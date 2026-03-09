@@ -1,4 +1,4 @@
-package com.camping.erp.global.core.util;
+package com.camping.erp.global._core.util;
 
 import lombok.Data;
 import org.springframework.http.*;
