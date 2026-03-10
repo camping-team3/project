@@ -1,85 +1,97 @@
 package com.camping.erp.global._core.handler;
 
+import com.camping.erp.global._core.handler.ex.*;
+import com.camping.erp.global._core.util.Resp;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.camping.erp.global._core.handler.ex.Exception400;
-import com.camping.erp.global._core.handler.ex.Exception401;
-import com.camping.erp.global._core.handler.ex.Exception403;
-import com.camping.erp.global._core.handler.ex.Exception404;
-import com.camping.erp.global._core.handler.ex.Exception500;
-
-@RestControllerAdvice // 모든 예외를 처리하는 클래스 (Data응답)
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(exception = Exception400.class) // 어떤 예외인지 지정하기
-    public String ex400(Exception400 e) {
-        String html = String.format("""
+    private boolean isAjaxRequest(HttpServletRequest request) {
+        String header = request.getHeader("X-Requested-With");
+        String acceptHeader = request.getHeader("Accept");
+        return "XMLHttpRequest".equals(header) || (acceptHeader != null && acceptHeader.contains("application/json"));
+    }
+
+    @ExceptionHandler(Exception400.class)
+    public Object ex400(Exception400 e, HttpServletRequest request) {
+        if (isAjaxRequest(request)) {
+            return Resp.fail(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return String.format("""
                 <script>
                     alert('%s');
                     history.back();
                 </script>
                 """, e.getMessage());
-        return html;
     }
 
-    @ExceptionHandler(exception = Exception401.class) // 어떤 예외인지 지정하기
-    public String ex401(Exception401 e) {
-        String html = String.format("""
+    @ExceptionHandler(Exception401.class)
+    public Object ex401(Exception401 e, HttpServletRequest request) {
+        if (isAjaxRequest(request)) {
+            return Resp.fail(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+        return String.format("""
                 <script>
                     alert('%s');
                     location.href = '/login-form';
                 </script>
                 """, e.getMessage());
-        return html;
     }
 
-    @ExceptionHandler(exception = Exception403.class) // 어떤 예외인지 지정하기
-    public String ex403(Exception403 e) {
-        String html = String.format("""
+    @ExceptionHandler(Exception403.class)
+    public Object ex403(Exception403 e, HttpServletRequest request) {
+        if (isAjaxRequest(request)) {
+            return Resp.fail(HttpStatus.FORBIDDEN, e.getMessage());
+        }
+        return String.format("""
                 <script>
                     alert('%s');
                     history.back();
                 </script>
                 """, e.getMessage());
-        // log남기기
-        return html;
     }
 
-    @ExceptionHandler(exception = Exception404.class) // 어떤 예외인지 지정하기
-    public String ex404(Exception404 e) {
-        String html = String.format("""
+    @ExceptionHandler(Exception404.class)
+    public Object ex404(Exception404 e, HttpServletRequest request) {
+        if (isAjaxRequest(request)) {
+            return Resp.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+        return String.format("""
                 <script>
                     alert('%s');
                     history.back();
                 </script>
                 """, e.getMessage());
-        return html;
     }
 
-    @ExceptionHandler(exception = Exception500.class) // 어떤 예외인지 지정하기
-    public String ex500(Exception500 e) {
-        String html = String.format("""
+    @ExceptionHandler(Exception500.class)
+    public Object ex500(Exception500 e, HttpServletRequest request) {
+        if (isAjaxRequest(request)) {
+            return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+        return String.format("""
                 <script>
                     alert('%s');
                     history.back();
                 </script>
                 """, e.getMessage());
-        return html;
     }
 
-    @ExceptionHandler(exception = Exception.class) // 어떤 예외인지 지정하기
-    public String exUnknown(Exception e) {
-        String html = String.format("""
+    @ExceptionHandler(Exception.class)
+    public Object exUnknown(Exception e, HttpServletRequest request) {
+        if (isAjaxRequest(request)) {
+            return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 문의하세요");
+        }
+        return String.format("""
                 <script>
                     alert('%s');
                     history.back();
                 </script>
                 """, "관리자에게 문의하세요");
-        System.out.println("error : " + e.getMessage());
-        // 1. 로그
-        // 2. SMS알림 -> e.getMessage()
-
-        return html;
     }
 }
