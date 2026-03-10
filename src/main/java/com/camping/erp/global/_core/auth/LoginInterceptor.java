@@ -1,4 +1,4 @@
-package com.camping.erp.global.interceptor;
+package com.camping.erp.global._core.auth;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
