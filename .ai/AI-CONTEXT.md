@@ -3,9 +3,9 @@
 ## 1. 프로젝트 현재 상태 (Current Milestone)
 
 - **단계**: Phase 1 - 프로젝트 초기화 및 도메인 설계
-- **진척도**: [|||---------] 25%
-- **최근 업데이트**: 프로젝트 기본 규칙(`common-rule`, `business-rule`) 수립 및 도메인 구조 생성 완료
-- **다음 목표**: MySQL ERD 설계 및 JPA Entity 생성
+- **진척도**: [||||--------] 35%
+- **최근 업데이트**: ERD 설계 명세 확정 및 MVP 워크플로우 수립 완료
+- **다음 목표**: JPA Entity 생성 및 연관관계 매핑
 
 ## 2. 프로젝트 맵 (File & Directory Manifest)
 
@@ -64,12 +64,11 @@
 - `2026-03-10`: 
   - 세션 자동 초기화 루틴 도입 (`AI-GUIDE.md` 업데이트)
   - 백엔드 패키지 경로 오타 수정 (`caping` -> `camping`)
-  - 도메인 폴더 구조 생성 (`board`, `payment` 추가)
-  - `common-rule.md` 및 `business-rule.md` 규칙 문서 수립
-  - Form 중심 응답 처리 전략 확정 및 명세 반영
-  - **(Sync)**: 명세와 실제 파일 불일치 해결
-    - `layout/header.mustache`, `layout/footer.mustache` 생성 및 `index.mustache` 적용
-    - `BookingService`, `SiteService`, `SiteRepository` 생성 및 명세 동기화
+  - 도메인 폴더 구조 및 뷰 템플릿 누락 폴더 생성 완료
+  - `workflow.md` 수립 (MVP 4단계 로드맵)
+  - **Deep Interview**를 통한 ERD 설계 및 `.person/ERD.md` 명세 확정
+  - **(Sync)**: 템플릿 폴더 구조 동기화 완료
+  - **(Sync)**: `AI-CONTEXT.md` 상태 및 진척도 업데이트 (25% -> 35%)
 
 ---
 
