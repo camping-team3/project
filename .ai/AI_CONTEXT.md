@@ -16,8 +16,8 @@
 모든 백엔드 코드는 `com.camping.erp` 하위의 **도메인별 폴더**에 위치하며, 각 폴더 내에 해당 도메인의 Controller, Service, Repository, Entity를 모아서 관리한다.
 
 - `domain/user/`: 회원 관련 (User, UserService, UserController, UserRepository)
-- `domain/reservation/`: 예약 및 선점 락 관련 (Reservation, BookingService, ...)
-- `domain/site/`: 캠핑 사이트 및 구역 관리 관련 (Site, SiteService, ...)
+- `domain/reservation/`: 예약 및 선점 락 관련 (Reservation, BookingService, ReservationRepository)
+- `domain/site/`: 캠핑 사이트 및 구역 관리 관련 (Site, SiteService, SiteRepository)
 - `domain/board/`: 공지사항, 갤러리, Q&A 관련 (Folder Created)
 - `domain/payment/`: 결제 및 환불 승인 로직 관련 (Folder Created)
 - `global/`: 공통 설정 및 유틸리티
@@ -31,6 +31,7 @@
 
 - `layout/`: `header.mustache`, `footer.mustache` (공통 레이아웃)
 - `main/`: 메인 화면 및 공용 페이지
+- `index.mustache`: 메인 진입점 (layout 적용)
 - `auth/`: 로그인, 회원가입 관련
 - `res/`: 예약 프로세스 (Step 1~3)
 - `mypage/`: 회원 전용 대시보드 및 내역
@@ -66,6 +67,9 @@
   - 도메인 폴더 구조 생성 (`board`, `payment` 추가)
   - `common-rule.md` 및 `business-rule.md` 규칙 문서 수립
   - Form 중심 응답 처리 전략 확정 및 명세 반영
+  - **(Sync)**: 명세와 실제 파일 불일치 해결
+    - `layout/header.mustache`, `layout/footer.mustache` 생성 및 `index.mustache` 적용
+    - `BookingService`, `SiteService`, `SiteRepository` 생성 및 명세 동기화
 
 ---
 
