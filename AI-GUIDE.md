@@ -28,6 +28,14 @@
 - **스킬상세**: `.ai/skills/{스킬명}/SKILL.md`
 - **비즈니스**: `.ai/rules/business-rule.md`
 
-## 3. AI-CONTEXT
+## 3. 사후 보고서 작성 (Post-Execution Report) - MANDATORY
+
+코드 수정이나 중요한 작업이 완료된 후에는 사용자 요청이 없더라도 반드시 다음을 수행한다.
+- **경로**: `.person/reports/{YYYY-MM-DD}/{기능명}-report.md` (날짜별 하위 폴더 분리 필수)
+- **내용 상단**: `Reporter: {Git user.name}` 정보를 반드시 포함.
+- 작업 요약, 변경 사항, 검증 결과 포함.
+- 보고서 생성 전까지는 작업을 완료된 것으로 간주하지 않는다.
+
+## 4. AI-CONTEXT
 
 코드 작업 전 해당 디렉토리에 `AI-CONTEXT.md`가 있으면 먼저 읽어라.

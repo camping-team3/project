@@ -1,4 +1,4 @@
-package com.camping.erp.domain.board;
+package com.camping.erp.domain.qna;
 
 import com.camping.erp.domain.user.User;
 import com.camping.erp.global._core.BaseTimeEntity;

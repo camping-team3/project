@@ -1,5 +1,6 @@
-package com.camping.erp.domain.board;
+package com.camping.erp.domain.gallery;
 
+import com.camping.erp.domain.image.Image;
 import com.camping.erp.global._core.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

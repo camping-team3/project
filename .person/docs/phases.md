@@ -22,7 +22,7 @@
   - `Board` (공지, 갤러리, Q&A)
   - `Review` (이용 완료자 전용)
   - `Image` (다중 이미지 관리)
-- [ ] **JPA Entity 매핑:** 도메인별 Entity 클래스 작성 및 연관관계(1:N 등) 설정
+- [ ] **JPA Entity 매핑:** 도메인별 Entity 클래스 작성
 - [ ] **데이터 검증:** `testData.sql`을 통한 초기 데이터 로드 및 JPA Repository 기본 동작 확인
 
 ## 🔑 Phase 2: MVP 핵심 도메인 (50%) — 4명 병렬

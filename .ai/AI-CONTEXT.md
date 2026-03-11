@@ -16,7 +16,11 @@
 | `src/main/java/.../domain/user/` | 회원 관리 (User, Role, Status 구현) |
 | `src/main/java/.../domain/reservation/` | 예약 관리 (Reservation, Payment, Refund 엔티티 완료) |
 | `src/main/java/.../domain/site/` | 사이트 관리 (Zone, Site 계층형 모델링 완료) |
-| `src/main/java/.../domain/board/` | 게시판/리뷰/Q&A (커뮤니티 엔티티 모델링 완료) |
+| `src/main/java/.../domain/notice/` | 시스템 공지사항 관리 (Notice) |
+| `src/main/java/.../domain/gallery/` | 캠핑장 포토 갤러리 (Gallery, Image) |
+| `src/main/java/.../domain/qna/` | 사용자 문의 및 관리자 답변 (Qna, Comment) |
+| `src/main/java/.../domain/review/` | 예약 기반 이용 후기 (Review, Image) |
+| `src/main/java/.../domain/image/` | 공통 이미지 메타데이터 관리 (Image) |
 | `src/main/java/.../global/` | 전역 설정, 예외 처리, 공통 유틸리티 |
 | `src/main/java/.../global/_core/` | **핵심 기반 기술 (인터셉터, 전역 예외 처리, 공통 응답)** |
 | `src/main/resources/templates/` | Mustache 뷰 템플릿 (Layout, Index 구조화) |
@@ -35,6 +39,17 @@
 - **코드 스타일**: `.ai/rules/common-rule.md`를 준수한다.
 
 ## 5. 작업 히스토리 (History)
+- **(2026-03-11) 비즈니스 규칙(business-rule.md) 최신화**
+    - `board` 패키지 해체 및 독립 도메인 구조를 반영한 규칙 전면 재구성.
+    - `Review` 작성 권한, `Qna` 상태 전이, `Image` 관리 정책 등 상세 비즈니스 로직 명시.
+- **(2026-03-11) 전 도메인 테스트 더미 데이터(testData.sql) 생성**
+    - `ERD.md` 및 `PRD.md` 명세를 기반으로 11개 테이블에 대한 유의미한 더미 데이터 구축.
+    - 테이블 역할 기술 및 Enum 상태값(Status, Role 등) 가이드를 주석으로 포함하여 데이터 가독성 증대.
+    - FK 제약 조건을 고려한 삽입 순서 최적화.
+- **(2026-03-11) 도메인 패키지 구조 재설계 및 board 패키지 해체**
+    - `board` 패키지에 모여 있던 엔티티들을 `notice`, `gallery`, `qna`, `review`, `image`로 분리하여 독립 도메인화.
+    - 각 도메인별 `Repository`, `Service`, `Controller`, `AI-CONTEXT.md` 기본 구조 구축.
+    - 불필요한 `Board.java`, `BoardService.java` 제거 및 의존성 정리.
 - **(2026-03-11) 도메인 모델링 및 인프라 고도화**
     - `Reservation`, `Zone`, `Site`, `Notice` 등 전체 엔티티 모델링 완료 (ERD 명세 준수).
     - `LoginInterceptor` 추가 및 `WebMvcConfig` 인터셉터 경로 매핑 (Security 기반 마련).

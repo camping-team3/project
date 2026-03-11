@@ -20,12 +20,16 @@ description: >
 3. **코드 제안 및 확인 (Code Proposal)**
    - 계획이 수립되면 작성할 실제 코드를 사용자에게 미리 보여주고, 해당 코드로 수정을 진행할지 최종 확인을 받습니다.
 
-4. **사후 보고서 작성 (Post-Execution Report)**
-   - .person/reports 폴더에 코드 수정 및 실행이 완료된 후에는 작업 결과를 정리한 `{기능명}-report.md` 파일을 생성합니다.
+4. **사후 보고서 작성 (Post-Execution Report) - MANDATORY**
+   - 사용자 요청 여부와 관계없이 **무조건** 실행한다.
+   - **경로**: `.person/reports/{YYYY-MM-DD}/{기능명}-report.md` (날짜별 폴더 분리)
+   - **상단**: `Reporter: {Git user.name}` 정보를 명시한다.
+   - 보고서가 생성되지 않은 작업은 완료되지 않은 것으로 간주한다.
 
 ## 핵심 워크플로우 (Core Workflow)
 
 1. **계획 제안** (사용자 대기)
 2. **코드 제안** (사용자 대기)
 3. **코드 실행/반영**
-4. **report.md 생성**
+4. **report.md 자동 생성 (비독촉 자동 수행)**
+5. **최종 완료 보고**
