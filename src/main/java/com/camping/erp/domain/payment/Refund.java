@@ -8,13 +8,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "payment_tb")
+@Table(name = "refund_tb")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Payment extends BaseTimeEntity {
+public class Refund extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,23 +23,16 @@ public class Payment extends BaseTimeEntity {
     private Reservation reservation;
 
     @Column(nullable = false)
-    private String impUid;
+    private String reason;
 
     @Column(nullable = false)
-    private Long amount;
-
-    @Column(nullable = false)
-    private String status;
-
-    private LocalDateTime payDate;
+    private Long refundAmount;
 
     @Builder
-    public Payment(Long id, Reservation reservation, String impUid, Long amount, String status, LocalDateTime payDate) {
+    public Refund(Long id, Reservation reservation, String reason, Long refundAmount) {
         this.id = id;
         this.reservation = reservation;
-        this.impUid = impUid;
-        this.amount = amount;
-        this.status = status;
-        this.payDate = payDate;
+        this.reason = reason;
+        this.refundAmount = refundAmount;
     }
 }

@@ -3,18 +3,17 @@
 # domain/site/
 
 ## 목적
-캠핑 사이트(공간) 및 요금 설정 관리. 구역(Zone)별 가격 정책과 개별 사이트 정보를 관리한다.
+캠핑 공간 및 요금 정책 관리. 구역(Zone)과 개별 사이트(Site) 정보를 관리한다.
 
 ## 주요 파일
 | 파일명 | 설명 |
 |--------|------|
-| `Site.java` | 사이트 엔티티 (zone_id, name, max_people) |
-| `SiteService.java` | 사이트 가용 여부 및 가격 계산 로직 |
-| `SiteRepository.java` | 구역 및 사이트 정보 조회 |
+| `Zone.java` | 구역 엔티티 (normalPrice, peakPrice 등 요금 정보 포함) |
+| `Site.java` | 개별 사이트 엔티티 (siteName, maxPeople, Zone 참조) |
+| `SiteRepository.java` | 구역별 사이트 조회 등 지원 |
+| `SiteService.java` | 사이트 조회 및 가용성 체크 로직 (뼈대 생성됨) |
+| `SiteRequest.java` / `SiteResponse.java` | 데이터 교환용 DTO |
 
 ## AI 작업 지침
-- **가격 정책**: `Zone` 테이블에 정의된 `normal_price`와 `peak_price`를 바탕으로 성수기 여부를 판단하여 합계 금액을 산출한다.
-- **가용성**: 예약 내역(`Reservation`)과 대조하여 특정 날짜의 예약 가능 여부를 반환한다.
-
-## 의존성
-- 외부: Spring Data JPA
+- **가격 산출**: `Zone`의 가격 정보를 바탕으로 시즌별 요금 계산 로직을 구현해야 한다.
+- **Fetch Join**: `Site` 조회 시 성능을 위해 `Zone`과 `fetch join` 사용을 권장한다.

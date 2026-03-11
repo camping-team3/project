@@ -8,20 +8,17 @@
 ## 주요 하위 패키지
 | 패키지 | 설명 |
 |--------|------|
-| `user/` | 회원 관리 (가입, 로그인, 권한) |
-| `site/` | 캠핑 사이트 관리 (배치, 요금, 상태) |
-| `reservation/` | 예약 시스템 (예약 생성, 취소, 오버부킹 방지) |
-| `payment/` | 결제 연동 및 이력 관리 |
-| `board/` | 게시판 (공지사항, Q&A, 리뷰) |
+| `user/` | 회원 관리 및 인증 (User, Role, Status) |
+| `site/` | 캠핑 사이트 및 요금 정책 관리 (Zone, Site) |
+| `reservation/` | 예약 시스템 및 일정 관리 (Reservation) |
+| `payment/` | 결제 연동 및 환불 이력 관리 (Payment, Refund) |
+| `board/` | 커뮤니티 및 콘텐츠 관리 (Notice, Gallery, Qna, Review, Image) |
 
 ## AI 작업 지침
-- **엔티티 설계**: JPA 엔티티는 `@Entity`와 `@Table`을 사용하며, 비즈니스 규칙을 반영해야 한다.
-- **연관 관계**: 지연 로딩(`LAZY`)을 기본으로 하며, 필요한 경우 `fetch join`을 사용한다.
-- **도메인 서비스**: 복잡한 비즈니스 로직은 `Service` 클래스에 구현하며, 단일 책임 원칙을 준수한다.
-
-## 테스트
-- 각 도메인별로 `RepositoryTest` 및 `ServiceTest`를 작성하여 검증한다.
+- **엔티티 설계**: 모든 엔티티는 `BaseTimeEntity`를 상속받으며 `@Getter`, `@NoArgsConstructor(access = AccessLevel.PROTECTED)`, `@Builder`를 사용한다.
+- **연관 관계**: 모든 연관관계는 `FetchType.LAZY`를 기본으로 하며, FK 명칭은 `table_id` 형식을 따른다.
+- **Service 레이어**: 비즈니스 로직은 `Service`에서 처리하며, `@Transactional(readOnly = true)`를 기본으로 사용한다.
 
 ## 의존성
-- 내부: `global/` (공통 예외, 응답 규격)
-- 외부: Spring Data JPA, Redis (Lock)
+- 내부: `global/_core` (공통 예외, 응답 규격, 시간 관리)
+- 외부: Spring Data JPA, Lombok

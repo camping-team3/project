@@ -11,9 +11,14 @@ public class BookingService {
 
     private final ReservationRepository reservationRepository;
 
-    // TODO: 예약 생성 로직 (Redis 분산 락 적용 필요)
     @Transactional
-    public void createReservation() {
-        // 예약 생성 비즈니스 로직
+    public ReservationResponse.ReserveDTO reserve(ReservationRequest.ReserveDTO request) {
+        // 직접 구현하세요.
+        return null;
+    }
+
+    @Transactional
+    public void cancel(Long id) {
+        // 직접 구현하세요.
     }
 }

@@ -3,17 +3,16 @@
 # domain/payment/
 
 ## 목적
-외부 결제 연동(PortOne) 및 결제 이력 관리. 예약 확정과 연계되어 트랜잭션을 처리한다.
+결제 승인 및 환불 이력 관리. 포트원 연동 정보와 예약 상태를 연계한다.
 
 ## 주요 파일
 | 파일명 | 설명 |
 |--------|------|
-| `Payment.java` | 결제 엔티티 (imp_uid, amount, status) |
+| `Payment.java` | 결제 성공 이력 (impUid, amount, payDate 등) |
+| `Refund.java` | 환불 승인 이력 (reason, refundAmount 등) |
+| `PaymentRepository.java` | 결제 데이터 접근 |
+| `PaymentService.java` | 결제 검증 및 확정 로직 (뼈대 생성됨) |
 
 ## AI 작업 지침
-- **트랜잭션**: 결제 성공 정보가 수신되면 `Reservation`의 상태를 `CONFIRMED`로 변경하는 작업이 원자적으로 수행되어야 한다.
-- **검증**: 클라이언트에서 넘어온 결제 금액과 실제 예약 금액이 일치하는지 서버 측 검증이 필수적이다.
-
-## 의존성
-- 내부: `domain/reservation` (참조)
-- 외부: PortOne V2 API
+- **원자성**: 결제 성공 시 `Reservation`의 상태 변경과 `Payment` 저장이 하나의 트랜잭션으로 묶여야 한다.
+- **환불**: 관리자 승인 후 `Refund` 엔티티가 생성되어야 한다.

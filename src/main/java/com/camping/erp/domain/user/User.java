@@ -1,23 +1,21 @@
 package com.camping.erp.domain.user;
 
+import com.camping.erp.global._core.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user_tb")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class User {
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -34,16 +32,29 @@ public class User {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false)
-    private String role; // USER, ADMIN
+    @Enumerated(EnumType.STRING)
+    private UserRole role; // USER, ADMIN
 
-    @Column(nullable = false)
-    private String status; // ACTIVE, ANONYMOUS
+    @Enumerated(EnumType.STRING)
+    private UserStatus status; // ACTIVE, ANONYMOUS
 
-    private LocalDateTime createdAt;
+    public enum UserRole {
+        USER, ADMIN
+    }
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+    public enum UserStatus {
+        ACTIVE, ANONYMOUS
+    }
+
+    @Builder
+    public User(Long id, String username, String password, String name, String email, String phone, UserRole role, UserStatus status) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.role = role;
+        this.status = status;
     }
 }
