@@ -8,39 +8,33 @@
 
 ---
 
-## 🏗️ Phase 1: 도메인 설계 및 환경 구축 (25%)
+## 🏗️ Phase 1: 도메인 설계 및 환경 구축 (100%) - 🔵 완료
 
 **목표:** 견고한 기술적 토대 마련 및 데이터베이스 구조 확립
 
 - [x] **프로젝트 초기화:** 패키지 구조(`com.camping.erp`), 기본 폴더링(`domain`, `global`, `layout`) 완료
 - [x] **규칙 수립:** `common-rule`, `business-rule`, `AI-CONTEXT` 기반의 협업 가이드 확정
-- [x] **데이터베이스 ERD 설계:**
-  - `User` (회원/관리자)
-  - `Zone` & `Site` (캠핑 구역 및 요금)
-  - `Reservation` (예약 및 상태)
-  - `Payment` (결제 및 환불)
-  - `Board` (공지, 갤러리, Q&A)
-  - `Review` (이용 완료자 전용)
-  - `Image` (다중 이미지 관리)
-- [ ] **JPA Entity 매핑:** 도메인별 Entity 클래스 작성
-- [ ] **데이터 검증:** `testData.sql`을 통한 초기 데이터 로드 및 JPA Repository 기본 동작 확인
+- [x] **데이터베이스 ERD 설계:** 11개 도메인 테이블 설계 및 관계 확정 (ERD.md 준수)
+- [x] **JPA Entity 매핑:** 11개 도메인(User, Reservation, Zone, Site, Notice, Gallery 등) Entity 클래스 구현 완료
+- [x] **데이터 검증:** `testData.sql` 구축 및 JPA Repository 기본 동작 확인 완료
 
-## 🔑 Phase 2: MVP 핵심 도메인 (50%) — 4명 병렬
+## 🔑 Phase 2: MVP 핵심 도메인 (20%) - 🟢 진행 중
 
 **목표:** 결제 없이 '예약 → 관리자 수동 확정' 플로우가 동작하는 MVP 완성
 
 > 각 도메인은 **User-facing + Admin CRUD**를 함께 구현한다.
 
 - [ ] **User 도메인:**
-  - 고객: 회원가입, 로그인, `LoginInterceptor` 기반 권한 인가 (일반/관리자 분리)
-  - 관리자: 회원 목록 조회, 권한 변경
+  - [x] 고객: 로그인, `LoginInterceptor` 및 `AdminInterceptor` 기반 권한 인가 (Security 기반 마련 완료)
+  - [ ] 고객: 회원가입 (진행 예정)
+  - [ ] 관리자: 회원 목록 조회, 권한 변경
 - [ ] **Zone & Site 도메인:**
   - 고객: 메인 페이지 렌더링, 구역·사이트 목록 조회, 날짜별 예약 가능 사이트 필터링
   - 관리자: 구역·사이트 CRUD, 요금 설정
 - [ ] **Reservation 도메인:**
   - 고객: 예약 생성 플로우
   - 관리자: 예약 현황 목록 조회, 수동 확정/취소 처리
-- [ ] **Board 도메인 (Notice + Gallery):**
+- [ ] **독립 도메인 (Notice + Gallery):** (board 패키지 해체 및 분리 완료)
   - 고객: 공지사항·갤러리 목록 조회
   - 관리자: 공지·갤러리 CRUD, Image 다중 업로드
 
