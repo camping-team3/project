@@ -8,8 +8,8 @@
 
 ### 2. 데이터베이스 및 데이터 접근 (Database & ORM)
 
-- **메인 DB**: MySQL (회원, 예약, 게시판 등 영구 데이터 저장)
-- **인메모리 DB**: Redis (HttpSession 클러스터링 및 5분 예약 선점 Lock TTL 관리)
+- **메인 DB (운영)**: MySQL (영구 데이터 저장)
+- **개발/테스트 DB**: H2 Database (In-memory, H2-console 활용)
 - **ORM (객체 관계 매핑)**: Spring Data JPA
 - 기본 CRUD는 `JpaRepository` 활용으로 개발 생산성 극대화.
 - 연관 관계는 지연 로딩(`FetchType.LAZY`)을 기본으로 설정.
