@@ -1,0 +1,88 @@
+/* 34고객문의답변달기.css - Admin Q&A Answer Page Styles */
+
+/* Header & Search UI Utils */
+.btn-icon-admin {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    background: transparent;
+    transition: background 0.2s;
+}
+
+.btn-icon-admin:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+/* Page Headers & Status */
+.badge.bg-amber-subtle {
+    background-color: #fffbeb !important;
+    color: #b45309 !important;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    border: 1px solid #fde68a;
+}
+
+/* Customer Question Card */
+.customer-profile-img-wrapper {
+    width: 56px;
+    height: 56px;
+    border: 3px solid #f1f5f9;
+}
+
+.icon-xs {
+    font-size: 14px !important;
+}
+
+.leading-relaxed {
+    line-height: 1.625;
+}
+
+.border-dashed {
+    border-style: dashed !important;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+/* Admin Answer Form Styles */
+.answer-form-highlight {
+    border: 2px solid rgba(44, 89, 38, 0.1) !important;
+    box-shadow: 0 10px 30px rgba(44, 89, 38, 0.05) !important;
+}
+
+.answer-textarea {
+    resize: none;
+    font-size: 0.95rem;
+}
+
+.char-counter {
+    font-size: 11px;
+}
+
+.btn-answer-submit {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+/* AI Assist Tooltip (if needed in future) */
+.ai-assist-tooltip {
+    position: absolute;
+    right: 70px;
+    bottom: 15px;
+    background: white;
+    color: var(--fh-primary);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 8px 16px;
+    border-radius: 99px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border: 1px solid rgba(44, 89, 38, 0.1);
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>거절 사유 입력 - Forest Haven Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="/css/common.css" rel="stylesheet"/>
+    <link href="/css/admin/reservation/reject-modal.css" rel="stylesheet"/>
+</head>
+<body class="bg-light overflow-hidden">
+    <!-- Background Content Mockup -->
+    <div class="position-fixed inset-0 opacity-25 pointer-events-none w-100 h-100 p-5">
+        <div class="container-lg">
+            <div class="bg-mock-dark rounded mb-4 mock-h-32 mock-w-200"></div>
+            <div class="row g-4">
+                <div class="col-8">
+                    <div class="bg-mock-light rounded-4 mb-4 mock-h-300"></div>
+                    <div class="bg-mock-light rounded-4 mock-h-150"></div>
+                </div>
+                <div class="col-4">
+                    <div class="bg-mock-light rounded-4 mock-h-470"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Container -->
+    <div class="modal-backdrop-mock">
+        <div class="fh-modal shadow-2xl">
+            <!-- Modal Header -->
+            <header class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center bg-primary bg-opacity-5">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="material-symbols-outlined text-primary fs-4">event_busy</span>
+                    <h2 class="h5 fw-bold text-primary m-0">거절 사유 입력</h2>
+                </div>
+                <button class="btn-icon rounded-circle hover-primary"><span class="material-symbols-outlined fs-5">close</span></button>
+            </header>
+
+            <!-- Modal Body -->
+            <div class="p-4">
+                <p class="text-secondary small mb-4 leading-relaxed">
+                    예약 또는 취소 요청을 거절하는 이유를 입력해 주세요.<br>
+                    입력하신 내용은 고객에게 알림으로 전송됩니다.
+                </p>
+
+                <!-- Context Card -->
+                <div class="row g-0 p-4 bg-primary bg-opacity-5 rounded-3 border border-primary border-opacity-10 mb-4 text-start">
+                    <div class="col-6 border-end border-primary border-opacity-10 pe-4">
+                        <p class="text-xs fw-bold text-primary opacity-75 text-uppercase tracking-wider mb-1">예약 번호 (ID)</p>
+                        <p class="h6 fw-bold text-dark m-0">RES-2024-0512</p>
+                    </div>
+                    <div class="col-6 ps-4">
+                        <p class="text-xs fw-bold text-primary opacity-75 text-uppercase tracking-wider mb-1">예약자 성함</p>
+                        <p class="h6 fw-bold text-dark m-0">김지수 (Kim Ji-su)</p>
+                    </div>
+                </div>
+
+                <!-- Input Field -->
+                <div class="mb-2">
+                    <label class="form-label small fw-bold text-dark mb-2">거절 상세 사유</label>
+                    <textarea class="form-control p-3 border-secondary border-opacity-25 fs-6 leading-relaxed bg-white shadow-none textarea-reject" rows="6" placeholder="예: 선택하신 날짜는 이미 단체 예약으로 인해 만석입니다. 다른 날짜를 선택해 주시면 감사하겠습니다."></textarea>
+                </div>
+                <p class="text-end text-secondary text-xxs">최대 500자까지 입력 가능합니다.</p>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-4 py-3 bg-light border-top d-flex justify-content-end gap-3">
+                <button class="btn btn-cancel-custom px-4 py-2">취소</button>
+                <button class="btn bg-custom-danger text-white px-4 py-2 fw-bold d-flex align-items-center gap-2 shadow-sm rounded-3 border-0">
+                    <span class="material-symbols-outlined fs-5">check_circle</span>
+                    <span>거절 확정</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

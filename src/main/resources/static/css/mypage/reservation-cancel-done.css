@@ -1,0 +1,33 @@
+/* 03예약취소신청완료.css - User Side */
+.success-hero {
+    height: 240px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 1.5rem;
+    position: relative;
+    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDZm25FzsdvgYEUtQwgZNDXjeFrxwh0DL1sUbQPI-vHOgUr7mrG99DtJDkU-59G1R5rBywshbtMDOTglqsHUoDPA6oV_dP0_ovTzmYkZ1kkXqK6-V6OkFRODgrjsZUMGSbGVuLdk3RkHa_o9CX_QC-v0tgDcYR6pbC-ptTS-NqyVOnyKLyWU9cRnlfn3Wc6ZwRkSXmmOS1y7FaF_3v2f1bY6LPBx8h_hLJ3f56D8CeDrrRPehDbY5VVYnWh59KNDo60yMOqwJQn7B2S');
+}
+
+.success-icon-badge {
+    position: absolute;
+    bottom: -1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.summary-list .summary-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--fh-border);
+}
+
+.summary-list .summary-item:last-child {
+    border-bottom: none;
+}

@@ -1,0 +1,53 @@
+/* 26포토갤러리.css - User Community Gallery Specific Styles */
+
+/* Gallery Grid */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 2rem;
+}
+
+.gallery-item {
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.gallery-thumb-wrapper {
+    aspect-ratio: 1;
+    border-radius: var(--fh-radius);
+    overflow: hidden;
+    position: relative;
+    background-color: var(--fh-border);
+}
+
+.gallery-thumb-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.gallery-item:hover .gallery-thumb-wrapper img {
+    transform: scale(1.1);
+}
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Utils */
+.max-w-sm {
+    max-width: 400px;
+}

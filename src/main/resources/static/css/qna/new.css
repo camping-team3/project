@@ -1,0 +1,86 @@
+/* 32질문하기페이지.css - User Ask Question Page Styles */
+
+/* Navbar UI Utils */
+.navbar-brand-icon {
+    background: var(--fh-primary);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.brand-name-text {
+    letter-spacing: -0.02em;
+}
+
+/* Form Styles */
+.form-label-bold {
+    font-weight: 700;
+    color: #334155;
+}
+
+.bg-input-soft {
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}
+
+.bg-input-soft:focus {
+    background-color: white !important;
+    border-color: var(--fh-primary) !important;
+    box-shadow: 0 0 0 4px rgba(44, 89, 38, 0.1) !important;
+}
+
+/* Editor Section */
+.fh-editor-content {
+    resize: none;
+    width: 100%;
+    padding: 1.5rem;
+    outline: none;
+}
+
+.editor-min-height {
+    min-height: 240px;
+}
+
+/* Upload Zone */
+.question-upload-zone {
+    border: 2px dashed var(--fh-border);
+    border-radius: var(--fh-radius);
+    padding: 3rem;
+    text-align: center;
+    background-color: var(--fh-bg-light);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.question-upload-zone:hover {
+    background-color: var(--fh-primary-light);
+    border-color: var(--fh-primary);
+}
+
+/* Buttons */
+.btn-cancel-hover {
+    transition: all 0.2s ease !important;
+    background-color: white !important;
+    color: #64748b !important;
+    border: 1px solid rgba(44, 89, 38, 0.1) !important;
+}
+
+.btn-cancel-hover:hover {
+    background-color: rgba(44, 89, 38, 0.05) !important;
+    border-color: var(--fh-primary) !important;
+    color: var(--fh-primary) !important;
+}
+
+/* Floating Elements */
+.floating-container {
+    z-index: 1050;
+}
+
+.btn-floating-chat {
+    width: 56px;
+    height: 56px;
+}

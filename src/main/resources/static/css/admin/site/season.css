@@ -1,0 +1,83 @@
+/* 08성수기비수기관리.css - Admin Season Management Specific Styles */
+
+/* Layout & Utils */
+.text-xs { font-size: 0.75rem; }
+
+/* Form Styles */
+.season-form-input {
+    font-size: 0.85rem;
+}
+
+/* Calendar Components */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background-color: #e2e8f0;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.calendar-day-header {
+    background-color: #f8fafc;
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #94a3b8;
+    text-transform: uppercase;
+}
+
+.calendar-day {
+    background-color: white;
+    height: 100px;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+}
+
+.calendar-day.other-month {
+    opacity: 0.3;
+}
+
+.event-label {
+    font-size: 10px;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bg-peak-soft { background-color: #fef2f2; }
+.bg-semi-soft { background-color: #fffbeb; }
+
+/* Calendar Legend Circles */
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.bg-dot-peak { background-color: #ef4444; }
+.bg-dot-semi { background-color: #f59e0b; }
+.bg-dot-off { background-color: var(--fh-primary); }
+
+/* Calendar Event Bars */
+.calendar-event-bar {
+    margin-top: 1rem;
+    height: 12px;
+    border-radius: 4px;
+}
+
+.bar-semi {
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+/* Season List Table */
+.badge-season-type {
+    font-size: 0.7rem;
+}

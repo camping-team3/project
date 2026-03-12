@@ -1,15 +1,12 @@
 package com.camping.erp.domain.site;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -23,18 +20,9 @@ public class SiteController {
     // 1. 사용자(User-facing) 기능
     // ==========================================================
 
-    @GetMapping("/")
-    public String index(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut,
-            Model model) {
-
-        List<SiteResponse.MainDTO> zones = siteService.getAvailableZonesWithSites(checkIn, checkOut);
-        model.addAttribute("zones", zones);
-        model.addAttribute("checkIn", checkIn);
-        model.addAttribute("checkOut", checkOut);
-
-        return "index";
+    @GetMapping("/sites/{id}")
+    public String detail(@PathVariable Long id) {
+        return "site/detail";
     }
 
     // ==========================================================

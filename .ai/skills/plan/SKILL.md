@@ -23,7 +23,7 @@ description: >
 4. **사후 보고서 작성 (Post-Execution Report) - MANDATORY**
    - 사용자 요청 여부와 관계없이 **무조건** 실행한다.
    - **경로**: `.person/reports/{YYYY-MM-DD}/{기능명}-report.md` (날짜별 폴더 분리)
-   - **상단**: `Reporter: {Git user.name}` 정보를 명시한다.
+   - **상단**: 반드시 `git config user.name` 명령을 실행하여 얻은 값을 `Reporter: {결과값}` 형식으로 첫 줄에 기재한다. AI 모델명이나 다른 값을 사용하지 않는다.
    - 보고서가 생성되지 않은 작업은 완료되지 않은 것으로 간주한다.
 
 ## 핵심 워크플로우 (Core Workflow)

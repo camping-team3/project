@@ -1,6 +1,8 @@
 package com.camping.erp.domain.site;
 
-import com.camping.erp.global._core.handler.ex.Exception404;
+import com.camping.erp.global.handler.ex.Exception400;
+import com.camping.erp.global.handler.ex.Exception404;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +45,7 @@ public class SiteService {
 
     public Site findById(Long id) {
         return siteRepository.findById(id)
-                .orElseThrow(() -> new Exception404("해당 사이트를 찾을 수 없습니다. id: " + id));
+                .orElseThrow(() -> new Exception400("해당 사이트를 찾을 수 없습니다. id: " + id));
     }
 
     @Transactional
