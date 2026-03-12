@@ -1,0 +1,60 @@
+/* 35메인허브.css - Forest Haven Main Homepage Styles */
+
+/* Navbar Actions */
+.navbar-actions .btn-login {
+    border-radius: 0.75rem;
+}
+
+/* Main Hero Section */
+.main-hero {
+    height: 600px;
+    border-radius: 1.5rem;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.2)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuAUYJDRHg382aRAR6yDQAkWM6NRxtjq_aLExtaXGen9-iPJXGUX4pRy4sFS0ALOzSPZedWEK7bsfWCwl29eA28UTkC57BNMxAwT2Q7iHwOWzhHNb9m_oBCnvGupFepwcWvwDIoY6g4D5-nDPLRElHNp3GUeBP2l8kEUKsAARmffK0oRGi9FkiLumFDRopi3D2-IGguvFeqlAXPiBbzSlalxAYt15C4lHV60BLaQlVbECYxmKOncP9_9wgbVecp_CwifvlrB3HBsLwNL');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    max-width: 1400px;
+}
+
+.hero-badge {
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-reserve {
+    background: white !important;
+    color: #2c5926 !important;
+    border: none !important;
+    padding: 1rem 3rem !important;
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-reserve:hover {
+    transform: scale(1.1) translateY(-5px) !important;
+    box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Site Sections */
+.site-section-container {
+    max-width: 1440px;
+}
+
+.site-card-img {
+    height: 200px;
+}
+
+/* Footer Styles */
+.footer-desc {
+    max-width: 400px;
+}

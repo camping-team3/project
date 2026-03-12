@@ -1,20 +1,6 @@
 {{> layout/header}}
-    <div class="fh-wrapper">
-        <header class="fh-navbar bg-white bg-opacity-80 backdrop-blur-md sticky-top">
-            <div class="navbar-brand">
-                <div class="brand-icon shadow-sm"><span class="material-symbols-outlined">forest</span></div>
-                <h1 class="brand-name">Forest Haven</h1>
-            </div>
-            <nav class="d-none d-lg-flex gap-5">
-                <a href="#" class="text-decoration-none text-dark fw-bold small hover-primary">리뷰</a>
-                <a href="/galleries" class="text-decoration-none text-dark fw-bold small hover-primary">포토갤러리</a>
-                <a href="/qna" class="text-decoration-none text-primary fw-bold small border-bottom border-primary border-2 pb-1">QnA</a>
-                <a href="21실시간예약.html" class="text-decoration-none text-dark fw-bold small hover-primary">예약하기</a>
-            </nav>
-            <button onclick="location.href='01마이페이지홈.html'" class="btn btn-primary px-4 py-2 small fw-bold shadow-sm rounded-pill">마이페이지</button>
-        </header>
 
-        <main class="container py-5 content-inner-max">
+        <main class="container py-5" style="max-width: 960px; margin: 0 auto;">
             <div class="mb-5 px-2">
                 <h2 class="display-5 fw-black text-dark mb-2">Q&A 커뮤니티</h2>
                 <p class="text-secondary fw-medium fs-5 opacity-75">캠핑 장비, 장소, 팁 등 궁금한 점을 고수들에게 물어보세요.</p>
@@ -103,26 +89,4 @@
             </div>
         </main>
 
-        <footer class="fh-footer bg-white py-5 mt-5 border-top">
-            <div class="container py-4 text-center text-md-start">
-                <div class="row g-5">
-                    <div class="col-md-6">
-                        <div class="navbar-brand mb-4">
-                            <div class="brand-icon small shadow-sm"><span class="material-symbols-outlined">forest</span></div>
-                            <h2 class="brand-name h5">Forest Haven</h2>
-                        </div>
-                        <p class="text-secondary small leading-relaxed max-w-sm">자연 속에서 진정한 휴식을 찾으세요. 포레스트 헤이븐은 당신의 완벽한 캠핑 경험을 위해 최고의 환경과 서비스를 제공합니다.</p>
-                    </div>
-                    <div class="col-md-6 text-md-end d-flex flex-column justify-content-center">
-                        <p class="small text-secondary m-0 fw-bold">T. 1234-5678 | E. help@foresthaven.com</p>
-                        <p class="small text-secondary m-0 opacity-50 mt-2">© 2024 Forest Haven. All rights reserved.</p>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
-        <button class="btn-chatbot shadow-lg border-0 btn-chatbot-large rounded-circle bg-primary text-white">
-            <span class="material-symbols-outlined fs-1">chat_bubble</span>
-        </button>
-    </div>
 {{> layout/footer}}

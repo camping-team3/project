@@ -1,0 +1,37 @@
+/* 07공지사항관리.css - Admin Side */
+.text-xs { font-size: 0.75rem; }
+
+.admin-tabs {
+    display: flex;
+    gap: 2rem;
+}
+
+.admin-tab-item {
+    padding: 1rem 0;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.admin-tab-item.active {
+    color: var(--fh-primary);
+}
+
+.pin-icon {
+    font-size: 1rem;
+    color: #ef4444;
+    vertical-align: middle;
+    margin-left: 0.25rem;
+}
+
+.bulk-action-bar {
+    padding: 1.5rem;
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid var(--fh-border);
+}
+
+.status-indicator-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}

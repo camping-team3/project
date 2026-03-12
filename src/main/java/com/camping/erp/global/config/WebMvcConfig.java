@@ -34,7 +34,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         // 모든 인증이 필요한 경로
         registry.addInterceptor(new LoginInterceptor())
-                .addPathPatterns("/mypage/**", "/reservations/**", "/admin/**", "/boards/**", "/replies/**", "/qna/new", "/reviews/new")
+                .addPathPatterns("/mypage/**", "/reservations/**", "/admin/**", "/boards/**", "/replies/**", "/qna/new",
+                        "/reviews/new")
                 .excludePathPatterns("/boards/[0-9]+"); // 상세 조회는 비로그인 허용 (필요시)
 
         // 관리자 전용 경로

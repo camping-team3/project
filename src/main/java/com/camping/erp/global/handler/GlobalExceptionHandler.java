@@ -1,12 +1,17 @@
 package com.camping.erp.global.handler;
 
-import com.camping.erp.global.handler.ex.*;
-import com.camping.erp.global.util.Resp;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.camping.erp.global.handler.ex.Exception400;
+import com.camping.erp.global.handler.ex.Exception401;
+import com.camping.erp.global.handler.ex.Exception403;
+import com.camping.erp.global.handler.ex.Exception404;
+import com.camping.erp.global.handler.ex.Exception500;
+import com.camping.erp.global.util.Resp;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -92,6 +97,6 @@ public class GlobalExceptionHandler {
                     alert('%s');
                     history.back();
                 </script>
-                """, "관리자에게 문의하세요");
+                """, "관리자에게 {이거 대부분 Get주소 연결문제당} 문의하세요");
     }
 }
