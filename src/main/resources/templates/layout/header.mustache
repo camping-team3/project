@@ -1,16 +1,79 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camping ERP</title>
-    <!-- CSS 등 필요한 리소스 추가 -->
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Camping ERP - 관리자 대시보드</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <!-- Common CSS -->
+    <link href="/css/common.css" rel="stylesheet"/>
+    <!-- Page Specific CSS -->
+    <link href="/css/08성수기비수기관리.css" rel="stylesheet"/>
+    <style>
+        .fw-black { font-weight: 900; }
+        .text-xs { font-size: 0.75rem; }
+        .tracking-wider { letter-spacing: 0.05em; }
+    </style>
 </head>
-<body>
-<header>
-    <nav>
-        <!-- 네비게이션 바 -->
-        <a href="/">홈</a>
-        <a href="/user/login">로그인</a>
-    </nav>
-</header>
+<body class="bg-light">
+    <div class="fh-admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="fh-admin-sidebar shadow-sm">
+            <div class="p-4 border-bottom border-primary border-opacity-10 mb-4">
+                <div class="d-flex align-items-center gap-3 py-2">
+                    <div class="brand-icon shadow-sm" style="background: var(--fh-primary); width: 40px; height: 40px; border-radius: 12px;">
+                        <span class="material-symbols-outlined text-white fs-4">camping</span>
+                    </div>
+                    <div>
+                        <h1 class="h6 fw-bold text-primary m-0">캠핑장 어드민</h1>
+                        <p class="text-secondary m-0" style="font-size: 0.65rem; font-weight: 600;">관리자 모드</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="fh-sidebar-nav px-3 flex-grow-1 gap-1">
+                <a href="/" class="nav-item">
+                    <span class="material-symbols-outlined">home</span>
+                    <span class="fw-medium small">메인 페이지</span>
+                </a>
+                <a href="/admin/site/management" class="nav-item active">
+                    <span class="material-symbols-outlined">event_note</span>
+                    <span class="fw-bold small">공간/시즌 관리</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-symbols-outlined">calendar_today</span>
+                    <span class="fw-medium small">예약 관리</span>
+                </a>
+            </nav>
+            <div class="p-4 border-top border-primary border-opacity-10 mt-auto">
+                <div class="d-flex align-items-center gap-3 p-2 bg-light rounded-3">
+                    <div class="user-avatar shadow-sm" style="width: 32px; height: 32px;">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYeq7y1LErLuY4N5RAMmKzr3n-yqvV40WBLQw0WBdziim_Zkkee-tRO_fWyhwO3chGBK30fqG-e-WFjR1JPVeGg5Xa2iDeMei9yoMh3J7OfdgKJeai_HrMJhYZ3Qk2wb9HY50wOIizEGfCQySNdSoCkkLwF-AF9kq-RmmnyGKcKnoQj0lDvYgfO31FUj8Ly97Db4iVXqhocTf0swrDQqMo7Q36T0cDsilSx0uCAmS5T-7newOjNNNr002eb5HCkLGH_LcQpta0ILLd" alt="Admin">
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden">
+                        <p class="small fw-bold text-dark m-0 truncate">관리 매니저</p>
+                        <p class="text-secondary truncate m-0" style="font-size: 0.6rem;">최고 관리자</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <main class="fh-admin-main">
+            <!-- Header -->
+            <header class="fh-admin-header bg-white bg-opacity-80 backdrop-blur-md">
+                <div class="d-flex align-items-center gap-4">
+                    <h2 class="h5 fw-bold text-dark m-0">성수기/비수기 및 공간 관리</h2>
+                </div>
+                <div class="d-flex align-items-center gap-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn-icon bg-light rounded-3" style="width: 40px; height: 40px;"><span class="material-symbols-outlined fs-5">notifications</span></button>
+                        <button class="btn-icon bg-light rounded-3" style="width: 40px; height: 40px;"><span class="material-symbols-outlined fs-5">settings</span></button>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="p-4 p-lg-5">

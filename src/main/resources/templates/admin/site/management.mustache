@@ -1,0 +1,118 @@
+{{> layout/header}}
+
+<!-- Page Title -->
+<div class="mb-5">
+    <h2 class="display-6 fw-black text-dark mb-1">공간 및 시즌 요금 관리</h2>
+    <p class="text-secondary fw-medium m-0">캠핑장의 구역별 요금을 설정하고 성수기 모드를 실시간으로 관리합니다.</p>
+</div>
+
+<!-- Action Buttons -->
+<div class="d-flex justify-content-end gap-2 mb-4">
+    <a href="/admin/zone/save-form" class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2 border-0 shadow-sm">
+        <span class="material-symbols-outlined fs-5">add_circle</span>
+        <span class="fw-bold small">새 구역 등록</span>
+    </a>
+    <a href="/admin/site/save-form" class="btn btn-success d-flex align-items-center gap-2 px-4 py-2 border-0 shadow-sm">
+        <span class="material-symbols-outlined fs-5">location_on</span>
+        <span class="fw-bold small">새 사이트 등록</span>
+    </a>
+</div>
+
+<!-- Zone List -->
+<div class="row g-4">
+    {{#zones}}
+    <div class="col-12">
+        <div class="fh-card shadow-sm border-primary border-opacity-10 overflow-hidden">
+            <!-- Zone Header -->
+            <div class="p-4 border-bottom d-flex justify-content-between align-items-center bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <h3 class="h5 fw-bold text-dark m-0">{{name}}</h3>
+                    {{#isPeak}}
+                    <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-3 py-1.5 rounded-pill" style="font-size: 0.75rem;">🔥 성수기 ON</span>
+                    {{/isPeak}}
+                    {{^isPeak}}
+                    <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1.5 rounded-pill" style="font-size: 0.75rem;">🧊 비수기 (평시)</span>
+                    {{/isPeak}}
+                </div>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Pricing Info -->
+                    <div class="px-3 py-1 bg-light rounded-pill border me-2">
+                        <span class="text-xs fw-bold text-secondary text-uppercase tracking-wider me-2">평시</span>
+                        <span class="fw-bold text-dark small">{{normalPrice}}원</span>
+                    </div>
+                    <div class="px-3 py-1 bg-light rounded-pill border me-3">
+                        <span class="text-xs fw-bold text-secondary text-uppercase tracking-wider me-2">성수기</span>
+                        <span class="fw-bold text-danger small">{{peakPrice}}원</span>
+                    </div>
+
+                    <!-- Toggle Logic -->
+                    <form action="/admin/zone/{{id}}/toggle-peak" method="POST" class="d-inline">
+                        <button type="submit" class="btn {{#isPeak}}btn-success{{/isPeak}}{{^isPeak}}btn-outline-danger{{/isPeak}} btn-sm fw-bold px-3 shadow-sm">
+                            {{#isPeak}}비수기로 전환{{/isPeak}}{{^isPeak}}성수기로 전환{{/isPeak}}
+                        </button>
+                    </form>
+
+                    <!-- Edit/Delete -->
+                    <a href="/admin/zone/{{id}}/update-form" class="btn btn-icon btn-sm hover-primary bg-light rounded ms-2">
+                        <span class="material-symbols-outlined fs-5">edit</span>
+                    </a>
+                    <form action="/admin/zone/{{id}}/delete" method="POST" class="d-inline ms-1" onsubmit="return confirm('구역 삭제 시 포함된 모든 사이트가 삭제됩니다. 계속하시겠습니까?');">
+                        <button type="submit" class="btn btn-icon btn-sm hover-danger bg-light rounded border-0">
+                            <span class="material-symbols-outlined fs-5">delete</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Site Table -->
+            <div class="table-responsive">
+                <table class="fh-table mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="text-xs fw-bold text-secondary uppercase px-4 py-3">사이트명</th>
+                            <th class="text-xs fw-bold text-secondary uppercase px-4 py-3">최대 수용 인원</th>
+                            <th class="text-xs fw-bold text-secondary uppercase px-4 py-3 text-end">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#sites}}
+                        <tr>
+                            <td class="px-4 py-3 fw-bold text-dark">{{siteName}}</td>
+                            <td class="px-4 py-3 text-secondary small">{{maxPeople}}명</td>
+                            <td class="px-4 py-3 text-end">
+                                <div class="d-flex justify-content-end gap-1">
+                                    <a href="/admin/site/{{id}}/update-form" class="btn btn-icon btn-sm hover-primary bg-light rounded">
+                                        <span class="material-symbols-outlined fs-5" style="font-size: 1.1rem;">edit</span>
+                                    </a>
+                                    <form action="/admin/site/{{id}}/delete" method="POST" class="d-inline" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                        <button type="submit" class="btn btn-icon btn-sm hover-danger bg-light rounded border-0">
+                                            <span class="material-symbols-outlined fs-5" style="font-size: 1.1rem;">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/sites}}
+                        {{^sites}}
+                        <tr>
+                            <td colspan="3" class="text-center py-5 text-muted small">등록된 사이트가 없습니다.</td>
+                        </tr>
+                        {{/sites}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {{/zones}}
+    {{^zones}}
+    <div class="col-12 text-center py-5">
+        <div class="fh-card p-5">
+            <span class="material-symbols-outlined fs-1 text-secondary mb-3 opacity-25">inventory_2</span>
+            <p class="text-secondary fw-medium">등록된 구역 정보가 없습니다. 새 구역을 등록해 주세요.</p>
+        </div>
+    </div>
+    {{/zones}}
+</div>
+
+{{> layout/footer}}

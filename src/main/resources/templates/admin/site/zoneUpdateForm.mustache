@@ -1,0 +1,34 @@
+{{> layout/header}}
+
+<div class="container mt-5">
+    <h2>구역 정보 수정</h2>
+    <hr>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4">
+                {{#zone}}
+                <form action="/admin/zone/{{id}}/update" method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">구역명</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{name}}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="normalPrice" class="form-label">평시 요금 (1박)</label>
+                        <input type="number" class="form-control" id="normalPrice" name="normalPrice" value="{{normalPrice}}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="peakPrice" class="form-label">성수기 요금 (1박)</label>
+                        <input type="number" class="form-control" id="peakPrice" name="peakPrice" value="{{peakPrice}}" required>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="/admin/site/management" class="btn btn-outline-secondary">취소</a>
+                        <button type="submit" class="btn btn-primary">수정 완료</button>
+                    </div>
+                </form>
+                {{/zone}}
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> layout/footer}}

@@ -1,0 +1,32 @@
+{{> layout/header}}
+
+<div class="container mt-5">
+    <h2>새 구역 등록</h2>
+    <hr>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <form action="/admin/zone/save" method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">구역명</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="예: A구역(오토캠핑)" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="normalPrice" class="form-label">평시 요금 (1박)</label>
+                        <input type="number" class="form-control" id="normalPrice" name="normalPrice" placeholder="50000" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="peakPrice" class="form-label">성수기 요금 (1박)</label>
+                        <input type="number" class="form-control" id="peakPrice" name="peakPrice" placeholder="80000" required>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="/admin/site/management" class="btn btn-outline-secondary">취소</a>
+                        <button type="submit" class="btn btn-primary">등록하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> layout/footer}}

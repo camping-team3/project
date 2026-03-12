@@ -29,14 +29,28 @@ public class Zone extends BaseTimeEntity {
     @Column(nullable = false)
     private Long peakPrice;
 
+    @Column(nullable = false)
+    private boolean isPeak = false; // 기본값: 비수기
+
     @OneToMany(mappedBy = "zone", fetch = FetchType.LAZY)
     private List<Site> sites = new ArrayList<>();
 
     @Builder
-    public Zone(Long id, String name, Long normalPrice, Long peakPrice) {
+    public Zone(Long id, String name, Long normalPrice, Long peakPrice, boolean isPeak) {
         this.id = id;
         this.name = name;
         this.normalPrice = normalPrice;
         this.peakPrice = peakPrice;
+        this.isPeak = isPeak;
+    }
+
+    public void update(String name, Long normalPrice, Long peakPrice) {
+        this.name = name;
+        this.normalPrice = normalPrice;
+        this.peakPrice = peakPrice;
+    }
+
+    public void togglePeak() {
+        this.isPeak = !this.isPeak;
     }
 }

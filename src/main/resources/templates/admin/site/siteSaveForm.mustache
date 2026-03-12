@@ -1,0 +1,37 @@
+{{> layout/header}}
+
+<div class="container mt-5">
+    <h2>새 사이트 등록</h2>
+    <hr>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <form action="/admin/site/save" method="POST">
+                    <div class="mb-3">
+                        <label for="zoneId" class="form-label">해당 구역 선택</label>
+                        <select class="form-select" id="zoneId" name="zoneId" required>
+                            <option value="">구역을 선택하세요</option>
+                            {{#zones}}
+                            <option value="{{id}}">{{name}}</option>
+                            {{/zones}}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="siteName" class="form-label">사이트 이름</label>
+                        <input type="text" class="form-control" id="siteName" name="siteName" placeholder="예: A-1, B-10" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="maxPeople" class="form-label">최대 수용 인원</label>
+                        <input type="number" class="form-control" id="maxPeople" name="maxPeople" value="4" required>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="/admin/site/management" class="btn btn-outline-secondary">취소</a>
+                        <button type="submit" class="btn btn-success">등록하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> layout/footer}}

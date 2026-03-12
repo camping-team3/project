@@ -18,11 +18,12 @@ INSERT INTO user_tb (username, password, name, email, phone, role, status, creat
 -- 역할: 캠핑장의 대분류 구역 및 시즌별 기본 요금 설정
 -- normal_price: 비수기/평시 1박 요금
 -- peak_price: 성수기/준성수기 1박 요금
+-- is_peak: 현재 성수기 모드 활성화 여부 (0: false, 1: true)
 -- ==========================================================
-INSERT INTO zone_tb (name, normal_price, peak_price, created_at) VALUES 
-('A구역(오토캠핑)', 50000, 80000, NOW()),
-('B구역(글램핑)', 150000, 250000, NOW()),
-('C구역(카라반)', 120000, 200000, NOW());
+INSERT INTO zone_tb (name, normal_price, peak_price, is_peak, created_at) VALUES 
+('A구역(오토캠핑)', 50000, 80000, 0, NOW()),
+('B구역(글램핑)', 150000, 250000, 0, NOW()),
+('C구역(카라반)', 120000, 200000, 0, NOW());
 
 
 -- ==========================================================

@@ -1,5 +1,74 @@
 {{> layout/header}}
-    <main>
-        <h1>환영합니다! Camping ERP입니다.</h1>
-    </main>
+
+<div class="container mt-4">
+    <div class="p-5 mb-4 bg-light rounded-3">
+        <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold text-center">🏕️ 캠핑장 예약 시스템</h1>
+            <p class="fs-4 text-center">원하시는 날짜를 선택하여 예약 가능한 사이트를 확인하세요.</p>
+        </div>
+    </div>
+
+    <!-- 검색 바 -->
+    <div class="card mb-5">
+        <div class="card-body">
+            <form action="/" method="GET" class="row g-3">
+                <div class="col-md-5">
+                    <label for="checkIn" class="form-label">입실일</label>
+                    <input type="date" class="form-control" id="checkIn" name="checkIn" value="{{#checkIn}}{{checkIn}}{{/checkIn}}">
+                </div>
+                <div class="col-md-5">
+                    <label for="checkOut" class="form-label">퇴실일</label>
+                    <input type="date" class="form-control" id="checkOut" name="checkOut" value="{{#checkOut}}{{checkOut}}{{/checkOut}}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">조회하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 구역 및 사이트 목록 -->
+    <div class="row">
+        {{#zones}}
+        <div class="col-12 mb-5">
+            <div class="d-flex align-items-center border-bottom pb-2">
+                <h3 class="mb-0 me-3">{{zoneName}}</h3>
+                {{#isPeak}}
+                <span class="badge bg-danger">🔥 성수기 요금 적용 중</span>
+                {{/isPeak}}
+            </div>
+            <p class="text-muted small mt-2">단가: 평시 {{normalPrice}}원 / 성수기 {{peakPrice}}원</p>
+            
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {{#sites}}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{siteName}}</h5>
+                            <p class="card-text">최대 수용 인원: {{maxPeople}}명</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="h5 mb-0 text-primary">{{totalPrice}}원</span>
+                                <a href="/reservation/save-form?siteId={{id}}&checkIn={{#checkIn}}{{checkIn}}{{/checkIn}}&checkOut={{#checkOut}}{{checkOut}}{{/checkOut}}" 
+                                   class="btn btn-outline-success btn-sm">예약하기</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{/sites}}
+                {{^sites}}
+                <div class="col-12">
+                    <p class="text-center py-4 bg-light text-muted">선택하신 날짜에 예약 가능한 사이트가 없습니다.</p>
+                </div>
+                {{/sites}}
+            </div>
+        </div>
+        {{/zones}}
+        {{^zones}}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted">현재 등록된 구역 정보가 없습니다.</p>
+        </div>
+        {{/zones}}
+    </div>
+</div>
+
 {{> layout/footer}}

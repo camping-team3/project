@@ -28,11 +28,15 @@ public class Refund extends BaseTimeEntity {
     @Column(nullable = false)
     private Long refundAmount;
 
+    @Column(nullable = false)
+    private java.time.LocalDateTime cancelledAt;
+
     @Builder
-    public Refund(Long id, Reservation reservation, String reason, Long refundAmount) {
+    public Refund(Long id, Reservation reservation, String reason, Long refundAmount, java.time.LocalDateTime cancelledAt) {
         this.id = id;
         this.reservation = reservation;
         this.reason = reason;
         this.refundAmount = refundAmount;
+        this.cancelledAt = cancelledAt;
     }
 }

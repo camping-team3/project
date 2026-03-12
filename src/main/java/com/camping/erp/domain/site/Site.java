@@ -34,4 +34,10 @@ public class Site extends BaseTimeEntity {
         this.siteName = siteName;
         this.maxPeople = maxPeople;
     }
+
+    public void update(Zone zone, String siteName, Integer maxPeople) {
+        this.zone = zone;
+        this.siteName = siteName;
+        this.maxPeople = maxPeople;
+    }
 }

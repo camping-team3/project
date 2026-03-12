@@ -22,6 +22,11 @@
 - **JPA Strategy**: 모든 연관관계는 `FetchType.LAZY`를 기본으로 하며, N+1 문제 방지를 위해 필요시 `fetch join`을 명시적으로 사용한다.
 - **Security**: `/admin/**` 경로 접근 시 `AdminInterceptor`를 통한 권한 검증이 필수적으로 이루어져야 한다.
 - **Lombok**: `@Data`, `@NoArgsConstructor`, `@AllArgsConstructor`, `@Builder` 등을 활용하여 보일러플레이트 코드를 최소화한다.
+- **DTO Construction Pattern (CRITICAL)**:
+    - Service 레이어에서 DTO 생성 시 `new` 이후 `set` 메서드를 수십 번 호출하는 방식을 **엄격히 금지**한다.
+    - 대신, DTO 내부에서 엔티티(Entity) 객체 자체를 매개변수로 받는 **생성자(Constructor)**를 구현한다.
+    - DTO는 생성자 내부에서 엔티티로부터 필요한 값만 추출하여 자신의 필드에 할당하며, 가능한 모든 필드는 `final`로 선언하여 데이터의 불변성을 확보한다.
+    - 예시: `public ZoneDTO(Zone zone) { this.id = zone.getId(); ... }`
 
 ## 5. Implementation Workflow
 1. **Research**: 기존 도메인 코드 및 `AI-CONTEXT.md`를 통해 요구사항과 제약사항을 확인한다.
