@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>회원가입 - Forest Haven</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+    <div class="signup-wrapper">
+        <!-- Brand Side (Hidden on Mobile) -->
+        <div class="signup-brand-side d-none d-lg-flex">
+            <h1 class="display-3 fw-black mb-3">Forest Haven</h1>
+            <p class="fs-4 fw-medium opacity-90 max-w-md leading-relaxed">자연 속에서 누리는 완벽한 휴식, 포레스트 헤이븐과 함께 당신만의 캠핑 여정을 계획하세요.</p>
+        </div>
+
+        <!-- Form Side -->
+        <div class="signup-form-side">
+            <div class="signup-form-container">
+                <div class="text-center text-lg-start mb-5">
+                    <div class="navbar-brand d-lg-none justify-content-center mb-4">
+                        <div class="brand-icon shadow-sm"><span class="material-symbols-outlined">forest</span></div>
+                        <h2 class="brand-name">Forest Haven</h2>
+                    </div>
+                    <h2 class="display-6 fw-black text-dark mb-2">회원가입</h2>
+                    <p class="text-secondary fw-medium">새로운 캠핑 여정을 시작하세요</p>
+                </div>
+
+                <form>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">이름</label>
+                        <input type="text" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="성함을 입력하세요">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">이메일 주소</label>
+                        <input type="email" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="email@example.com">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">휴대폰 번호</label>
+                        <input type="tel" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="010-0000-0000">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">비밀번호</label>
+                        <div class="position-relative">
+                            <input type="password" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="비밀번호를 입력하세요">
+                            <span class="material-symbols-outlined password-toggle">visibility</span>
+                        </div>
+                    </div>
+                    <div class="mb-5">
+                        <label class="form-label small fw-bold text-secondary">비밀번호 확인</label>
+                        <div class="position-relative">
+                            <input type="password" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="비밀번호를 다시 입력하세요">
+                            <span class="material-symbols-outlined password-toggle">visibility</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column gap-3 mb-5">
+                        <div class="form-check">
+                            <input class="form-check-input shadow-none" type="checkbox" id="terms1">
+                            <label class="form-check-label small text-secondary fw-medium" for="terms1">서비스 이용약관 동의 (필수)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input shadow-none" type="checkbox" id="terms2">
+                            <label class="form-check-label small text-secondary fw-medium" for="terms2">개인정보 수집 및 이용 동의 (필수)</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3.5 fw-bold shadow-md border-0 mb-4 rounded-3">회원가입 완료</button>
+                </form>
+
+                <div class="text-center">
+                    <p class="small text-secondary">이미 계정이 있으신가요? <a href="/login-form" class="text-primary fw-bold text-decoration-none hover-underline ms-1">로그인하기</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

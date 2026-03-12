@@ -2,7 +2,7 @@ package com.camping.erp.domain.image;
 
 import com.camping.erp.domain.gallery.Gallery;
 import com.camping.erp.domain.review.Review;
-import com.camping.erp.global._core.BaseTimeEntity;
+import com.camping.erp.global.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git config:*)",
+      "Bash(./gradlew compileJava 2>&1 | tail -20)",
+      "Bash(cd C:/workspace/pr-work/project && ./gradlew compileJava 2>&1 | tail -20)",
+      "Bash(cd C:/workspace/pr-work/project && mv src/main/resources/templates/auth/login.mustache src/main/resources/templates/auth/login-form.mustache && mv src/main/resources/templates/auth/join.mustache src/main/resources/templates/auth/join-form.mustache)",
+      "Bash(cd C:/workspace/pr-work/project && ./gradlew compileJava 2>&1 | tail -10)"
+    ]
+  }
+}

@@ -1,0 +1,153 @@
+{{> layout/header}}
+    <div class="fh-admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="fh-admin-sidebar shadow-sm">
+            <div class="p-4 border-bottom border-primary border-opacity-10 mb-4">
+                <div class="d-flex align-items-center gap-3 py-2">
+                    <div class="brand-icon shadow-sm">
+                        <span class="material-symbols-outlined fs-4">camping</span>
+                    </div>
+                    <div>
+                        <h1 class="h6 fw-bold text-dark m-0 admin-brand-title">캠핑장 관리자</h1>
+                        <p class="text-primary m-0 admin-brand-subtitle">Campsite Manager</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="fh-sidebar-nav px-3 flex-grow-1">
+                <a href="#" class="nav-item">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>대시보드</span>
+                </a>
+                <a href="#" class="nav-item active">
+                    <span class="material-symbols-outlined icon-fill-1">calendar_check</span>
+                    <span>예약 관리</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-symbols-outlined">camping</span>
+                    <span>사이트 관리</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-symbols-outlined">reviews</span>
+                    <span>사용자 리뷰</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>설정</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="fh-admin-main">
+            <!-- Header -->
+            <header class="fh-admin-header">
+                <div class="d-flex align-items-center gap-4">
+                    <div class="d-flex align-items-center gap-2 text-primary">
+                        <span class="material-symbols-outlined fs-4">forest</span>
+                        <h2 class="h6 fw-bold m-0">Campsite Admin</h2>
+                    </div>
+                    <nav class="d-none d-md-flex align-items-center gap-4 ms-4">
+                        <a href="#" class="text-secondary small fw-bold text-decoration-none hover-primary">알림</a>
+                        <a href="#" class="text-secondary small fw-bold text-decoration-none hover-primary">문의 내역</a>
+                    </nav>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="search-wrapper d-none d-lg-block">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-5 text-primary opacity-50">search</span></span>
+                            <input type="text" class="form-control bg-light border-0 py-2 shadow-none small search-input-admin" placeholder="Search">
+                        </div>
+                    </div>
+                    <button class="btn-icon bg-primary bg-opacity-5"><span class="material-symbols-outlined fs-5">notifications</span></button>
+                    <div class="user-avatar-small shadow-sm">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1hOxvq-8qzsTJqiRrsoHmonieQN5-ndK6StWeT6oUjMkAdpVNH1S15DeXruoTfznTF_k8V2wamn_yFaP0itbmsXr0ILdV0EFHpUtDc13kJpBJKV6n7zJD_hSQ1N5nh0l0Wa0iGC8cezxiMW92gEBDFNzhErqUGj4vkaUAYn9d_gxlVwD2i7EYh85rDne2-iKAriv8ZkYRFkMlO7yIzl74ZQMLyQB4N5KTWz2QfhjxFx8f6x1M2xguCXrWaVeGNw9cdLOvV9eXlXMr" alt="Admin">
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-4 p-lg-5 content-inner-max">
+                <!-- Breadcrumbs -->
+                <nav class="d-flex align-items-center gap-2 small text-secondary mb-4">
+                    <a href="#" class="text-decoration-none text-secondary hover-primary">홈</a>
+                    <span class="material-symbols-outlined fs-6 opacity-50">chevron_right</span>
+                    <a href="#" class="text-decoration-none text-secondary hover-primary">예약 관리</a>
+                    <span class="material-symbols-outlined fs-6 opacity-50">chevron_right</span>
+                    <span class="text-dark fw-bold">예약 취소 신청</span>
+                </nav>
+
+                <!-- Title Section -->
+                <div class="mb-5">
+                    <h1 class="display-6 fw-black text-dark mb-2">예약 취소 신청</h1>
+                    <p class="text-primary opacity-75 fw-medium">기존 예약을 취소하시겠습니까? 아래 내용을 확인해 주세요.</p>
+                </div>
+
+                <!-- Current Reservation Info -->
+                <section class="mb-5">
+                    <h3 class="h6 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined text-primary fs-5">info</span>
+                        현재 예약 정보
+                    </h3>
+                    <div class="fh-card p-0 reservation-info-card shadow-sm border-primary border-opacity-10">
+                        <div class="reservation-info-img"></div>
+                        <div class="p-4 flex-grow-1 d-flex flex-column justify-content-center">
+                            <div>
+                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-2 py-1 mb-3 badge-res-status">예약 완료</span>
+                                <h4 class="h4 fw-bold text-dark mb-2">A-1 데크</h4>
+                                <div class="d-flex flex-column gap-1 text-secondary small fw-medium">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="material-symbols-outlined fs-6 text-primary opacity-70">calendar_today</span>
+                                        <span>2023.12.25</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="material-symbols-outlined fs-6 text-primary opacity-70">group</span>
+                                        <span>성인 2인</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Cancellation Form -->
+                <section class="mb-5">
+                    <div class="fh-card shadow-sm p-4 p-md-5 border-primary border-opacity-10">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark small mb-2">취소 사유</label>
+                            <select class="form-select py-3 shadow-none border-primary border-opacity-10 bg-primary bg-opacity-5">
+                                <option disabled selected>취소 사유를 선택해 주세요</option>
+                                <option>단순 변심</option>
+                                <option>일정 변경</option>
+                                <option>개인 사정</option>
+                                <option>기상 악화</option>
+                                <option>기타</option>
+                            </select>
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label fw-bold text-dark small mb-2">상세 사유 입력</label>
+                            <textarea class="form-control py-3 px-4 shadow-none border-primary border-opacity-10 bg-primary bg-opacity-5 textarea-cancel" rows="4" placeholder="취소 사유를 구체적으로 입력해 주세요."></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Refund Notice -->
+                <section class="mb-5">
+                    <div class="warning-banner p-4 rounded-3 d-flex gap-3 align-items-start bg-primary bg-opacity-5">
+                        <span class="material-symbols-outlined text-primary fs-4">warning</span>
+                        <div>
+                            <h4 class="small fw-bold text-primary mb-2">환불 안내 및 유의사항</h4>
+                            <p class="text-secondary small m-0 leading-relaxed fw-medium">
+                                취소 시점 및 약관에 따라 위약금이 발생할 수 있습니다. 관리자 승인 후 최종 취소 처리가 완료되며, 환불 금액은 영업일 기준 3~5일 내로 입금됩니다.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Action Buttons -->
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-end mt-5">
+                    <button onclick="history.back()" class="btn btn-light px-5 py-3 fw-bold text-primary border-0 bg-primary bg-opacity-10 shadow-sm">이전으로</button>
+                    <button class="btn btn-primary px-5 py-3 fw-bold shadow-md border-0">취소 요청하기</button>
+                </div>
+            </div>
+        </main>
+    </div>
+{{> layout/footer}}

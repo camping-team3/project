@@ -1,0 +1,150 @@
+{{> layout/admin-header}}
+<div class="p-4 p-lg-5 content-inner-max">
+    <!-- Breadcrumbs & Header -->
+    <div class="mb-5">
+        <nav class="d-flex align-items-center gap-2 small text-secondary mb-4">
+            <span>예약 관리</span>
+            <span class="material-symbols-outlined fs-6 opacity-25">chevron_right</span>
+            <span>예약 상세</span>
+            <span class="material-symbols-outlined fs-6 opacity-25">chevron_right</span>
+            <span class="text-primary fw-bold">RES-2024-0012</span>
+        </nav>
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-4">
+                <h1 class="display-6 fw-black text-dark m-0">예약 상세 정보</h1>
+                <span class="badge bg-warning bg-opacity-10 text-warning fw-bold px-3 py-2 border border-warning border-opacity-25 text-xs tracking-wider">변경 요청</span>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-list-hover px-4 fw-bold small">목록으로</button>
+                <button class="btn btn-primary px-4 fw-bold small shadow-lg border-0">변경 승인</button>
+                <button class="btn btn-danger px-4 fw-bold small shadow-lg border-0 btn-danger-admin">거절</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <!-- Customer Card -->
+            <div class="fh-card shadow-sm border-0 p-4 mb-4 d-flex align-items-center gap-4 bg-white">
+                <div class="rounded-circle overflow-hidden shadow-sm ring-light customer-profile-large">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAO0iWnVaExCcQu50uqhi-0URdFlF_WXSFaAuzElvIUN2DblKNIIU9rWe3KQDDUxIHetw9oytgwZb8_nd-1etMnFL7BDV3z1gVG0ZRTJhmLAub-s86Hv4-NtqJ-VKNilBax2wEdC0Xk1-f4EAki9X6cRURw3t9-bWeDvAzbswot1ZOsh3R-bkmqes-VxxWb7lh4CWa6xPj9yZUaM2NO3Z4WRczZK_L7Ymdzcjm3mySqH4JpH6bxcR7PPxWUn8W6fHqbfkTsRJ6ACsRl" class="w-100 h-100 object-fit-cover" alt="Customer">
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <h3 class="h4 fw-bold text-dark m-0">김철수 고객님</h3>
+                        <span class="badge bg-primary text-white fw-bold px-2 py-0.5 uppercase text-xxs">Regular</span>
+                    </div>
+                    <div class="row g-3 text-secondary small fw-medium">
+                        <div class="col-auto d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6 opacity-50">call</span> 010-1234-5678</div>
+                        <div class="col-auto d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6 opacity-50">mail</span> chulsoo@example.com</div>
+                        <div class="col-auto d-flex align-items-center gap-1 text-primary"><span class="material-symbols-outlined fs-6 icon-fill-1">stars</span> 우수 회원 (총 12회 방문)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reservation Info -->
+            <div class="fh-card shadow-sm border-0 p-0 mb-4 overflow-hidden bg-white">
+                <div class="bg-primary bg-opacity-5 px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h4 class="h6 fw-bold text-primary m-0 d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined fs-5">info</span> 현재 예약 정보
+                    </h4>
+                    <button class="btn btn-link text-primary small fw-bold p-0 text-decoration-none text-xs-info">상세 정보 편집</button>
+                </div>
+                <div class="p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="text-xs fw-bold text-secondary uppercase tracking-tight mb-1">캠핑 사이트</label>
+                            <p class="h6 fw-bold text-primary m-0">A-1 데크 사이트 (전기 포함)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-xs fw-bold text-secondary uppercase tracking-tight mb-1">인원</label>
+                            <p class="h6 fw-bold text-dark m-0">성인 2, 아동 1 (총 3명)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-xs fw-bold text-secondary uppercase tracking-tight mb-1">예약 기간</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="text-center">
+                                    <p class="small fw-bold m-0">2024.06.15</p>
+                                    <p class="text-secondary mb-0 text-xxs">CHECK-IN</p>
+                                </div>
+                                <span class="material-symbols-outlined text-secondary opacity-25">arrow_forward</span>
+                                <div class="text-center">
+                                    <p class="small fw-bold m-0">2024.06.17</p>
+                                    <p class="text-secondary mb-0 text-xxs">CHECK-OUT</p>
+                                </div>
+                                <span class="badge bg-primary bg-opacity-10 text-primary small fw-bold ms-2">2박 3일</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-xs fw-bold text-secondary uppercase tracking-tight mb-1">결제 정보</label>
+                            <p class="h6 fw-bold text-dark m-0">₩145,000 (카드 결제 완료)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modification Request -->
+            <div class="change-request-section">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="bg-warning bg-opacity-20 text-warning-emphasis rounded-circle p-2 d-flex align-items-center justify-content-center change-request-icon-box">
+                        <span class="material-symbols-outlined fs-4 icon-fill-1">edit_notifications</span>
+                    </div>
+                    <div>
+                        <h4 class="h6 fw-bold text-dark m-0">변경 요청 사항</h4>
+                        <p class="text-secondary m-0 text-xs-info">2024.05.20 14:32 요청됨</p>
+                    </div>
+                </div>
+                <div class="bg-white bg-opacity-60 p-4 rounded-3 border border-warning border-opacity-50 mb-4">
+                    <p class="text-xs fw-bold text-warning-emphasis mb-2 uppercase tracking-wide">변경 사유</p>
+                    <p class="text-dark small m-0 italic-relaxed opacity-75">
+                        "갑작스러운 회사 일정 변경으로 인해 부득이하게 날짜를 하루 늦추고 싶습니다. 6월 15일 입실이 아닌 6월 16일로 변경이 가능할까요? 가능하다면 퇴실 일자도 18일로 조정 부탁드립니다."
+                    </p>
+                </div>
+                <div class="d-flex align-items-center gap-4 small fw-bold">
+                    <span class="text-secondary">희망 일자:</span>
+                    <span class="text-warning-emphasis fs-6">2024.06.16 - 2024.06.18</span>
+                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 text-xxs">해당 일자 예약 가능</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- Admin Memo -->
+            <div class="fh-card shadow-sm border-0 p-4 mb-4 bg-white">
+                <h4 class="h6 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-primary fs-5">description</span> 관리자 메모
+                </h4>
+                <textarea class="form-control bg-primary bg-opacity-5 border-0 shadow-none py-3 px-3 small mb-3 textarea-admin-memo" rows="5" placeholder="내부 공유용 메모를 입력하세요..."></textarea>
+                <button class="btn btn-light bg-primary bg-opacity-10 text-primary w-100 fw-bold small border-0 py-2.5">메모 저장</button>
+            </div>
+
+            <!-- History -->
+            <div class="fh-card shadow-sm border-0 p-4 bg-white">
+                <h4 class="h6 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-primary fs-5">history</span> 예약 히스토리
+                </h4>
+                <div class="fh-timeline-v2">
+                    <div class="timeline-v2-item">
+                        <div class="timeline-v2-dot bg-dot-warning"><span class="material-symbols-outlined">edit</span></div>
+                        <p class="small fw-bold text-dark mb-0">변경 요청 접수</p>
+                        <p class="text-secondary text-xs-info">2024.05.20 14:32 • 고객 본인</p>
+                    </div>
+                    <div class="timeline-v2-item">
+                        <div class="timeline-v2-dot bg-dot-success"><span class="material-symbols-outlined">payments</span></div>
+                        <p class="small fw-bold text-dark mb-0">결제 완료 (₩145,000)</p>
+                        <p class="text-secondary text-xs-info">2024.05.15 10:20 • 시스템 자동</p>
+                    </div>
+                    <div class="timeline-v2-item mb-0">
+                        <div class="timeline-v2-dot bg-dot-primary"><span class="material-symbols-outlined">add</span></div>
+                        <p class="small fw-bold text-dark mb-0">예약 신규 생성</p>
+                        <p class="text-secondary text-xs-info">2024.05.15 10:15 • 고객 본인</p>
+                    </div>
+                </div>
+                <button class="btn btn-link text-secondary small fw-bold w-100 mt-4 text-decoration-none text-xs-info">전체 히스토리 보기</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{> layout/admin-footer}}

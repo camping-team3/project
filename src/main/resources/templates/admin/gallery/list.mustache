@@ -1,0 +1,122 @@
+{{> layout/admin-header}}
+<div class="p-4 p-lg-5">
+    <!-- Page Title -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="display-6 fw-black text-dark mb-1">포토갤러리 관리</h2>
+            <p class="text-secondary fw-medium m-0">캠핑장 주요 현장 사진을 관리하고 구성합니다.</p>
+        </div>
+        <button onclick="location.href='/admin/galleries/new'" class="btn btn-primary px-4 py-2.5 fw-bold d-flex align-items-center gap-2 shadow-lg rounded-3 border-0">
+            <span class="material-symbols-outlined fs-5">add</span>
+            <span>새 게시글 작성</span>
+        </button>
+    </div>
+
+    <!-- Table Card -->
+    <div class="fh-card shadow-sm border-primary border-opacity-10 overflow-hidden bg-white">
+        <div class="table-responsive">
+            <table class="fh-table m-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider px-4">썸네일</th>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider px-4">제목</th>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider px-4">카테고리</th>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider px-4">등록일</th>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider text-center px-4">조회수</th>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider text-end px-4">관리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Row 1 -->
+                    <tr>
+                        <td class="px-4">
+                            <div class="thumbnail-box shadow-sm">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuADvJKrIjfaM4Z5xlP60geJPAT95bdOHvdBt5ixaHVSqj4mdXJlxYXel8wIB7ETyGT3wQo4jfeoNZ19zFmaF9455ZHqtDFWGXRrka_NF00dWXNM4DldKUoXiD1Dikhpc_7O04HBLrDTVf07up38INzcIFnb4gg_3w4jkQ34C0o1WXIoGo3f95ZPEfsgESdRxy4cFTCA8TQn0mePAieWC8jpqkpzpA3AH9x5wprfrgzNxhxYWfhTHMwgRjzFo-qA14G8Z4CK4-qLCtSc" alt="G" class="w-100 h-100 object-fit-cover">
+                            </div>
+                        </td>
+                        <td class="px-4">
+                            <div class="fw-bold text-dark mb-0">여름 휴가 하이라이트</div>
+                            <div class="text-secondary text-xs">A구역 저녁 호수 뷰</div>
+                        </td>
+                        <td class="px-4"><span class="category-badge bg-blue-subtle">캠핑</span></td>
+                        <td class="px-4 text-secondary small">2023-10-24</td>
+                        <td class="px-4 text-center fw-medium">1,240</td>
+                        <td class="px-4 text-end">
+                            <div class="d-flex justify-content-end gap-1">
+                                <button class="btn btn-icon btn-sm hover-primary"><span class="material-symbols-outlined fs-5">edit</span></button>
+                                <button class="btn btn-icon btn-sm hover-danger"><span class="material-symbols-outlined fs-5 text-danger opacity-75">delete</span></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Row 2 -->
+                    <tr>
+                        <td class="px-4">
+                            <div class="thumbnail-box shadow-sm">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRH5z2K42ONVgY_cym9iZMlHlfaycdzJ4HxWKWFtKgiJtgz3AUmrcAuVVBEsKCgq3cLlz1y4F2KFjFrfbe5XW6kUiWz3d1fBu41fdOBLYtH5_qmT-LeNZrV3L_q2t3o6McKxfkxH-MitVeognBKkS26X1T_Mv0ZN6z9EN7Mhbs_7UHS12CpRPiOOw0mVczU2EgTc660BP5mINkH3S1H16xVffPUV3QZfLBpYyoM6SvSLF4ib4eq1lnKGloO_VoFaRHtjnXtG5I9NVH" alt="G" class="w-100 h-100 object-fit-cover">
+                            </div>
+                        </td>
+                        <td class="px-4">
+                            <div class="fw-bold text-dark mb-0">최고의 불멍 스팟</div>
+                            <div class="text-secondary text-xs">안전 수칙 및 명당 추천</div>
+                        </td>
+                        <td class="px-4"><span class="category-badge bg-orange-subtle">팁/노하우</span></td>
+                        <td class="px-4 text-secondary small">2023-10-22</td>
+                        <td class="px-4 text-center fw-medium">850</td>
+                        <td class="px-4 text-end">
+                            <div class="d-flex justify-content-end gap-1">
+                                <button class="btn btn-icon btn-sm hover-primary"><span class="material-symbols-outlined fs-5">edit</span></button>
+                                <button class="btn btn-icon btn-sm hover-danger"><span class="material-symbols-outlined fs-5 text-danger opacity-75">delete</span></button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-4 py-3 bg-light bg-opacity-50 d-flex justify-content-between align-items-center border-top">
+            <div class="text-secondary small">전체 <span class="fw-bold text-dark">24</span>개 항목 중 <span class="fw-bold text-dark">1-2</span> 표시</div>
+            <nav>
+                <ul class="pagination pagination-sm m-0 gap-1">
+                    <li class="page-item"><a class="page-link border-0 rounded-2 text-secondary" href="#"><span class="material-symbols-outlined fs-6">chevron_left</span></a></li>
+                    <li class="page-item active"><a class="page-link border-0 rounded-2 bg-primary text-white" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link border-0 rounded-2 text-dark fw-bold" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link border-0 rounded-2 text-dark fw-bold" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link border-0 rounded-2 text-secondary" href="#"><span class="material-symbols-outlined fs-6">chevron_right</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Footer Summary Grid -->
+    <div class="row g-4 mt-5">
+        <div class="col-md-4">
+            <div class="fh-card d-flex align-items-center gap-4 p-4 border-0 shadow-sm bg-white rounded-4">
+                <div class="icon-box-48 bg-primary bg-opacity-10 text-primary"><span class="material-symbols-outlined">collections</span></div>
+                <div>
+                    <p class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-1">총 게시글</p>
+                    <p class="h3 fw-black text-dark m-0">124</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="fh-card d-flex align-items-center gap-4 p-4 border-0 shadow-sm bg-white rounded-4">
+                <div class="icon-box-48 bg-orange-subtle"><span class="material-symbols-outlined">visibility</span></div>
+                <div>
+                    <p class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-1">누적 조회수</p>
+                    <p class="h3 fw-black text-dark m-0">42.8k</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="fh-card d-flex align-items-center gap-4 p-4 border-0 shadow-sm bg-white rounded-4">
+                <div class="icon-box-48 bg-blue-subtle"><span class="material-symbols-outlined">today</span></div>
+                <div>
+                    <p class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-1">이달의 게시글</p>
+                    <p class="h3 fw-black text-dark m-0">12</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{> layout/admin-footer}}

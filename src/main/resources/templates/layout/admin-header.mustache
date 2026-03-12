@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Forest Haven Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <!-- Common CSS -->
+    {{!-- <link href="/css/common.css" rel="stylesheet"/> --}}
+</head>
+<body class="bg-light">
+    <div class="fh-admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar p-4 d-flex flex-column gap-5">
+            <div class="brand-section px-3 py-2 d-flex align-items-center gap-3">
+                <div class="brand-icon shadow-sm">
+                    <span class="material-symbols-outlined text-white fs-5">forest</span>
+                </div>
+                <h1 class="h6 fw-black text-dark m-0">Forest Admin</h1>
+            </div>
+
+            <div class="menu-group">
+                <p class="text-xs font-bold text-secondary opacity-50 text-uppercase tracking-widest px-3 mb-3">Main Menu</p>
+                <nav class="fh-sidebar-nav d-flex flex-column gap-1">
+                    <a href="/admin" class="nav-item">
+                        <span class="material-symbols-outlined">home</span>
+                        <span class="small fw-medium">홈 대시보드</span>
+                    </a>
+                    <a href="/admin/reservations" class="nav-item">
+                        <span class="material-symbols-outlined">calendar_today</span>
+                        <span class="small fw-medium">예약 관리</span>
+                    </a>
+                    <a href="/admin/qna" class="nav-item">
+                        <span class="material-symbols-outlined">question_answer</span>
+                        <span class="small fw-medium">Q&A 관리</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="menu-group">
+                <p class="text-xs font-bold text-secondary opacity-50 text-uppercase tracking-widest px-3 mb-3">Operational</p>
+                <nav class="fh-sidebar-nav d-flex flex-column gap-1">
+                    <a href="/admin/users" class="nav-item">
+                        <span class="material-symbols-outlined">group</span>
+                        <span class="small fw-medium">사용자 관리</span>
+                    </a>
+                    <a href="/admin/stat" class="nav-item">
+                        <span class="material-symbols-outlined">bar_chart</span>
+                        <span class="small fw-medium">통계 리포트</span>
+                    </a>
+                    <a href="/admin/sites/season" class="nav-item">
+                        <span class="material-symbols-outlined">event_note</span>
+                        <span class="small fw-medium">시즌 관리</span>
+                    </a>
+                    <a href="/admin/notices" class="nav-item">
+                        <span class="material-symbols-outlined">campaign</span>
+                        <span class="small fw-medium">공지사항 관리</span>
+                    </a>
+                    <a href="/admin/galleries" class="nav-item">
+                        <span class="material-symbols-outlined">gallery_thumbnail</span>
+                        <span class="small fw-medium">갤러리 관리</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="mt-auto p-3 rounded-4 bg-primary bg-opacity-5 border border-primary border-opacity-10">
+                <p class="text-xs font-bold text-primary mb-1">시스템 상태</p>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="bg-success rounded-circle" style="width: 6px; height: 6px;"></div>
+                    <p class="text-secondary m-0 fs-xxs fw-bold">v2.0.1 - 정상 작동중</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="d-flex align-items-center gap-4 flex-grow-1">
+                    <div class="search-wrapper">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0 rounded-start-3">
+                                <span class="material-symbols-outlined fs-5 text-secondary opacity-50">search</span>
+                            </span>
+                            <input type="text" class="form-control bg-light border-0 py-2 shadow-none rounded-end-3" placeholder="통합 검색...">
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2 me-4">
+                    <button class="btn-icon shadow-none border-0 btn-icon-admin">
+                        <span class="material-symbols-outlined fs-5 text-secondary">notifications</span>
+                    </button>
+                    <button class="btn-icon shadow-none border-0 btn-icon-admin">
+                        <span class="material-symbols-outlined fs-5 text-secondary">settings</span>
+                    </button>
+                </div>
+                <div class="admin-profile-section">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="admin-user-info">
+                            <span class="name">{{sessionUser.name}}</span>
+                            <span class="role">최고 권한자</span>
+                        </div>
+                        <div class="user-avatar shadow-sm border-2 border-white">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDu7CPt2d_pS1OE1BR2iHC5vXN3uFT9huOZiR2YZKOmkFH7MNbqd5nHY0tZxKAPYWAujIJ6jdnnXBniq9h6mHwPmn3_uRe_gt4R8pMZ6fFzEV0LEr8erZL-uZw87LVWx1tiOyiL7BUhfK1GHaVEP28rSqfRveaC_MwBbu_GRCDfDa54ry0fZ6T0UFXAe4Rz5eC1MP_y9ayNXeaBmjnqPqsdxMawm4321x4IDlEyoRgCjkTOzhRO0X4SFDF95jkIzVJdOzpoNWCnBu9A" alt="Admin">
+                        </div>
+                    </div>
+                </div>
+            </header>

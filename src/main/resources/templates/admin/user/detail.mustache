@@ -1,0 +1,121 @@
+{{> layout/admin-header}}
+<div class="p-4 p-lg-5 content-inner-max">
+    <!-- User Overview Card -->
+    <div class="fh-card p-4 p-lg-5 mb-5 border-0 shadow-sm bg-white overflow-hidden position-relative">
+        <div class="position-absolute top-0 end-0 p-4">
+            <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-2 rounded-pill">활성 계정</span>
+        </div>
+
+        <div class="d-flex flex-column flex-lg-row align-items-center align-items-lg-start gap-5">
+            <div class="position-relative">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjLWnR5btJ7Vzl2F04dSFUDs6e0IKd58PvnxI3ZZGgasEy7loQLOdAO-NWWF9_ZbE9BA2KUDbK7XrCjW1nRsYyGnoW5JXLZ8m3RjezY92d5L6z-kuLYZJWjm4G1dXXDVOI3Neb0fKHeUauozDKtXdTWcS_5k_faLEyWd2-0tWT69kVhjz6yDDZcLnl1ii3Bj4_8nnbmQrwyYCBeSyHOrqt8BXhN2Fo5TdnYBQ7NKYrtp2pST2OxuZMhYP70qvBMTp2oeAJ9CtzrPV0" class="customer-profile-img shadow-lg" alt="User">
+                <button class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0 p-2 shadow-lg border-2 border-white">
+                    <span class="material-symbols-outlined fs-6">edit</span>
+                </button>
+            </div>
+
+            <div class="flex-grow-1 text-center text-lg-start">
+                <div class="mb-4">
+                    <h2 class="display-6 fw-black text-dark mb-1">김철수</h2>
+                    <p class="text-secondary fw-medium m-0">chulsoo.kim@example.com</p>
+                </div>
+
+                <div class="row g-4 justify-content-center justify-content-lg-start">
+                    <div class="col-auto">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined text-primary fs-5">calendar_today</span>
+                            <div class="text-start">
+                                <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider m-0">가입일</p>
+                                <p class="small fw-bold text-dark m-0">2023.10.15</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto px-lg-4 border-lg-start border-lg-end">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined text-primary fs-5">database</span>
+                            <div class="text-start">
+                                <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider m-0">누적 포인트</p>
+                                <p class="small fw-bold text-dark m-0">12,450 P</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined text-primary fs-5">shopping_bag</span>
+                            <div class="text-start">
+                                <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider m-0">총 예약 횟수</p>
+                                <p class="small fw-bold text-dark m-0">8회</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column gap-2 w-100 w-lg-auto">
+                <button class="btn btn-primary px-4 py-2.5 fw-bold rounded-3 shadow-sm border-0">사용자 수정</button>
+                <button class="btn btn-light px-4 py-2.5 fw-bold rounded-3 border bg-white">비밀번호 초기화</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Content -->
+    <div class="row g-5">
+        <div class="col-lg-8">
+            <!-- Tabs -->
+            <div class="detail-tab-nav mb-5 px-2">
+                <div class="detail-tab-item active">최근 예약 내역</div>
+                <div class="detail-tab-item">작성한 리뷰</div>
+                <div class="detail-tab-item">Q&A 문의</div>
+            </div>
+
+            <!-- Reservation Table -->
+            <div class="fh-card border-0 shadow-sm bg-white overflow-hidden mb-5">
+                <div class="table-responsive">
+                    <table class="fh-table m-0">
+                        <thead class="bg-light bg-opacity-50">
+                            <tr>
+                                <th class="px-4 py-3 text-xxs fw-bold text-secondary uppercase">예약번호</th>
+                                <th class="px-4 py-3 text-xxs fw-bold text-secondary uppercase">상품 정보</th>
+                                <th class="px-4 py-3 text-xxs fw-bold text-secondary uppercase">이용 날짜</th>
+                                <th class="px-4 py-3 text-xxs fw-bold text-secondary uppercase">상태</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="px-4 py-4 small fw-bold">#ORD-99821</td>
+                                <td class="px-4 py-4 small">A-1 데크 (1박)</td>
+                                <td class="px-4 py-4 small text-secondary">2023.12.25</td>
+                                <td class="px-4 py-4"><span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1 rounded">예약 완료</span></td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-4 small fw-bold">#ORD-99750</td>
+                                <td class="px-4 py-4 small">B-2 글램핑 (2박)</td>
+                                <td class="px-4 py-4 small text-secondary">2023.11.10</td>
+                                <td class="px-4 py-4"><span class="badge bg-secondary bg-opacity-10 text-secondary fw-bold px-2 py-1 rounded">이용 완료</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <h3 class="h6 fw-bold text-dark mb-4">계정 추가 정보</h3>
+            <div class="d-flex flex-column gap-3">
+                <div class="sub-info-card">
+                    <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider mb-2">연락처</p>
+                    <p class="small fw-bold text-dark m-0">010-1234-5678</p>
+                </div>
+                <div class="sub-info-card">
+                    <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider mb-2">마지막 로그인</p>
+                    <p class="small fw-bold text-dark m-0">2023.10.27 14:30</p>
+                </div>
+                <div class="sub-info-card bg-danger bg-opacity-5 border-danger border-opacity-10">
+                    <p class="text-xxs fw-bold text-danger text-uppercase tracking-wider mb-2">관리자 메모</p>
+                    <p class="small fw-medium text-dark m-0 leading-relaxed">블랙리스트 주의 대상 (취소 빈번)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{> layout/admin-footer}}

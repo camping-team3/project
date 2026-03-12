@@ -1,0 +1,91 @@
+{{> layout/header}}
+    <div class="fh-wrapper">
+        <!-- Header -->
+        <header class="fh-navbar bg-white bg-opacity-80 backdrop-blur-md sticky-top">
+            <div class="navbar-brand">
+                <div class="navbar-brand-icon shadow-sm">
+                    <span class="material-symbols-outlined fs-5">forest</span>
+                </div>
+                <h1 class="brand-name h5 fw-black m-0 ms-2 brand-name-text">Forest Haven</h1>
+            </div>
+            <nav class="d-none d-lg-flex gap-5">
+                <a href="#" class="text-decoration-none text-dark fw-bold small hover-primary">리뷰</a>
+                <a href="/galleries" class="text-decoration-none text-dark fw-bold small hover-primary">포토갤러리</a>
+                <a href="/qna" class="text-decoration-none text-primary fw-bold small border-bottom border-primary border-2 pb-1">QnA</a>
+                <a href="21실시간예약.html" class="text-decoration-none text-dark fw-bold small hover-primary">예약하기</a>
+            </nav>
+            <button onclick="location.href='01마이페이지홈.html'" class="btn btn-primary px-4 py-2 small fw-bold shadow-sm rounded-pill">마이페이지</button>
+        </header>
+
+        <main class="container py-5 content-inner-max">
+            <div class="mb-5 px-2">
+                <h2 class="display-5 fw-black text-dark mb-2">질문하기</h2>
+                <p class="text-secondary fw-medium fs-5 opacity-75">포레스트 헤이븐에 대해 궁금한 점을 남겨주세요. 운영진이 확인 후 답변해 드립니다.</p>
+            </div>
+
+            <div class="fh-card shadow-sm border-0 p-4 p-md-5 bg-white rounded-4">
+                <form>
+                    <!-- Category -->
+                    <div class="mb-4">
+                        <label class="form-label form-label-bold small mb-2">카테고리 선택</label>
+                        <select class="form-select py-3 bg-input-soft shadow-none rounded-3">
+                            <option disabled selected value="">문의 유형을 선택해 주세요</option>
+                            <option value="reservation">예약문의</option>
+                            <option value="facility">시설문의</option>
+                            <option value="etc">기타</option>
+                        </select>
+                    </div>
+
+                    <!-- Title -->
+                    <div class="mb-4">
+                        <label class="form-label form-label-bold small mb-2">제목</label>
+                        <input type="text" class="form-control py-3 bg-input-soft shadow-none rounded-3" placeholder="제목을 입력해 주세요">
+                    </div>
+
+                    <!-- Editor -->
+                    <div class="mb-5">
+                        <label class="form-label form-label-bold small mb-2">내용</label>
+                        <div class="fh-editor-container border-light-subtle rounded-3 overflow-hidden">
+                            <div class="fh-editor-toolbar bg-light bg-opacity-50 py-2">
+                                <button type="button" class="btn btn-icon btn-sm"><span class="material-symbols-outlined fs-6">format_bold</span></button>
+                                <button type="button" class="btn btn-icon btn-sm"><span class="material-symbols-outlined fs-6">format_italic</span></button>
+                                <button type="button" class="btn btn-icon btn-sm"><span class="material-symbols-outlined fs-6">format_underlined</span></button>
+                                <div class="vr mx-2 opacity-10"></div>
+                                <button type="button" class="btn btn-icon btn-sm"><span class="material-symbols-outlined fs-6">format_list_bulleted</span></button>
+                                <button type="button" class="btn btn-icon btn-sm"><span class="material-symbols-outlined fs-6">link</span></button>
+                            </div>
+                            <textarea class="fh-editor-content bg-input-soft editor-min-height border-0" placeholder="내용을 입력해 주세요"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div class="mb-5">
+                        <label class="form-label form-label-bold small mb-3">이미지 첨부 (선택)</label>
+                        <div class="question-upload-zone shadow-sm border-light-subtle">
+                            <span class="material-symbols-outlined text-secondary fs-1 mb-2 opacity-25">add_photo_alternate</span>
+                            <p class="text-dark small fw-bold mb-1">이미지를 드래그하거나 클릭하여 업로드하세요</p>
+                            <p class="text-secondary text-xxs">최대 3장, 각 5MB 이하 (JPG, PNG)</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="row g-3">
+                        <div class="col-8">
+                            <button type="submit" class="btn btn-primary w-100 py-3.5 fw-bold shadow-lg border-0 rounded-3">등록하기</button>
+                        </div>
+                        <div class="col-4">
+                            <button type="button" onclick="history.back()" class="btn btn-cancel-hover w-100 py-3.5 fw-bold rounded-3">취소</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <!-- Floating Chatbot -->
+        <div class="position-fixed bottom-0 end-0 p-4 floating-container">
+            <button class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center btn-floating-chat">
+                <span class="material-symbols-outlined fs-2">smart_toy</span>
+            </button>
+        </div>
+    </div>
+{{> layout/footer}}

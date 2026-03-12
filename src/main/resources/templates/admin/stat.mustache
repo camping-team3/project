@@ -1,0 +1,158 @@
+{{> layout/admin-header}}
+<div class="p-4 p-lg-5">
+    <!-- Page Header -->
+    <div class="mb-5">
+        <h2 class="h2 fw-black text-dark mb-1">통계 리포트</h2>
+        <p class="text-secondary fw-medium m-0">캠핑장의 주요 지표와 성과를 한눈에 확인하세요.</p>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="fh-card shadow-sm p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <p class="text-secondary small fw-bold m-0">이번 달 총 수익</p>
+                    <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1 rounded-1 badge-stat-growth">+12.5%</span>
+                </div>
+                <h3 class="fh-metric-value text-primary m-0">₩12,450,000</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="fh-card shadow-sm p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <p class="text-secondary small fw-bold m-0">객실 점유율</p>
+                    <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1 rounded-1 badge-stat-growth">+5.2%</span>
+                </div>
+                <h3 class="fh-metric-value text-dark m-0">82%</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="fh-card shadow-sm p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <p class="text-secondary small fw-bold m-0">신규 가입자</p>
+                    <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1 rounded-1 badge-stat-growth">+18%</span>
+                </div>
+                <h3 class="fh-metric-value text-dark m-0">145명</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-6">
+            <div class="fh-card shadow-sm p-4 h-100">
+                <div class="mb-5">
+                    <h3 class="h5 fw-bold text-dark mb-1">월간 예약 트렌드</h3>
+                    <p class="text-secondary small fw-medium m-0">최근 30일 데이터 기준</p>
+                </div>
+                <div class="position-relative trends-chart-container">
+                    <svg class="w-100 h-100" viewBox="0 0 400 150" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+                                <stop offset="0%" stop-color="#2c5926" stop-opacity="0.2"></stop>
+                                <stop offset="100%" stop-color="#2c5926" stop-opacity="0"></stop>
+                            </linearGradient>
+                        </defs>
+                        <path d="M0,120 Q50,110 80,60 T160,80 T240,40 T320,70 T400,30 L400,150 L0,150 Z" fill="url(#chartGradient)"></path>
+                        <path d="M0,120 Q50,110 80,60 T160,80 T240,40 T320,70 T400,30" fill="none" stroke="#2c5926" stroke-width="3" stroke-linecap="round"></path>
+                    </svg>
+                    <div class="d-flex justify-content-between mt-4 px-2 text-secondary fw-bold chart-axis-labels">
+                        <span>1주차</span><span>2주차</span><span>3주차</span><span>4주차</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="fh-card shadow-sm p-4 h-100">
+                <div class="mb-5">
+                    <h3 class="h5 fw-bold text-dark mb-1">객실 유형별 수익 비교</h3>
+                    <p class="text-secondary small fw-medium m-0">이번 달 유형별 매출액</p>
+                </div>
+                <div class="d-flex align-items-end justify-content-between gap-4 px-2 bar-chart-container">
+                    <div class="bar-chart-column">
+                        <div class="bar-fill bar-light" style="height: 65%;"></div>
+                        <span class="text-secondary fw-bold chart-axis-labels">A-1 데크</span>
+                    </div>
+                    <div class="bar-chart-column">
+                        <div class="bar-fill bar-primary" style="height: 90%;"></div>
+                        <span class="text-secondary fw-bold chart-axis-labels">글램핑</span>
+                    </div>
+                    <div class="bar-chart-column">
+                        <div class="bar-fill bar-semi" style="height: 45%;"></div>
+                        <span class="text-secondary fw-bold chart-axis-labels">카라반</span>
+                    </div>
+                    <div class="bar-chart-column">
+                        <div class="bar-fill bar-muted" style="height: 30%;"></div>
+                        <span class="text-secondary fw-bold chart-axis-labels">오토캠핑</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rankings Table -->
+    <div class="fh-table-container shadow-sm border-0 bg-white">
+        <div class="p-4 border-bottom border-primary border-opacity-5 d-flex justify-content-between align-items-center">
+            <h3 class="h5 fw-bold text-dark m-0">인기 객실 TOP 3</h3>
+            <button class="btn btn-link text-primary fw-bold text-decoration-none small p-0">상세보기</button>
+        </div>
+        <div class="table-responsive">
+            <table class="fh-table mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase col-rank">순위</th>
+                        <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase">객실 명칭</th>
+                        <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase col-count">예약 횟수</th>
+                        <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase col-rating">평균 평점</th>
+                        <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase text-end col-status">상태</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="align-middle">
+                        <td class="px-4 py-4 text-primary fw-black rank-number">1</td>
+                        <td class="px-4 py-4 fw-bold text-dark">프리미엄 글램핑 A-1</td>
+                        <td class="px-4 py-4 text-secondary fw-medium">128건</td>
+                        <td class="px-4 py-4">
+                            <div class="d-flex align-items-center text-warning fw-bold">
+                                <span class="material-symbols-outlined fs-5 me-1 icon-fill-1">star</span>
+                                <span>4.9</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 text-end">
+                            <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-pill badge-rank-status">인기 급상승</span>
+                        </td>
+                    </tr>
+                    <tr class="align-middle">
+                        <td class="px-4 py-4 text-primary fw-black rank-number opacity-50">2</td>
+                        <td class="px-4 py-4 fw-bold text-dark">숲속 카라반 B-4</td>
+                        <td class="px-4 py-4 text-secondary fw-medium">95건</td>
+                        <td class="px-4 py-4">
+                            <div class="d-flex align-items-center text-warning fw-bold">
+                                <span class="material-symbols-outlined fs-5 me-1 icon-fill-1">star</span>
+                                <span>4.7</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 text-end">
+                            <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-2 rounded-pill badge-rank-status">안정적</span>
+                        </td>
+                    </tr>
+                    <tr class="align-middle">
+                        <td class="px-4 py-4 text-primary fw-black rank-number opacity-25">3</td>
+                        <td class="px-4 py-4 fw-bold text-dark">강변 데크 C-12</td>
+                        <td class="px-4 py-4 text-secondary fw-medium">72건</td>
+                        <td class="px-4 py-4">
+                            <div class="d-flex align-items-center text-warning fw-bold">
+                                <span class="material-symbols-outlined fs-5 me-1 icon-fill-1">star</span>
+                                <span>4.8</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 text-end">
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary fw-bold px-3 py-2 rounded-pill badge-rank-status">매진 임박</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{> layout/admin-footer}}

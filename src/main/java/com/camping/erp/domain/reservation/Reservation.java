@@ -1,8 +1,9 @@
 package com.camping.erp.domain.reservation;
 
+import com.camping.erp.domain.reservation.enums.ReservationStatus;
 import com.camping.erp.domain.site.Site;
 import com.camping.erp.domain.user.User;
-import com.camping.erp.global._core.BaseTimeEntity;
+import com.camping.erp.global.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,10 +41,6 @@ public class Reservation extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private ReservationStatus status; // PENDING, CONFIRMED, CANCEL_REQ, CANCEL_COMP
-
-    public enum ReservationStatus {
-        PENDING, CONFIRMED, CANCEL_REQ, CANCEL_COMP
-    }
 
     @Builder
     public Reservation(Long id, User user, Site site, LocalDate checkIn, LocalDate checkOut, Long totalPrice, ReservationStatus status) {
