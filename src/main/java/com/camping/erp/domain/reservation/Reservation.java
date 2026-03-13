@@ -37,18 +37,22 @@ public class Reservation extends BaseTimeEntity {
     private LocalDate checkOut;
 
     @Column(nullable = false)
+    private Integer peopleCount;
+
+    @Column(nullable = false)
     private Long totalPrice;
 
     @Enumerated(EnumType.STRING)
     private ReservationStatus status; // PENDING, CONFIRMED, CANCEL_REQ, CANCEL_COMP
 
     @Builder
-    public Reservation(Long id, User user, Site site, LocalDate checkIn, LocalDate checkOut, Long totalPrice, ReservationStatus status) {
+    public Reservation(Long id, User user, Site site, LocalDate checkIn, LocalDate checkOut, Integer peopleCount, Long totalPrice, ReservationStatus status) {
         this.id = id;
         this.user = user;
         this.site = site;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
+        this.peopleCount = peopleCount;
         this.totalPrice = totalPrice;
         this.status = status;
     }
