@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class BookingService {
+public class ReservationService {
 
     private final ReservationRepository reservationRepository;
 
