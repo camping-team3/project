@@ -6,7 +6,8 @@ import lombok.Setter;
 
 public class SiteResponse {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     public static class ListDTO {
         private Long id;
         private String siteName;
@@ -24,5 +25,11 @@ public class SiteResponse {
             this.price = price;
             this.isAvailable = isAvailable;
         }
+    }
+
+    @Getter
+    @Setter
+    public static class DetailDTO {
+        // 직접 구현하세요.
     }
 }
