@@ -46,12 +46,12 @@ INSERT INTO site_tb (zone_id, site_name, max_people, created_at) VALUES
 --   - CANCEL_REQ: 사용자 취소 요청(관리자 승인 대기)
 --   - CANCEL_COMP: 취소 승인 완료(환불 처리됨)
 -- ==========================================================
-INSERT INTO reservation_tb (user_id, site_id, check_in, check_out, total_price, status, created_at) VALUES 
-(2, 1, '2026-03-01', '2026-03-03', 100000, 'CONFIRMED', NOW()), -- 이용완료(과거)
-(3, 4, '2026-03-10', '2026-03-12', 300000, 'CONFIRMED', NOW()), -- 현재 이용중
-(4, 2, '2026-04-01', '2026-04-03', 100000, 'CONFIRMED', NOW()), -- 미래 예약
-(5, 5, '2026-05-01', '2026-05-02', 150000, 'CANCEL_REQ', NOW()), -- 취소 요청 중
-(2, 6, '2026-02-01', '2026-02-03', 240000, 'CANCEL_COMP', NOW()); -- 취소 완료된 건
+INSERT INTO reservation_tb (user_id, site_id, check_in, check_out, people_count, total_price, status, created_at) VALUES 
+(2, 1, '2026-03-01', '2026-03-03', 2, 100000, 'CONFIRMED', NOW()), -- 이용완료(과거)
+(3, 4, '2026-03-10', '2026-03-12', 4, 300000, 'CONFIRMED', NOW()), -- 현재 이용중
+(4, 2, '2026-04-01', '2026-04-03', 2, 100000, 'CONFIRMED', NOW()), -- 미래 예약
+(5, 5, '2026-05-01', '2026-05-02', 4, 150000, 'CANCEL_REQ', NOW()), -- 취소 요청 중
+(2, 6, '2026-02-01', '2026-02-03', 2, 240000, 'CANCEL_COMP', NOW()); -- 취소 완료된 건
 
 
 -- ==========================================================
