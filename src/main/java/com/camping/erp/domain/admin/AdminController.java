@@ -42,16 +42,6 @@ public class AdminController {
         return "admin/user/detail";
     }
 
-    @GetMapping("/admin/notices")
-    public String noticeList() {
-        return "admin/notice/list";
-    }
-
-    @GetMapping("/admin/notices/new")
-    public String noticeNew() {
-        return "admin/notice/new";
-    }
-
     @GetMapping("/admin/galleries")
     public String galleryList() {
         return "admin/gallery/list";

@@ -1,0 +1,90 @@
+{{> layout/admin-header}}
+
+<!-- Summernote Lite CSS (Bootstrap 5 호환) -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+
+<div class="p-5" style="max-width: 896px; margin: 0 auto;">
+    <form action="/admin/notices/{{notice.id}}/update" method="POST">
+        <!-- Page Title Section -->
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="display-6 fw-bold text-dark mb-1 tracking-tight">공지사항 수정</h2>
+                <p class="text-secondary small mt-1">기존 공지사항의 내용을 수정합니다.</p>
+            </div>
+            <div class="d-flex gap-3">
+                <button type="button" onclick="history.back()" class="btn btn-light px-4 py-2.5 fw-bold text-secondary border bg-white rounded-3 small">취소</button>
+                <button type="submit" class="btn btn-primary px-4 py-2.5 fw-bold shadow-md border-0 rounded-3 small">수정 완료</button>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <!-- Form Card -->
+            <div class="form-card shadow-sm p-4 bg-white rounded-4 border border-secondary border-opacity-10">
+                <!-- isTop & Title -->
+                <div class="row g-4 mb-4 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-dark mb-2">공지 설정</label>
+                        <div class="form-check form-switch p-0 ms-4">
+                            <input class="form-check-input" type="checkbox" name="isTop" value="true" id="isTopCheck" style="width: 3em; height: 1.5em;" {{#notice.isTop}}checked{{/notice.isTop}}>
+                            <label class="form-check-label ms-2 fw-bold text-primary small" for="isTopCheck">상단 고정 (필독)</label>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <label class="form-label small fw-bold text-dark mb-2">공지사항 제목</label>
+                        <input type="text" name="title" class="form-control py-2.5 shadow-none border-secondary border-opacity-25 text-sm" placeholder="공지사항 제목을 입력해주세요" value="{{notice.title}}" required>
+                    </div>
+                </div>
+
+                <!-- Editor -->
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-dark mb-2">본문 내용</label>
+                    <textarea id="summernote" name="content">{{notice.content}}</textarea>
+                </div>
+
+                <!-- File Upload (UI만 유지) -->
+                <div class="mb-0">
+                    <label class="form-label small fw-bold text-dark mb-2">첨부 이미지</label>
+                    <div class="file-drop-zone border-dashed p-5 text-center bg-light rounded-4" style="border: 2px dashed #dee2e6;">
+                        {{#notice.images.0}}
+                        <p class="small fw-medium text-dark mb-1 mt-2">첨부된 이미지가 있습니다.</p>
+                        {{/notice.images.0}}
+                        {{^notice.images.0}}
+                        <span class="material-symbols-outlined icon-upload fs-1 text-secondary opacity-50">upload_file</span>
+                        <p class="small fw-medium text-dark mb-1 mt-2">이미지 파일을 이곳에 드래그하거나 클릭하세요</p>
+                        {{/notice.images.0}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Actions -->
+            <div class="d-flex align-items-center justify-content-end gap-3 pt-4">
+                <button type="button" onclick="history.back()" class="btn btn-light px-4 py-2.5 rounded-lg border border-secondary border-opacity-10 bg-white small fw-bold text-secondary">취소</button>
+                <button type="submit" class="btn btn-primary px-4 py-2.5 rounded-lg fw-bold shadow-md border-0 small">수정 완료</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- JQuery & Summernote Lite JS -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#summernote').summernote({
+            tabsize: 2,
+            height: 400,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+    });
+</script>
+
+{{> layout/admin-footer}}

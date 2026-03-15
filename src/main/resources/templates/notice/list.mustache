@@ -1,92 +1,80 @@
 {{> layout/header}}
 
-        <main class="container py-5" style="max-width: 960px; margin: 0 auto;">
-            <!-- Hero Banner -->
-            <div class="notice-hero shadow-sm mb-5">
-                <h2 class="display-5 fw-black text-white mb-2">공지사항</h2>
-                <p class="text-white opacity-75 fw-medium m-0">포레스트 헤이븐의 새로운 소식과 안내를 확인하세요.</p>
-            </div>
+<main class="container py-5" style="max-width: 960px; margin: 0 auto;">
+    <!-- Hero Banner -->
+    <div class="notice-hero shadow-sm mb-5 bg-primary p-5 rounded-4 text-center">
+        <h2 class="display-5 fw-black text-white mb-2">공지사항</h2>
+        <p class="text-white opacity-75 fw-medium m-0">포레스트 헤이븐의 새로운 소식과 안내를 확인하세요.</p>
+    </div>
 
-            <!-- Filters -->
-            <div class="d-flex flex-wrap gap-2 mb-4">
-                <button class="btn btn-primary rounded-pill px-4 py-2 small fw-bold">전체</button>
-                <button class="btn btn-light bg-primary bg-opacity-5 text-primary rounded-pill px-4 py-2 small fw-bold border-0">[중요]</button>
-                <button class="btn btn-light bg-primary bg-opacity-5 text-primary rounded-pill px-4 py-2 small fw-bold border-0">[안내]</button>
-                <button class="btn btn-light bg-primary bg-opacity-5 text-primary rounded-pill px-4 py-2 small fw-bold border-0">[이벤트]</button>
-            </div>
+    <!-- Search -->
+    <div class="position-relative mb-5">
+        <form action="/notices" method="GET">
+            <span class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-4 text-secondary opacity-50">search</span>
+            <input type="text" name="keyword" class="form-control py-3 ps-5 border-0 shadow-sm rounded-4" placeholder="공지사항 검색" value="{{keyword}}">
+        </form>
+    </div>
 
-            <!-- Search -->
-            <div class="position-relative mb-5">
-                <span class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-4 text-secondary opacity-50">search</span>
-                <input type="text" class="form-control py-3 ps-5 border-0 shadow-sm rounded-4" placeholder="공지사항 검색">
-            </div>
-
-            <!-- Notice List -->
-            <div class="d-flex flex-column gap-3">
-                <!-- Item 1 -->
-                <div class="fh-card notice-item p-4 border-0 shadow-sm rounded-4 d-flex align-items-start justify-content-between bg-white">
-                    <div class="d-flex gap-4">
-                        <div class="notice-icon-box bg-danger bg-opacity-10 text-danger">
-                            <span class="material-symbols-outlined fs-4">campaign</span>
-                        </div>
-                        <div>
-                            <div class="d-flex align-items-center gap-2 mb-1">
-                                <span class="badge bg-danger text-white fw-bold px-2 py-1 badge-notice-type">중요</span>
-                                <h3 class="h6 fw-bold text-dark m-0">동절기 캠핑장 운영 시간 변경 및 안전수칙 안내</h3>
-                            </div>
-                            <p class="text-secondary small m-0 mb-2 text-truncate notice-desc-truncate">동절기 한파 및 안전사고 예방을 위해 매너타임 준수 및 등유 난로 사용 시 주의사항을 안내드립니다.</p>
-                            <span class="text-secondary opacity-50 fw-bold notice-date-text">2023.12.01</span>
-                        </div>
-                    </div>
-                    <span class="material-symbols-outlined text-secondary opacity-25">chevron_right</span>
+    <!-- Notice List -->
+    <div class="d-flex flex-column gap-3">
+        {{#notices.content}}
+        <!-- Notice Item -->
+        <div class="fh-card notice-item p-4 border-0 shadow-sm rounded-4 d-flex align-items-start justify-content-between bg-white cursor-pointer" onclick="location.href='/notices/{{id}}'" style="transition: transform 0.2s ease, box-shadow 0.2s ease;">
+            <div class="d-flex gap-4">
+                <div class="notice-icon-box {{#isTop}}bg-danger bg-opacity-10 text-danger{{/isTop}}{{^isTop}}bg-primary bg-opacity-10 text-primary{{/isTop}} p-3 rounded-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                    <span class="material-symbols-outlined fs-4">{{#isTop}}campaign{{/isTop}}{{^isTop}}info{{/isTop}}</span>
                 </div>
-                <!-- Item 2 -->
-                <div class="fh-card notice-item p-4 border-0 shadow-sm rounded-4 d-flex align-items-start justify-content-between bg-white">
-                    <div class="d-flex gap-4">
-                        <div class="notice-icon-box bg-primary bg-opacity-10 text-primary">
-                            <span class="material-symbols-outlined fs-4">event</span>
-                        </div>
-                        <div>
-                            <div class="d-flex align-items-center gap-2 mb-1">
-                                <span class="badge bg-primary text-white fw-bold px-2 py-1 badge-notice-type">이벤트</span>
-                                <h3 class="h6 fw-bold text-dark m-0">크리스마스 '숲속의 기적' 캠핑 축제 예약 안내</h3>
-                            </div>
-                            <p class="text-secondary small m-0 mb-2 text-truncate notice-desc-truncate">포레스트 헤이븐에서 준비한 따뜻한 연말 이벤트! 가족, 연인과 함께하는 크리스마스 마켓과 모닥불 공연에 초대합니다.</p>
-                            <span class="text-secondary opacity-50 fw-bold notice-date-text">2023.11.25</span>
-                        </div>
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        {{#isTop}}
+                        <span class="badge bg-danger text-white fw-bold px-2 py-1 badge-notice-type">중요</span>
+                        {{/isTop}}
+                        <h3 class="h6 fw-bold text-dark m-0">{{title}}</h3>
                     </div>
-                    <span class="material-symbols-outlined text-secondary opacity-25">chevron_right</span>
-                </div>
-                <!-- Item 3 -->
-                <div class="fh-card notice-item p-4 border-0 shadow-sm rounded-4 d-flex align-items-start justify-content-between bg-white">
-                    <div class="d-flex gap-4">
-                        <div class="notice-icon-box bg-primary bg-opacity-10 text-primary">
-                            <span class="material-symbols-outlined fs-4">info</span>
-                        </div>
-                        <div>
-                            <div class="d-flex align-items-center gap-2 mb-1">
-                                <span class="badge bg-secondary text-white fw-bold px-2 py-1 badge-notice-type">안내</span>
-                                <h3 class="h6 fw-bold text-dark m-0">캠핑장 내 편의시설 리뉴얼 공사 일정 안내</h3>
-                            </div>
-                            <p class="text-secondary small m-0 mb-2 text-truncate notice-desc-truncate">더 쾌적한 캠핑 환경을 위해 샤워실 및 개수대 리뉴얼 공사를 진행합니다. 공사 기간 중 대체 시설 이용 방법을 안내해 드립니다.</p>
-                            <span class="text-secondary opacity-50 fw-bold notice-date-text">2023.11.20</span>
-                        </div>
-                    </div>
-                    <span class="material-symbols-outlined text-secondary opacity-25">chevron_right</span>
+                    <p class="text-secondary small m-0 mb-2 text-truncate notice-desc-truncate">자세한 내용을 확인하시려면 클릭해주세요.</p>
+                    <span class="text-secondary opacity-50 fw-bold notice-date-text">{{createdAt}}</span>
                 </div>
             </div>
+            <span class="material-symbols-outlined text-secondary opacity-25 align-self-center">chevron_right</span>
+        </div>
+        {{/notices.content}}
+        
+        {{^notices.content}}
+        <div class="text-center py-5 bg-white rounded-4 shadow-sm text-secondary fw-medium">
+            검색 결과가 없거나 등록된 공지사항이 없습니다.
+        </div>
+        {{/notices.content}}
+    </div>
 
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center gap-2 mt-5">
-                <button class="btn btn-icon border border-secondary border-opacity-10 bg-white"><span class="material-symbols-outlined fs-6">chevron_left</span></button>
-                <button class="btn btn-primary px-3 py-1.5 small fw-bold">1</button>
-                <button class="btn btn-light bg-white border border-secondary border-opacity-10 px-3 py-1.5 small fw-bold text-secondary">2</button>
-                <button class="btn btn-light bg-white border border-secondary border-opacity-10 px-3 py-1.5 small fw-bold text-secondary">3</button>
-                <button class="btn btn-icon border border-secondary border-opacity-10 bg-white"><span class="material-symbols-outlined fs-6">chevron_right</span></button>
-            </div>
-        </main>
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center gap-2 mt-5">
+        {{#notices.hasPrevious}}
+        <a href="?page={{notices.previousPage}}&keyword={{keyword}}" class="btn btn-icon border border-secondary border-opacity-10 bg-white d-flex align-items-center justify-content-center shadow-sm rounded-3 p-2">
+            <span class="material-symbols-outlined fs-6">chevron_left</span>
+        </a>
+        {{/notices.hasPrevious}}
+        
+        <button class="btn btn-primary px-4 py-1.5 small fw-bold shadow-sm rounded-3 border-0">현재 페이지</button>
+        
+        {{#notices.hasNext}}
+        <a href="?page={{notices.nextPage}}&keyword={{keyword}}" class="btn btn-icon border border-secondary border-opacity-10 bg-white d-flex align-items-center justify-content-center shadow-sm rounded-3 p-2">
+            <span class="material-symbols-outlined fs-6">chevron_right</span>
+        </a>
+        {{/notices.hasNext}}
+    </div>
+</main>
 
-        <button class="btn-chatbot shadow-lg border-0 btn-chatbot-large">
-            <span class="material-symbols-outlined fs-1">chat</span>
-        </button>
+<button class="btn-chatbot shadow-lg border-0 btn-chatbot-large">
+    <span class="material-symbols-outlined fs-1">chat</span>
+</button>
+
+<style>
+    .notice-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+    }
+    .cursor-pointer {
+        cursor: pointer;
+    }
+</style>
 {{> layout/footer}}
