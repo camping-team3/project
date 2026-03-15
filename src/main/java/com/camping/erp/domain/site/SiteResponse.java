@@ -13,18 +13,18 @@ public class SiteResponse {
         private String siteName;
         private String zoneName;
         private Integer maxPeople;
-        private Long pricePerNight; // 1박 요금 추가
-        private Long totalPrice;     // 숙박 일수 포함 총액 추가
+        private Integer basePeople; // 기준 인원 필드 추가
+        private Long pricePerNight; // 1박 요금 필드 추가
         private Boolean isAvailable;
 
         @Builder
-        public ListDTO(Long id, String siteName, String zoneName, Integer maxPeople, Long pricePerNight, Long totalPrice, Boolean isAvailable) {
+        public ListDTO(Long id, String siteName, String zoneName, Integer maxPeople, Integer basePeople, Long pricePerNight, Boolean isAvailable) {
             this.id = id;
             this.siteName = siteName;
             this.zoneName = zoneName;
             this.maxPeople = maxPeople;
+            this.basePeople = basePeople;
             this.pricePerNight = pricePerNight;
-            this.totalPrice = totalPrice;
             this.isAvailable = isAvailable;
         }
     }
