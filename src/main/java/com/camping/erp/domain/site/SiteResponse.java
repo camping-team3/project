@@ -13,16 +13,18 @@ public class SiteResponse {
         private String siteName;
         private String zoneName;
         private Integer maxPeople;
-        private Long price;
+        private Long pricePerNight; // 1박 요금 추가
+        private Long totalPrice;     // 숙박 일수 포함 총액 추가
         private Boolean isAvailable;
 
         @Builder
-        public ListDTO(Long id, String siteName, String zoneName, Integer maxPeople, Long price, Boolean isAvailable) {
+        public ListDTO(Long id, String siteName, String zoneName, Integer maxPeople, Long pricePerNight, Long totalPrice, Boolean isAvailable) {
             this.id = id;
             this.siteName = siteName;
             this.zoneName = zoneName;
             this.maxPeople = maxPeople;
-            this.price = price;
+            this.pricePerNight = pricePerNight;
+            this.totalPrice = totalPrice;
             this.isAvailable = isAvailable;
         }
     }
@@ -30,6 +32,5 @@ public class SiteResponse {
     @Getter
     @Setter
     public static class DetailDTO {
-        // 직접 구현하세요.
     }
 }

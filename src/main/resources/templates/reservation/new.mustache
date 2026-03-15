@@ -23,43 +23,39 @@
             </div>
 
             <!-- Filter Bar -->
-            <div class="fh-card shadow-sm border-0 p-4 mb-5 bg-white rounded-4">
+            <form action="/reservations/new" method="GET" class="fh-card shadow-sm border-0 p-4 mb-5 bg-white rounded-4">
                 <div class="row g-4 align-items-end">
                     <div class="col-lg-5">
                         <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">체크인 / 체크아웃</label>
-                        <button class="btn btn-light bg-light w-100 py-3 d-flex align-items-center justify-content-between px-4 rounded-3 border-0 border-hover-primary transition-all">
-                            <div class="d-flex align-items-center gap-3">
+                        <div class="btn btn-light bg-light w-100 py-3 d-flex align-items-center justify-content-between px-4 rounded-3 border-0 border-hover-primary transition-all position-relative">
+                            <div class="d-flex align-items-center gap-3 w-100">
                                 <span class="material-symbols-outlined text-primary">calendar_today</span>
-                                <span class="fw-bold text-dark small">{{checkInDisplay}} - {{checkOutDisplay}}</span>
+                                <div class="d-flex align-items-center gap-2 flex-grow-1">
+                                    <input type="date" name="checkIn" class="form-control form-control-sm border-0 bg-transparent p-0 fw-bold text-dark" value="{{search.checkIn}}" style="width: 120px;">
+                                    <span class="text-secondary">-</span>
+                                    <input type="date" name="checkOut" class="form-control form-control-sm border-0 bg-transparent p-0 fw-bold text-dark" value="{{search.checkOut}}" style="width: 120px;">
+                                </div>
                             </div>
-                            <span class="text-primary fw-bold small">{{nights}}박</span>
-                        </button>
+                            <span class="text-primary fw-bold small flex-shrink-0">{{nights}}박</span>
+                        </div>
                     </div>
                     <div class="col-lg-4">
                         <div class="row g-3">
-                            <div class="col-6">
-                                <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">성인</label>
-                                <div class="d-flex align-items-center bg-light rounded-3">
-                                    <button class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">remove</span></button>
-                                    <span class="flex-grow-1 text-center fw-bold text-dark">{{search.peopleCount}}</span>
-                                    <button class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">add</span></button>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">아동</label>
-                                <div class="d-flex align-items-center bg-light rounded-3">
-                                    <button class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">remove</span></button>
-                                    <span class="flex-grow-1 text-center fw-bold text-dark">0</span>
-                                    <button class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">add</span></button>
+                            <div class="col-12">
+                                <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">성인 인원 (최대 10인)</label>
+                                <div class="d-flex align-items-center bg-light rounded-3 px-2">
+                                    <button type="button" class="btn btn-sm text-primary p-2" onclick="this.nextElementSibling.stepDown()"><span class="material-symbols-outlined fs-5">remove</span></button>
+                                    <input type="number" name="peopleCount" class="form-control border-0 bg-transparent text-center fw-bold text-dark" value="{{search.peopleCount}}" min="1" max="10" readonly>
+                                    <button type="button" class="btn btn-sm text-primary p-2" onclick="this.previousElementSibling.stepUp()"><span class="material-symbols-outlined fs-5">add</span></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3">
-                        <button class="btn btn-primary w-100 py-3 fw-bold shadow-sm border-0 rounded-3">검색하기</button>
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-sm border-0 rounded-3">검색하기</button>
                     </div>
                 </div>
-            </div>
+            </form>
 
             <!-- Map Section -->
             <div class="fh-card shadow-sm border-0 p-4 p-lg-5 mb-5 bg-white rounded-4">
@@ -110,9 +106,12 @@
                                 <div>
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <span class="badge bg-primary bg-opacity-10 text-primary fw-bold text-uppercase badge-area-type">{{zoneName}}</span>
-                                        <span class="h5 fw-bold text-primary m-0">₩{{price}} / 총 요금</span>
+                                        <div class="text-end">
+                                            <span class="d-block text-secondary small" style="text-decoration: line-through;">₩{{pricePerNight}} / 1박</span>
+                                            <span class="h5 fw-bold text-primary m-0">₩{{totalPrice}} / 총 요금</span>
+                                        </div>
                                     </div>
-                                    <h4 class="h5 fw-bold text-dark mb-1">{{siteName}} (Forest Site)</h4>
+                                    <h4 class="h5 fw-bold text-dark mb-1">{{siteName}}</h4>
                                     <p class="text-secondary small mb-4">쾌적한 숲속 뷰와 함께 여유로운 캠핑을 즐기실 수 있는 사이트입니다.</p>
                                     <div class="d-flex gap-4 text-xs font-bold text-secondary">
                                         <div class="d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6">group</span> 최대 {{maxPeople}}인</div>
@@ -149,35 +148,28 @@
                         <div class="p-4">
                             <div class="d-flex flex-column gap-3 mb-4 pb-4 border-bottom border-secondary border-opacity-10">
                                 <div class="d-flex justify-content-between small">
-                                    <span class="text-secondary fw-medium">선택한 사이트</span>
-                                    <span class="fw-bold text-dark">C-3 오토캠핑 (Grass)</span>
-                                </div>
-                                <div class="d-flex justify-content-between small">
                                     <span class="text-secondary fw-medium">일정</span>
-                                    <span class="fw-bold text-dark">05.24 - 05.26 (2박)</span>
+                                    <span class="fw-bold text-dark">{{checkInDisplay}} - {{checkOutDisplay}} ({{nights}}박)</span>
                                 </div>
                                 <div class="d-flex justify-content-between small">
                                     <span class="text-secondary fw-medium">인원</span>
-                                    <span class="fw-bold text-dark">성인 2명</span>
+                                    <span class="fw-bold text-dark">성인 {{search.peopleCount}}명</span>
                                 </div>
                             </div>
-                            <div class="d-flex flex-column gap-2 mb-5">
+                            <!-- 사이트 선택 전 안내 -->
+                            <div class="py-4 text-center">
+                                <span class="material-symbols-outlined text-secondary opacity-25 fs-1 mb-2">touch_app</span>
+                                <p class="text-secondary small mb-0">왼쪽 리스트에서<br>예약하실 사이트를 선택해 주세요.</p>
+                            </div>
+                            
+                            <div class="d-flex flex-column gap-2 mb-5 opacity-50">
                                 <div class="d-flex justify-content-between small">
-                                    <span class="text-secondary fw-medium">객실 요금 (2박)</span>
-                                    <span class="text-dark fw-bold">₩100,000</span>
-                                </div>
-                                <div class="d-flex justify-content-between small">
-                                    <span class="text-secondary fw-medium">추가 옵션</span>
-                                    <span class="text-dark fw-bold">₩0</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-end mt-3 pt-3 border-top">
-                                    <span class="fw-bold text-dark">총 결제 금액</span>
-                                    <span class="h3 fw-black text-primary m-0">₩100,000</span>
+                                    <span class="text-secondary fw-medium">총 결제 금액</span>
+                                    <span class="h3 fw-black text-primary m-0">₩ -</span>
                                 </div>
                             </div>
-                            <button class="btn btn-primary btn-lg w-100 py-3 fw-black shadow-lg d-flex align-items-center justify-content-center gap-2 rounded-3 border-0">
-                                <span>다음: 정보 입력하기</span>
-                                <span class="material-symbols-outlined">arrow_forward</span>
+                            <button class="btn btn-secondary btn-lg w-100 py-3 fw-black shadow-lg d-flex align-items-center justify-content-center gap-2 rounded-3 border-0 disabled" disabled>
+                                <span>사이트를 선택해 주세요</span>
                             </button>
                             <p class="text-center text-secondary mt-4 mb-0 text-xxs-info leading-relaxed">
                                 위 금액에는 부가세가 포함되어 있습니다.<br>
@@ -185,6 +177,7 @@
                             </p>
                         </div>
                     </div>
+                    
                     <div class="fh-card border-0 shadow-sm p-3 d-flex align-items-center gap-3 bg-white rounded-3">
                         <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz3xzKGdZMJ3xNhwTjSiJXSI1L16fhtQxAoA7FNsRABUtSG4XJB0-l0cv_3Uo13X-kLJqHq-H6trQF6X9e1xpgQZ0NbSXu9Oetnkw2SCPu_3HO3bCfZKiSAF9onsZS3H4024rnRxfDugctS_-mthpeSvbphs3QwvKXt9Ee-03rzgOSZhjbmO7BY1slfGZXRf7jxEUqPLtiCUu-hrVAKywWLxpESI_Aa46CCkQIQRqsxQkte7Imy4qr5VUhUvn57okqC3im1asfzUH7" class="rounded-3" style="width: 64px; height: 64px; object-fit: cover; opacity: 0.8;" alt="Mini map">
                         <div>

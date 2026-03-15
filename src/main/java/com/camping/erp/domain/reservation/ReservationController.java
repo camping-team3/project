@@ -20,26 +20,32 @@ public class ReservationController {
 
     @GetMapping("/reservations/new")
     public String newForm(ReservationRequest.SearchDTO searchDTO, Model model) {
-        // 인원수 기본값 설정
+        // 1. 모든 기본값 세팅 (폼 초기값 결정)
+        if (searchDTO.getCheckIn() == null) {
+            searchDTO.setCheckIn(LocalDate.now());
+        }
+        if (searchDTO.getCheckOut() == null) {
+            searchDTO.setCheckOut(searchDTO.getCheckIn().plusDays(1));
+        }
+        if (!searchDTO.getCheckOut().isAfter(searchDTO.getCheckIn())) {
+            searchDTO.setCheckOut(searchDTO.getCheckIn().plusDays(1));
+        }
         if (searchDTO.getPeopleCount() == null) {
             searchDTO.setPeopleCount(2);
         }
 
+        // 2. 서비스 호출 (이미 기본값이 채워진 searchDTO 사용)
         List<SiteResponse.ListDTO> sites = reservationService.findAvailableSites(searchDTO);
 
-        // 검색 데이터 재추출 (서비스에서 설정된 기본값 포함)
-        LocalDate checkIn = searchDTO.getCheckIn();
-        LocalDate checkOut = searchDTO.getCheckOut();
-        long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
-
-        // 날짜 포맷팅 (2024.05.24(금) 형식)
+        // 3. 뷰를 위한 데이터 가공
+        long nights = ChronoUnit.DAYS.between(searchDTO.getCheckIn(), searchDTO.getCheckOut());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);
 
         model.addAttribute("sites", sites);
         model.addAttribute("search", searchDTO);
         model.addAttribute("nights", nights);
-        model.addAttribute("checkInDisplay", checkIn.format(formatter));
-        model.addAttribute("checkOutDisplay", checkOut.format(formatter));
+        model.addAttribute("checkInDisplay", searchDTO.getCheckIn().format(formatter));
+        model.addAttribute("checkOutDisplay", searchDTO.getCheckOut().format(formatter));
 
         return "reservation/new";
     }

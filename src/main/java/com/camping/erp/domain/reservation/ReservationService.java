@@ -19,20 +19,15 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
 
     public List<SiteResponse.ListDTO> findAvailableSites(ReservationRequest.SearchDTO searchDTO) {
-        LocalDate checkIn = searchDTO.getCheckIn() != null ? searchDTO.getCheckIn() : LocalDate.now();
-        LocalDate checkOut = searchDTO.getCheckOut() != null ? searchDTO.getCheckOut() : LocalDate.now().plusDays(1);
-
-        // 유효한 체크인-아웃 기간인지 검증 (최소 1박)
-        if (!checkOut.isAfter(checkIn)) {
-            checkOut = checkIn.plusDays(1);
-        }
+        // 이미 컨트롤러에서 날짜와 인원 기본값이 채워져 넘어옴을 보장받음
+        LocalDate checkIn = searchDTO.getCheckIn();
+        LocalDate checkOut = searchDTO.getCheckOut();
+        long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
 
         List<ReservationStatus> activeStatuses = List.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED, ReservationStatus.CANCEL_REQ);
 
         List<Site> availableSites = reservationRepository.findAvailableSites(
                 checkIn, checkOut, activeStatuses, searchDTO.getZoneId(), searchDTO.getPeopleCount());
-
-        long days = ChronoUnit.DAYS.between(checkIn, checkOut);
 
         return availableSites.stream()
                 .map(s -> SiteResponse.ListDTO.builder()
@@ -40,7 +35,8 @@ public class ReservationService {
                         .siteName(s.getSiteName())
                         .zoneName(s.getZone().getName())
                         .maxPeople(s.getMaxPeople())
-                        .price(s.getZone().getNormalPrice() * days)
+                        .pricePerNight(s.getZone().getNormalPrice())
+                        .totalPrice(s.getZone().getNormalPrice() * nights)
                         .isAvailable(true)
                         .build())
                 .toList();
@@ -48,12 +44,10 @@ public class ReservationService {
 
     @Transactional
     public ReservationResponse.ReserveDTO reserve(ReservationRequest.ReserveDTO request) {
-        // 직접 구현하세요.
         return null;
     }
 
     @Transactional
     public void cancel(Long id) {
-        // 직접 구현하세요.
     }
 }
