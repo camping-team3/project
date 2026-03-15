@@ -3,6 +3,7 @@ package com.camping.erp.global.handler;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.handler.ex.Exception401;
@@ -20,6 +21,20 @@ public class GlobalExceptionHandler {
         String header = request.getHeader("X-Requested-With");
         String acceptHeader = request.getHeader("Accept");
         return "XMLHttpRequest".equals(header) || (acceptHeader != null && acceptHeader.contains("application/json"));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public Object handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e, HttpServletRequest request) {
+        String message = "업로드 가능한 파일 크기를 초과했습니다.";
+        if (isAjaxRequest(request)) {
+            return Resp.fail(HttpStatus.PAYLOAD_TOO_LARGE, message);
+        }
+        return String.format("""
+                <script>
+                    alert('%s');
+                    history.back();
+                </script>
+                """, message);
     }
 
     @ExceptionHandler(Exception400.class)
