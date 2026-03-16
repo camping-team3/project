@@ -106,7 +106,7 @@
                             </div>
                         </div>
 
-                        <form action="/reservations/reserve" method="POST">
+                        <form id="payment-form" action="/reservations/reserve" method="POST">
                             <input type="hidden" name="siteId" value="{{payment.siteId}}">
                             <input type="hidden" name="checkIn" value="{{payment.checkIn}}">
                             <input type="hidden" name="checkOut" value="{{payment.checkOut}}">
@@ -125,6 +125,7 @@
 
     <!-- Terms Agreement Logic -->
     <script>
+        const paymentForm = document.getElementById('payment-form');
         const allCheck = document.getElementById('all-check');
         const termChecks = [
             document.getElementById('term1'),
@@ -145,6 +146,15 @@
                 const allChecked = termChecks.every(c => c.checked);
                 allCheck.checked = allChecked;
             });
+        });
+
+        // 폼 제출 시 검증
+        paymentForm.addEventListener('submit', (e) => {
+            const allChecked = termChecks.every(c => c.checked);
+            if (!allChecked) {
+                e.preventDefault();
+                alert('모든 필수 약관에 동의하셔야 결제가 가능합니다.');
+            }
         });
     </script>
 {{> layout/footer}}

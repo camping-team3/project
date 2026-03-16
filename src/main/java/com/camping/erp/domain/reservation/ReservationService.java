@@ -1,5 +1,6 @@
 package com.camping.erp.domain.reservation;
 
+import com.camping.erp.domain.admin.AdminResponse;
 import com.camping.erp.domain.reservation.enums.ReservationStatus;
 import com.camping.erp.domain.site.Site;
 import com.camping.erp.domain.site.SiteRepository;
@@ -8,6 +9,7 @@ import com.camping.erp.domain.user.User;
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.handler.ex.Exception404;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +44,40 @@ public class ReservationService {
                         .pricePerNight(s.getZone().getNormalPrice()) // 1박 요금 고정
                         .isAvailable(true)
                         .build())
+                .toList();
+    }
+
+    // 관리자용 전체 예약 내역 조회
+    public List<AdminResponse.ReservationListDTO> findAllForAdmin() {
+        List<Reservation> reservations = reservationRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+
+        return reservations.stream()
+                .map(r -> {
+                    long nights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
+                    String statusText = "";
+                    String statusClass = "";
+
+                    switch (r.getStatus()) {
+                        case PENDING -> { statusText = "대기 중"; statusClass = "warning"; }
+                        case CONFIRMED -> { statusText = "확정됨"; statusClass = "success"; }
+                        case CANCEL_REQ -> { statusText = "취소 요청"; statusClass = "info"; }
+                        case CANCEL_COMP -> { statusText = "취소 완료"; statusClass = "secondary"; }
+                    }
+
+                    return AdminResponse.ReservationListDTO.builder()
+                            .id(r.getId())
+                            .reservationIdDisplay("RSV-" + String.format("%04d", r.getId()))
+                            .username(r.getUser().getName())
+                            .siteName(r.getSite().getSiteName())
+                            .checkIn(r.getCheckIn())
+                            .checkOut(r.getCheckOut())
+                            .nights(nights)
+                            .totalPrice(r.getTotalPrice())
+                            .status(r.getStatus())
+                            .statusText(statusText)
+                            .statusClass(statusClass)
+                            .build();
+                })
                 .toList();
     }
 

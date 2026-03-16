@@ -1,11 +1,19 @@
 package com.camping.erp.domain.admin;
 
+import com.camping.erp.domain.reservation.ReservationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @Controller
+@RequiredArgsConstructor
 public class AdminController {
+
+    private final ReservationService reservationService;
 
     @GetMapping("/admin")
     public String dashboard() {
@@ -18,7 +26,9 @@ public class AdminController {
     }
 
     @GetMapping("/admin/reservations")
-    public String reservationList() {
+    public String reservationList(Model model) {
+        List<AdminResponse.ReservationListDTO> reservations = reservationService.findAllForAdmin();
+        model.addAttribute("reservations", reservations);
         return "admin/reservation/list";
     }
 
