@@ -1,7 +1,7 @@
 package com.camping.erp.domain.payment;
 
 import com.camping.erp.domain.reservation.Reservation;
-import com.camping.erp.global.BaseTimeEntity;
+import com.camping.erp.global._core.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

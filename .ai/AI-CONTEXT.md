@@ -1,41 +1,45 @@
-# .ai/ — AI 협업 도구 모음
+# 🏕️ 캠핑장 예약 시스템 (ERP)
 
-## 목적
-AI 에이전트가 이 프로젝트에서 일관되게 작업할 수 있도록 규칙, 스킬, 컨텍스트를 정의한다.
-루트 AI-CONTEXT 계층의 최상단 노드이며, 모든 하위 `AI-CONTEXT.md`의 최종 부모다.
+## 1. 프로젝트 마일스톤
+- [x] **Phase 1: 인프라 및 도메인 모델 설계** (100%) - 🔵 완료
+- [ ] **Phase 2: 회원 및 인증 시스템** (20%) - 🟢 진행 중
+- [ ] **Phase 3: 예약 및 결제 핵심 로직** (0%)
+- [ ] **Phase 4: 관리자 대시보드 및 콘텐츠 관리** (0%)
+- [ ] **Phase 5: 안정화 및 최종 검수** (0%)
 
-## 프로젝트 개요
-**캠핑장 예약 시스템 (Forest Haven ERP)**
-- 단일 캠핑장을 위한 풀스택 SSR 웹 서비스
-- 고객 예약·결제, 관리자 운영·통합 대시보드
-- Stack: Java 21 + Spring Boot + Mustache + H2/MySQL + Bootstrap 5
-
-## 디렉토리 구조
+## 2. 프로젝트 맵
 | 경로 | 설명 |
 |------|------|
-| `rules/` | 프로젝트 공통 규칙 및 비즈니스 정책 |
-| `skills/` | AI 에이전트 스킬 정의 (deepinit, plan, deep-interview 등) |
+| `.ai/` | AI 지침 및 컨텍스트 관리 |
+| `.person/` | **PRD, ERD, 아키텍처 등 설계 문서 (최신화 완료)** |
+| `src/main/java/.../domain/` | 도메인 주도 설계(DDD) 기반 패키지 구조 |
+| `src/main/java/.../domain/user/` | 회원 관리 (User, Role, Status 구현) |
+| `src/main/java/.../domain/reservation/` | 예약 관리 (Reservation, Payment, Refund 엔티티 완료) |
+| `src/main/java/.../domain/site/` | 사이트 관리 (Zone, Site 계층형 모델링 완료) |
+| `src/main/java/.../domain/board/` | 게시판/리뷰/Q&A (커뮤니티 엔티티 모델링 완료) |
+| `src/main/java/.../global/` | 전역 설정, 예외 처리, 공통 유틸리티 |
+| `src/main/java/.../global/_core/` | **핵심 기반 기술 (인터셉터, 전역 예외 처리, 공통 응답)** |
+| `src/main/resources/templates/` | Mustache 뷰 템플릿 (Layout, Index 구조화) |
+| `src/main/resources/db/` | `testData.sql` (데이터 설계 및 대량 삽입 예정) |
 
-## 주요 규칙 파일
-| 파일 | 설명 |
-|------|------|
-| `rules/common-rule.md` | 패키지 구조, 코딩 컨벤션, Web/Response 전략, 워크플로우 |
-| `rules/business-rule.md` | 예약 라이프사이클, 요금/환불 규정, 도메인별 비즈니스 규칙 |
+## 3. 비즈니스 로직 매핑
+- **인증/인가**: `HttpSession` + `HandlerInterceptor` 기반. `LoginInterceptor`는 일반 회원 경로를, `AdminInterceptor`는 `/admin/**` 경로를 철저히 보호함.
+- **예외 처리**: `GlobalExceptionHandler`가 요청 헤더를 분석하여 AJAX 요청 시 JSON(`Resp`)을, 일반 요청 시 알럿창 후 뒤로가기(`Script`)를 자동 반환함.
+- **데이터 관리**: 모든 엔티티는 `BaseTimeEntity`를 상속받아 생성/수정 시간을 자동 기록함.
+- **예약 흐름**: PRD에 따라 `PENDING` -> `CONFIRMED` -> `CANCEL_REQ` -> `CANCEL_COMP` 순서로 상태가 전이되도록 엔티티 설계됨.
 
-## AI 스킬 목록
-| 스킬 | 트리거 | 설명 |
-|------|--------|------|
-| `deepinit` | `/deepinit` | 코드베이스 인덱싱 및 계층형 AI-CONTEXT.md 생성 |
-| `plan` | `/plan` | 구현 계획 수립 |
-| `deep-interview` | `/deep-interview` | 요구사항 심층 인터뷰 |
+## 4. AI 작업 지침 (Global)
+- **SSR 원칙**: 데이터 처리는 서버에서 완료 후 Mustache에 전달한다.
+- **상태 변경**: 반드시 `POST` 요청과 PRG 패턴을 사용한다.
+- **예외 처리**: `global/_core/handler`의 전역 예외 처리기를 활용한다.
+- **코드 스타일**: `.ai/rules/common-rule.md`를 준수한다.
 
-## AI 작업 지침
-- 코드 작업 전 반드시 `rules/common-rule.md` → `rules/business-rule.md` → 해당 디렉토리 `AI-CONTEXT.md` 순서로 읽는다.
-- 작업 완료 후 `.person/reports/{YYYY-MM-DD}/{기능명}-report.md` 생성 필수 (Reporter: git user.name 포함).
-- `<!-- MANUAL -->` 태그가 있는 섹션은 deepinit 업데이트 시에도 보존한다.
-
-## 연결 문서
-- 프로젝트 루트: `../AI-CONTEXT.md`
-- 세션 가이드: `../AI-GUIDE.md`
-- PRD: `../.person/docs/PRD.md`
-- 로드맵: `../.person/docs/phases.md`
+## 5. 작업 히스토리 (History)
+- **(2026-03-11) 도메인 모델링 및 인프라 고도화**
+    - `Reservation`, `Zone`, `Site`, `Notice` 등 전체 엔티티 모델링 완료 (ERD 명세 준수).
+    - `LoginInterceptor` 추가 및 `WebMvcConfig` 인터셉터 경로 매핑 (Security 기반 마련).
+    - `User` 엔티티에 `UserRole`, `UserStatus` Enum 적용 및 익명화 정책 반영 준비.
+- **(2026-03-10) 프로젝트 초기화 및 기반 기술 구축**
+    - `BaseTimeEntity`, `Resp` 유틸리티 추가.
+    - `GlobalExceptionHandler` 구현 (Exception400~500 및 AJAX/Script 응답 분기).
+    - `deepinit` 스킬을 통한 코드베이스 인덱싱 및 `.ai` 지침 체계 수립.
