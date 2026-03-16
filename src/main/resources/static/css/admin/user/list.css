@@ -1,0 +1,36 @@
+/* 25관리자사용자목록.css - Admin User List Specific Styles */
+
+/* Admin Header UI Utils */
+.btn-icon-admin {
+    width: 40px;
+    height: 40px;
+}
+
+/* User Tier Badges */
+.tier-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.tier-gold { background-color: #fef3c7; color: #b45309; }
+.tier-silver { background-color: #f1f5f9; color: #475569; }
+.tier-bronze { background-color: #ffedd5; color: #9a3412; }
+
+/* Status Indicators */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.status-active { background-color: #10b981; }
+.status-banned { background-color: #ef4444; }
+
+/* Table Hover */
+.fh-table tbody tr.cursor-pointer:hover {
+    background-color: rgba(44, 89, 38, 0.05);
+}

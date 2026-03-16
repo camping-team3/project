@@ -1,0 +1,52 @@
+{{> layout/header}}
+
+        <main class="container py-5" style="max-width: 800px;">
+            <!-- Review Target Info -->
+            <section class="mb-5 px-2">
+                <div class="d-flex align-items-center gap-4">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHyMKTeMqjJTgxf0uBjZHTHwK5AWKmOLlpVDJ7GFfZFmgi6GL6T2a3fSBoFFzr9warOZhd9WXfOAP7TP6ATy6uXSaOhTNnDRMe4RBlMJTbKwY82ed-oepKGdAeSvv-3jSwtG4g463zwHO8ardIGrptYFGn4pR-1ScOYgB80a2jJP-E4gh6lcBn9AuXMIkFyUrYDeBj5BVkluyBvwXHrDWT_fxYTLcdthZXX17oi2dX-0RJcJyCt1CLTK2yjJNUrz1O4ZGR-Cwkko7T" class="rounded-4 shadow-sm" style="width: 80px; height: 80px; object-fit: cover;" alt="Site">
+                    <div>
+                        <h1 class="h4 fw-bold text-dark mb-1">A-1 데크 사이트</h1>
+                        <p class="text-secondary small fw-medium m-0">이용 기간: 2023.12.25 - 2023.12.26</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Star Rating -->
+            <section class="fh-card shadow-sm border-0 p-5 mb-4 bg-white rounded-4 text-center">
+                <h3 class="h5 fw-bold text-dark mb-4">캠핑 경험은 어떠셨나요?</h3>
+                <div class="review-star-rating mb-3">
+                    <span class="material-symbols-outlined active">star</span>
+                    <span class="material-symbols-outlined active">star</span>
+                    <span class="material-symbols-outlined active">star</span>
+                    <span class="material-symbols-outlined active">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                </div>
+                <p class="text-primary fw-bold">최고예요! (4점)</p>
+            </section>
+
+            <!-- Content Area -->
+            <section class="fh-card shadow-sm border-0 p-4 p-md-5 mb-4 bg-white rounded-4">
+                <label class="form-label fw-bold text-dark small mb-3">상세한 후기를 남겨주세요</label>
+                <textarea class="form-control bg-light border-0 py-3 px-4 shadow-none rounded-3 mb-4" rows="8" placeholder="최소 10자 이상 입력해주세요."></textarea>
+
+                <label class="form-label fw-bold text-dark small mb-3">사진 첨부 (최대 3장)</label>
+                <div class="review-upload-zone shadow-sm mb-2">
+                    <span class="material-symbols-outlined text-secondary fs-1 mb-2 opacity-25">add_a_photo</span>
+                    <p class="text-dark small fw-bold mb-1">사진을 클릭하거나 드래그하여 업로드</p>
+                    <p class="text-secondary" style="font-size: 11px;">JPG, PNG 파일만 가능</p>
+                </div>
+                <div class="preview-img-container">
+                    <div class="position-relative">
+                        <img src="https://placeholder.pics/svg/300" class="preview-thumb" alt="Preview">
+                        <button class="btn btn-danger btn-sm rounded-circle position-absolute top-0 end-0 p-0 d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; transform: translate(50%, -50%);"><span class="material-symbols-outlined" style="font-size: 12px;">close</span></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Submit Button (Mobile focus) -->
+            <div class="mt-5">
+                <button class="btn btn-primary w-100 py-3.5 fw-bold shadow-lg border-0 rounded-3">리뷰 등록하기</button>
+            </div>
+        </main>
+{{> layout/footer}}

@@ -1,0 +1,78 @@
+/* 30관리자대시보드.css - Admin Dashboard Specific Styles */
+
+/* Layout & Background */
+.bg-admin-main { background-color: #f8fafc; }
+
+/* Admin Header UI Utils */
+.btn-icon-admin {
+    width: 40px;
+    height: 40px;
+}
+
+/* Stat Cards */
+.stat-card-v2 {
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    transition: all 0.2s;
+}
+
+.stat-card-v2:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+}
+
+.icon-box-48 {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+}
+
+.badge-stat-delta {
+    font-size: 10px;
+}
+
+/* Request Table */
+.table-dash {
+    font-size: 0.85rem;
+}
+
+.pulse-dot-orange {
+    width: 6px; 
+    height: 6px; 
+    background-color: #f59e0b; 
+    border-radius: 50%;
+    animation: pulse-orange 2s infinite;
+}
+
+@keyframes pulse-orange {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+/* Q&A List */
+.badge-update {
+    font-size: 9px; 
+    padding: 3px 10px; 
+    letter-spacing: 0.05em;
+}
+
+.user-avatar-placeholder {
+    width: 44px;
+    height: 44px;
+}
+
+.qa-meta-text {
+    font-size: 11px;
+}
+
+.hover-bg-light:hover {
+    background-color: #f8fafc;
+}
+
+/* Misc Utilities */
+.divide-y > * + * {
+    border-top: 1px solid #f1f5f9;
+}

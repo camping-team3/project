@@ -12,7 +12,11 @@
 | `site/` | 캠핑 사이트 및 요금 정책 관리 (Zone, Site) |
 | `reservation/` | 예약 시스템 및 일정 관리 (Reservation) |
 | `payment/` | 결제 연동 및 환불 이력 관리 (Payment, Refund) |
-| `board/` | 커뮤니티 및 콘텐츠 관리 (Notice, Gallery, Qna, Review, Image) |
+| `notice/` | 시스템 공지사항 관리 (Notice) |
+| `gallery/` | 캠핑장 포토 갤러리 (Gallery, Image) |
+| `qna/` | 사용자 문의 및 관리자 답변 (Qna, Comment) |
+| `review/` | 예약 기반 이용 후기 (Review, Image) |
+| `image/` | 공통 이미지 메타데이터 관리 (Image) |
 
 ## AI 작업 지침
 - **엔티티 설계**: 모든 엔티티는 `BaseTimeEntity`를 상속받으며 `@Getter`, `@NoArgsConstructor(access = AccessLevel.PROTECTED)`, `@Builder`를 사용한다.

@@ -1,6 +1,8 @@
 package com.camping.erp.domain.user;
 
-import com.camping.erp.global._core.BaseTimeEntity;
+import com.camping.erp.domain.user.enums.UserRole;
+import com.camping.erp.domain.user.enums.UserStatus;
+import com.camping.erp.global.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,14 +39,6 @@ public class User extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private UserStatus status; // ACTIVE, ANONYMOUS
-
-    public enum UserRole {
-        USER, ADMIN
-    }
-
-    public enum UserStatus {
-        ACTIVE, ANONYMOUS
-    }
 
     @Builder
     public User(Long id, String username, String password, String name, String email, String phone, UserRole role, UserStatus status) {

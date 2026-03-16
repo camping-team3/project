@@ -1,0 +1,130 @@
+{{> layout/admin-header}}
+<div class="p-4 p-lg-5">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h2 class="display-6 fw-bold text-dark mb-2">통합 예약 관리</h2>
+            <p class="text-secondary fw-medium mb-0">캠핑장의 모든 실시간 예약 내역을 확인하고 처리합니다.</p>
+        </div>
+        <button class="btn btn-primary px-4 py-2.5 fw-bold d-flex align-items-center gap-2 shadow-sm border-0">
+            <span class="material-symbols-outlined fs-5">add</span>
+            <span>신규 예약 등록</span>
+        </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-section shadow-sm mb-5 border-0">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">예약자명 / ID</label>
+                <input type="text" class="form-control py-2 shadow-none border-secondary border-opacity-25" placeholder="이름 또는 ID">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">체크인 기간</label>
+                <input type="date" class="form-control py-2 shadow-none border-secondary border-opacity-25">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">예약 상태</label>
+                <select class="form-select py-2 shadow-none border-secondary border-opacity-25">
+                    <option>전체 상태</option>
+                    <option>대기 중 (Pending)</option>
+                    <option>확정됨 (Confirmed)</option>
+                    <option>취소됨 (Canceled)</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button class="btn btn-light bg-primary bg-opacity-10 text-primary w-100 py-2 fw-bold border-0">필터 적용</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="fh-table-container shadow-sm border-0 bg-white overflow-hidden">
+        <table class="fh-table m-0">
+            <thead>
+                <tr>
+                    <th class="px-4 py-3">예약 ID</th>
+                    <th class="px-4 py-3">예약자</th>
+                    <th class="px-4 py-3">캠핑 사이트</th>
+                    <th class="px-4 py-3">체크인/아웃</th>
+                    <th class="px-4 py-3 text-end">결제 금액</th>
+                    <th class="px-4 py-3 text-center">상태</th>
+                    <th class="px-4 py-3 text-end">관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Pending -->
+                <tr class="reservation-table-row pending">
+                    <td class="px-4 py-4 font-monospace small text-secondary">RES-2024-0012</td>
+                    <td class="px-4 py-4 fw-bold text-dark">이민호</td>
+                    <td class="px-4 py-4 small">숲속 A-1 사이트</td>
+                    <td class="px-4 py-4 small">
+                        <div class="fw-bold">2024.06.15</div>
+                        <div class="text-secondary stay-duration-text">2박 3일</div>
+                    </td>
+                    <td class="px-4 py-4 fw-bold text-dark text-end">120,000원</td>
+                    <td class="px-4 py-4 text-center">
+                        <span class="badge bg-warning bg-opacity-10 text-warning fw-bold px-2 py-1 badge-res-status">대기 중</span>
+                    </td>
+                    <td class="px-4 py-4 text-end">
+                        <div class="d-flex justify-content-end gap-2">
+                            <button class="btn btn-primary btn-sm px-3 fw-bold border-0">승인</button>
+                            <button class="btn btn-light bg-danger bg-opacity-10 text-danger btn-sm px-3 fw-bold border-0">거절</button>
+                        </div>
+                    </td>
+                </tr>
+                <!-- Confirmed -->
+                <tr onclick="location.href='/admin/reservations/{id}/change'" class="reservation-table-row cursor-pointer">
+                    <td class="px-4 py-4 font-monospace small text-secondary">RES-2024-0011</td>
+                    <td class="px-4 py-4 fw-bold text-dark">박지윤</td>
+                    <td class="px-4 py-4 small">강변 오토캠핑 B-3</td>
+                    <td class="px-4 py-4 small">
+                        <div class="fw-bold">2024.06.12</div>
+                        <div class="text-secondary stay-duration-text">1박 2일</div>
+                    </td>
+                    <td class="px-4 py-4 fw-bold text-dark text-end">65,000원</td>
+                    <td class="px-4 py-4 text-center">
+                        <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1 badge-res-status">확정됨</span>
+                    </td>
+                    <td class="px-4 py-4 text-end">
+                        <div class="d-flex justify-content-end gap-1">
+                            <button class="btn btn-icon text-secondary"><span class="material-symbols-outlined fs-5">edit</span></button>
+                            <button class="btn btn-icon text-danger"><span class="material-symbols-outlined fs-5">block</span></button>
+                        </div>
+                    </td>
+                </tr>
+                <!-- Canceled -->
+                <tr onclick="location.href='/admin/reservations/{id}/cancel'" class="reservation-table-row canceled cursor-pointer">
+                    <td class="px-4 py-4 font-monospace small text-secondary">RES-2024-0010</td>
+                    <td class="px-4 py-4 fw-bold text-dark">최준혁</td>
+                    <td class="px-4 py-4 small">마운틴뷰 데크 C-5</td>
+                    <td class="px-4 py-4 small">
+                        <div class="fw-bold">2024.06.10</div>
+                        <div class="text-secondary stay-duration-text">3박 4일</div>
+                    </td>
+                    <td class="px-4 py-4 fw-bold text-dark text-end">240,000원</td>
+                    <td class="px-4 py-4 text-center">
+                        <span class="badge bg-secondary bg-opacity-10 text-secondary fw-bold px-2 py-1 badge-res-status">취소됨</span>
+                    </td>
+                    <td class="px-4 py-4 text-end">
+                        <button class="btn btn-icon text-secondary"><span class="material-symbols-outlined fs-5">info</span></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="p-4 bg-light bg-opacity-50 d-flex justify-content-between align-items-center border-top">
+            <p class="text-secondary small m-0 fw-medium">전체 124개 중 1-10개 표시</p>
+            <nav>
+                <ul class="pagination pagination-sm m-0 gap-1">
+                    <li class="page-item disabled"><a class="page-link border-0 rounded-2 bg-transparent text-secondary" href="#"><span class="material-symbols-outlined fs-6">chevron_left</span></a></li>
+                    <li class="page-item active"><a class="page-link border-0 rounded-2 bg-primary text-white fw-bold" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link border-0 rounded-2 text-dark fw-bold" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link border-0 rounded-2 text-dark fw-bold" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link border-0 rounded-2 text-secondary" href="#"><span class="material-symbols-outlined fs-6">chevron_right</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{{> layout/admin-footer}}

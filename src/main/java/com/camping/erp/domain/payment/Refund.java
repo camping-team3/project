@@ -1,12 +1,14 @@
 package com.camping.erp.domain.payment;
 
 import com.camping.erp.domain.reservation.Reservation;
-import com.camping.erp.global._core.BaseTimeEntity;
+import com.camping.erp.global.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "refund_tb")
@@ -28,11 +30,14 @@ public class Refund extends BaseTimeEntity {
     @Column(nullable = false)
     private Long refundAmount;
 
+    private LocalDateTime cancelledAt;
+
     @Builder
-    public Refund(Long id, Reservation reservation, String reason, Long refundAmount) {
+    public Refund(Long id, Reservation reservation, String reason, Long refundAmount, LocalDateTime cancelledAt) {
         this.id = id;
         this.reservation = reservation;
         this.reason = reason;
         this.refundAmount = refundAmount;
+        this.cancelledAt = cancelledAt;
     }
 }

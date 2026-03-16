@@ -1,0 +1,41 @@
+/* 22회원가입.css - Sign Up Page Specific Styles */
+
+.signup-wrapper {
+    min-height: 100vh;
+    display: flex;
+}
+
+.signup-brand-side {
+    flex: 1;
+    background: linear-gradient(rgba(44, 89, 38, 0.2), rgba(44, 89, 38, 0.2)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuBbXVURORJvyKYAsVRWOd6WCSvZXt_X3A929st4FwJz4_43YjSeRn6K3awfMrosRDIhBqUvd8yJKEOX5BE3slvDqFbdXForgEevAT419WktjCQuhuOV858OpsiskX2YAQysyCTg7GTiBbKp4QyNZhWwoLaOisvcfbSQ945YNKAu57ALa6SqZWFGxVRekljC_KCKreH49TL-3oVzlA9oK6PSs-cYqO28JZQEP77IGtB2FVsgg946ajRY1debqaNDgtolHrzRXtxIS7V2');
+    background-size: cover;
+    background-position: center;
+    padding: 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    color: white;
+}
+
+.signup-form-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    background-color: var(--fh-bg-light);
+}
+
+.signup-form-container {
+    width: 100%;
+    max-width: 440px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--fh-text-muted);
+    cursor: pointer;
+}

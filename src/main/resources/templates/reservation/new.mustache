@@ -1,0 +1,186 @@
+{{> layout/header}}
+
+        <main class="container py-5" style="max-width: 1200px; margin: 0 auto;">
+            <!-- Page Title -->
+            <div class="mb-5">
+                <h1 class="display-5 fw-bold text-dark mb-4">실시간 예약</h1>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2 text-primary bg-primary bg-opacity-10 px-3 py-2 rounded-pill small fw-bold">
+                        <span class="step-number-circle active fw-bold">1</span>
+                        일정 및 객실 선택
+                    </div>
+                    <span class="material-symbols-outlined text-secondary opacity-25 fs-6">chevron_right</span>
+                    <div class="d-flex align-items-center gap-2 text-secondary small fw-bold">
+                        <span class="step-number-circle inactive fw-bold">2</span>
+                        정보 입력
+                    </div>
+                    <span class="material-symbols-outlined text-secondary opacity-25 fs-6">chevron_right</span>
+                    <div class="d-flex align-items-center gap-2 text-secondary small fw-bold">
+                        <span class="step-number-circle inactive fw-bold">3</span>
+                        결제하기
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <form action="/reservations/new" method="get" class="fh-card shadow-sm border-0 p-4 mb-5 bg-white rounded-4">
+                <div class="row g-4 align-items-end">
+                    <div class="col-lg-5">
+                        <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">체크인 / 체크아웃</label>
+                        <div class="d-flex gap-2">
+                            <input type="date" name="checkIn" class="form-control py-3 rounded-3 border-0 bg-light fw-bold" value="{{checkIn}}">
+                            <input type="date" name="checkOut" class="form-control py-3 rounded-3 border-0 bg-light fw-bold" value="{{checkOut}}">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">성인</label>
+                                <div class="d-flex align-items-center bg-light rounded-3">
+                                    <button type="button" class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">remove</span></button>
+                                    <span class="flex-grow-1 text-center fw-bold text-dark">2</span>
+                                    <button type="button" class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">add</span></button>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">아동</label>
+                                <div class="d-flex align-items-center bg-light rounded-3">
+                                    <button type="button" class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">remove</span></button>
+                                    <span class="flex-grow-1 text-center fw-bold text-dark">0</span>
+                                    <button type="button" class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">add</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-sm border-0 rounded-3">검색하기</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Map Section -->
+            <div class="fh-card shadow-sm border-0 p-4 p-lg-5 mb-5 bg-white rounded-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                    <div>
+                        <h3 class="h5 fw-bold text-dark m-0 d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">map</span> 캠핑장 배치도
+                        </h3>
+                        <p class="text-secondary small m-0 mt-1">지도의 좌석을 클릭하여 예약하실 사이트를 선택해주세요.</p>
+                    </div>
+                    <div class="d-flex gap-4 text-xs font-bold text-secondary">
+                        <div class="d-flex align-items-center gap-1.5"><span class="legend-circle bg-primary"></span> 예약가능</div>
+                        <div class="d-flex align-items-center gap-1.5"><span class="legend-circle bg-secondary opacity-50"></span> 예약마감</div>
+                        <div class="d-flex align-items-center gap-1.5"><span class="legend-circle border-2 border-primary bg-primary bg-opacity-20"></span> 선택됨</div>
+                    </div>
+                </div>
+                <div class="map-container-v2 rounded-4 overflow-hidden position-relative border">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz3xzKGdZMJ3xNhwTjSiJXSI1L16fhtQxAoA7FNsRABUtSG4XJB0-l0cv_3Uo13X-kLJqHq-H6trQF6X9e1xpgQZ0NbSXu9Oetnkw2SCPu_3HO3bCfZKiSAF9onsZS3H4024rnRxfDugctS_-mthpeSvbphs3QwvKXt9Ee-03rzgOSZhjbmO7BY1slfGZXRf7jxEUqPLtiCUu-hrVAKywWLxpESI_Aa46CCkQIQRqsxQkte7Imy4qr5VUhUvn57okqC3im1asfzUH7" class="w-100 h-100 object-fit-cover opacity-25 grayscale" alt="Map">
+                    <!-- Pin A-1 -->
+                    <div class="map-pin" style="top: 20%; left: 25%;">
+                        <span class="material-symbols-outlined text-primary fs-3">location_on</span>
+                        <span class="pin-label">A-1</span>
+                    </div>
+                    <!-- Pin B-2 (Occupied) -->
+                    <div class="map-pin occupied" style="top: 40%; left: 45%;">
+                        <span class="material-symbols-outlined text-secondary fs-3 pin-icon">location_on</span>
+                        <span class="pin-label">B-2 (마감)</span>
+                    </div>
+                    <!-- Pin C-3 (Selected) -->
+                    <div class="map-pin selected" style="top: 65%; left: 70%;">
+                        <span class="material-symbols-outlined text-primary fs-2 icon-fill-1">location_on</span>
+                        <div class="pin-label">C-3 선택됨</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 align-items-start">
+                <!-- Site List -->
+                <div class="col-lg-8">
+                    <div class="d-flex flex-column gap-4">
+                        {{#availableSites}}
+                        <!-- Site Item -->
+                        <div class="fh-card p-0 overflow-hidden shadow-sm border-0 d-flex flex-column flex-md-row bg-white rounded-4 transition-all">
+                            <div class="flex-shrink-0 position-relative site-img-wrapper">
+                                {{! TODO: 이미지 연동 }}
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxOhGfH7LR9jgbs_l76sxDb2LiuyNhgTkShnxjdanvr1kQs8r3V6dHT1Luxhiuk1j-TDs_vSV7ws0c_-0GOsIv4C0uZYa7lvPi0Y6NEEZU2VQg1Bkn6L7lQaJdbGXIcztvvxj2sgm_2Mrs2YrjpgSv0sVQdXXdKqILfNYRNT7ZISEx5lYpFUA9Jn0KXcwfNpV8ozpIJg8LXhdacRg7yoF6OJVDrtLu83Rp2DbE8QDHCaF11LViCHaD2wHaOd_VKSoIaCatQNOU6ee2" class="w-100 h-100 object-fit-cover" alt="{{siteName}}">
+                            </div>
+                            <div class="p-4 flex-grow-1 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="badge bg-primary bg-opacity-10 text-primary fw-bold text-uppercase badge-area-type">{{zoneName}} Area</span>
+                                        <span class="h5 fw-bold text-primary m-0">₩{{price}} / 1박</span>
+                                    </div>
+                                    <h4 class="h5 fw-bold text-dark mb-1">{{siteName}}</h4>
+                                    <p class="text-secondary small mb-4">편안한 휴식을 위한 최적의 공간입니다.</p>
+                                    <div class="d-flex gap-4 text-xs font-bold text-secondary">
+                                        <div class="d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6">group</span> 최대 {{maxPeople}}인</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary w-100 mt-4 py-2.5 fw-bold shadow-sm rounded-3 border-0">선택하기</button>
+                            </div>
+                        </div>
+                        {{/availableSites}}
+                        {{^availableSites}}
+                        <div class="text-center py-5">
+                            <span class="material-symbols-outlined fs-1 text-secondary opacity-25 mb-3">search_off</span>
+                            <p class="text-secondary fw-bold">해당 기간에 예약 가능한 사이트가 없습니다.</p>
+                        </div>
+                        {{/availableSites}}
+                    </div>
+                </div>
+
+                <!-- Summary Sidebar -->
+                <aside class="col-lg-4 sticky-top sticky-sidebar">
+                    <div class="fh-summary-card shadow-lg border-0 mb-4 overflow-hidden summary-card-v2 bg-white">
+                        <div class="p-4 bg-primary text-white d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined">receipt_long</span>
+                            <h4 class="h6 fw-bold m-0">예약 요약</h4>
+                        </div>
+                        <div class="p-4">
+                            <div class="d-flex flex-column gap-3 mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                                <div class="d-flex justify-content-between small">
+                                    <span class="text-secondary fw-medium">선택한 사이트</span>
+                                    <span class="fw-bold text-dark">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between small">
+                                    <span class="text-secondary fw-medium">일정</span>
+                                    <span class="fw-bold text-dark">{{checkIn}} - {{checkOut}}</span>
+                                </div>
+                                <div class="d-flex justify-content-between small">
+                                    <span class="text-secondary fw-medium">인원</span>
+                                    <span class="fw-bold text-dark">성인 2명</span>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column gap-2 mb-5">
+                                <div class="d-flex justify-content-between small">
+                                    <span class="text-secondary fw-medium">객실 요금</span>
+                                    <span class="text-dark fw-bold">₩0</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-end mt-3 pt-3 border-top">
+                                    <span class="fw-bold text-dark">총 결제 금액</span>
+                                    <span class="h3 fw-black text-primary m-0">₩0</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-lg w-100 py-3 fw-black shadow-lg d-flex align-items-center justify-content-center gap-2 rounded-3 border-0" disabled>
+                                <span>사이트를 선택해주세요</span>
+                                <span class="material-symbols-outlined">arrow_forward</span>
+                            </button>
+                            <p class="text-center text-secondary mt-4 mb-0 text-xxs-info leading-relaxed">
+                                위 금액에는 부가세가 포함되어 있습니다.<br>
+                                예약 후 2시간 이내에 결제가 진행되어야 합니다.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="fh-card border-0 shadow-sm p-3 d-flex align-items-center gap-3 bg-white rounded-3">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz3xzKGdZMJ3xNhwTjSiJXSI1L16fhtQxAoA7FNsRABUtSG4XJB0-l0cv_3Uo13X-kLJqHq-H6trQF6X9e1xpgQZ0NbSXu9Oetnkw2SCPu_3HO3bCfZKiSAF9onsZS3H4024rnRxfDugctS_-mthpeSvbphs3QwvKXt9Ee-03rzgOSZhjbmO7BY1slfGZXRf7jxEUqPLtiCUu-hrVAKywWLxpESI_Aa46CCkQIQRqsxQkte7Imy4qr5VUhUvn57okqC3im1asfzUH7" class="rounded-3" style="width: 64px; height: 64px; object-fit: cover; opacity: 0.8;" alt="Mini map">
+                        <div>
+                            <h5 class="small fw-bold text-dark mb-1">배치도 확인하기</h5>
+                            <p class="text-secondary text-xxs-info mb-0">전체 사이트 구성 및 편의시설</p>
+                            <button class="btn btn-link text-primary small fw-bold p-0 text-decoration-none d-flex align-items-center gap-1 text-xxs-info">자세히 보기 <span class="material-symbols-outlined icon-12">open_in_new</span></button>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+{{> layout/footer}}

@@ -1,0 +1,92 @@
+/* 33관리자Q&A관리.css - Admin Q&A List Specific Styles */
+
+/* Tabs Navigation */
+.admin-tab-item {
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.admin-tab-item.active {
+    margin-bottom: -1.5px;
+}
+
+.admin-tab-item:hover {
+    color: var(--fh-primary) !important;
+}
+
+/* Table Utilities */
+.fh-table th.col-id { width: 70px; }
+.fh-table th.col-author, 
+.fh-table th.col-date, 
+.fh-table th.col-status, 
+.fh-table th.col-action { width: 140px; }
+
+.title-truncate {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.category-text {
+    font-size: 0.7rem;
+}
+
+/* Badges */
+.badge.bg-amber-subtle { 
+    background-color: #fffbeb !important; 
+    color: #92400e !important; 
+    font-size: 0.65rem;
+}
+
+.badge.bg-green-subtle { 
+    background-color: #f0fdf4 !important; 
+    color: #166534 !important; 
+    font-size: 0.65rem;
+}
+
+/* Action Links */
+.btn-detail-link, .btn-detail-completed {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2px;
+    transition: all 0.2s;
+}
+
+.btn-detail-link { color: var(--fh-primary) !important; }
+.btn-detail-link:hover { opacity: 0.7; transform: translateX(2px); }
+
+.btn-detail-completed { color: #64748b !important; }
+.btn-detail-completed:hover { color: var(--fh-primary) !important; transform: translateX(2px); }
+
+.btn-detail-link .material-symbols-outlined, 
+.btn-detail-completed .material-symbols-outlined { font-size: 18px; }
+
+/* Stats & Icons */
+.icon-box-48 {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.icon-box-pending { background-color: rgba(44, 89, 38, 0.05); color: var(--fh-primary); }
+.icon-box-completed { background-color: #f0fdf4; color: #16a34a; }
+.icon-box-time { background-color: #f8fafc; color: #64748b; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .title-truncate { max-width: 150px; }
+    @media (min-width: 992px) {
+        .title-truncate { max-width: 400px; }
+    }
+}

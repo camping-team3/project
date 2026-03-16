@@ -1,0 +1,63 @@
+/* 01마이페이지홈.css - Page Specific Styles */
+
+/* Sidebar Profile */
+.profile-card-v2 {
+    background: white;
+}
+
+.user-avatar-md {
+    width: 80px;
+    height: 80px;
+}
+
+.btn-profile-edit {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-14 { font-size: 14px !important; }
+
+/* Sidebar Nav Customization */
+.fh-sidebar-nav .nav-item.active {
+    box-shadow: 0 4px 12px rgba(44, 89, 38, 0.15);
+}
+
+.stat-card {
+    padding: 1.5rem !important;
+    transition: all 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.logout-btn {
+    color: #ef4444;
+    transition: all 0.2s;
+    border: 1px solid #fee2e2 !important;
+}
+
+.logout-btn:hover {
+    background-color: #fef2f2 !important;
+    color: #b91c1c !important;
+    border-color: #fecaca !important;
+}
+
+.reservation-badge-group {
+    display: flex;
+    align-items: center;
+}
+
+.reservation-section .fh-card img {
+    min-height: 200px;
+}
+
+@media (max-width: 767px) {
+    .reservation-section .fh-card img {
+        height: 200px;
+    }
+}
