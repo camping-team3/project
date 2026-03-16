@@ -27,7 +27,7 @@
                 <div class="row g-4 align-items-end">
                     <div class="col-lg-5">
                         <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">체크인 / 체크아웃</label>
-                        <div class="btn btn-light bg-light w-100 py-3 d-flex align-items-center justify-content-between px-4 rounded-3 border-0 border-hover-primary transition-all position-relative">
+                        <div class="btn btn-light bg-light w-100 py-3 d-flex align-items-center px-4 rounded-3 border-0 border-hover-primary transition-all position-relative">
                             <div class="d-flex align-items-center gap-3 w-100">
                                 <span class="material-symbols-outlined text-primary">calendar_today</span>
                                 <div class="d-flex align-items-center gap-2 flex-grow-1">
@@ -36,7 +36,6 @@
                                     <input type="date" name="checkOut" class="form-control form-control-sm border-0 bg-transparent p-0 fw-bold text-dark" value="{{search.checkOut}}" style="width: 120px;">
                                 </div>
                             </div>
-                            <span class="text-primary fw-bold small flex-shrink-0">{{nights}}박</span>
                         </div>
                     </div>
                     <div class="col-lg-4">
@@ -157,7 +156,7 @@
                                     </div>
                                     <div class="d-flex justify-content-between small">
                                         <span class="text-secondary fw-medium">일정</span>
-                                        <span class="fw-bold text-dark">{{checkInDisplay}} - {{checkOutDisplay}} ({{nights}}박)</span>
+                                        <span class="fw-bold text-dark">{{checkInDisplay}} - {{checkOutDisplay}}</span>
                                     </div>
                                     <div class="d-flex justify-content-between small">
                                         <span class="text-secondary fw-medium">인원</span>
