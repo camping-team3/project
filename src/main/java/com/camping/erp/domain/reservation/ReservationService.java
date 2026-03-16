@@ -138,7 +138,7 @@ public class ReservationService {
                 .checkOut(request.getCheckOut())
                 .peopleCount(request.getPeopleCount())
                 .totalPrice(calculatedPrice)
-                .status(ReservationStatus.PENDING)
+                .status(ReservationStatus.CONFIRMED)
                 .build();
 
         Reservation saved = reservationRepository.save(reservation);
