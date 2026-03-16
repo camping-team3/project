@@ -27,7 +27,8 @@ public class SiteService {
     }
 
     public List<SiteResponse.ListDTO> findAvailableSites(LocalDate checkIn, LocalDate checkOut) {
-        List<ReservationStatus> statuses = List.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED, ReservationStatus.CANCEL_REQ);
+        List<ReservationStatus> statuses = List.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED,
+                ReservationStatus.CANCEL_REQ);
         List<Site> sites = siteRepository.findAvailableSites(checkIn, checkOut, statuses);
         return sites.stream().map(SiteResponse.ListDTO::new).toList();
     }
@@ -47,7 +48,7 @@ public class SiteService {
     public void updateZone(Long id, SiteRequest.ZoneSaveDTO requestDTO) {
         Zone zone = zoneRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 구역을 찾을 수 없습니다."));
-        zone.update(requestDTO.getName(), requestDTO.getNormalPrice(), requestDTO.getPeakPrice());
+        zone.update(requestDTO.getName(), requestDTO.getNormalPrice(), requestDTO.getPeakPrice(), requestDTO.getBasePeople(), requestDTO.getExtraPersonFee());
     }
 
     @Transactional
@@ -68,7 +69,7 @@ public class SiteService {
                 .orElseThrow(() -> new RuntimeException("해당 사이트를 찾을 수 없습니다."));
         Zone zone = zoneRepository.findById(requestDTO.getZoneId())
                 .orElseThrow(() -> new RuntimeException("해당 구역을 찾을 수 없습니다."));
-        site.update(requestDTO.getSiteName(), requestDTO.getMaxPeople(), zone);
+        site.update(requestDTO.getSiteName(), requestDTO.getMaxPeople(), zone, requestDTO.isAvailable());
     }
 
     @Transactional
