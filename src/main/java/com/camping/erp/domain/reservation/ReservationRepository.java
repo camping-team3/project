@@ -24,4 +24,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                                   @Param("statuses") List<ReservationStatus> statuses,
                                   @Param("zoneId") Long zoneId,
                                   @Param("peopleCount") Integer peopleCount);
+
+    @Query("SELECT COUNT(r) > 0 FROM Reservation r " +
+            "WHERE r.site.id = :siteId " +
+            "AND (r.checkIn < :checkOut AND r.checkOut > :checkIn) " +
+            "AND r.status IN :statuses")
+    boolean existsBySiteIdAndDateRange(@Param("siteId") Long siteId, 
+                                      @Param("checkIn") LocalDate checkIn, 
+                                      @Param("checkOut") LocalDate checkOut, 
+                                      @Param("statuses") List<ReservationStatus> statuses);
 }

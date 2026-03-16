@@ -1,10 +1,13 @@
 package com.camping.erp.domain.reservation;
 
 import com.camping.erp.domain.site.SiteResponse;
+import com.camping.erp.domain.user.User;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,10 +20,10 @@ import java.util.Locale;
 public class ReservationController {
 
     private final ReservationService reservationService;
+    private final HttpSession session;
 
     @GetMapping("/reservations/new")
     public String newForm(ReservationRequest.SearchDTO searchDTO, Model model) {
-        // 1. 모든 기본값 세팅 (폼 초기값 결정)
         if (searchDTO.getCheckIn() == null) {
             searchDTO.setCheckIn(LocalDate.now());
         }
@@ -34,10 +37,8 @@ public class ReservationController {
             searchDTO.setPeopleCount(2);
         }
 
-        // 2. 서비스 호출 (이미 기본값이 채워진 searchDTO 사용)
         List<SiteResponse.ListDTO> sites = reservationService.findAvailableSites(searchDTO);
 
-        // 3. 뷰를 위한 데이터 가공
         long nights = ChronoUnit.DAYS.between(searchDTO.getCheckIn(), searchDTO.getCheckOut());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);
 
@@ -51,8 +52,26 @@ public class ReservationController {
     }
 
     @GetMapping("/reservations/payment")
-    public String payment() {
+    public String paymentForm(ReservationRequest.ReserveDTO request, Model model) {
+        ReservationResponse.PaymentFormDTO paymentInfo = reservationService.getPaymentForm(request);
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);
+        String dateRange = String.format("%s - %s (%d박)", 
+                paymentInfo.getCheckIn().format(formatter), 
+                paymentInfo.getCheckOut().format(formatter), 
+                paymentInfo.getNights());
+
+        model.addAttribute("payment", paymentInfo);
+        model.addAttribute("dateRange", dateRange);
+        
         return "reservation/payment";
+    }
+
+    @PostMapping("/reservations/reserve")
+    public String reserve(ReservationRequest.ReserveDTO request) {
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        reservationService.reserve(request, sessionUser);
+        return "redirect:/reservations/complete";
     }
 
     @GetMapping("/reservations/complete")
