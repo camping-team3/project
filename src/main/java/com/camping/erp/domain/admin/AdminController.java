@@ -1,15 +1,30 @@
 package com.camping.erp.domain.admin;
 
+import com.camping.erp.domain.site.SiteResponse;
+import com.camping.erp.domain.site.SiteService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @Controller
+@RequiredArgsConstructor
 public class AdminController {
+    private final SiteService siteService;
 
     @GetMapping("/admin")
     public String dashboard() {
         return "admin/dashboard";
+    }
+
+    @GetMapping("/admin/sites")
+    public String siteList(Model model) {
+        List<SiteResponse.AdminZoneDTO> zones = siteService.findAllForAdmin();
+        model.addAttribute("zones", zones);
+        return "admin/site/list";
     }
 
     @GetMapping("/admin/stat")

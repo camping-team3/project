@@ -1,0 +1,77 @@
+{{> layout/admin-header}}
+<div class="p-4 p-lg-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="h3 fw-black text-dark mb-1">구역 및 사이트 관리</h2>
+            <p class="text-secondary small fw-medium m-0">캠핑장 구역별 요금 설정 및 개별 사이트 현황을 관리합니다.</p>
+        </div>
+        <button class="btn btn-primary fw-bold shadow-sm px-4 py-2.5 d-flex align-items-center gap-2 rounded-3 border-0">
+            <span class="material-symbols-outlined fs-5">add</span>
+            신규 구역 등록
+        </button>
+    </div>
+
+    <div class="row g-4">
+        {{#zones}}
+        <div class="col-12">
+            <div class="fh-card shadow-sm border-0 overflow-hidden bg-white rounded-4">
+                <!-- Zone Header -->
+                <div class="px-4 py-4 border-bottom border-light bg-light bg-opacity-30 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center icon-box-40 shadow-sm">
+                            <span class="material-symbols-outlined fs-5">map</span>
+                        </div>
+                        <div>
+                            <h3 class="h6 fw-bold text-dark m-0">{{name}}</h3>
+                            <p class="text-secondary fs-xxs fw-bold m-0 mt-1">평시: ₩{{normalPrice}} / 성수기: ₩{{peakPrice}}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-light bg-white border btn-sm px-3 fw-bold text-secondary shadow-sm">요금 수정</button>
+                        <button class="btn btn-primary btn-sm px-3 fw-bold shadow-sm">사이트 추가</button>
+                    </div>
+                </div>
+                
+                <!-- Site List Table -->
+                <div class="table-responsive">
+                    <table class="table align-middle m-0 table-hover">
+                        <thead class="bg-white">
+                            <tr>
+                                <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider" style="width: 100px;">ID</th>
+                                <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider">사이트명</th>
+                                <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider">최대 수용 인원</th>
+                                <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider text-end">관리</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y border-light">
+                            {{#sites}}
+                            <tr>
+                                <td class="px-4 py-3 text-secondary small">#{{id}}</td>
+                                <td class="px-4 py-3 fw-bold text-dark">{{siteName}}</td>
+                                <td class="px-4 py-3 text-secondary small">{{maxPeople}}인</td>
+                                <td class="px-4 py-3 text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button class="btn btn-icon-admin-sm border-0 bg-transparent text-secondary hover-primary">
+                                            <span class="material-symbols-outlined fs-5">edit</span>
+                                        </button>
+                                        <button class="btn btn-icon-admin-sm border-0 bg-transparent text-secondary hover-danger">
+                                            <span class="material-symbols-outlined fs-5">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{/sites}}
+                            {{^sites}}
+                            <tr>
+                                <td colspan="4" class="px-4 py-5 text-center text-secondary opacity-50 small">등록된 사이트가 없습니다.</td>
+                            </tr>
+                            {{/sites}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {{/zones}}
+    </div>
+</div>
+{{> layout/admin-footer}}
