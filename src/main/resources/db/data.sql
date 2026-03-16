@@ -5,12 +5,12 @@
 -- Enum [status]: ACTIVE(활동 중), ANONYMOUS(탈퇴/익명화됨)
 -- ==========================================================
 INSERT INTO user_tb (username, password, name, email, phone, role, status, created_at) VALUES 
-('admin', '1234', '관리자', 'admin@camping.com', '010-1111-1111', 'ADMIN', 'ACTIVE', NOW()),
-('ssar', '1234', '박한별', 'ssar@nate.com', '010-2222-2222', 'USER', 'ACTIVE', NOW()),
-('cos', '1234', '홍길동', 'cos@nate.com', '010-3333-3333', 'USER', 'ACTIVE', NOW()),
-('love', '1234', '강사랑', 'love@nate.com', '010-4444-4444', 'USER', 'ACTIVE', NOW()),
-('guest', '1234', '이게스트', 'guest@nate.com', '010-5555-5555', 'USER', 'ACTIVE', NOW()),
-('olduser', '1234', '탈퇴사용자', 'old@nate.com', '010-6666-6666', 'USER', 'ANONYMOUS', NOW());
+('admin', '$2a$10$8H0OmIE98Xf90E76y0.5fO5Z7p.J88mP.J88mP.J88mP.J88mP', '관리자', 'admin@camping.com', '010-1111-1111', 'ADMIN', 'ACTIVE', NOW()),
+('ssar', '$2a$10$8H0OmIE98Xf90E76y0.5fO5Z7p.J88mP.J88mP.J88mP.J88mP', '박한별', 'ssar@nate.com', '010-2222-2222', 'USER', 'ACTIVE', NOW()),
+('cos', '$2a$10$8H0OmIE98Xf90E76y0.5fO5Z7p.J88mP.J88mP.J88mP.J88mP', '홍길동', 'cos@nate.com', '010-3333-3333', 'USER', 'ACTIVE', NOW()),
+('love', '$2a$10$8H0OmIE98Xf90E76y0.5fO5Z7p.J88mP.J88mP.J88mP.J88mP', '강사랑', 'love@nate.com', '010-4444-4444', 'USER', 'ACTIVE', NOW()),
+('guest', '$2a$10$8H0OmIE98Xf90E76y0.5fO5Z7p.J88mP.J88mP.J88mP.J88mP', '이게스트', 'guest@nate.com', '010-5555-5555', 'USER', 'ACTIVE', NOW()),
+('olduser', '$2a$10$8H0OmIE98Xf90E76y0.5fO5Z7p.J88mP.J88mP.J88mP.J88mP', '탈퇴사용자', 'old@nate.com', '010-6666-6666', 'USER', 'ANONYMOUS', NOW());
 
 
 -- ==========================================================
