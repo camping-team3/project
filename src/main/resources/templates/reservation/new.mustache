@@ -119,7 +119,7 @@
                                 </div>
                                 <button type="button" 
                                         class="btn btn-outline-primary w-100 mt-4 py-2.5 fw-bold shadow-sm rounded-3 select-site-btn"
-                                        onclick="selectSite('{{id}}', '{{siteName}}', '{{pricePerNight}}')">
+                                        onclick="selectSite('{{id}}', '{{siteName}}', '{{pricePerNight}}', '{{basePeople}}')">
                                     선택하기
                                 </button>
                             </div>
@@ -196,25 +196,45 @@
         </main>
 
         <script>
-            let selectedSites = [];
+            let selectedSite = null;
             const nights = parseInt('{{nights}}');
             const peopleCount = parseInt('{{search.peopleCount}}');
 
-            function selectSite(id, name, price) {
+            function selectSite(id, name, price, basePeople) {
                 const pricePerNight = parseInt(price);
-                
-                // 1. 선택된 사이트 배열에 추가
-                selectedSites.push({ id, name, pricePerNight });
+                const base = parseInt(basePeople);
 
-                // 2. 버튼 상태 변경 (비활성화 및 텍스트 변경)
+                // 1. 이미 선택된 사이트를 다시 클릭한 경우 (선택 해제)
+                if (selectedSite && selectedSite.id === id) {
+                    deselectSite(id);
+                    selectedSite = null;
+                    updateSummary();
+                    return;
+                }
+
+                // 2. 다른 사이트가 선택되어 있었다면 기존 사이트 해제
+                if (selectedSite) {
+                    deselectSite(selectedSite.id);
+                }
+
+                // 3. 새로운 사이트 선택
+                selectedSite = { id, name, pricePerNight, basePeople: base };
+                
                 const btn = document.querySelector(`#site-card-${id} .select-site-btn`);
                 btn.innerText = '선택됨';
                 btn.classList.remove('btn-outline-primary');
-                btn.classList.add('btn-secondary');
-                btn.disabled = true;
+                btn.classList.add('btn-primary');
 
-                // 3. 사이드바 업데이트
                 updateSummary();
+            }
+
+            function deselectSite(id) {
+                const btn = document.querySelector(`#site-card-${id} .select-site-btn`);
+                if (btn) {
+                    btn.innerText = '선택하기';
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-outline-primary');
+                }
             }
 
             function updateSummary() {
@@ -223,33 +243,37 @@
                 const paymentBtn = document.getElementById('payment-btn');
                 const form = document.getElementById('reservation-form');
 
-                if (selectedSites.length === 0) return;
+                if (!selectedSite) {
+                    namesContainer.innerHTML = '<span class="text-secondary fw-normal opacity-50 small">리스트에서 선택해 주세요.</span>';
+                    priceDisplay.innerText = '₩ 0';
+                    paymentBtn.innerText = '사이트를 선택해 주세요';
+                    paymentBtn.classList.remove('btn-primary');
+                    paymentBtn.classList.add('btn-secondary', 'disabled');
+                    paymentBtn.disabled = true;
+                    
+                    document.querySelectorAll('input[name="siteId"]').forEach(el => el.remove());
+                    return;
+                }
 
-                // 사이트 이름 나열
-                namesContainer.innerHTML = selectedSites.map(s => `<div>${s.name}</div>`).join('');
+                namesContainer.innerHTML = `<div>${selectedSite.name}</div>`;
 
-                // 총액 계산: Σ((1박 금액 / 2) * 인원 * 박수)
-                let total = 0;
-                selectedSites.forEach(s => {
-                    total += (s.pricePerNight / 2) * peopleCount * nights;
-                });
-                priceDisplay.innerText = `₩ ${total.toLocaleString()}`;
+                // 공식: (1박 요금 + (MAX(0, 선택인원 - 기준인원) * 100,000)) * 박수
+                const extraPeople = Math.max(0, peopleCount - selectedSite.basePeople);
+                const totalPrice = (selectedSite.pricePerNight + (extraPeople * 100000)) * nights;
+                
+                priceDisplay.innerText = `₩ ${totalPrice.toLocaleString()}`;
 
-                // 버튼 활성화
                 paymentBtn.innerText = '결제하기';
                 paymentBtn.classList.remove('btn-secondary', 'disabled');
                 paymentBtn.classList.add('btn-primary');
                 paymentBtn.disabled = false;
 
-                // Hidden input 추가 (siteIds 다중 전송용)
-                document.querySelectorAll('input[name="siteIds"]').forEach(el => el.remove());
-                selectedSites.forEach(s => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'siteIds';
-                    input.value = s.id;
-                    form.appendChild(input);
-                });
+                document.querySelectorAll('input[name="siteId"]').forEach(el => el.remove());
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'siteId';
+                input.value = selectedSite.id;
+                form.appendChild(input);
             }
         </script>
 
