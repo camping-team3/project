@@ -18,11 +18,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
     @Transactional
     public void join(UserRequest.JoinDTO request) {
         // 1. 중복 확인
-        Optional<User> userOP = userRepository.findByUsername(request.getUsername());
-        if (userOP.isPresent()) {
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new RuntimeException("이미 존재하는 아이디입니다.");
         }
 

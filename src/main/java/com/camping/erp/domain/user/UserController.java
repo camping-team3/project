@@ -1,12 +1,16 @@
 package com.camping.erp.domain.user;
 
+import com.camping.erp.global.util.Resp;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequiredArgsConstructor
@@ -14,6 +18,15 @@ public class UserController {
 
     private final UserService userService;
     private final HttpSession session;
+
+    @GetMapping("/api/users/check-username")
+    public @ResponseBody ResponseEntity<?> checkUsername(@RequestParam("username") String username) {
+        boolean isDuplicate = userService.existsByUsername(username);
+        if (isDuplicate) {  
+            return Resp.fail(org.springframework.http.HttpStatus.BAD_REQUEST, "이미 존재하는 아이디입니다.");
+        }
+        return Resp.ok("사용 가능한 아이디입니다.");
+    }
 
     // 회원가입 페이지
     @GetMapping("/join-form")

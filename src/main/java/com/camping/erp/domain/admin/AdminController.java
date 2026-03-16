@@ -87,16 +87,6 @@ public class AdminController {
         return "admin/reservation/cancel-detail";
     }
 
-    @GetMapping("/admin/users")
-    public String userList() {
-        return "admin/user/list";
-    }
-
-    @GetMapping("/admin/users/{id}")
-    public String userDetail(@PathVariable Long id) {
-        return "admin/user/detail";
-    }
-
     @GetMapping("/admin/notices")
     public String noticeList() {
         return "admin/notice/list";
