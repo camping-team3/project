@@ -31,12 +31,26 @@ public class UserService {
     }
 
     public UserResponse.LoginDTO login(UserRequest.LoginDTO request) {
-        // TODO: 다음 단계에서 구현
-        return null;
+        // 1. 사용자 조회
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("아이디 또는 비밀번호가 일치하지 않습니다."));
+
+        // 2. 비밀번호 비교
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 3. DTO 반환
+        return UserResponse.LoginDTO.builder()
+                .user(user)
+                .build();
     }
 
     public UserResponse.DetailDTO findUser(Long id) {
-        // TODO: 다음 단계에서 구현
-        return null;
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        return UserResponse.DetailDTO.builder()
+                .user(user)
+                .build();
     }
 }

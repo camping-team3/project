@@ -1,7 +1,9 @@
 package com.camping.erp.domain.user;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class UserController {
 
     private final UserService userService;
+    private final HttpSession session;
 
     // 회원가입 페이지
     @GetMapping("/join-form")
@@ -31,9 +34,30 @@ public class UserController {
         return "auth/login-form";
     }
 
+    // 로그인 처리
+    @PostMapping("/login")
+    public String login(UserRequest.LoginDTO request) {
+        UserResponse.LoginDTO sessionUser = userService.login(request);
+        session.setAttribute("sessionUser", sessionUser);
+        return "redirect:/";
+    }
+
+    // 로그아웃 처리
+    @GetMapping("/logout")
+    public String logout() {
+        session.invalidate();
+        return "redirect:/";
+    }
+
     // 마이페이지 홈
     @GetMapping("/mypage")
-    public String home() {
+    public String home(Model model) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/home";
     }
 
