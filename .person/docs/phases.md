@@ -19,7 +19,7 @@
 - [x] **데이터 검증:** `testData.sql` 구축 및 JPA Repository 기본 동작 확인 완료
 - [x] **UI 프로토타입 변환:** `zBackup/html/` 내 37개 HTML을 Mustache SSR 템플릿(35개)으로 100% 변환 완료 (전체 페이즈 공통)
 
-## 🔑 Phase 2: MVP 핵심 도메인 (60%) - 🟢 진행 중
+## 🔑 Phase 2: MVP 핵심 도메인 (70%) - 🟢 진행 중
 
 **목표:** 결제 없이 '예약 → 관리자 수동 확정' 플로우가 동작하는 MVP 완성
 
@@ -30,11 +30,11 @@
   - [x] 인증: `LoginInterceptor` 및 `AdminInterceptor` 기반 권한 인가 기반 마련
   - [ ] 기능: 회원가입 로직 구현 (진행 예정)
   - [ ] 관리자: 회원 목록 조회, 권한 변경 로직
-- [ ] **Zone & Site 도메인:**
+- [x] **Zone & Site 도메인 (100%):**
   - [x] 고객: 메인 페이지(`index`) 구역·사이트 목록 동적 렌더링 완료
   - [x] 고객: 사이트 상세(`site/detail`) 정보 조회 및 연동 완료
   - [x] 고객: 실시간 예약 페이지(`reservation/new`) 날짜별 예약 가능 사이트 필터링 로직 구현 완료
-  - [ ] 관리자: 구역·사이트 CRUD, 요금 설정 로직
+  - [x] 관리자: 구역·사이트 CRUD, 요금 설정 로직
 - [ ] **Reservation 도메인:**
   - [x] UI: 예약 생성(`reservation/new`), 관리자 예약 목록 템플릿 완료
   - [ ] 고객: 예약 생성(PENDING) 로직

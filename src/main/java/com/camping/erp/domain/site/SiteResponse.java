@@ -54,11 +54,15 @@ public class SiteResponse {
         private Long id;
         private String siteName;
         private Integer maxPeople;
+        private Long zoneId;
 
         public AdminSiteDTO(Site site) {
             this.id = site.getId();
             this.siteName = site.getSiteName();
             this.maxPeople = site.getMaxPeople();
+            if (site.getZone() != null) {
+                this.zoneId = site.getZone().getId();
+            }
         }
     }
 
