@@ -25,14 +25,20 @@ public class Site extends BaseTimeEntity {
     private String siteName;
 
     @Column(nullable = false)
-    private Integer maxPeople;
+    private int maxPeople;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isAvailable = true; // 예약 가능 여부 (점검 중 등)
 
     @Builder
-    public Site(Long id, Zone zone, String siteName, Integer maxPeople) {
+    public Site(Long id, Zone zone, String siteName, int maxPeople, boolean isAvailable) {
         this.id = id;
         this.zone = zone;
         this.siteName = siteName;
         this.maxPeople = maxPeople;
+        this.isAvailable = isAvailable;
+    }
     }
 
     public void update(String siteName, Integer maxPeople, Zone zone) {
