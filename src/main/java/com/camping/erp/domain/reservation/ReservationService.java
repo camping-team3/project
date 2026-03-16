@@ -1,5 +1,6 @@
 package com.camping.erp.domain.reservation;
 
+import com.camping.erp.domain.admin.AdminRequest;
 import com.camping.erp.domain.admin.AdminResponse;
 import com.camping.erp.domain.reservation.enums.ReservationStatus;
 import com.camping.erp.domain.site.Site;
@@ -47,9 +48,12 @@ public class ReservationService {
                 .toList();
     }
 
-    // 관리자용 전체 예약 내역 조회
-    public List<AdminResponse.ReservationListDTO> findAllForAdmin() {
-        List<Reservation> reservations = reservationRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+    // 관리자용 전체 예약 내역 조회 (검색 필터 적용)
+    public List<AdminResponse.ReservationListDTO> findAllForAdmin(AdminRequest.ReservationSearchDTO searchDTO) {
+        List<Reservation> reservations = reservationRepository.findAllAdminSearch(
+                searchDTO.getKeyword(), 
+                searchDTO.getCheckIn(), 
+                searchDTO.getStatus());
 
         return reservations.stream()
                 .map(r -> {

@@ -33,4 +33,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                                       @Param("checkIn") LocalDate checkIn, 
                                       @Param("checkOut") LocalDate checkOut, 
                                       @Param("statuses") List<ReservationStatus> statuses);
+
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.user JOIN FETCH r.site s JOIN FETCH s.zone " +
+            "WHERE (:keyword IS NULL OR r.user.name LIKE %:keyword% OR CAST(r.id AS string) LIKE %:keyword%) " +
+            "AND (:checkIn IS NULL OR r.checkIn = :checkIn) " +
+            "AND (:status IS NULL OR r.status = :status) " +
+            "ORDER BY r.id DESC")
+    List<Reservation> findAllAdminSearch(@Param("keyword") String keyword, 
+                                        @Param("checkIn") LocalDate checkIn, 
+                                        @Param("status") ReservationStatus status);
 }

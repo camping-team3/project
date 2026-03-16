@@ -12,30 +12,33 @@
     </div>
 
     <!-- Filters -->
-    <div class="filter-section shadow-sm mb-5 border-0">
+    <form action="/admin/reservations" method="GET" class="filter-section shadow-sm mb-5 border-0">
         <div class="row g-4">
             <div class="col-md-3">
                 <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">예약자명 / ID</label>
-                <input type="text" class="form-control py-2 shadow-none border-secondary border-opacity-25" placeholder="이름 또는 ID">
+                <input type="text" name="keyword" class="form-control py-2 shadow-none border-secondary border-opacity-25" 
+                       placeholder="이름 또는 ID" value="{{#search.keyword}}{{search.keyword}}{{/search.keyword}}">
             </div>
             <div class="col-md-3">
-                <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">체크인 기간</label>
-                <input type="date" class="form-control py-2 shadow-none border-secondary border-opacity-25">
+                <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">체크인 날짜</label>
+                <input type="date" name="checkIn" class="form-control py-2 shadow-none border-secondary border-opacity-25" 
+                       value="{{#search.checkIn}}{{search.checkIn}}{{/search.checkIn}}">
             </div>
             <div class="col-md-3">
                 <label class="form-label small fw-bold text-secondary text-uppercase tracking-wider">예약 상태</label>
-                <select class="form-select py-2 shadow-none border-secondary border-opacity-25">
-                    <option>전체 상태</option>
-                    <option>대기 중 (Pending)</option>
-                    <option>확정됨 (Confirmed)</option>
-                    <option>취소됨 (Canceled)</option>
+                <select name="status" id="status-filter" class="form-select py-2 shadow-none border-secondary border-opacity-25">
+                    <option value="">전체 상태</option>
+                    <option value="PENDING">대기 중 (Pending)</option>
+                    <option value="CONFIRMED">확정됨 (Confirmed)</option>
+                    <option value="CANCEL_REQ">취소 요청 (Cancel Req)</option>
+                    <option value="CANCEL_COMP">취소 완료 (Cancel Comp)</option>
                 </select>
             </div>
             <div class="col-md-3 d-flex align-items-end">
-                <button class="btn btn-light bg-primary bg-opacity-10 text-primary w-100 py-2 fw-bold border-0">필터 적용</button>
+                <button type="submit" class="btn btn-light bg-primary bg-opacity-10 text-primary w-100 py-2 fw-bold border-0">필터 적용</button>
             </div>
         </div>
-    </div>
+    </form>
 
     <!-- Table -->
     <div class="fh-table-container shadow-sm border-0 bg-white overflow-hidden">
@@ -105,10 +108,17 @@
 </div>
 
 <script>
+    // 일수 계산
     document.querySelectorAll('.days-display').forEach(el => {
         const nights = parseInt(el.innerText);
         el.innerText = nights + 1;
     });
+
+    // 검색 조건 유지 (Select)
+    const currentStatus = "{{#search.status}}{{search.status}}{{/search.status}}";
+    if (currentStatus) {
+        document.getElementById('status-filter').value = currentStatus;
+    }
 </script>
 
 {{> layout/admin-footer}}

@@ -26,9 +26,10 @@ public class AdminController {
     }
 
     @GetMapping("/admin/reservations")
-    public String reservationList(Model model) {
-        List<AdminResponse.ReservationListDTO> reservations = reservationService.findAllForAdmin();
+    public String reservationList(AdminRequest.ReservationSearchDTO searchDTO, Model model) {
+        List<AdminResponse.ReservationListDTO> reservations = reservationService.findAllForAdmin(searchDTO);
         model.addAttribute("reservations", reservations);
+        model.addAttribute("search", searchDTO);
         return "admin/reservation/list";
     }
 
