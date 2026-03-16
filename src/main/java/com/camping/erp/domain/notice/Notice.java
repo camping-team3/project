@@ -23,10 +23,14 @@ public class Notice extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private boolean isTop;
+
     @Builder
-    public Notice(Long id, String title, String content) {
+    public Notice(Long id, String title, String content, boolean isTop) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.isTop = isTop;
     }
 }
