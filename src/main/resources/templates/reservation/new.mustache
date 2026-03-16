@@ -23,43 +23,40 @@
             </div>
 
             <!-- Filter Bar -->
-            <div class="fh-card shadow-sm border-0 p-4 mb-5 bg-white rounded-4">
+            <form action="/reservations/new" method="get" class="fh-card shadow-sm border-0 p-4 mb-5 bg-white rounded-4">
                 <div class="row g-4 align-items-end">
                     <div class="col-lg-5">
                         <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">체크인 / 체크아웃</label>
-                        <button class="btn btn-light bg-light w-100 py-3 d-flex align-items-center justify-content-between px-4 rounded-3 border-0 border-hover-primary transition-all">
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="material-symbols-outlined text-primary">calendar_today</span>
-                                <span class="fw-bold text-dark small">2024.05.24(금) - 2024.05.26(일)</span>
-                            </div>
-                            <span class="text-primary fw-bold small">2박</span>
-                        </button>
+                        <div class="d-flex gap-2">
+                            <input type="date" name="checkIn" class="form-control py-3 rounded-3 border-0 bg-light fw-bold" value="{{checkIn}}">
+                            <input type="date" name="checkOut" class="form-control py-3 rounded-3 border-0 bg-light fw-bold" value="{{checkOut}}">
+                        </div>
                     </div>
                     <div class="col-lg-4">
                         <div class="row g-3">
                             <div class="col-6">
                                 <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">성인</label>
                                 <div class="d-flex align-items-center bg-light rounded-3">
-                                    <button class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">remove</span></button>
+                                    <button type="button" class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">remove</span></button>
                                     <span class="flex-grow-1 text-center fw-bold text-dark">2</span>
-                                    <button class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">add</span></button>
+                                    <button type="button" class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">add</span></button>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">아동</label>
                                 <div class="d-flex align-items-center bg-light rounded-3">
-                                    <button class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">remove</span></button>
+                                    <button type="button" class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">remove</span></button>
                                     <span class="flex-grow-1 text-center fw-bold text-dark">0</span>
-                                    <button class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">add</span></button>
+                                    <button type="button" class="btn btn-sm text-primary p-2"><span class="material-symbols-outlined fs-5">add</span></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3">
-                        <button class="btn btn-primary w-100 py-3 fw-bold shadow-sm border-0 rounded-3">검색하기</button>
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-sm border-0 rounded-3">검색하기</button>
                     </div>
                 </div>
-            </div>
+            </form>
 
             <!-- Map Section -->
             <div class="fh-card shadow-sm border-0 p-4 p-lg-5 mb-5 bg-white rounded-4">
@@ -100,74 +97,35 @@
                 <!-- Site List -->
                 <div class="col-lg-8">
                     <div class="d-flex flex-column gap-4">
-                        <!-- Site Item 1 -->
+                        {{#availableSites}}
+                        <!-- Site Item -->
                         <div class="fh-card p-0 overflow-hidden shadow-sm border-0 d-flex flex-column flex-md-row bg-white rounded-4 transition-all">
                             <div class="flex-shrink-0 position-relative site-img-wrapper">
-                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxOhGfH7LR9jgbs_l76sxDb2LiuyNhgTkShnxjdanvr1kQs8r3V6dHT1Luxhiuk1j-TDs_vSV7ws0c_-0GOsIv4C0uZYa7lvPi0Y6NEEZU2VQg1Bkn6L7lQaJdbGXIcztvvxj2sgm_2Mrs2YrjpgSv0sVQdXXdKqILfNYRNT7ZISEx5lYpFUA9Jn0KXcwfNpV8ozpIJg8LXhdacRg7yoF6OJVDrtLu83Rp2DbE8QDHCaF11LViCHaD2wHaOd_VKSoIaCatQNOU6ee2" class="w-100 h-100 object-fit-cover" alt="Site">
+                                {{! TODO: 이미지 연동 }}
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxOhGfH7LR9jgbs_l76sxDb2LiuyNhgTkShnxjdanvr1kQs8r3V6dHT1Luxhiuk1j-TDs_vSV7ws0c_-0GOsIv4C0uZYa7lvPi0Y6NEEZU2VQg1Bkn6L7lQaJdbGXIcztvvxj2sgm_2Mrs2YrjpgSv0sVQdXXdKqILfNYRNT7ZISEx5lYpFUA9Jn0KXcwfNpV8ozpIJg8LXhdacRg7yoF6OJVDrtLu83Rp2DbE8QDHCaF11LViCHaD2wHaOd_VKSoIaCatQNOU6ee2" class="w-100 h-100 object-fit-cover" alt="{{siteName}}">
                             </div>
                             <div class="p-4 flex-grow-1 d-flex flex-column justify-content-between">
                                 <div>
                                     <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <span class="badge bg-primary bg-opacity-10 text-primary fw-bold text-uppercase badge-area-type">A Area</span>
-                                        <span class="h5 fw-bold text-primary m-0">₩65,000 / 1박</span>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary fw-bold text-uppercase badge-area-type">{{zoneName}} Area</span>
+                                        <span class="h5 fw-bold text-primary m-0">₩{{price}} / 1박</span>
                                     </div>
-                                    <h4 class="h5 fw-bold text-dark mb-1">A-1 데크 (Forest View)</h4>
-                                    <p class="text-secondary small mb-4">숲속 조용한 나무 데크 사이트로 프라이빗한 캠핑을 즐기실 수 있습니다.</p>
+                                    <h4 class="h5 fw-bold text-dark mb-1">{{siteName}}</h4>
+                                    <p class="text-secondary small mb-4">편안한 휴식을 위한 최적의 공간입니다.</p>
                                     <div class="d-flex gap-4 text-xs font-bold text-secondary">
-                                        <div class="d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6">group</span> 기준 2인 / 최대 4인</div>
-                                        <div class="d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6">aspect_ratio</span> 4m x 6m</div>
+                                        <div class="d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6">group</span> 최대 {{maxPeople}}인</div>
                                     </div>
                                 </div>
                                 <button class="btn btn-primary w-100 mt-4 py-2.5 fw-bold shadow-sm rounded-3 border-0">선택하기</button>
                             </div>
                         </div>
-
-                        <!-- Site Item 2 (Sold Out) -->
-                        <div class="fh-card p-0 overflow-hidden shadow-sm border-0 d-flex flex-column flex-md-row bg-white rounded-4 grayscale-card position-relative">
-                            <div class="flex-shrink-0 position-relative site-img-wrapper">
-                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAECa_PUI7q25fjD0iknpY187VPX13O2fqFIhu2YVeS66fKmA6ORmCnWRaxA7ttci-_Kd2FRgVsp7rzaKrHoEhiFPXro93ny25N3cjnfbEspyfQIrRXzR9m8UnYdbuhuavsXIqi0Ai4WijwVsvk6r0w5GqUTttdUgr3Fk0CLQ4d9SNxuXyVV_isAwcAZr96pJyRoACjAXCUQJ1cn6-uRzTZ-dJ20jB8594UV7tZ3TKN2ljhzAwGJxapDBWAXsQ8YhLCdLjGshb4O2LL" class="w-100 h-100 object-fit-cover" alt="Site">
-                                <div class="sold-out-overlay">예약마감</div>
-                            </div>
-                            <div class="p-4 flex-grow-1 d-flex flex-column justify-content-between">
-                                <div>
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <span class="badge bg-secondary bg-opacity-10 text-secondary fw-bold text-uppercase badge-area-type">B Area</span>
-                                        <span class="h5 fw-bold text-secondary m-0">₩150,000 / 1박</span>
-                                    </div>
-                                    <h4 class="h5 fw-bold text-dark mb-1">B-2 글램핑 (Premium)</h4>
-                                    <p class="text-secondary small mb-4">모든 장비가 갖춰진 럭셔리 글램핑 텐트입니다. 몸만 오세요.</p>
-                                    <div class="d-flex gap-4 text-xs font-bold text-secondary">
-                                        <div class="d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6">group</span> 기준 2인 / 최대 4인</div>
-                                    </div>
-                                </div>
-                                <button class="btn btn-secondary w-100 mt-4 py-2.5 fw-bold border-0 rounded-3" disabled>선택 불가</button>
-                            </div>
+                        {{/availableSites}}
+                        {{^availableSites}}
+                        <div class="text-center py-5">
+                            <span class="material-symbols-outlined fs-1 text-secondary opacity-25 mb-3">search_off</span>
+                            <p class="text-secondary fw-bold">해당 기간에 예약 가능한 사이트가 없습니다.</p>
                         </div>
-
-                        <!-- Site Item 3 (Selected) -->
-                        <div class="fh-card p-0 overflow-hidden shadow-sm border-primary border-opacity-50 d-flex flex-column flex-md-row bg-white rounded-4 ring ring-primary ring-opacity-10">
-                            <div class="flex-shrink-0 position-relative site-img-wrapper">
-                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFROebuCGUBBoW4bUFww7DbK4KQeXPSODZGOJYIMH88geo_skLIDxiddxd-MNEc52IDKQ2NYdR4jmd_y30ios4_1em0-I7xjp6ZkL3YhrKHH8bUfM-kKTLfYWMg9joWIX2U-RLrjO8BPEqJ0Jz7sfPaeIOx0SOTgE-cuwORcMJI_hYPCTDx-BpApxv-UqODgbWc7qniNtx6w9LWSaTJXyIvUZnQhNzCvIulhZoAcbdLcQntwPklU1G0I9ZFDzJczzlKkJokwA00sL-" class="w-100 h-100 object-fit-cover" alt="Site">
-                            </div>
-                            <div class="p-4 flex-grow-1 d-flex flex-column justify-content-between">
-                                <div>
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <div class="d-flex gap-2">
-                                            <span class="badge bg-primary text-white fw-bold text-uppercase badge-area-type">C Area</span>
-                                            <span class="text-primary text-xs fw-bold d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6 icon-fill-1">check_circle</span> 선택됨</span>
-                                        </div>
-                                        <span class="h5 fw-bold text-primary m-0">₩50,000 / 1박</span>
-                                    </div>
-                                    <h4 class="h5 fw-bold text-dark mb-1">C-3 오토캠핑 (Grass)</h4>
-                                    <p class="text-secondary small mb-4">차량 바로 옆에 텐트 설치가 가능한 잔디 사이트입니다.</p>
-                                    <div class="d-flex gap-4 text-xs font-bold text-secondary">
-                                        <div class="d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6">group</span> 기준 2인 / 최대 5인</div>
-                                        <div class="d-flex align-items-center gap-1"><span class="material-symbols-outlined fs-6">electric_bolt</span> 전기 사용가능</div>
-                                    </div>
-                                </div>
-                                <button class="btn btn-outline-primary w-100 mt-4 py-2.5 fw-bold border-opacity-50 rounded-3">선택 해제</button>
-                            </div>
-                        </div>
+                        {{/availableSites}}
                     </div>
                 </div>
 
@@ -182,11 +140,11 @@
                             <div class="d-flex flex-column gap-3 mb-4 pb-4 border-bottom border-secondary border-opacity-10">
                                 <div class="d-flex justify-content-between small">
                                     <span class="text-secondary fw-medium">선택한 사이트</span>
-                                    <span class="fw-bold text-dark">C-3 오토캠핑 (Grass)</span>
+                                    <span class="fw-bold text-dark">-</span>
                                 </div>
                                 <div class="d-flex justify-content-between small">
                                     <span class="text-secondary fw-medium">일정</span>
-                                    <span class="fw-bold text-dark">05.24 - 05.26 (2박)</span>
+                                    <span class="fw-bold text-dark">{{checkIn}} - {{checkOut}}</span>
                                 </div>
                                 <div class="d-flex justify-content-between small">
                                     <span class="text-secondary fw-medium">인원</span>
@@ -195,20 +153,16 @@
                             </div>
                             <div class="d-flex flex-column gap-2 mb-5">
                                 <div class="d-flex justify-content-between small">
-                                    <span class="text-secondary fw-medium">객실 요금 (2박)</span>
-                                    <span class="text-dark fw-bold">₩100,000</span>
-                                </div>
-                                <div class="d-flex justify-content-between small">
-                                    <span class="text-secondary fw-medium">추가 옵션</span>
+                                    <span class="text-secondary fw-medium">객실 요금</span>
                                     <span class="text-dark fw-bold">₩0</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-end mt-3 pt-3 border-top">
                                     <span class="fw-bold text-dark">총 결제 금액</span>
-                                    <span class="h3 fw-black text-primary m-0">₩100,000</span>
+                                    <span class="h3 fw-black text-primary m-0">₩0</span>
                                 </div>
                             </div>
-                            <button class="btn btn-primary btn-lg w-100 py-3 fw-black shadow-lg d-flex align-items-center justify-content-center gap-2 rounded-3 border-0">
-                                <span>다음: 정보 입력하기</span>
+                            <button class="btn btn-primary btn-lg w-100 py-3 fw-black shadow-lg d-flex align-items-center justify-content-center gap-2 rounded-3 border-0" disabled>
+                                <span>사이트를 선택해주세요</span>
                                 <span class="material-symbols-outlined">arrow_forward</span>
                             </button>
                             <p class="text-center text-secondary mt-4 mb-0 text-xxs-info leading-relaxed">

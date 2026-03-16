@@ -29,12 +29,18 @@ public class Zone extends BaseTimeEntity {
     @Column(nullable = false)
     private Long peakPrice;
 
-    @OneToMany(mappedBy = "zone", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "zone", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Site> sites = new ArrayList<>();
 
     @Builder
     public Zone(Long id, String name, Long normalPrice, Long peakPrice) {
         this.id = id;
+        this.name = name;
+        this.normalPrice = normalPrice;
+        this.peakPrice = peakPrice;
+    }
+
+    public void update(String name, Long normalPrice, Long peakPrice) {
         this.name = name;
         this.normalPrice = normalPrice;
         this.peakPrice = peakPrice;
