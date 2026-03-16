@@ -1,9 +1,8 @@
 package com.camping.erp.domain.reservation;
 
-import com.camping.erp.domain.reservation.enums.ReservationStatus;
 import com.camping.erp.domain.site.Site;
 import com.camping.erp.domain.user.User;
-import com.camping.erp.global.BaseTimeEntity;
+import com.camping.erp.global._core.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -39,26 +38,21 @@ public class Reservation extends BaseTimeEntity {
     @Column(nullable = false)
     private Long totalPrice;
 
-    @Column(nullable = false)
-    private Integer peopleCount;  // 예약 인원
-
-    private String visitorName;   // 방문자 성함
-    private String visitorPhone;  // 방문자 연락처
-
     @Enumerated(EnumType.STRING)
-    private ReservationStatus status; // PENDING, CONFIRMED, CANCEL_REQ, CANCEL_COMP, COMPLETED
+    private ReservationStatus status; // PENDING, CONFIRMED, CANCEL_REQ, CANCEL_COMP
+
+    public enum ReservationStatus {
+        PENDING, CONFIRMED, CANCEL_REQ, CANCEL_COMP
+    }
 
     @Builder
-    public Reservation(Long id, User user, Site site, LocalDate checkIn, LocalDate checkOut, Long totalPrice, Integer peopleCount, String visitorName, String visitorPhone, ReservationStatus status) {
+    public Reservation(Long id, User user, Site site, LocalDate checkIn, LocalDate checkOut, Long totalPrice, ReservationStatus status) {
         this.id = id;
         this.user = user;
         this.site = site;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         this.totalPrice = totalPrice;
-        this.peopleCount = peopleCount;
-        this.visitorName = visitorName;
-        this.visitorPhone = visitorPhone;
         this.status = status;
     }
 }
