@@ -257,9 +257,9 @@
 
                 namesContainer.innerHTML = `<div>${selectedSite.name}</div>`;
 
-                // 공식: (1박 요금 + (MAX(0, 선택인원 - 기준인원) * 100,000)) * 박수
+                // 공식: (1박 요금 + (MAX(0, 선택인원 - 기준인원) * 10,000)) * 박수
                 const extraPeople = Math.max(0, peopleCount - selectedSite.basePeople);
-                const totalPrice = (selectedSite.pricePerNight + (extraPeople * 100000)) * nights;
+                const totalPrice = (selectedSite.pricePerNight + (extraPeople * 10000)) * nights;
                 
                 priceDisplay.innerText = `₩ ${totalPrice.toLocaleString()}`;
 
