@@ -116,6 +116,26 @@ public class ReservationService {
                 .build();
     }
 
+    // 예약 완료 상세 정보 조회
+    public ReservationResponse.CompleteDTO getCompleteDetails(Long id) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new Exception404("예약 내역을 찾을 수 없습니다."));
+
+        long nights = ChronoUnit.DAYS.between(reservation.getCheckIn(), reservation.getCheckOut());
+
+        return ReservationResponse.CompleteDTO.builder()
+                .id(reservation.getId())
+                .siteName(reservation.getSite().getSiteName())
+                .zoneName(reservation.getSite().getZone().getName())
+                .checkIn(reservation.getCheckIn())
+                .checkOut(reservation.getCheckOut())
+                .nights(nights)
+                .peopleCount(reservation.getPeopleCount())
+                .totalPrice(reservation.getTotalPrice())
+                .username(reservation.getUser().getUsername())
+                .build();
+    }
+
     @Transactional
     public void cancel(Long id) {
         // 취소 로직은 추후 구현

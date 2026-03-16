@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -70,12 +71,19 @@ public class ReservationController {
     @PostMapping("/reservations/reserve")
     public String reserve(ReservationRequest.ReserveDTO request) {
         User sessionUser = (User) session.getAttribute("sessionUser");
-        reservationService.reserve(request, sessionUser);
-        return "redirect:/reservations/complete";
+        ReservationResponse.ReserveDTO response = reservationService.reserve(request, sessionUser);
+        return "redirect:/reservations/complete?id=" + response.getId();
     }
 
     @GetMapping("/reservations/complete")
-    public String complete() {
+    public String complete(@RequestParam("id") Long id, Model model) {
+        ReservationResponse.CompleteDTO reservation = reservationService.getCompleteDetails(id);
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);
+        model.addAttribute("reservation", reservation);
+        model.addAttribute("checkInDisplay", reservation.getCheckIn().format(formatter));
+        model.addAttribute("checkOutDisplay", reservation.getCheckOut().format(formatter));
+        
         return "reservation/complete";
     }
 }

@@ -47,4 +47,18 @@ public class ReservationResponse {
         private LocalDate checkOut;
         private Long totalPrice;
     }
+
+    @Getter @Setter
+    @Builder
+    public static class CompleteDTO {
+        private Long id;
+        private String siteName;
+        private String zoneName;
+        private LocalDate checkIn;
+        private LocalDate checkOut;
+        private long nights;
+        private Integer peopleCount;
+        private Long totalPrice;
+        private String username;
+    }
 }
