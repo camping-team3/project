@@ -1,0 +1,213 @@
+{{> layout/admin-header}}
+<div class="p-4 p-lg-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="h3 fw-black text-dark mb-1">구역 및 사이트 관리</h2>
+            <p class="text-secondary small fw-medium m-0">캠핑장 구역별 요금 설정 및 개별 사이트 현황을 관리합니다.</p>
+        </div>
+        <button class="btn btn-primary fw-bold shadow-sm px-4 py-2.5 d-flex align-items-center gap-2 rounded-3 border-0"
+                data-bs-toggle="modal" data-bs-target="#addZoneModal">
+            <span class="material-symbols-outlined fs-5">add</span>
+            신규 구역 등록
+        </button>
+    </div>
+
+    <div class="row g-4">
+        {{#zones}}
+        <div class="col-12">
+            <div class="fh-card shadow-sm border-0 overflow-hidden bg-white rounded-4">
+                <!-- Zone Header -->
+                <div class="px-4 py-4 border-bottom border-light bg-light bg-opacity-30 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center icon-box-40 shadow-sm">
+                            <span class="material-symbols-outlined fs-5">map</span>
+                        </div>
+                        <div>
+                            <h3 class="h6 fw-bold text-dark m-0">{{name}}</h3>
+                            <p class="text-secondary fs-xxs fw-bold m-0 mt-1">평시: ₩{{normalPrice}} / 성수기: ₩{{peakPrice}}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-light bg-white border btn-sm px-3 fw-bold text-secondary shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#editZoneModal-{{id}}">요금 수정</button>
+                        <button class="btn btn-primary btn-sm px-3 fw-bold shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#addSiteModal-{{id}}">사이트 추가</button>
+                        <form action="/admin/zones/{{id}}/delete" method="post" onsubmit="return confirm('이 구역을 삭제하시겠습니까? 연관된 사이트도 모두 삭제될 수 있습니다.');">
+                            <button type="submit" class="btn btn-outline-danger btn-sm px-3 fw-bold shadow-sm">구역 삭제</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Site List Table -->
+                <div class="table-responsive">
+                    <table class="table align-middle m-0 table-hover">
+                        <thead class="bg-white">
+                            <tr>
+                                <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider" style="width: 100px;">ID</th>
+                                <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider">사이트명</th>
+                                <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider">최대 수용 인원</th>
+                                <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider text-end">관리</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y border-light">
+                            {{#sites}}
+                            <tr>
+                                <td class="px-4 py-3 text-secondary small">#{{id}}</td>
+                                <td class="px-4 py-3 fw-bold text-dark">{{siteName}}</td>
+                                <td class="px-4 py-3 text-secondary small">{{maxPeople}}인</td>
+                                <td class="px-4 py-3 text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button class="btn btn-icon-admin-sm border-0 bg-transparent text-secondary hover-primary"
+                                                data-bs-toggle="modal" data-bs-target="#editSiteModal-{{id}}">
+                                            <span class="material-symbols-outlined fs-5">edit</span>
+                                        </button>
+                                        <form action="/admin/sites/{{id}}/delete" method="post" onsubmit="return confirm('이 사이트를 삭제하시겠습니까?');">
+                                            <button type="submit" class="btn btn-icon-admin-sm border-0 bg-transparent text-secondary hover-danger">
+                                                <span class="material-symbols-outlined fs-5">delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Edit Site Modal -->
+                            <div class="modal fade" id="editSiteModal-{{id}}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content border-0 shadow-lg rounded-4">
+                                        <form action="/admin/sites/{{id}}/update" method="post">
+                                            <input type="hidden" name="zoneId" value="{{zoneId}}">
+                                            <div class="modal-header border-bottom border-light px-4 py-3">
+                                                <h5 class="modal-title fw-bold">사이트 수정</h5>
+                                                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body p-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label small fw-bold text-secondary">사이트명</label>
+                                                    <input type="text" name="siteName" class="form-control rounded-3 shadow-none border-light-subtle py-2.5" value="{{siteName}}" required>
+                                                </div>
+                                                <div class="mb-0">
+                                                    <label class="form-label small fw-bold text-secondary">최대 수용 인원</label>
+                                                    <input type="number" name="maxPeople" class="form-control rounded-3 shadow-none border-light-subtle py-2.5" value="{{maxPeople}}" required>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer border-0 p-4 pt-0">
+                                                <button type="button" class="btn btn-light px-4 fw-bold" data-bs-dismiss="modal">취소</button>
+                                                <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">수정 완료</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/sites}}
+                            {{^sites}}
+                            <tr>
+                                <td colspan="4" class="px-4 py-5 text-center text-secondary opacity-50 small">등록된 사이트가 없습니다.</td>
+                            </tr>
+                            {{/sites}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Zone Modal -->
+        <div class="modal fade" id="editZoneModal-{{id}}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <form action="/admin/zones/{{id}}/update" method="post">
+                        <div class="modal-header border-bottom border-light px-4 py-3">
+                            <h5 class="modal-title fw-bold">구역 정보 수정</h5>
+                            <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-secondary">구역 명칭</label>
+                                <input type="text" name="name" class="form-control rounded-3 shadow-none border-light-subtle py-2.5" value="{{name}}" required>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">평시 요금 (1박)</label>
+                                    <input type="number" name="normalPrice" class="form-control rounded-3 shadow-none border-light-subtle py-2.5" value="{{normalPrice}}" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">성수기 요금 (1박)</label>
+                                    <input type="number" name="peakPrice" class="form-control rounded-3 shadow-none border-light-subtle py-2.5" value="{{peakPrice}}" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 p-4 pt-0">
+                            <button type="button" class="btn btn-light px-4 fw-bold" data-bs-dismiss="modal">취소</button>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">수정 완료</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Site Modal -->
+        <div class="modal fade" id="addSiteModal-{{id}}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <form action="/admin/sites" method="post">
+                        <input type="hidden" name="zoneId" value="{{id}}">
+                        <div class="modal-header border-bottom border-light px-4 py-3">
+                            <h5 class="modal-title fw-bold">신규 사이트 등록 ({{name}})</h5>
+                            <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-secondary">사이트명</label>
+                                <input type="text" name="siteName" class="form-control rounded-3 shadow-none border-light-subtle py-2.5" placeholder="예: A1, B5" required>
+                            </div>
+                            <div class="mb-0">
+                                <label class="form-label small fw-bold text-secondary">최대 수용 인원</label>
+                                <input type="number" name="maxPeople" class="form-control rounded-3 shadow-none border-light-subtle py-2.5" placeholder="숫자만 입력" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 p-4 pt-0">
+                            <button type="button" class="btn btn-light px-4 fw-bold" data-bs-dismiss="modal">취소</button>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">등록 완료</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {{/zones}}
+    </div>
+</div>
+
+<!-- Add Zone Modal -->
+<div class="modal fade" id="addZoneModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <form action="/admin/zones" method="post">
+                <div class="modal-header border-bottom border-light px-4 py-3">
+                    <h5 class="modal-title fw-bold">신규 구역 등록</h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-secondary">구역 명칭</label>
+                        <input type="text" name="name" class="form-control rounded-3 shadow-none border-light-subtle py-2.5" placeholder="예: 오토캠핑 A존, 글램핑 B존" required>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-secondary">평시 요금 (1박)</label>
+                            <input type="number" name="normalPrice" class="form-control rounded-3 shadow-none border-light-subtle py-2.5" placeholder="0" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-secondary">성수기 요금 (1박)</label>
+                            <input type="number" name="peakPrice" class="form-control rounded-3 shadow-none border-light-subtle py-2.5" placeholder="0" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light px-4 fw-bold" data-bs-dismiss="modal">취소</button>
+                    <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">등록 완료</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{> layout/admin-footer}}
