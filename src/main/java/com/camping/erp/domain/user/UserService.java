@@ -1,6 +1,9 @@
 package com.camping.erp.domain.user;
 
+import com.camping.erp.domain.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,5 +55,18 @@ public class UserService {
         return UserResponse.DetailDTO.builder()
                 .user(user)
                 .build();
+    }
+
+    // 전체 회원 목록 조회 (페이징)
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    // 회원 권한 변경
+    @Transactional
+    public void updateRole(Long id, UserRole role) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        user.updateRole(role);
     }
 }
