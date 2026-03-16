@@ -4,10 +4,32 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 @RequiredArgsConstructor
 public class UserController {
+
+    private final UserService userService;
+
+    // 회원가입 페이지
+    @GetMapping("/join-form")
+    public String joinForm() {
+        return "auth/join-form";
+    }
+
+    // 회원가입 처리
+    @PostMapping("/join")
+    public String join(UserRequest.JoinDTO request) {
+        userService.join(request);
+        return "redirect:/login-form";
+    }
+
+    // 로그인 페이지
+    @GetMapping("/login-form")
+    public String loginForm() {
+        return "auth/login-form";
+    }
 
     // 마이페이지 홈
     @GetMapping("/mypage")
