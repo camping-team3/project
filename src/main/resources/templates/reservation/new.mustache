@@ -25,33 +25,35 @@
             <!-- Filter Bar -->
             <form action="/reservations/new" method="GET" class="fh-card shadow-sm border-0 p-4 mb-5 bg-white rounded-4">
                 <div class="row g-4 align-items-end">
-                    <div class="col-lg-5">
+                    <div class="col-lg-6">
                         <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">체크인 / 체크아웃</label>
-                        <div class="btn btn-light bg-light w-100 py-3 d-flex align-items-center px-4 rounded-3 border-0 border-hover-primary transition-all position-relative">
-                            <div class="d-flex align-items-center gap-3 w-100">
-                                <span class="material-symbols-outlined text-primary">calendar_today</span>
-                                <div class="d-flex align-items-center gap-2 flex-grow-1">
-                                    <input type="date" name="checkIn" class="form-control form-control-sm border-0 bg-transparent p-0 fw-bold text-dark" value="{{search.checkIn}}" style="width: 120px;">
-                                    <span class="text-secondary">-</span>
-                                    <input type="date" name="checkOut" class="form-control form-control-sm border-0 bg-transparent p-0 fw-bold text-dark" value="{{search.checkOut}}" style="width: 120px;">
+                        <div class="btn btn-light bg-light w-100 py-0 d-flex align-items-center px-4 rounded-3 border-0 border-hover-primary transition-all position-relative" style="height: 60px;">
+                            <div class="d-flex align-items-center justify-content-between w-100">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="material-symbols-outlined text-primary">calendar_today</span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="text-secondary fw-bold small" style="font-size: 0.75rem; min-width: 40px;">체크인</span>
+                                        <input type="date" name="checkIn" class="form-control form-control-sm border-0 bg-transparent p-0 fw-bold text-dark" value="{{search.checkIn}}" style="width: 125px;">
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">성인 인원 (최대 10인)</label>
-                                <div class="d-flex align-items-center bg-light rounded-3 px-2">
-                                    <button type="button" class="btn btn-sm text-primary p-2" onclick="this.nextElementSibling.stepDown()"><span class="material-symbols-outlined fs-5">remove</span></button>
-                                    <input type="number" name="peopleCount" id="peopleCount" class="form-control border-0 bg-transparent text-center fw-bold text-dark" value="{{search.peopleCount}}" min="1" max="10" readonly>
-                                    <button type="button" class="btn btn-sm text-primary p-2" onclick="this.previousElementSibling.stepUp()"><span class="material-symbols-outlined fs-5">add</span></button>
+                                <span class="text-secondary opacity-50">-</span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-secondary fw-bold small" style="font-size: 0.75rem; min-width: 50px;">체크아웃</span>
+                                    <input type="date" name="checkOut" class="form-control form-control-sm border-0 bg-transparent p-0 fw-bold text-dark" value="{{search.checkOut}}" style="width: 125px;">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3">
-                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-sm border-0 rounded-3">검색하기</button>
+                        <label class="text-xs fw-bold text-secondary text-uppercase tracking-wider mb-2 d-block">인원 (최대 6인)</label>
+                        <div class="d-flex align-items-center bg-light rounded-3 px-2 py-0" style="height: 60px;">
+                            <button type="button" class="btn btn-sm text-primary p-2 d-flex align-items-center" onclick="this.nextElementSibling.stepDown()"><span class="material-symbols-outlined fs-5">remove_circle</span></button>
+                            <input type="number" name="peopleCount" id="peopleCount" class="form-control border-0 bg-transparent text-center fw-bold text-dark" value="{{search.peopleCount}}" min="1" max="6" readonly style="font-size: 1.1rem;">
+                            <button type="button" class="btn btn-sm text-primary p-2 d-flex align-items-center" onclick="this.previousElementSibling.stepUp()"><span class="material-symbols-outlined fs-5">add_circle</span></button>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm border-0 rounded-3" style="height: 60px;">검색하기</button>
                     </div>
                 </div>
             </form>
