@@ -2,15 +2,14 @@ package com.camping.erp.domain.site;
 
 import com.camping.erp.global.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "site_tb")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Site extends BaseTimeEntity {
 
     @Id
@@ -31,19 +30,10 @@ public class Site extends BaseTimeEntity {
     @Builder.Default
     private boolean isAvailable = true; // 예약 가능 여부 (점검 중 등)
 
-    @Builder
-    public Site(Long id, Zone zone, String siteName, int maxPeople, boolean isAvailable) {
-        this.id = id;
-        this.zone = zone;
+    public void update(String siteName, Integer maxPeople, Zone zone, boolean isAvailable) {
         this.siteName = siteName;
         this.maxPeople = maxPeople;
+        this.zone = zone;
         this.isAvailable = isAvailable;
-    }
-    }
-
-    public void update(String siteName, Integer maxPeople, Zone zone) {
-        this.siteName = siteName;
-        this.maxPeople = maxPeople;
-        this.zone = zone;
     }
 }

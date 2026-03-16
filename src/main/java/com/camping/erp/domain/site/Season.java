@@ -1,6 +1,6 @@
 package com.camping.erp.domain.site;
 
-import com.camping.erp.global.common.BaseTimeEntity;
+import com.camping.erp.global.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
