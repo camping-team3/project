@@ -49,7 +49,7 @@
 - **Gallery (포토 갤러리):** `id`, `title`, `content`, `created_at`
 - **Qna (질문 답변):** `id`, `user_id` (FK), `title`, `content`, `is_answered` (답변 여부), `created_at`
 - **Comment (관리자 답변):** `id`, `qna_id` (FK), `admin_id` (FK), `content`, `created_at`
-- **Review (이용 후기):** `id`, `user_id` (FK), `reservation_id` (FK), `rating` (별점), `content`, `created_at`
+- **Review (이용 후기):** `id`, `user_id` (FK), `reservation_id` (FK, Unique), `rating` (별점), `content`, `created_at`
 
 ### 2.5 파일 관리 (Image)
 - **Image (공통 이미지):** 다중 이미지 지원
@@ -63,9 +63,10 @@
 3. **Site : Reservation** (1:N)
 4. **Reservation : Payment** (1:1)
 5. **Reservation : Refund** (1:1)
-6. **Qna : Comment** (1:N)
-7. **Gallery : Image** (1:N)
-8. **Review : Image** (1:N)
-9. **Zone : Image** (1:N) - 구역 대표/상세 사진
-10. **Site : Image** (1:N) - 사이트 상세 사진
-11. **User : Review** (1:N)
+6. **Reservation : Review** (1:1) - 한 예약당 하나의 리뷰만 허용
+7. **Qna : Comment** (1:N)
+8. **Gallery : Image** (1:N)
+9. **Review : Image** (1:N)
+10. **Zone : Image** (1:N) - 구역 대표/상세 사진
+11. **Site : Image** (1:N) - 사이트 상세 사진
+12. **User : Review** (1:N)
