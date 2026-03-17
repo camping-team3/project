@@ -45,11 +45,11 @@
   - `id` (PK), `reservation_id` (FK), `reason` (취소 사유), `refund_amount` (확정 환불액), `cancelled_at`
 
 ### 2.4 커뮤니티 (Notice, Gallery, Qna, Review, Comment)
-- **Notice (공지사항):** `id`, `title`, `content`, `created_at`
+- **Notice (공지사항):** `id`, `title`, `content`, `is_top` (상단 고정 여부), `created_at`
 - **Gallery (포토 갤러리):** `id`, `title`, `content`, `created_at`
-- **Qna (질문 답변):** `id`, `user_id` (FK), `title`, `content`, `is_answered`, `created_at`
+- **Qna (질문 답변):** `id`, `user_id` (FK), `title`, `content`, `is_answered` (답변 여부), `created_at`
 - **Comment (관리자 답변):** `id`, `qna_id` (FK), `admin_id` (FK), `content`, `created_at`
-- **Review (이용 후기):** `id`, `user_id` (FK), `reservation_id` (FK), `rating`, `content`, `created_at`
+- **Review (이용 후기):** `id`, `user_id` (FK), `reservation_id` (FK), `rating` (별점), `content`, `created_at`
 
 ### 2.5 파일 관리 (Image)
 - **Image (공통 이미지):** 다중 이미지 지원
