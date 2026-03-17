@@ -65,30 +65,28 @@
                         <h3 class="h5 fw-bold text-dark m-0 d-flex align-items-center gap-2">
                             <span class="material-symbols-outlined text-primary">map</span> 캠핑장 배치도
                         </h3>
-                        <p class="text-secondary small m-0 mt-1">지도의 좌석을 클릭하여 예약하실 사이트를 선택해주세요.</p>
+                        <p class="text-secondary small m-0 mt-1">구역 핀을 클릭하여 원하는 위치의 사이트만 모아보세요.</p>
                     </div>
                     <div class="d-flex gap-4 text-xs font-bold text-secondary">
-                        <div class="d-flex align-items-center gap-1.5"><span class="legend-circle bg-primary"></span> 예약가능</div>
-                        <div class="d-flex align-items-center gap-1.5"><span class="legend-circle bg-secondary opacity-50"></span> 예약마감</div>
-                        <div class="d-flex align-items-center gap-1.5"><span class="legend-circle border-2 border-primary bg-primary bg-opacity-20"></span> 선택됨</div>
+                        <div class="d-flex align-items-center gap-1.5"><span class="legend-circle bg-primary"></span> 선택가능</div>
+                        <div class="d-flex align-items-center gap-1.5"><span class="legend-circle border-2 border-primary bg-primary bg-opacity-20"></span> 필터링됨</div>
                     </div>
                 </div>
-                <div class="map-container-v2 rounded-4 overflow-hidden position-relative border">
-                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz3xzKGdZMJ3xNhwTjSiJXSI1L16fhtQxAoA7FNsRABUtSG4XJB0-l0cv_3Uo13X-kLJqHq-H6trQF6X9e1xpgQZ0NbSXu9Oetnkw2SCPu_3HO3bCfZKiSAF9onsZS3H4024rnRxfDugctS_-mthpeSvbphs3QwvKXt9Ee-03rzgOSZhjbmO7BY1slfGZXRf7jxEUqPLtiCUu-hrVAKywWLxpESI_Aa46CCkQIQRqsxQkte7Imy4qr5VUhUvn57okqC3im1asfzUH7" class="w-100 h-100 object-fit-cover opacity-25 grayscale" alt="Map">
-                    <!-- Pin A-1 -->
-                    <div class="map-pin" style="top: 20%; left: 25%;">
-                        <span class="material-symbols-outlined text-primary fs-3">location_on</span>
-                        <span class="pin-label">A-1</span>
+                <div class="map-container-v2 rounded-4 overflow-hidden position-relative border" id="map-helper-container">
+                    <img src="/images/camping_map.png" class="w-100 h-100 object-fit-contain" alt="Camping Map" style="min-height: 400px;">
+                    
+                    <!-- 구역 핀 (DB의 zoneName과 정확히 일치시켜 필터링 해결) -->
+                    <div class="zone-pin" style="top: 37.5%; left: 43.9%;" onclick="filterByZone('A구역(오토캠핑)', this)" data-zone="A구역(오토캠핑)">
+                        <span class="material-symbols-outlined pin-icon">location_on</span>
+                        <span class="pin-label">A</span>
                     </div>
-                    <!-- Pin B-2 (Occupied) -->
-                    <div class="map-pin occupied" style="top: 40%; left: 45%;">
-                        <span class="material-symbols-outlined text-secondary fs-3 pin-icon">location_on</span>
-                        <span class="pin-label">B-2 (마감)</span>
+                    <div class="zone-pin" style="top: 58.6%; left: 43.9%;" onclick="filterByZone('B구역(글램핑)', this)" data-zone="B구역(글램핑)">
+                        <span class="material-symbols-outlined pin-icon">location_on</span>
+                        <span class="pin-label">B</span>
                     </div>
-                    <!-- Pin C-3 (Selected) -->
-                    <div class="map-pin selected" style="top: 65%; left: 70%;">
-                        <span class="material-symbols-outlined text-primary fs-2 icon-fill-1">location_on</span>
-                        <div class="pin-label">C-3 선택됨</div>
+                    <div class="zone-pin" style="top: 88.5%; left: 45.2%;" onclick="filterByZone('C구역(카라반)', this)" data-zone="C구역(카라반)">
+                        <span class="material-symbols-outlined pin-icon">location_on</span>
+                        <span class="pin-label">C</span>
                     </div>
                 </div>
             </div>
@@ -96,10 +94,10 @@
             <div class="row g-4 align-items-start">
                 <!-- Site List -->
                 <div class="col-lg-8">
-                    <div class="d-flex flex-column gap-4">
+                    <div class="d-flex flex-column gap-4" id="site-list-container">
                         {{#sites}}
                         <!-- Site Item -->
-                        <div class="fh-card p-0 overflow-hidden shadow-sm border-0 d-flex flex-column flex-md-row bg-white rounded-4 transition-all site-card" id="site-card-{{id}}">
+                        <div class="fh-card p-0 overflow-hidden shadow-sm border-0 d-flex flex-column flex-md-row bg-white rounded-4 transition-all site-card" id="site-card-{{id}}" data-zone="{{zoneName}}">
                             <div class="flex-shrink-0 position-relative site-img-wrapper">
                                 <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxOhGfH7LR9jgbs_l76sxDb2LiuyNhgTkShnxjdanvr1kQs8r3V6dHT1Luxhiuk1j-TDs_vSV7ws0c_-0GOsIv4C0uZYa7lvPi0Y6NEEZU2VQg1Bkn6L7lQaJdbGXIcztvvxj2sgm_2Mrs2YrjpgSv0sVQdXXdKqILfNYRNT7ZISEx5lYpFUA9Jn0KXcwfNpV8ozpIJg8LXhdacRg7yoF6OJVDrtLu83Rp2DbE8QDHCaF11LViCHaD2wHaOd_VKSoIaCatQNOU6ee2" class="w-100 h-100 object-fit-cover" alt="Site">
                             </div>
@@ -183,29 +181,48 @@
                             </div>
                         </div>
                     </form>
-
-                    <div class="fh-card border-0 shadow-sm p-3 d-flex align-items-center gap-3 bg-white rounded-3">
-                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz3xzKGdZMJ3xNhwTjSiJXSI1L16fhtQxAoA7FNsRABUtSG4XJB0-l0cv_3Uo13X-kLJqHq-H6trQF6X9e1xpgQZ0NbSXu9Oetnkw2SCPu_3HO3bCfZKiSAF9onsZS3H4024rnRxfDugctS_-mthpeSvbphs3QwvKXt9Ee-03rzgOSZhjbmO7BY1slfGZXRf7jxEUqPLtiCUu-hrVAKywWLxpESI_Aa46CCkQIQRqsxQkte7Imy4qr5VUhUvn57okqC3im1asfzUH7" class="rounded-3" style="width: 64px; height: 64px; object-fit: cover; opacity: 0.8;" alt="Mini map">
-                        <div>
-                            <h5 class="small fw-bold text-dark mb-1">배치도 확인하기</h5>
-                            <p class="text-secondary text-xxs-info mb-0">전체 사이트 구성 및 편의시설</p>
-                            <button class="btn btn-link text-primary small fw-bold p-0 text-decoration-none d-flex align-items-center gap-1 text-xxs-info">자세히 보기 <span class="material-symbols-outlined icon-12">open_in_new</span></button>
-                        </div>
-                    </div>
                 </aside>
             </div>
         </main>
 
         <script>
             let selectedSite = null;
+            let currentFilterZone = null;
             const nights = parseInt('{{nights}}');
             const peopleCount = parseInt('{{search.peopleCount}}');
 
+            // --- 1. 구역 필터링 기능 ---
+            function filterByZone(zoneName, element) {
+                const cards = document.querySelectorAll('.site-card');
+                const pins = document.querySelectorAll('.zone-pin');
+
+                // 토글 로직: 이미 선택된 구역을 다시 클릭하면 필터 해제
+                if (currentFilterZone === zoneName) {
+                    currentFilterZone = null;
+                    pins.forEach(p => p.classList.remove('active'));
+                    cards.forEach(c => c.classList.remove('d-none'));
+                } else {
+                    currentFilterZone = zoneName;
+                    // 핀 스타일 업데이트
+                    pins.forEach(p => p.classList.remove('active'));
+                    element.classList.add('active');
+
+                    // 카드 필터링
+                    cards.forEach(card => {
+                        if (card.dataset.zone === zoneName) {
+                            card.classList.remove('d-none');
+                        } else {
+                            card.classList.add('d-none');
+                        }
+                    });
+                }
+            }
+
+            // --- 3. 사이트 선택 기능 (기존 로직 유지) ---
             function selectSite(id, name, price, basePeople) {
                 const pricePerNight = parseInt(price);
                 const base = parseInt(basePeople);
 
-                // 1. 이미 선택된 사이트를 다시 클릭한 경우 (선택 해제)
                 if (selectedSite && selectedSite.id === id) {
                     deselectSite(id);
                     selectedSite = null;
@@ -213,12 +230,10 @@
                     return;
                 }
 
-                // 2. 다른 사이트가 선택되어 있었다면 기존 사이트 해제
                 if (selectedSite) {
                     deselectSite(selectedSite.id);
                 }
 
-                // 3. 새로운 사이트 선택
                 selectedSite = { id, name, pricePerNight, basePeople: base };
                 
                 const btn = document.querySelector(`#site-card-${id} .select-site-btn`);
@@ -258,7 +273,6 @@
 
                 namesContainer.innerHTML = `<div>${selectedSite.name}</div>`;
 
-                // 공식: (1박 요금 + (MAX(0, 선택인원 - 기준인원) * 10,000)) * 박수
                 const extraPeople = Math.max(0, peopleCount - selectedSite.basePeople);
                 const totalPrice = (selectedSite.pricePerNight + (extraPeople * 10000)) * nights;
                 
@@ -277,5 +291,48 @@
                 form.appendChild(input);
             }
         </script>
+
+        <style>
+            /* 맵 핀 기본 스타일 */
+            .zone-pin {
+                position: absolute;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                transform: translate(-50%, -100%);
+                transition: all 0.2s ease-in-out;
+                z-index: 10;
+            }
+            .zone-pin .pin-icon {
+                color: #6c757d;
+                font-size: 2.5rem;
+                transition: color 0.2s;
+            }
+            .zone-pin .pin-label {
+                background: white;
+                padding: 2px 10px;
+                border-radius: 12px;
+                font-size: 0.85rem;
+                font-weight: bold;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+                white-space: nowrap;
+                margin-top: -5px;
+                border: 1px solid #dee2e6;
+            }
+            /* 활성화된 핀 스타일 */
+            .zone-pin.active .pin-icon {
+                color: #0d6efd;
+                transform: scale(1.1);
+            }
+            .zone-pin.active .pin-label {
+                background: #0d6efd;
+                color: white;
+                border-color: #0d6efd;
+            }
+            .zone-pin:hover .pin-icon {
+                color: #0d6efd;
+            }
+        </style>
 
 {{> layout/footer}}
