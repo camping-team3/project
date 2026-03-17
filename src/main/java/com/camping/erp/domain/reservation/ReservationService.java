@@ -10,6 +10,8 @@ import com.camping.erp.domain.user.User;
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.handler.ex.Exception404;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -48,14 +51,15 @@ public class ReservationService {
                 .toList();
     }
 
-    // 관리자용 전체 예약 내역 조회 (검색 필터 적용)
-    public List<AdminResponse.ReservationListDTO> findAllForAdmin(AdminRequest.ReservationSearchDTO searchDTO) {
-        List<Reservation> reservations = reservationRepository.findAllAdminSearch(
+    // 관리자용 전체 예약 내역 조회 (검색 필터 및 페이징 적용)
+    public AdminResponse.ReservationPageDTO findAllForAdmin(AdminRequest.ReservationSearchDTO searchDTO, Pageable pageable) {
+        Page<Reservation> page = reservationRepository.findAllAdminSearch(
                 searchDTO.getKeyword(), 
                 searchDTO.getCheckIn(), 
-                searchDTO.getStatus());
+                searchDTO.getStatus(),
+                pageable);
 
-        return reservations.stream()
+        List<AdminResponse.ReservationListDTO> dtoList = page.getContent().stream()
                 .map(r -> {
                     long nights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
                     String statusText = "";
@@ -83,6 +87,36 @@ public class ReservationService {
                             .build();
                 })
                 .toList();
+
+        // 페이징 메타데이터 계산 (예: 5개씩 번호 표시)
+        int totalPages = page.getTotalPages();
+        int currentPage = page.getNumber();
+        int startPage = Math.max(0, (currentPage / 5) * 5);
+        int endPage = Math.min(startPage + 4, totalPages - 1);
+
+        List<AdminResponse.PageNumberDTO> pageNumbers = IntStream.rangeClosed(startPage, endPage)
+                .mapToObj(n -> AdminResponse.PageNumberDTO.builder()
+                        .number(n)
+                        .displayDigit(n + 1)
+                        .isCurrent(n == currentPage)
+                        .build())
+                .toList();
+
+        AdminResponse.PaginationDTO pagination = AdminResponse.PaginationDTO.builder()
+                .totalPages(totalPages)
+                .totalElements(page.getTotalElements())
+                .currentPage(currentPage)
+                .pageNumbers(pageNumbers)
+                .hasPrev(page.hasPrevious())
+                .hasNext(page.hasNext())
+                .prevPage(currentPage - 1)
+                .nextPage(currentPage + 1)
+                .build();
+
+        return AdminResponse.ReservationPageDTO.builder()
+                .reservations(dtoList)
+                .pagination(pagination)
+                .build();
     }
 
     // 결제 폼 데이터 준비

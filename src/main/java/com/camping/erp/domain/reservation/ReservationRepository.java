@@ -2,6 +2,8 @@ package com.camping.erp.domain.reservation;
 
 import com.camping.erp.domain.reservation.enums.ReservationStatus;
 import com.camping.erp.domain.site.Site;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,12 +36,16 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                                       @Param("checkOut") LocalDate checkOut, 
                                       @Param("statuses") List<ReservationStatus> statuses);
 
-    @Query("SELECT r FROM Reservation r JOIN FETCH r.user JOIN FETCH r.site s JOIN FETCH s.zone " +
+    @Query(value = "SELECT r FROM Reservation r JOIN FETCH r.user JOIN FETCH r.site s JOIN FETCH s.zone " +
             "WHERE (:keyword IS NULL OR r.user.name LIKE %:keyword% OR CAST(r.id AS string) LIKE %:keyword%) " +
             "AND (:checkIn IS NULL OR r.checkIn = :checkIn) " +
-            "AND (:status IS NULL OR r.status = :status) " +
-            "ORDER BY r.id DESC")
-    List<Reservation> findAllAdminSearch(@Param("keyword") String keyword, 
+            "AND (:status IS NULL OR r.status = :status)",
+            countQuery = "SELECT COUNT(r) FROM Reservation r " +
+            "WHERE (:keyword IS NULL OR r.user.name LIKE %:keyword% OR CAST(r.id AS string) LIKE %:keyword%) " +
+            "AND (:checkIn IS NULL OR r.checkIn = :checkIn) " +
+            "AND (:status IS NULL OR r.status = :status)")
+    Page<Reservation> findAllAdminSearch(@Param("keyword") String keyword, 
                                         @Param("checkIn") LocalDate checkIn, 
-                                        @Param("status") ReservationStatus status);
+                                        @Param("status") ReservationStatus status,
+                                        Pageable pageable);
 }

@@ -2,10 +2,14 @@ package com.camping.erp.domain.admin;
 
 import com.camping.erp.domain.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -26,9 +30,11 @@ public class AdminController {
     }
 
     @GetMapping("/admin/reservations")
-    public String reservationList(AdminRequest.ReservationSearchDTO searchDTO, Model model) {
-        List<AdminResponse.ReservationListDTO> reservations = reservationService.findAllForAdmin(searchDTO);
-        model.addAttribute("reservations", reservations);
+    public String reservationList(AdminRequest.ReservationSearchDTO searchDTO, 
+                                  @RequestParam(name = "page", defaultValue = "0") int page, Model model) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+        AdminResponse.ReservationPageDTO response = reservationService.findAllForAdmin(searchDTO, pageable);
+        model.addAttribute("response", response);
         model.addAttribute("search", searchDTO);
         return "admin/reservation/list";
     }

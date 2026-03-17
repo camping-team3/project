@@ -55,7 +55,7 @@
                 </tr>
             </thead>
             <tbody>
-                {{#reservations}}
+                {{#response.reservations}}
                 <tr class="reservation-table-row {{#isPending}}pending{{/isPending}}">
                     <td class="px-4 py-4 font-monospace small text-secondary">{{reservationIdDisplay}}</td>
                     <td class="px-4 py-4 fw-bold text-dark">{{username}}</td>
@@ -81,28 +81,52 @@
                         </div>
                     </td>
                 </tr>
-                {{/reservations}}
-                {{^reservations}}
+                {{/response.reservations}}
+                {{^response.reservations}}
                 <tr>
                     <td colspan="7" class="px-4 py-5 text-center text-secondary opacity-50">
                         <span class="material-symbols-outlined fs-1 mb-2">event_busy</span>
                         <p class="m-0">예약 내역이 없습니다.</p>
                     </td>
                 </tr>
-                {{/reservations}}
+                {{/response.reservations}}
             </tbody>
         </table>
 
         <!-- Pagination -->
         <div class="p-4 bg-light bg-opacity-50 d-flex justify-content-between align-items-center border-top">
-            <p class="text-secondary small m-0 fw-medium">전체 내역 표시 중</p>
+            {{#response.pagination}}
+            <p class="text-secondary small m-0 fw-medium">총 {{totalElements}}건의 내역 ({{totalPages}} 페이지)</p>
             <nav>
                 <ul class="pagination pagination-sm m-0 gap-1">
-                    <li class="page-item disabled"><a class="page-link border-0 rounded-2 bg-transparent text-secondary" href="#"><span class="material-symbols-outlined fs-6">chevron_left</span></a></li>
-                    <li class="page-item active"><a class="page-link border-0 rounded-2 bg-primary text-white fw-bold" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link border-0 rounded-2 text-secondary" href="#"><span class="material-symbols-outlined fs-6">chevron_right</span></a></li>
+                    <!-- Previous -->
+                    <li class="page-item {{^hasPrev}}disabled{{/hasPrev}}">
+                        <a class="page-link border-0 rounded-2 bg-transparent text-secondary" 
+                           href="?page={{prevPage}}{{#search.keyword}}&keyword={{.}}{{/search.keyword}}{{#search.checkIn}}&checkIn={{.}}{{/search.checkIn}}{{#search.status}}&status={{.}}{{/search.status}}">
+                            <span class="material-symbols-outlined fs-6">chevron_left</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Numbers -->
+                    {{#pageNumbers}}
+                    <li class="page-item {{#isCurrent}}active{{/isCurrent}}">
+                        <a class="page-link border-0 rounded-2 {{#isCurrent}}bg-primary text-white fw-bold{{/isCurrent}} {{^isCurrent}}text-secondary{{/isCurrent}}" 
+                           href="?page={{number}}{{#search.keyword}}&keyword={{.}}{{/search.keyword}}{{#search.checkIn}}&checkIn={{.}}{{/search.checkIn}}{{#search.status}}&status={{.}}{{/search.status}}">
+                            {{displayDigit}}
+                        </a>
+                    </li>
+                    {{/pageNumbers}}
+                    
+                    <!-- Next -->
+                    <li class="page-item {{^hasNext}}disabled{{/hasNext}}">
+                        <a class="page-link border-0 rounded-2 text-secondary" 
+                           href="?page={{nextPage}}{{#search.keyword}}&keyword={{.}}{{/search.keyword}}{{#search.checkIn}}&checkIn={{.}}{{/search.checkIn}}{{#search.status}}&status={{.}}{{/search.status}}">
+                            <span class="material-symbols-outlined fs-6">chevron_right</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
+            {{/response.pagination}}
         </div>
     </div>
 </div>
