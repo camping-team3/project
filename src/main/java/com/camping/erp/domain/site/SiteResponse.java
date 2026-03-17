@@ -37,6 +37,8 @@ public class SiteResponse {
         private String name;
         private Long normalPrice;
         private Long peakPrice;
+        private int basePeople;
+        private Long extraPersonFee;
         private List<AdminSiteDTO> sites;
 
         public AdminZoneDTO(Zone zone) {
@@ -44,6 +46,8 @@ public class SiteResponse {
             this.name = zone.getName();
             this.normalPrice = zone.getNormalPrice();
             this.peakPrice = zone.getPeakPrice();
+            this.basePeople = zone.getBasePeople();
+            this.extraPersonFee = zone.getExtraPersonFee();
             this.sites = zone.getSites().stream().map(AdminSiteDTO::new).toList();
         }
     }
