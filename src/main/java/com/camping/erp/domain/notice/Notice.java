@@ -24,7 +24,7 @@ public class Notice extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
-    @Column(columnDefinition = "LONGTEXT", nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Column(nullable = false)
@@ -45,5 +45,10 @@ public class Notice extends BaseTimeEntity {
         this.title = title;
         this.content = content;
         this.isTop = isTop;
+    }
+
+    public void addImage(com.camping.erp.domain.image.Image image) {
+        this.images.add(image);
+        image.setNotice(this);
     }
 }

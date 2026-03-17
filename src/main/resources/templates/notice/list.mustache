@@ -49,17 +49,31 @@
     <!-- Pagination -->
     <div class="d-flex justify-content-center gap-2 mt-5">
         {{#notices.hasPrevious}}
-        <a href="?page={{notices.previousPage}}&keyword={{keyword}}" class="btn btn-icon border border-secondary border-opacity-10 bg-white d-flex align-items-center justify-content-center shadow-sm rounded-3 p-2">
+        <a href="?page={{notices.previousPage}}&keyword={{keyword}}" class="btn btn-icon border border-secondary border-opacity-10 bg-white d-flex align-items-center justify-content-center shadow-sm rounded-3 p-2" style="width: 40px; height: 40px;">
             <span class="material-symbols-outlined fs-6">chevron_left</span>
         </a>
         {{/notices.hasPrevious}}
+        {{^notices.hasPrevious}}
+        <button class="btn btn-icon border border-secondary border-opacity-10 bg-white d-flex align-items-center justify-content-center shadow-sm rounded-3 p-2 opacity-50" style="width: 40px; height: 40px;" disabled>
+            <span class="material-symbols-outlined fs-6">chevron_left</span>
+        </button>
+        {{/notices.hasPrevious}}
         
-        <button class="btn btn-primary px-4 py-1.5 small fw-bold shadow-sm rounded-3 border-0">현재 페이지</button>
+        {{#notices.pageNumbers}}
+        <a href="?page={{pageIndex}}&keyword={{keyword}}" class="btn {{#active}}btn-primary text-white{{/active}}{{^active}}btn-light bg-white text-secondary border border-secondary border-opacity-10{{/active}} px-3 py-2 small fw-bold shadow-sm rounded-3 border-0 d-flex align-items-center justify-content-center" style="min-width: 40px; height: 40px;">
+            {{number}}
+        </a>
+        {{/notices.pageNumbers}}
         
         {{#notices.hasNext}}
-        <a href="?page={{notices.nextPage}}&keyword={{keyword}}" class="btn btn-icon border border-secondary border-opacity-10 bg-white d-flex align-items-center justify-content-center shadow-sm rounded-3 p-2">
+        <a href="?page={{notices.nextPage}}&keyword={{keyword}}" class="btn btn-icon border border-secondary border-opacity-10 bg-white d-flex align-items-center justify-content-center shadow-sm rounded-3 p-2" style="width: 40px; height: 40px;">
             <span class="material-symbols-outlined fs-6">chevron_right</span>
         </a>
+        {{/notices.hasNext}}
+        {{^notices.hasNext}}
+        <button class="btn btn-icon border border-secondary border-opacity-10 bg-white d-flex align-items-center justify-content-center shadow-sm rounded-3 p-2 opacity-50" style="width: 40px; height: 40px;" disabled>
+            <span class="material-symbols-outlined fs-6">chevron_right</span>
+        </button>
         {{/notices.hasNext}}
     </div>
 </main>

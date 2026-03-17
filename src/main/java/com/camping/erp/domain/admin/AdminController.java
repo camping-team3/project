@@ -42,16 +42,6 @@ public class AdminController {
         return "admin/user/detail";
     }
 
-    @GetMapping("/admin/galleries")
-    public String galleryList() {
-        return "admin/gallery/list";
-    }
-
-    @GetMapping("/admin/galleries/new")
-    public String galleryNew() {
-        return "admin/gallery/new";
-    }
-
     @GetMapping("/admin/qna")
     public String qnaList() {
         return "admin/qna/list";

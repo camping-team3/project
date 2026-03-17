@@ -4,16 +4,12 @@
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 
 <div class="p-5" style="max-width: 896px; margin: 0 auto;">
-    <form action="/admin/notices/save" method="POST">
+    <form id="noticeSaveForm" action="/admin/notices/save" method="POST" enctype="multipart/form-data">
         <!-- Page Title Section -->
         <div class="d-flex justify-content-between align-items-center mb-5">
             <div>
                 <h2 class="display-6 fw-bold text-dark mb-1 tracking-tight">새 공지사항 작성</h2>
                 <p class="text-secondary small mt-1">캠핑지기 웹사이트 및 앱에 노출될 새로운 공지사항을 등록합니다.</p>
-            </div>
-            <div class="d-flex gap-3">
-                <button type="button" onclick="history.back()" class="btn btn-light px-4 py-2.5 fw-bold text-secondary border bg-white rounded-3 small">취소</button>
-                <button type="submit" class="btn btn-primary px-4 py-2.5 fw-bold shadow-md border-0 rounded-3 small">게시하기</button>
             </div>
         </div>
 
@@ -31,7 +27,7 @@
                     </div>
                     <div class="col-md-9">
                         <label class="form-label small fw-bold text-dark mb-2">공지사항 제목</label>
-                        <input type="text" name="title" class="form-control py-2.5 shadow-none border-secondary border-opacity-25 text-sm" placeholder="공지사항 제목을 입력해주세요" required>
+                        <input type="text" name="title" class="form-control py-2.5 shadow-none border-secondary border-opacity-25 text-sm" placeholder="공지사항 제목을 입력해주세요">
                     </div>
                 </div>
 
@@ -41,13 +37,22 @@
                     <textarea id="summernote" name="content"></textarea>
                 </div>
 
-                <!-- File Upload (UI만 유지) -->
+                <!-- File Upload -->
                 <div class="mb-0">
-                    <label class="form-label small fw-bold text-dark mb-2">첨부 이미지 (차후 다중 업로드 지원 예정)</label>
-                    <div class="file-drop-zone border-dashed p-5 text-center bg-light rounded-4" style="border: 2px dashed #dee2e6;">
+                    <label class="form-label small fw-bold text-dark mb-3">첨부 이미지</label>
+                    
+                    <!-- 숨겨진 파일 입력창 -->
+                    <input type="file" id="imageInput" name="images" multiple accept="image/*" style="display:none">
+                    
+                    <div id="dropZone" class="file-drop-zone border-dashed p-5 text-center bg-light rounded-4" style="border: 2px dashed #dee2e6; cursor: pointer; transition: all 0.3s ease;">
                         <span class="material-symbols-outlined icon-upload fs-1 text-secondary opacity-50">upload_file</span>
                         <p class="small fw-medium text-dark mb-1 mt-2">이미지 파일을 이곳에 드래그하거나 클릭하세요</p>
-                        <p class="text-secondary" style="font-size: 11px;">현재는 텍스트 위주로 작성 가능하며, 이미지 업로드는 고도화 예정입니다.</p>
+                        <p class="text-secondary" style="font-size: 11px;">최대 20MB 이하의 JPG, PNG 파일 업로드를 지원합니다.</p>
+                    </div>
+
+                    <!-- 프리뷰 그리드 영역 -->
+                    <div id="previewGrid" class="d-flex flex-wrap gap-3 mt-3">
+                        <!-- 동적으로 프리뷰 이미지가 삽입될 공간 -->
                     </div>
                 </div>
             </div>
@@ -55,18 +60,19 @@
             <!-- Bottom Actions -->
             <div class="d-flex align-items-center justify-content-end gap-3 pt-4">
                 <button type="button" onclick="history.back()" class="btn btn-light px-4 py-2.5 rounded-lg border border-secondary border-opacity-10 bg-white small fw-bold text-secondary">취소</button>
-                <button type="submit" class="btn btn-primary px-4 py-2.5 rounded-lg fw-bold shadow-md border-0 small">게시하기</button>
+                <button type="button" id="btnNoticeSave" class="btn btn-primary px-4 py-2.5 rounded-lg fw-bold shadow-md border-0 small">게시하기</button>
             </div>
         </div>
     </form>
 </div>
 
-<!-- JQuery & Summernote Lite JS -->
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+<!-- JQuery & Summernote Lite JS (Full 버전 jQuery 사용) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
 <script>
     $(document).ready(function() {
+        // Summernote 초기화
         $('#summernote').summernote({
             placeholder: '공지사항 내용을 작성해주세요...',
             tabsize: 2,
@@ -81,6 +87,97 @@
                 ['view', ['fullscreen', 'codeview', 'help']]
             ]
         });
+
+        // 게시하기 버튼 클릭 이벤트
+        $('#btnNoticeSave').on('click', function() {
+            // Summernote 내용 동기화
+            const content = $('#summernote').summernote('code');
+            if (!content || content === '<p><br></p>' || content === '') {
+                alert('본문 내용을 입력해주세요.');
+                return;
+            }
+            $('#summernote').val(content);
+
+            // 제목 확인
+            const title = $('input[name="title"]').val();
+            if (!title || title.trim() === '') {
+                alert('제목을 입력해주세요.');
+                return;
+            }
+
+            // 폼 제출
+            $('#noticeSaveForm').submit();
+        });
+
+        // 이미지 업로드 로직
+        const dropZone = document.getElementById('dropZone');
+        const imageInput = document.getElementById('imageInput');
+        const previewGrid = document.getElementById('previewGrid');
+        let selectedFiles = [];
+
+        if (dropZone) {
+            dropZone.addEventListener('click', () => imageInput.click());
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.style.backgroundColor = 'rgba(13, 110, 253, 0.05)';
+                dropZone.style.borderColor = '#0d6efd';
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.style.backgroundColor = '';
+                dropZone.style.borderColor = '#dee2e6';
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.style.backgroundColor = '';
+                dropZone.style.borderColor = '#dee2e6';
+                const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+                handleFiles(files);
+            });
+        }
+
+        if (imageInput) {
+            imageInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                handleFiles(files);
+            });
+        }
+
+        function handleFiles(files) {
+            files.forEach(file => {
+                selectedFiles.push(file);
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'position-relative animate__animated animate__fadeIn';
+                    previewItem.style.width = '120px';
+                    previewItem.style.height = '120px';
+                    previewItem.innerHTML = `
+                        <img src="${e.target.result}" class="w-100 h-100 object-fit-cover rounded-3 border shadow-sm">
+                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-0 d-flex align-items-center justify-content-center" 
+                                style="width: 24px; height: 24px; border-radius: 50%; font-size: 16px; transform: translate(30%, -30%); border: 2px solid white;" 
+                                onclick="removeFile(this, '${file.name}')">×</button>
+                    `;
+                    previewGrid.appendChild(previewItem);
+                };
+                reader.readAsDataURL(file);
+            });
+            updateInputFiles();
+        }
+
+        window.removeFile = function(btn, fileName) {
+            btn.parentElement.remove();
+            selectedFiles = selectedFiles.filter(f => f.name !== fileName);
+            updateInputFiles();
+        };
+
+        function updateInputFiles() {
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            imageInput.files = dataTransfer.files;
+        }
     });
 </script>
 

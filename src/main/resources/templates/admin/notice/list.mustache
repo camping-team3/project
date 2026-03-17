@@ -87,19 +87,35 @@
                 <ul class="pagination pagination-sm m-0 gap-1">
                     {{#notices.hasPrevious}}
                     <li class="page-item">
-                        <a class="page-link border-0 rounded-2 text-dark fw-bold bg-white shadow-sm" href="?page={{notices.previousPage}}&keyword={{keyword}}">
+                        <a class="page-link border-0 rounded-2 text-dark fw-bold bg-white shadow-sm d-flex align-items-center justify-content-center" href="?page={{notices.previousPage}}&keyword={{keyword}}" style="width: 32px; height: 32px;">
+                            <span class="material-symbols-outlined fs-6">chevron_left</span>
+                        </a>
+                    </li>
+                    {{/notices.hasPrevious}}
+                    {{^notices.hasPrevious}}
+                    <li class="page-item disabled">
+                        <a class="page-link border-0 rounded-2 text-secondary bg-white opacity-50 d-flex align-items-center justify-content-center" href="#" style="width: 32px; height: 32px;">
                             <span class="material-symbols-outlined fs-6">chevron_left</span>
                         </a>
                     </li>
                     {{/notices.hasPrevious}}
                     
-                    <li class="page-item active">
-                        <a class="page-link border-0 rounded-2 bg-primary text-white fw-bold shadow-sm" href="#">{{notices.number}}</a>
+                    {{#notices.pageNumbers}}
+                    <li class="page-item {{#active}}active{{/active}}">
+                        <a class="page-link border-0 rounded-2 {{#active}}bg-primary text-white{{/active}}{{^active}}bg-white text-dark{{/active}} fw-bold shadow-sm d-flex align-items-center justify-content-center" href="?page={{pageIndex}}&keyword={{keyword}}" style="width: 32px; height: 32px;">{{number}}</a>
                     </li>
+                    {{/notices.pageNumbers}}
                     
                     {{#notices.hasNext}}
                     <li class="page-item">
-                        <a class="page-link border-0 rounded-2 text-dark fw-bold bg-white shadow-sm" href="?page={{notices.nextPage}}&keyword={{keyword}}">
+                        <a class="page-link border-0 rounded-2 text-dark fw-bold bg-white shadow-sm d-flex align-items-center justify-content-center" href="?page={{notices.nextPage}}&keyword={{keyword}}" style="width: 32px; height: 32px;">
+                            <span class="material-symbols-outlined fs-6">chevron_right</span>
+                        </a>
+                    </li>
+                    {{/notices.hasNext}}
+                    {{^notices.hasNext}}
+                    <li class="page-item disabled">
+                        <a class="page-link border-0 rounded-2 text-secondary bg-white opacity-50 d-flex align-items-center justify-content-center" href="#" style="width: 32px; height: 32px;">
                             <span class="material-symbols-outlined fs-6">chevron_right</span>
                         </a>
                     </li>

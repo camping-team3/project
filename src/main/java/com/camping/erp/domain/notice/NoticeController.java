@@ -1,5 +1,6 @@
 package com.camping.erp.domain.notice;
 
+import com.camping.erp.global.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,8 +20,8 @@ public class NoticeController {
     @GetMapping("/notices")
     public String list(@RequestParam(name = "keyword", defaultValue = "") String keyword,
                        @PageableDefault(size = 10) Pageable pageable, Model model) {
-        Page<NoticeResponse.ListDTO> notices = noticeService.findAll(keyword, pageable);
-        model.addAttribute("notices", notices);
+        Page<NoticeResponse.ListDTO> noticePage = noticeService.findAll(keyword, pageable);
+        model.addAttribute("notices", new PageResponse<>(noticePage));
         model.addAttribute("keyword", keyword);
         return "notice/list";
     }
