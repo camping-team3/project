@@ -10,12 +10,16 @@ public class SiteRequest {
         private String name;
         private Long normalPrice;
         private Long peakPrice;
+        private int basePeople;
+        private Long extraPersonFee;
 
         public Zone toEntity() {
             return Zone.builder()
                     .name(name)
                     .normalPrice(normalPrice)
                     .peakPrice(peakPrice)
+                    .basePeople(basePeople)
+                    .extraPersonFee(extraPersonFee)
                     .build();
         }
     }
@@ -25,12 +29,14 @@ public class SiteRequest {
         private String siteName;
         private Integer maxPeople;
         private Long zoneId;
+        private boolean isAvailable = true;
 
         public Site toEntity(Zone zone) {
             return Site.builder()
                     .siteName(siteName)
                     .maxPeople(maxPeople)
                     .zone(zone)
+                    .isAvailable(isAvailable)
                     .build();
         }
     }
