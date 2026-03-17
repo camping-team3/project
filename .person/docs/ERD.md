@@ -47,7 +47,8 @@
 ### 2.4 커뮤니티 (Notice, Gallery, Qna, Review, Comment)
 - **Notice (공지사항):** `id`, `title`, `content`, `created_at`
 - **Gallery (포토 갤러리):** `id`, `title`, `content`, `created_at`
-- **Qna (질문 답변):** `id`, `user_id` (FK), `title`, `content`, `is_answered`, `created_at`
+- **Qna (질문 답변):** 
+  - `id` (PK), `user_id` (FK), `title`, `content`, `category` (RESERVATION, FACILITY, ETC), `hits` (조회수), `is_answered` (답변 여부), `created_at`
 - **Comment (관리자 답변):** `id`, `qna_id` (FK), `admin_id` (FK), `content`, `created_at`
 - **Review (이용 후기):** `id`, `user_id` (FK), `reservation_id` (FK), `rating`, `content`, `created_at`
 

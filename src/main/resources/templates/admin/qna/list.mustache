@@ -5,7 +5,7 @@
             <h2 class="display-6 fw-black text-dark mb-1">질의응답 관리</h2>
             <p class="text-secondary fw-medium m-0 small">사용자들의 문의 사항을 실시간으로 확인하고 답변을 등록합니다.</p>
         </div>
-        <button class="btn btn-primary px-4 py-2.5 fw-bold d-flex align-items-center gap-2 shadow-lg border-0 rounded-3">
+        <button onclick="alert('엑셀 내보내기 기능은 준비 중입니다.')" class="btn btn-primary px-4 py-2.5 fw-bold d-flex align-items-center gap-2 shadow-lg border-0 rounded-3">
             <span class="material-symbols-outlined fs-5">download</span>
             <span>내보내기 (Excel)</span>
         </button>
@@ -13,9 +13,9 @@
 
     <!-- Tabs -->
     <div class="d-flex align-items-center gap-4 mb-4 border-bottom border-light px-2">
-        <div class="admin-tab-item active fw-bold text-primary border-bottom border-primary border-3 pb-2">전체</div>
-        <div class="admin-tab-item fw-medium text-secondary pb-2">답변 대기</div>
-        <div class="admin-tab-item fw-medium text-secondary pb-2">답변 완료</div>
+        <a href="/admin/qna?status=all" class="admin-tab-item {{#isAll}}active fw-bold text-primary border-bottom border-primary border-3{{/isAll}} pb-2 text-decoration-none {{^isAll}}text-secondary{{/isAll}}">전체</a>
+        <a href="/admin/qna?status=pending" class="admin-tab-item {{#isPending}}active fw-bold text-primary border-bottom border-primary border-3{{/isPending}} pb-2 text-decoration-none {{^isPending}}text-secondary{{/isPending}}">답변 대기</a>
+        <a href="/admin/qna?status=completed" class="admin-tab-item {{#isCompleted}}active fw-bold text-primary border-bottom border-primary border-3{{/isCompleted}} pb-2 text-decoration-none {{^isCompleted}}text-secondary{{/isCompleted}}">답변 완료</a>
     </div>
 
     <!-- Table -->
@@ -33,76 +33,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Row 1 -->
+                    {{#qnas}}
                     <tr class="hover-bg-primary-5 transition-colors">
-                        <td class="text-secondary fw-bold px-4">105</td>
+                        <td class="text-secondary fw-bold px-4">{{id}}</td>
                         <td class="px-4">
-                            <div class="fw-bold text-dark m-0 title-truncate">숲속의 집 예약 문의</div>
-                            <div class="text-secondary category-text">카테고리: 예약/결제</div>
+                            <div class="fw-bold text-dark m-0 title-truncate">{{title}}</div>
+                            <div class="text-secondary category-text">카테고리: {{categoryName}}</div>
                         </td>
-                        <td class="px-4 small">김철수</td>
-                        <td class="px-4 text-secondary small">2023-10-24</td>
-                        <td class="px-4"><span class="badge bg-amber-subtle fw-bold px-2.5 py-1 rounded">답변 대기</span></td>
+                        <td class="px-4 small">{{username}}</td>
+                        <td class="px-4 text-secondary small">{{createdAt}}</td>
+                        <td class="px-4">
+                            {{#isAnswered}}
+                            <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2.5 py-1 rounded">답변 완료</span>
+                            {{/isAnswered}}
+                            {{^isAnswered}}
+                            <span class="badge bg-warning bg-opacity-10 text-warning fw-bold px-2.5 py-1 rounded">답변 대기</span>
+                            {{/isAnswered}}
+                        </td>
                         <td class="px-4 text-end">
-                            <a href="/admin/qna/105/answer" class="btn-detail-link">상세보기 <span class="material-symbols-outlined">chevron_right</span></a>
+                            <a href="/admin/qna/{{id}}/answer" class="btn-detail-link">상세보기 <span class="material-symbols-outlined">chevron_right</span></a>
                         </td>
                     </tr>
-                    <!-- Row 2 -->
+                    {{/qnas}}
+                    {{^qnas}}
                     <tr>
-                        <td class="text-secondary fw-bold px-4">104</td>
-                        <td class="px-4">
-                            <div class="fw-bold text-dark m-0 title-truncate">반려동물 동반 가능 여부</div>
-                            <div class="text-secondary category-text">카테고리: 시설안내</div>
-                        </td>
-                        <td class="px-4 small">이영희</td>
-                        <td class="px-4 text-secondary small">2023-10-23</td>
-                        <td class="px-4"><span class="badge bg-green-subtle fw-bold px-2.5 py-1 rounded">답변 완료</span></td>
-                        <td class="px-4 text-end">
-                            <a href="/admin/qna/104/answer" class="btn-detail-completed">상세보기 <span class="material-symbols-outlined">chevron_right</span></a>
-                        </td>
+                        <td colspan="6" class="text-center py-5 text-secondary">등록된 문의가 없습니다.</td>
                     </tr>
-                    <!-- Row 3 -->
-                    <tr>
-                        <td class="text-secondary fw-bold px-4">103</td>
-                        <td class="px-4">
-                            <div class="fw-bold text-dark m-0 title-truncate">환불 규정이 궁금합니다</div>
-                            <div class="text-secondary category-text">카테고리: 예약/결제</div>
-                        </td>
-                        <td class="px-4 small">박지민</td>
-                        <td class="px-4 text-secondary small">2023-10-22</td>
-                        <td class="px-4"><span class="badge bg-green-subtle fw-bold px-2.5 py-1 rounded">답변 완료</span></td>
-                        <td class="px-4 text-end">
-                            <a href="/admin/qna/103/answer" class="btn-detail-completed">상세보기 <span class="material-symbols-outlined">chevron_right</span></a>
-                        </td>
-                    </tr>
-                    <!-- Row 4 -->
-                    <tr class="hover-bg-primary-5 transition-colors">
-                        <td class="text-secondary fw-bold px-4">102</td>
-                        <td class="px-4">
-                            <div class="fw-bold text-dark m-0 title-truncate">단체 예약 할인 혜택</div>
-                            <div class="text-secondary category-text">카테고리: 프로모션</div>
-                        </td>
-                        <td class="px-4 small">최승우</td>
-                        <td class="px-4 text-secondary small">2023-10-21</td>
-                        <td class="px-4"><span class="badge bg-amber-subtle fw-bold px-2.5 py-1 rounded">답변 대기</span></td>
-                        <td class="px-4 text-end">
-                            <a href="/admin/qna/102/answer" class="btn-detail-link">상세보기 <span class="material-symbols-outlined">chevron_right</span></a>
-                        </td>
-                    </tr>
-                    <!-- Row 5 -->
-                    <tr>
-                        <td class="text-secondary fw-bold px-4">101</td>
-                        <td class="px-4">
-                            <div class="fw-bold text-dark m-0 title-truncate">주차 시설 안내 요청</div>
-                            <div class="text-secondary category-text">카테고리: 시설안내</div>
-                        </td>
-                        <td class="px-4 small">강다니엘</td>
-                        <td class="px-4 text-secondary small">2023-10-20</td>
-                        <td class="px-4"><span class="badge bg-green-subtle fw-bold px-2.5 py-1 rounded">답변 완료</span></td>
-                        <td class="px-4 text-end">
-                            <a href="/admin/qna/101/answer" class="btn-detail-completed">상세보기 <span class="material-symbols-outlined">chevron_right</span></a>
-                        </td>
-                    </tr>
+                    {{/qnas}}
                 </tbody>
             </table>
         </div>

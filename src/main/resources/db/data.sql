@@ -89,10 +89,9 @@ INSERT INTO gallery_tb (title, content, created_at) VALUES
 -- ==========================================================
 -- 9. Q&A 및 관리자 답변 (qna_tb, comment_tb)
 -- ==========================================================
-INSERT INTO qna_tb (user_id, title, content, is_answered, created_at) VALUES 
-(2, '반려견 동반 입실이 가능한가요?', '10kg 미만 소형견 1마리와 동반하고 싶은데 A구역 가능할까요?', true, NOW()),
-(3, '주차 공간이 사이트 바로 옆인가요?', '텐트 바로 옆에 차를 댈 수 있는지 궁금합니다.', false, NOW());
-
+INSERT INTO qna_tb (user_id, title, content, category, hits, is_answered, created_at) VALUES 
+(2, '반려견 동반 입실이 가능한가요?', '10kg 미만 소형견 1마리와 동반하고 싶은데 A구역 가능할까요?', 'FACILITY', 0, true, NOW()),
+(3, '주차 공간이 사이트 바로 옆인가요?', '텐트 바로 옆에 차를 댈 수 있는지 궁금합니다.', 'RESERVATION', 0, false, NOW());
 INSERT INTO comment_tb (qna_id, admin_id, content, created_at) VALUES 
 (1, 1, '안녕하세요! A구역은 사이트당 1마리(소형견)에 한해 동반이 가능합니다. 목줄 착용은 필수입니다.', NOW());
 
