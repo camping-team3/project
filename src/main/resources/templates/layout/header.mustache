@@ -58,6 +58,7 @@
                     {{^isAdmin}}
                         <button onclick="location.href='/mypage'" class="btn btn-primary px-4 py-2 small fw-bold shadow-sm">마이페이지</button>
                     {{/isAdmin}}
+                    <button onclick="location.href='/logout'" class="btn btn-outline-primary px-4 py-2 small fw-bold shadow-sm ms-2">로그아웃</button>
                 {{/sessionUser}}
                 {{^sessionUser}}
                     <button onclick="location.href='/login-form'" class="btn btn-primary px-4 py-2 small fw-bold shadow-sm">로그인</button>

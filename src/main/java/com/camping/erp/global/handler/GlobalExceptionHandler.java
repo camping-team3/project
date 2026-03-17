@@ -43,12 +43,7 @@ public class GlobalExceptionHandler {
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-        return String.format("""
-                <script>
-                    alert('%s');
-                    history.back();
-                </script>
-                """, e.getMessage());
+        return scriptAlert(e.getMessage(), "history.back();");
     }
 
     @ExceptionHandler(Exception401.class)
@@ -56,12 +51,7 @@ public class GlobalExceptionHandler {
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
-        return String.format("""
-                <script>
-                    alert('%s');
-                    location.href = '/login-form';
-                </script>
-                """, e.getMessage());
+        return scriptAlert(e.getMessage(), "location.href = '/login-form';");
     }
 
     @ExceptionHandler(Exception403.class)
@@ -69,12 +59,7 @@ public class GlobalExceptionHandler {
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.FORBIDDEN, e.getMessage());
         }
-        return String.format("""
-                <script>
-                    alert('%s');
-                    history.back();
-                </script>
-                """, e.getMessage());
+        return scriptAlert(e.getMessage(), "history.back();");
     }
 
     @ExceptionHandler(Exception404.class)
@@ -82,12 +67,7 @@ public class GlobalExceptionHandler {
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.NOT_FOUND, e.getMessage());
         }
-        return String.format("""
-                <script>
-                    alert('%s');
-                    history.back();
-                </script>
-                """, e.getMessage());
+        return scriptAlert(e.getMessage(), "history.back();");
     }
 
     @ExceptionHandler(Exception500.class)
@@ -95,28 +75,25 @@ public class GlobalExceptionHandler {
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-        return String.format("""
-                <script>
-                    alert('%s');
-                    history.back();
-                </script>
-                """, e.getMessage());
+        return scriptAlert(e.getMessage(), "history.back();");
     }
 
     @ExceptionHandler(Exception.class)
-    public @ResponseBody Object exUnknown(Exception e, HttpServletRequest request) {
-        // 상세 에러 로그 출력 (서버 콘솔 확인용)
+    public Object exUnknown(Exception e, HttpServletRequest request) {
         e.printStackTrace();
-
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 문의하세요: " + e.getMessage());
         }
+        // 리다이렉트이므로 @ResponseBody를 붙이지 않음
+        return "redirect:/login-form";
+    }
 
+    private String scriptAlert(String msg, String action) {
         return String.format("""
                 <script>
-                    alert('에러가 발생했습니다: %s');
-                    history.back();
+                    alert('%s');
+                    %s
                 </script>
-                """, e.getMessage());
+                """, msg, action);
     }
 }

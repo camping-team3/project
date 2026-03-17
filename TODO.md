@@ -1,67 +1,21 @@
-# ⛳ Forest Haven ERP 개발 체크리스트
+﻿# 🔑 User 도메인 완성 및 검증 강화 (Phase 2)
 
-## 📅 [Phase 2] 공지사항(Notice) 기능 및 안정화
+## 1. 서버 사이드 검증 로직 추가 (JoinDTO) [x]
+- [x] UserRequest.JoinDTO에 passwordConfirm 필드 추가
+- [x] UserService.join()에서 password와 passwordConfirm 일치 여부 검증 로직 추가
+- [x] (Optional) JoinDTO에 유효성 검사 어노테이션 추가 (email, phone 형식 등)
 
-- [x] **1단계: 도메인 모델링 및 기본 구현**
-  - [x] Notice 엔티티 수정: isTop 필드 추가, Image 연관관계 설정
-  - [x] Image 엔티티 수정: Notice 연관관계 추가
-  - [x] NoticeRepository 구현: 최신/상단고정 정렬, 검색 쿼리 추가
-- [x] **2단계: 비즈니스 로직 및 DTO 구성**
-  - [x] NoticeRequest / NoticeResponse DTO 생성 및 필드 반영
-  - [x] NoticeService 구현: CRUD, 검색/페이징, 파일 업로드 로직 통합
-- [x] **3단계: 관리자 기능 개발 (Admin CRUD)**
-  - [x] AdminNoticeController 생성 및 권한 인터셉터 적용
-  - [x] 관리자용 공지사항 목록 화면 (admin/notice/list.mustache)
-  - [x] 공지사항 등록/수정 폼 (admin/notice/save-form.mustache) - Summernote 에디터 및 이미지 업로드 통합
-- [x] **4단계: 사용자 뷰(Public View)**
-  - [x] 공지사항 목록 화면 (notice/list.mustache) - 검색 기능 및 상단고정 디자인 적용
-  - [x] 공지사항 상세 뷰 (notice/detail.mustache) - 에디터 내용 렌더링 및 이미지 노출
-- [x] **5단계: 안정화**
-  - [x] 비로그인 사용자의 접근 권한 인터셉터 적용
-  - [x] 통합 테스트 및 예외 처리 로직 (GlobalExceptionHandler) 검증
-  - [x] 최종 작업 보고서 (notice-report.md) 작성 및 TODO 체크
-- [x] **6단계: 검증 및 데이터 정합성 강화**
-  - [x] `data.sql` 초기 데이터 정합성 수정 (`is_top` 컬럼 및 값 추가)
-  - [x] 서버 기동 및 런타임 오류 검증 (H2 IntegrityConstraintViolation 해결)
-  - [x] 갤러리/공지사항 이미지 업로드(클릭/드래그) 및 프리뷰 기능 구현
-- [x] **8단계: 공지사항 페이징 UI 구현**
-  - [x] 관리자 공지사항 목록(`admin/notice/list.mustache`) 페이징 연동
-  - [x] 사용자 공지사항 목록(`notice/list.mustache`) 페이징 연동
-  - [x] 이전/다음 버튼 및 페이지 번호(1부터 시작) 노출 로직 구현
-- [x] **11단계: 포토갤러리 저장 및 목록 노출 오류 수정**
-  - [x] 갤러리 저장(`AdminGalleryController.save`) 로직 및 데이터 저장 여부 확인
-  - [x] 갤러리 목록(`AdminGalleryController.list`) 조회 쿼리 및 페이징 확인
-  - [x] 갤러리 엔티티 및 이미지 연관관계 저장 정합성 검토
-- [x] **12단계: 포토갤러리 수정 기능 구현**
-  - [x] 수정 폼(`admin/gallery/update-form.mustache`) UI 및 JS 구현
-  - [x] 수정 요청 처리(`AdminGalleryController.update`) 및 이미지 추가/삭제 로직
-  - [x] 목록 화면에서 수정 버튼 링크 연결
-- [x] **13단계: 갤러리 썸네일 즉시 반영 UI 개선**
-  - [x] 갤러리 작성/수정 후 목록/상세 화면 이동 시 캐시 또는 리로딩 문제 해결 (외부 경로 매핑 방식 도입)
-  - [x] 썸네일 이미지 URL에 타임스탬프 또는 캐시 방지 파라미터 적용 검토 (UUID 사용으로 중복 방지 확인)
-  - [x] 작업 보고서 작성 및 TODO 체크
-- [x] **14단계: 갤러리 카테고리 통일**
-  - [x] 등록/수정 폼 카테고리 옵션 일치 [특별 이벤트, 캠핑장 전경, 기타]
-  - [x] 수정 폼 기존 카테고리 자동 선택 로직 추가
-  - [x] 초기 데이터(data.sql) 카테고리 정합성 수정
-  - [x] 작업 보고서 작성 및 TODO 체크
-- [x] **15단계: 갤러리 작성 URL 및 템플릿 명칭 컨벤션 준수**
-  - [x] AdminGalleryController: /new -> /save-form URL 변경
-  - [x] Mustache: new.mustache -> save-form.mustache 파일명 변경
-  - [x] 갤러리 목록 버튼 링크 수정
-  - [x] 작업 보고서 작성 및 TODO 체크
-- [x] **16단계: 갤러리 게시글 최신순 정렬**
-  - [x] GalleryRepository: ID 내림차순 쿼리 메서드 추가
-  - [x] GalleryService: 최신순 정렬 메서드 호출 적용
-  - [x] 작업 보고서 작성 및 TODO 체크
-- [x] **17단계: 데이터 정합성 오류 수정**
-  - [x] `data.sql` 내 `gallery_tb` 데이터 삽입 구문 누락 또는 순서 오류 확인
-  - [x] `image_tb` 삽입 시점 조정 (참조하는 테이블 데이터 삽입 이후로 이동)
-  - [x] 서버 재기동 및 H2 데이터 초기화 정상 작동 검증
-- [x] **18단계: gallery_tb 컬럼 누락 수정**
-  - [x] `data.sql`의 `gallery_tb` 삽입문에 `shooting_date`, `view_count` 컬럼 추가
-  - [x] 서버 재기동 및 데이터 초기화 성공 여부 최종 확인
-- [x] **19단계: ERD.md 문서 최신화**
-  - [x] `gallery_tb`에 `shooting_date`, `view_count` 컬럼 추가 반영
-  - [x] `image_tb`에 `notice_id` (FK) 추가 및 통합 관계 명시
-  - [x] 엔티티 관계도(Notice : Image) 최신화
+## 2. 예외 처리 및 사용자 알림 강화 [x]
+- [x] GlobalExceptionHandler에서 RuntimeException 발생 시 Alert 창 띄우고 history.back() 응답 확인
+- [x] UserService에서 Exception400을 사용하여 구체적인 에러 메시지 전달
+
+## 3. 관리자 회원 관리 기능 최종 점검 [x]
+- [x] AdminUserController 목록 조회 페이징 동작 확인
+- [x] AdminInterceptor를 통한 권한 접근 제어 테스트
+- [x] UserStatus (ACTIVE/ANONYMOUS) 전환 로직 추가 (회원 상태 변경 기능)
+
+## 4. 최종 통합 테스트 [x]
+- [x] 회원가입(중복체크, 비밀번호불일치, 성공) 테스트
+- [x] 로그인/로그아웃/마이페이지 접근 테스트
+- [x] 관리자 페이지 회원 목록 및 권한 변경 테스트
+
