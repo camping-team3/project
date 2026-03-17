@@ -24,15 +24,20 @@ public class UserService {
 
     @Transactional
     public void join(UserRequest.JoinDTO request) {
-        // 1. 중복 확인
+        // 1. 비밀번호 확인 일치 검증 추가
+        if (request.getPassword() == null || !request.getPassword().equals(request.getPasswordConfirm())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+
+        // 2. 중복 확인
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new RuntimeException("이미 존재하는 아이디입니다.");
         }
 
-        // 2. 비밀번호 암호화
+        // 3. 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
-        // 3. 저장
+        // 4. 저장
         userRepository.save(request.toEntity(encodedPassword));
     }
 

@@ -1,0 +1,20 @@
+﻿# 🔑 User 도메인 완성 및 검증 강화 (Phase 2)
+
+## 1. 서버 사이드 검증 로직 추가 (JoinDTO) [x]
+- [x] UserRequest.JoinDTO에 passwordConfirm 필드 추가
+- [x] UserService.join()에서 password와 passwordConfirm 일치 여부 검증 로직 추가
+- [ ] (Optional) JoinDTO에 유효성 검사 어노테이션 추가 (email, phone 형식 등)
+
+## 2. 예외 처리 및 사용자 알림 강화 [ ]
+- [ ] GlobalExceptionHandler에서 RuntimeException 발생 시 Alert 창 띄우고 history.back() 응답 확인
+- [ ] UserController.login() 실패 시 적절한 에러 메시지 전달 확인
+
+## 3. 관리자 회원 관리 기능 최종 점검 [ ]
+- [ ] AdminUserController 목록 조회 페이징 동작 확인
+- [ ] AdminInterceptor를 통한 권한 접근 제어 테스트
+- [ ] UserStatus (ACTIVE/ANONYMOUS) 전환 로직 기반 마련 (회원 탈퇴 처리용)
+
+## 4. 최종 통합 테스트 [ ]
+- [ ] 회원가입(중복체크, 비밀번호불일치, 성공) 테스트
+- [ ] 로그인/로그아웃/마이페이지 접근 테스트
+- [ ] 관리자 페이지 회원 목록 및 권한 변경 테스트

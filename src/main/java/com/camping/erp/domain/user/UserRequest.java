@@ -11,6 +11,7 @@ public class UserRequest {
     public static class JoinDTO {
         private String username;
         private String password;
+        private String passwordConfirm; // 비밀번호 확인 필드 추가
         private String name;
         private String email;
         private String phone;
