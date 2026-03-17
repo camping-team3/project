@@ -1,13 +1,18 @@
 package com.camping.erp.domain.admin;
 
+import com.camping.erp.domain.reservation.ReservationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import com.camping.erp.domain.site.SiteRequest;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -16,6 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
     private final SiteService siteService;
+
+    private final ReservationService reservationService;
 
     @GetMapping("/admin")
     public String dashboard() {
@@ -26,7 +33,8 @@ public class AdminController {
     public String siteList(Model model) {
         List<SiteResponse.AdminZoneDTO> zones = siteService.findAllForAdmin();
         System.out.println("Admin Zone Count: " + zones.size());
-        zones.forEach(z -> System.out.println("Zone: " + z.getName() + ", Site Count: " + (z.getSites() != null ? z.getSites().size() : 0)));
+        zones.forEach(z -> System.out
+                .println("Zone: " + z.getName() + ", Site Count: " + (z.getSites() != null ? z.getSites().size() : 0)));
         model.addAttribute("zones", zones);
         return "admin/site/list";
     }
@@ -73,7 +81,12 @@ public class AdminController {
     }
 
     @GetMapping("/admin/reservations")
-    public String reservationList() {
+    public String reservationList(AdminRequest.ReservationSearchDTO searchDTO,
+            @RequestParam(name = "page", defaultValue = "0") int page, Model model) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+        AdminResponse.ReservationPageDTO response = reservationService.findAllForAdmin(searchDTO, pageable);
+        model.addAttribute("response", response);
+        model.addAttribute("search", searchDTO);
         return "admin/reservation/list";
     }
 
