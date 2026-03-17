@@ -1,6 +1,7 @@
 package com.camping.erp.domain.user;
 
 import com.camping.erp.domain.user.enums.UserRole;
+import com.camping.erp.global.handler.ex.Exception400;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,12 +27,12 @@ public class UserService {
     public void join(UserRequest.JoinDTO request) {
         // 1. 비밀번호 확인 일치 검증 추가
         if (request.getPassword() == null || !request.getPassword().equals(request.getPasswordConfirm())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+            throw new Exception400("비밀번호가 일치하지 않습니다.");
         }
 
         // 2. 중복 확인
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("이미 존재하는 아이디입니다.");
+            throw new Exception400("이미 존재하는 아이디입니다.");
         }
 
         // 3. 비밀번호 암호화
@@ -44,11 +45,11 @@ public class UserService {
     public UserResponse.LoginDTO login(UserRequest.LoginDTO request) {
         // 1. 사용자 조회
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("아이디 또는 비밀번호가 일치하지 않습니다."));
+                .orElseThrow(() -> new Exception400("아이디 또는 비밀번호가 일치하지 않습니다."));
 
         // 2. 비밀번호 비교
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("아이디 또는 비밀번호가 일치하지 않습니다.");
+            throw new Exception400("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
         // 3. DTO 반환
@@ -59,7 +60,7 @@ public class UserService {
 
     public UserResponse.DetailDTO findUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
         return UserResponse.DetailDTO.builder()
                 .user(user)
                 .build();
@@ -74,7 +75,7 @@ public class UserService {
     @Transactional
     public void updateRole(Long id, UserRole role) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
         user.updateRole(role);
     }
 }

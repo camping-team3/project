@@ -5,9 +5,9 @@
 - [x] UserService.join()에서 password와 passwordConfirm 일치 여부 검증 로직 추가
 - [ ] (Optional) JoinDTO에 유효성 검사 어노테이션 추가 (email, phone 형식 등)
 
-## 2. 예외 처리 및 사용자 알림 강화 [ ]
-- [ ] GlobalExceptionHandler에서 RuntimeException 발생 시 Alert 창 띄우고 history.back() 응답 확인
-- [ ] UserController.login() 실패 시 적절한 에러 메시지 전달 확인
+## 2. 예외 처리 및 사용자 알림 강화 [x]
+- [x] GlobalExceptionHandler에서 RuntimeException 발생 시 Alert 창 띄우고 history.back() 응답 확인
+- [x] UserService에서 Exception400을 사용하여 구체적인 에러 메시지 전달
 
 ## 3. 관리자 회원 관리 기능 최종 점검 [ ]
 - [ ] AdminUserController 목록 조회 페이징 동작 확인
