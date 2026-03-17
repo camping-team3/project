@@ -3,12 +3,8 @@ package com.camping.erp.global.handler;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-<<<<<<< HEAD
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-=======
 import org.springframework.web.bind.annotation.ResponseBody;
->>>>>>> dev
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.handler.ex.Exception401;
@@ -115,7 +111,7 @@ public class GlobalExceptionHandler {
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 문의하세요: " + e.getMessage());
         }
-        
+
         return String.format("""
                 <script>
                     alert('에러가 발생했습니다: %s');

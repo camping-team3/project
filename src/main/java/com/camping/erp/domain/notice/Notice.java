@@ -28,7 +28,6 @@ public class Notice extends BaseTimeEntity {
     private String content;
 
     @Column(nullable = false)
-<<<<<<< HEAD
     private Boolean isTop;
 
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -51,15 +50,5 @@ public class Notice extends BaseTimeEntity {
     public void addImage(com.camping.erp.domain.image.Image image) {
         this.images.add(image);
         image.setNotice(this);
-=======
-    private boolean isTop;
-
-    @Builder
-    public Notice(Long id, String title, String content, boolean isTop) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.isTop = isTop;
->>>>>>> dev
     }
 }

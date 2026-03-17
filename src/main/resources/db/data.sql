@@ -94,31 +94,17 @@ INSERT INTO refund_tb (id, reservation_id, reason, refund_amount, cancelled_at, 
 -- ==========================================================
 -- 7. 공지사항 (notice_tb)
 -- ==========================================================
-<<<<<<< HEAD
-INSERT INTO notice_tb (title, content, is_top, created_at) VALUES 
-('2026년 봄 시즌 정식 오픈 안내', '안녕하세요. 캠핑장이 3월부터 정식 오픈합니다. 많은 이용 바랍니다.', true, NOW()),
-('성수기 요금 및 예약 제한 기간 안내', '7월 15일부터 8월 20일까지 성수기 요금이 적용되며 2박 이상 우선 예약됩니다.', false, NOW()),
-('캠핑장 내 매너타임 준수 안내', '밤 10시부터는 매너타임입니다. 타인을 위해 고성방가를 자제해주세요.', false, NOW());
-
-=======
 INSERT INTO notice_tb (id, title, content, is_top, created_at) VALUES 
 (1, '2026년 봄 시즌 정식 오픈 안내', '정식 오픈합니다.', true, NOW()),
 (2, '성수기 요금 안내', '성수기 요금이 적용됩니다.', false, NOW()),
 (3, '매너타임 준수 안내', '밤 10시부터 매너타임입니다.', false, NOW());
->>>>>>> dev
 
 -- ==========================================================
 -- 8. Q&A 및 답변 (qna_tb, comment_tb)
 -- ==========================================================
-<<<<<<< HEAD
-INSERT INTO gallery_tb (title, category, shooting_date, content, view_count, created_at) VALUES 
-('A구역 산책로의 아침 풍경', '캠핑장 전경', '2026-03-10', '피톤치드 가득한 A구역의 산책길입니다.', 124, NOW()),
-('B구역 럭셔리 글램핑 텐트 내부', '캠핑장 전경', '2026-03-12', '호텔급 침구류와 개별 화장실을 갖춘 내부 모습입니다.', 85, NOW());
-=======
 INSERT INTO qna_tb (id, user_id, title, content, is_answered, created_at) VALUES 
 (1, 2, '반려견 동반 입실?', '가능할까요?', true, NOW()),
 (2, 3, '주차 공간 문의', '텐트 옆 주차 가능한가요?', false, NOW());
->>>>>>> dev
 
 INSERT INTO comment_tb (id, qna_id, admin_id, content, created_at) VALUES 
 (1, 1, 1, 'A구역만 소형견 가능합니다.', NOW());
@@ -131,27 +117,20 @@ INSERT INTO review_tb (id, user_id, reservation_id, rating, content, created_at)
 (2, 3, 2, 4, '조용하게 힐링하고 왔어요.', DATEADD(DAY, -15, NOW()));
 
 -- ==========================================================
--- 10. 이미지 관리 (image_tb)
+-- 10. 갤러리 (gallery_tb) - 누락 데이터 추가
 -- ==========================================================
-<<<<<<< HEAD
-INSERT INTO review_tb (user_id, reservation_id, rating, content, created_at) VALUES 
-(2, 1, 5, '화장실과 개수대가 너무 깨끗해서 좋았어요! 사장님도 정말 친절하십니다.', NOW());
-
+INSERT INTO gallery_tb (id, title, category, shooting_date, content, view_count, created_at) VALUES 
+(1, '안개 낀 숲속의 아침', '캠핑장 전경', '2026-03-01', '숲속 아침 풍경입니다.', 0, NOW()),
+(2, '글램핑 내부 시설 공개', '캠핑장 전경', '2026-03-05', '깨끗하고 아늑합니다.', 0, NOW());
 
 -- ==========================================================
 -- 11. 이미지 관리 (image_tb)
--- 역할: 갤러리 및 리뷰에 첨부된 다중 이미지 파일 정보
--- gallery_id: 갤러리 게시글 참조 (Nullable)
--- review_id: 리뷰 게시글 참조 (Nullable)
--- notice_id: 공지사항 게시글 참조 (Nullable)
+-- 역할: 갤러리, 리뷰, 공지사항 및 구역/사이트 이미지 파일 정보
 -- ==========================================================
-INSERT INTO image_tb (gallery_id, review_id, notice_id, file_path, file_name, created_at) VALUES 
-(1, null, null, '/upload/gallery/', 'morning_forest_01.jpg', NOW()),
-(1, null, null, '/upload/gallery/', 'morning_forest_02.jpg', NOW()),
-(2, null, null, '/upload/gallery/', 'glamping_inside.jpg', NOW()),
-(null, 1, null, '/upload/review/', 'my_camping_pic.jpg', NOW());
-=======
-INSERT INTO image_tb (id, gallery_id, review_id, zone_id, site_id, file_path, file_name, created_at) VALUES 
-(1, null, null, 1, null, '/upload/zone/', 'zone_a_main.jpg', NOW()),
-(2, null, 1, null, null, '/upload/review/', 'my_pic.jpg', NOW());
->>>>>>> dev
+INSERT INTO image_tb (id, gallery_id, review_id, notice_id, zone_id, site_id, file_path, file_name, created_at) VALUES 
+(1, null, null, null, 1, null, '/upload/zone/', 'zone_a_main.jpg', NOW()),
+(2, null, 1, null, null, null, '/upload/review/', 'my_pic.jpg', NOW()),
+(3, 1, null, null, null, null, '/upload/gallery/', 'morning_forest_01.jpg', NOW()),
+(4, 1, null, null, null, null, '/upload/gallery/', 'morning_forest_02.jpg', NOW()),
+(5, 2, null, null, null, null, '/upload/gallery/', 'glamping_inside.jpg', NOW()),
+(6, null, 1, null, null, null, '/upload/review/', 'my_camping_pic.jpg', NOW());

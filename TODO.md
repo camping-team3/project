@@ -2,25 +2,25 @@
 
 ## 📅 [Phase 2] 공지사항(Notice) 기능 및 안정화
 
-- [ ] **1단계: 도메인 모델링 및 기본 구현**
+- [x] **1단계: 도메인 모델링 및 기본 구현**
   - [x] Notice 엔티티 수정: isTop 필드 추가, Image 연관관계 설정
   - [x] Image 엔티티 수정: Notice 연관관계 추가
   - [x] NoticeRepository 구현: 최신/상단고정 정렬, 검색 쿼리 추가
-- [ ] **2단계: 비즈니스 로직 및 DTO 구성**
+- [x] **2단계: 비즈니스 로직 및 DTO 구성**
   - [x] NoticeRequest / NoticeResponse DTO 생성 및 필드 반영
   - [x] NoticeService 구현: CRUD, 검색/페이징, 파일 업로드 로직 통합
-- [ ] **3단계: 관리자 기능 개발 (Admin CRUD)**
+- [x] **3단계: 관리자 기능 개발 (Admin CRUD)**
   - [x] AdminNoticeController 생성 및 권한 인터셉터 적용
   - [x] 관리자용 공지사항 목록 화면 (admin/notice/list.mustache)
   - [x] 공지사항 등록/수정 폼 (admin/notice/save-form.mustache) - Summernote 에디터 및 이미지 업로드 통합
-- [ ] **4단계: 사용자 뷰(Public View)**
+- [x] **4단계: 사용자 뷰(Public View)**
   - [x] 공지사항 목록 화면 (notice/list.mustache) - 검색 기능 및 상단고정 디자인 적용
   - [x] 공지사항 상세 뷰 (notice/detail.mustache) - 에디터 내용 렌더링 및 이미지 노출
-- [ ] **5단계: 안정화**
+- [x] **5단계: 안정화**
   - [x] 비로그인 사용자의 접근 권한 인터셉터 적용
   - [x] 통합 테스트 및 예외 처리 로직 (GlobalExceptionHandler) 검증
   - [x] 최종 작업 보고서 (notice-report.md) 작성 및 TODO 체크
-- [ ] **6단계: 검증 및 데이터 정합성 강화**
+- [x] **6단계: 검증 및 데이터 정합성 강화**
   - [x] `data.sql` 초기 데이터 정합성 수정 (`is_top` 컬럼 및 값 추가)
   - [x] 서버 기동 및 런타임 오류 검증 (H2 IntegrityConstraintViolation 해결)
   - [x] 갤러리/공지사항 이미지 업로드(클릭/드래그) 및 프리뷰 기능 구현
@@ -54,3 +54,14 @@
   - [x] GalleryRepository: ID 내림차순 쿼리 메서드 추가
   - [x] GalleryService: 최신순 정렬 메서드 호출 적용
   - [x] 작업 보고서 작성 및 TODO 체크
+- [x] **17단계: 데이터 정합성 오류 수정**
+  - [x] `data.sql` 내 `gallery_tb` 데이터 삽입 구문 누락 또는 순서 오류 확인
+  - [x] `image_tb` 삽입 시점 조정 (참조하는 테이블 데이터 삽입 이후로 이동)
+  - [x] 서버 재기동 및 H2 데이터 초기화 정상 작동 검증
+- [x] **18단계: gallery_tb 컬럼 누락 수정**
+  - [x] `data.sql`의 `gallery_tb` 삽입문에 `shooting_date`, `view_count` 컬럼 추가
+  - [x] 서버 재기동 및 데이터 초기화 성공 여부 최종 확인
+- [x] **19단계: ERD.md 문서 최신화**
+  - [x] `gallery_tb`에 `shooting_date`, `view_count` 컬럼 추가 반영
+  - [x] `image_tb`에 `notice_id` (FK) 추가 및 통합 관계 명시
+  - [x] 엔티티 관계도(Notice : Image) 최신화
