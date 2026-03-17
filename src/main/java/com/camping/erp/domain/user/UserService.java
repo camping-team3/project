@@ -1,6 +1,7 @@
 package com.camping.erp.domain.user;
 
 import com.camping.erp.domain.user.enums.UserRole;
+import com.camping.erp.domain.user.enums.UserStatus;
 import com.camping.erp.global.handler.ex.Exception400;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -77,5 +78,13 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
         user.updateRole(role);
+    }
+
+    // 회원 상태 변경
+    @Transactional
+    public void updateStatus(Long id, UserStatus status) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
+        user.updateStatus(status);
     }
 }

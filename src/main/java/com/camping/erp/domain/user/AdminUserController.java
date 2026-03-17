@@ -1,6 +1,7 @@
 package com.camping.erp.domain.user;
 
 import com.camping.erp.domain.user.enums.UserRole;
+import com.camping.erp.domain.user.enums.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +37,13 @@ public class AdminUserController {
     @PostMapping("/users/{id}/update-role")
     public String updateRole(@PathVariable("id") Long id, @RequestParam("role") UserRole role) {
         userService.updateRole(id, role);
+        return "redirect:/admin/users/" + id;
+    }
+
+    // 회원 상태 변경 처리
+    @PostMapping("/users/{id}/update-status")
+    public String updateStatus(@PathVariable("id") Long id, @RequestParam("status") UserStatus status) {
+        userService.updateStatus(id, status);
         return "redirect:/admin/users/" + id;
     }
 }
