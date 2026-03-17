@@ -17,14 +17,17 @@ public class UserRequest {
         private String phone;
 
         public User toEntity(String encodedPassword) {
+            // 테스트 편의를 위해 아이디에 'admin'이 포함되면 관리자, 아니면 일반유저로 가입
+            UserRole role = (username != null && username.contains("admin")) ? UserRole.ADMIN : UserRole.USER;
+            
             return User.builder()
                     .username(username)
                     .password(encodedPassword)
                     .name(name)
                     .email(email)
                     .phone(phone)
-                    .role(UserRole.USER) // 기본 권한 USER
-                    .status(UserStatus.ACTIVE) // 기본 상태 ACTIVE
+                    .role(role)
+                    .status(UserStatus.ACTIVE)
                     .build();
         }
     }

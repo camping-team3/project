@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class UserController {
 
     private final UserService userService;
-    private final HttpSession session;
 
     @GetMapping("/api/users/check-username")
     public @ResponseBody ResponseEntity<?> checkUsername(@RequestParam("username") String username) {
@@ -49,7 +48,7 @@ public class UserController {
 
     // 로그인 처리
     @PostMapping("/login")
-    public String login(UserRequest.LoginDTO request) {
+    public String login(UserRequest.LoginDTO request, HttpSession session) {
         UserResponse.LoginDTO sessionUser = userService.login(request);
         session.setAttribute("sessionUser", sessionUser);
         return "redirect:/";
@@ -57,14 +56,16 @@ public class UserController {
 
     // 로그아웃 처리
     @GetMapping("/logout")
-    public String logout() {
-        session.invalidate();
-        return "redirect:/";
+    public String logout(HttpSession session) {
+        if (session != null) {
+            session.invalidate();
+        }
+        return "redirect:/login-form";
     }
 
     // 마이페이지 홈
     @GetMapping("/mypage")
-    public String home(Model model) {
+    public String home(Model model, HttpSession session) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         if (sessionUser == null) {
             return "redirect:/login-form";
