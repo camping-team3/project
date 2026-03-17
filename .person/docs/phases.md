@@ -19,13 +19,13 @@
 - [x] **데이터 검증:** `testData.sql` 구축 및 JPA Repository 기본 동작 확인 완료
 - [x] **UI 프로토타입 변환:** `zBackup/html/` 내 37개 HTML을 Mustache SSR 템플릿(35개)으로 100% 변환 완료 (전체 페이즈 공통)
 
-## 🔑 Phase 2: MVP 핵심 도메인 (70%) - 🟢 진행 중
+## 🔑 Phase 2: MVP 핵심 도메인 (80%) - 🟢 진행 중
 
 **목표:** 결제 없이 '예약 → 관리자 수동 확정' 플로우가 동작하는 MVP 완성
 
 > 각 도메인은 **User-facing + Admin CRUD**를 함께 구현한다.
 
-- [ ] **User 도메인:**
+- [x] **User 도메인 (100%):**
   - [x] UI: 로그인(`login-form`), 회원가입(`join-form`) 템플릿 완료
   - [x] 인증: `LoginInterceptor` 및 `AdminInterceptor` 기반 권한 인가 기반 마련
   - [x] 기능: 회원가입 로직 구현 (완료)

@@ -48,8 +48,11 @@ public class UserService {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new Exception400("아이디 또는 비밀번호가 일치하지 않습니다."));
 
-        // 2. 비밀번호 비교
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        // 2. 비밀번호 비교 (평문 비교 OR BCrypt 비교)
+        boolean isMatch = request.getPassword().equals(user.getPassword()) 
+                || passwordEncoder.matches(request.getPassword(), user.getPassword());
+
+        if (!isMatch) {
             throw new Exception400("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
