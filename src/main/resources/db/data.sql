@@ -1,216 +1,124 @@
 -- ==========================================================
--- 1. 회원 정보 (user_tb) - 모든 참조의 기초
+-- 1. 회원 정보 (user_tb) - ID 명시
 -- ==========================================================
-INSERT INTO user_tb (username, password, name, email, phone, role, status, created_at) VALUES 
-('admin', '1234', '관리자', 'admin@camping.com', '010-1111-1111', 'ADMIN', 'ACTIVE', NOW()),
-('ssar', '1234', '박한별', 'ssar@nate.com', '010-2222-2222', 'USER', 'ACTIVE', NOW()),
-('cos', '1234', '홍길동', 'cos@nate.com', '010-3333-3333', 'USER', 'ACTIVE', NOW()),
-('love', '1234', '강사랑', 'love@nate.com', '010-4444-4444', 'USER', 'ACTIVE', NOW()),
-('guest', '1234', '이게스트', 'guest@nate.com', '010-5555-5555', 'USER', 'ACTIVE', NOW()),
-('olduser', '1234', '탈퇴사용자', 'old@nate.com', '010-6666-6666', 'USER', 'ANONYMOUS', NOW());
+INSERT INTO user_tb (id, username, password, name, email, phone, role, status, created_at) VALUES 
+(1, 'admin', '1234', '관리자', 'admin@camping.com', '010-1111-1111', 'ADMIN', 'ACTIVE', NOW()),
+(2, 'ssar', '1234', '박한별', 'ssar@nate.com', '010-2222-2222', 'USER', 'ACTIVE', NOW()),
+(3, 'cos', '1234', '홍길동', 'cos@nate.com', '010-3333-3333', 'USER', 'ACTIVE', NOW()),
+(4, 'love', '1234', '강사랑', 'love@nate.com', '010-4444-4444', 'USER', 'ACTIVE', NOW()),
+(5, 'guest', '1234', '이게스트', 'guest@nate.com', '010-5555-5555', 'USER', 'ACTIVE', NOW()),
+(6, 'olduser', '1234', '탈퇴사용자', 'old@nate.com', '010-6666-6666', 'USER', 'ANONYMOUS', NOW());
 
-INSERT INTO user_tb (username, password, name, email, phone, role, status, created_at) VALUES 
-('user01', '1234', '김철수', 'user01@nate.com', '010-1001-1001', 'USER', 'ACTIVE', DATEADD(DAY, -20, NOW())),
-('user02', '1234', '이영희', 'user02@nate.com', '010-1002-1002', 'USER', 'ACTIVE', DATEADD(DAY, -19, NOW())),
-('user03', '1234', '박지성', 'user03@nate.com', '010-1003-1003', 'USER', 'ACTIVE', DATEADD(DAY, -18, NOW())),
-('user04', '1234', '손흥민', 'user04@nate.com', '010-1004-1004', 'USER', 'ACTIVE', DATEADD(DAY, -17, NOW())),
-('user05', '1234', '김연아', 'user05@nate.com', '010-1005-1005', 'USER', 'ACTIVE', DATEADD(DAY, -16, NOW())),
-('user06', '1234', '이강인', 'user06@nate.com', '010-1006-1006', 'USER', 'ACTIVE', DATEADD(DAY, -15, NOW())),
-('user07', '1234', '안정환', 'user07@nate.com', '010-1007-1007', 'USER', 'ACTIVE', DATEADD(DAY, -14, NOW())),
-('user08', '1234', '박찬호', 'user08@nate.com', '010-1008-1008', 'USER', 'ACTIVE', DATEADD(DAY, -13, NOW())),
-('user09', '1234', '서장훈', 'user09@nate.com', '010-1009-1009', 'USER', 'ACTIVE', DATEADD(DAY, -12, NOW())),
-('user10', '1234', '유재석', 'user10@nate.com', '010-1010-1010', 'USER', 'ACTIVE', DATEADD(DAY, -11, NOW())),
-('user11', '1234', '강호동', 'user11@nate.com', '010-1011-1011', 'USER', 'ACTIVE', DATEADD(DAY, -10, NOW())),
-('user12', '1234', '신동엽', 'user12@nate.com', '010-1012-1012', 'USER', 'ACTIVE', DATEADD(DAY, -9, NOW())),
-('user13', '1234', '이수근', 'user13@nate.com', '010-1013-1013', 'USER', 'ACTIVE', DATEADD(DAY, -8, NOW())),
-('user14', '1234', '은지원', 'user14@nate.com', '010-1014-1014', 'USER', 'ACTIVE', DATEADD(DAY, -7, NOW())),
-('user15', '1234', '김종민', 'user15@nate.com', '010-1015-1015', 'USER', 'ACTIVE', DATEADD(DAY, -6, NOW()));
-
-
--- ==========================================================
--- 2. 구역 정보 (zone_tb)
--- ==========================================================
-INSERT INTO zone_tb (name, normal_price, peak_price, base_people, extra_person_fee, created_at) VALUES 
-('A구역(오토캠핑)', 50000, 80000, 2, 10000, NOW()),
-('B구역(글램핑)', 150000, 250000, 2, 20000, NOW()),
-('C구역(카라반)', 120000, 200000, 2, 15000, NOW());
-
+INSERT INTO user_tb (id, username, password, name, email, phone, role, status, created_at) VALUES 
+(7, 'user01', '1234', '김철수', 'user01@nate.com', '010-1001-1001', 'USER', 'ACTIVE', DATEADD(DAY, -20, NOW())),
+(8, 'user02', '1234', '이영희', 'user02@nate.com', '010-1002-1002', 'USER', 'ACTIVE', DATEADD(DAY, -19, NOW())),
+(9, 'user03', '1234', '박지성', 'user03@nate.com', '010-1003-1003', 'USER', 'ACTIVE', DATEADD(DAY, -18, NOW())),
+(10, 'user04', '1234', '손흥민', 'user04@nate.com', '010-1004-1004', 'USER', 'ACTIVE', DATEADD(DAY, -17, NOW())),
+(11, 'user05', '1234', '김연아', 'user05@nate.com', '010-1005-1005', 'USER', 'ACTIVE', DATEADD(DAY, -16, NOW())),
+(12, 'user06', '1234', '이강인', 'user06@nate.com', '010-1006-1006', 'USER', 'ACTIVE', DATEADD(DAY, -15, NOW())),
+(13, 'user07', '1234', '안정환', 'user07@nate.com', '010-1007-1007', 'USER', 'ACTIVE', DATEADD(DAY, -14, NOW())),
+(14, 'user08', '1234', '박찬호', 'user08@nate.com', '010-1008-1008', 'USER', 'ACTIVE', DATEADD(DAY, -13, NOW())),
+(15, 'user09', '1234', '서장훈', 'user09@nate.com', '010-1009-1009', 'USER', 'ACTIVE', DATEADD(DAY, -12, NOW())),
+(16, 'user10', '1234', '유재석', 'user10@nate.com', '010-1010-1010', 'USER', 'ACTIVE', DATEADD(DAY, -11, NOW())),
+(17, 'user11', '1234', '강호동', 'user11@nate.com', '010-1011-1011', 'USER', 'ACTIVE', DATEADD(DAY, -10, NOW())),
+(18, 'user12', '1234', '신동엽', 'user12@nate.com', '010-1012-1012', 'USER', 'ACTIVE', DATEADD(DAY, -9, NOW())),
+(19, 'user13', '1234', '이수근', 'user13@nate.com', '010-1013-1013', 'USER', 'ACTIVE', DATEADD(DAY, -8, NOW())),
+(20, 'user14', '1234', '은지원', 'user14@nate.com', '010-1014-1014', 'USER', 'ACTIVE', DATEADD(DAY, -7, NOW())),
+(21, 'user15', '1234', '김종민', 'user15@nate.com', '010-1015-1015', 'USER', 'ACTIVE', DATEADD(DAY, -6, NOW()));
 
 -- ==========================================================
--- 3. 사이트 정보 (site_tb)
+-- 2. 구역 정보 (zone_tb) - ID 명시
 -- ==========================================================
-INSERT INTO site_tb (zone_id, site_name, max_people, is_available, created_at) VALUES 
-(1, 'A-1', 4, true, NOW()), (1, 'A-2', 4, true, NOW()), (1, 'A-3', 6, true, NOW()),
-(2, 'B-1', 2, true, NOW()), (2, 'B-2', 4, false, NOW()), (3, 'C-1', 4, true, NOW());
+INSERT INTO zone_tb (id, name, normal_price, peak_price, base_people, extra_person_fee, created_at) VALUES 
+(1, 'A구역(오토캠핑)', 50000, 80000, 2, 10000, NOW()),
+(2, 'B구역(글램핑)', 150000, 250000, 2, 20000, NOW()),
+(3, 'C구역(카라반)', 120000, 200000, 2, 15000, NOW());
 
+-- ==========================================================
+-- 3. 사이트 정보 (site_tb) - ID 명시 및 정확한 FK 참조
+-- ==========================================================
+INSERT INTO site_tb (id, zone_id, site_name, max_people, is_available, created_at) VALUES 
+(1, 1, 'A-1', 4, true, NOW()), 
+(2, 1, 'A-2', 4, true, NOW()), 
+(3, 1, 'A-3', 6, true, NOW()),
+(4, 2, 'B-1', 2, true, NOW()), 
+(5, 2, 'B-2', 4, false, NOW()), 
+(6, 3, 'C-1', 4, true, NOW());
 
 -- ==========================================================
 -- 4. 성수기 정보 (season_tb)
 -- ==========================================================
-INSERT INTO season_tb (name, start_date, end_date, created_at) VALUES 
-('2026 여름 성수기', '2026-07-01', '2026-08-31', NOW()),
-('2026 단풍 시즌', '2026-10-15', '2026-11-15', NOW());
-
+INSERT INTO season_tb (id, name, start_date, end_date, created_at) VALUES 
+(1, '2026 여름 성수기', '2026-07-01', '2026-08-31', NOW()),
+(2, '2026 단풍 시즌', '2026-10-15', '2026-11-15', NOW());
 
 -- ==========================================================
--- 5. 예약 정보 (reservation_tb)
+-- 5. 예약 정보 (reservation_tb) - ID 명시 및 상태 동기화
 -- ==========================================================
-INSERT INTO reservation_tb (user_id, site_id, check_in, check_out, total_price, people_count, visitor_name, visitor_phone, status, created_at) VALUES 
-(2, 1, '2026-03-01', '2026-03-03', 100000, 2, '박한별', '010-2222-2222', 'COMPLETED', NOW()), -- 1
-(3, 4, '2026-03-10', '2026-03-12', 300000, 2, '홍길동', '010-3333-3333', 'COMPLETED', NOW()), -- 2
-(4, 2, '2026-04-01', '2026-04-03', 120000, 4, '강사랑', '010-4444-4444', 'CONFIRMED', NOW()), -- 3
-(5, 5, '2026-05-01', '2026-05-02', 150000, 2, '이게스트', '010-5555-5555', 'CANCEL_REQ', NOW()), -- 4
-(2, 6, '2026-02-01', '2026-02-03', 240000, 2, '박한별', '010-2222-2222', 'CANCEL_COMP', NOW()); -- 5
+INSERT INTO reservation_tb (id, user_id, site_id, check_in, check_out, total_price, people_count, visitor_name, visitor_phone, status, created_at) VALUES 
+(1, 2, 1, '2026-03-01', '2026-03-03', 100000, 2, '박한별', '010-2222-2222', 'COMPLETED', NOW()),
+(2, 3, 4, '2026-03-10', '2026-03-12', 300000, 2, '홍길동', '010-3333-3333', 'COMPLETED', NOW()),
+(3, 4, 2, '2026-04-01', '2026-04-03', 120000, 4, '강사랑', '010-4444-4444', 'CONFIRMED', NOW()),
+(4, 5, 5, '2026-05-01', '2026-05-02', 150000, 2, '이게스트', '010-5555-5555', 'CANCEL_REQ', NOW()),
+(5, 2, 6, '2026-02-01', '2026-02-03', 240000, 2, '박한별', '010-2222-2222', 'CANCEL_COMP', NOW());
 
-INSERT INTO reservation_tb (user_id, site_id, check_in, check_out, total_price, people_count, visitor_name, visitor_phone, status, created_at) VALUES 
-(7, 1, '2026-06-01', '2026-06-03', 100000, 2, '김철수', '010-1001-1001', 'CONFIRMED', DATEADD(DAY, -10, NOW())),
-(8, 2, '2026-06-05', '2026-06-07', 100000, 2, '이영희', '010-1002-1002', 'CONFIRMED', DATEADD(DAY, -9, NOW())),
-(9, 3, '2026-06-10', '2026-06-12', 100000, 2, '박지성', '010-1003-1003', 'PENDING', DATEADD(DAY, -8, NOW())),
-(10, 4, '2026-06-15', '2026-06-17', 300000, 2, '손흥민', '010-1004-1004', 'CONFIRMED', DATEADD(DAY, -7, NOW())),
-(11, 5, '2026-06-20', '2026-06-22', 300000, 2, '김연아', '010-1005-1005', 'CANCEL_REQ', DATEADD(DAY, -6, NOW())),
-(12, 6, '2026-06-25', '2026-06-27', 240000, 2, '이강인', '010-1006-1006', 'CONFIRMED', DATEADD(DAY, -5, NOW())),
-(13, 1, '2026-07-01', '2026-07-03', 160000, 4, '안정환', '010-1007-1007', 'CONFIRMED', DATEADD(DAY, -4, NOW())),
-(14, 2, '2026-07-05', '2026-07-07', 100000, 2, '박찬호', '010-1008-1008', 'PENDING', DATEADD(DAY, -3, NOW())),
-(15, 3, '2026-07-10', '2026-07-12', 100000, 2, '서장훈', '010-1009-1009', 'CONFIRMED', DATEADD(DAY, -2, NOW())),
-(7, 4, '2026-07-15', '2026-07-17', 500000, 4, '유재석', '010-1010-1010', 'CONFIRMED', DATEADD(DAY, -1, NOW())),
-(8, 5, '2026-07-20', '2026-07-22', 300000, 2, '강호동', '010-1011-1011', 'CANCEL_COMP', NOW()),
-(9, 6, '2026-07-25', '2026-07-27', 240000, 2, '신동엽', '010-1012-1012', 'CONFIRMED', NOW()),
-(10, 1, '2026-08-01', '2026-08-03', 160000, 4, '이수근', '010-1013-1013', 'CONFIRMED', NOW()),
-(11, 2, '2026-08-05', '2026-08-07', 100000, 2, '은지원', '010-1014-1014', 'PENDING', NOW()),
-(12, 3, '2026-08-10', '2026-08-12', 100000, 2, '김종민', '010-1015-1015', 'CONFIRMED', NOW()),
-(13, 4, '2026-08-15', '2026-08-17', 500000, 4, '김철수', '010-1001-1001', 'CONFIRMED', NOW()),
-(14, 5, '2026-08-20', '2026-08-22', 300000, 2, '이영희', '010-1002-1002', 'CONFIRMED', NOW()),
-(15, 6, '2026-08-25', '2026-08-27', 240000, 2, '박지성', '010-1003-1003', 'CONFIRMED', NOW()),
-(7, 1, '2026-09-01', '2026-09-03', 100000, 2, '손흥민', '010-1004-1004', 'PENDING', NOW()),
-(8, 2, '2026-09-05', '2026-09-07', 100000, 2, '김연아', '010-1005-1005', 'CONFIRMED', NOW());
-
+INSERT INTO reservation_tb (id, user_id, site_id, check_in, check_out, total_price, people_count, visitor_name, visitor_phone, status, created_at) VALUES 
+(6, 7, 1, '2026-06-01', '2026-06-03', 100000, 2, '김철수', '010-1001-1001', 'CONFIRMED', DATEADD(DAY, -10, NOW())),
+(7, 8, 2, '2026-06-05', '2026-06-07', 100000, 2, '이영희', '010-1002-1002', 'CONFIRMED', DATEADD(DAY, -9, NOW())),
+(8, 9, 3, '2026-06-10', '2026-06-12', 100000, 2, '박지성', '010-1003-1003', 'PENDING', DATEADD(DAY, -8, NOW())),
+(9, 10, 4, '2026-06-15', '2026-06-17', 300000, 2, '손흥민', '010-1004-1004', 'CONFIRMED', DATEADD(DAY, -7, NOW())),
+(10, 11, 5, '2026-06-20', '2026-06-22', 300000, 2, '김연아', '010-1005-1005', 'CANCEL_REQ', DATEADD(DAY, -6, NOW())),
+(11, 12, 6, '2026-06-25', '2026-06-27', 240000, 2, '이강인', '010-1006-1006', 'CONFIRMED', DATEADD(DAY, -5, NOW())),
+(12, 13, 1, '2026-07-01', '2026-07-03', 160000, 4, '안정환', '010-1007-1007', 'CONFIRMED', DATEADD(DAY, -4, NOW())),
+(13, 14, 2, '2026-07-05', '2026-07-07', 100000, 2, '박찬호', '010-1008-1008', 'PENDING', DATEADD(DAY, -3, NOW())),
+(14, 15, 3, '2026-07-10', '2026-07-12', 100000, 2, '서장훈', '010-1009-1009', 'CONFIRMED', DATEADD(DAY, -2, NOW())),
+(15, 7, 4, '2026-07-15', '2026-07-17', 500000, 4, '유재석', '010-1010-1010', 'CONFIRMED', DATEADD(DAY, -1, NOW())),
+(16, 8, 5, '2026-07-20', '2026-07-22', 300000, 2, '강호동', '010-1011-1011', 'CANCEL_COMP', NOW()),
+(17, 9, 6, '2026-07-25', '2026-07-27', 240000, 2, '신동엽', '010-1012-1012', 'CONFIRMED', NOW()),
+(18, 10, 1, '2026-08-01', '2026-08-03', 160000, 4, '이수근', '010-1013-1013', 'CONFIRMED', NOW()),
+(19, 11, 2, '2026-08-05', '2026-08-07', 100000, 2, '은지원', '010-1014-1014', 'PENDING', NOW()),
+(20, 12, 3, '2026-08-10', '2026-08-12', 100000, 2, '김종민', '010-1015-1015', 'CONFIRMED', NOW());
 
 -- ==========================================================
 -- 6. 결제 및 환불 정보
 -- ==========================================================
-INSERT INTO payment_tb (reservation_id, imp_uid, amount, status, pay_date, created_at) VALUES 
-(1, 'imp_111111', 100000, 'PAID', '2026-02-20', NOW()),
-(2, 'imp_222222', 300000, 'PAID', '2026-03-05', NOW()),
-(3, 'imp_333333', 120000, 'PAID', '2026-03-10', NOW()),
-(4, 'imp_444444', 150000, 'PAID', '2026-03-11', NOW());
+INSERT INTO payment_tb (id, reservation_id, imp_uid, amount, status, pay_date, created_at) VALUES 
+(1, 1, 'imp_111111', 100000, 'PAID', '2026-02-20', NOW()),
+(2, 2, 'imp_222222', 300000, 'PAID', '2026-03-05', NOW()),
+(3, 3, 'imp_333333', 120000, 'PAID', '2026-03-10', NOW()),
+(4, 4, 'imp_444444', 150000, 'PAID', '2026-03-11', NOW());
 
-INSERT INTO refund_tb (reservation_id, reason, refund_amount, cancelled_at, created_at) VALUES
-(5, '개인 사정으로 인한 일정 변경 불가', 240000, NOW(), NOW());
-
+INSERT INTO refund_tb (id, reservation_id, reason, refund_amount, cancelled_at, created_at) VALUES
+(1, 5, '개인 사정으로 인한 일정 변경 불가', 240000, NOW(), NOW());
 
 -- ==========================================================
 -- 7. 공지사항 (notice_tb)
 -- ==========================================================
-INSERT INTO notice_tb (title, content, is_top, created_at) VALUES 
-('2026년 봄 시즌 정식 오픈 안내', '안녕하세요. 캠핑장이 3월부터 정식 오픈합니다. 많은 이용 바랍니다.', true, NOW()),
-('성수기 요금 및 예약 제한 기간 안내', '7월 15일부터 8월 20일까지 성수기 요금이 적용되며 2박 이상 우선 예약됩니다.', false, NOW()),
-('캠핑장 내 매너타임 준수 안내', '밤 10시부터는 매너타임입니다. 타인을 위해 고성방가를 자제해주세요.', false, NOW());
-
-INSERT INTO notice_tb (title, content, is_top, created_at) VALUES 
-('동계 캠핑 시 주의사항 안내', '추운 겨울철 텐트 내 난로 사용 시 환기에 각별히 유의해 주세요.', false, DATEADD(DAY, -10, NOW())),
-('매점 이용 시간 변경 안내', '동절기 동안 매점 운영 시간이 오전 9시 ~ 오후 8시로 변경됩니다.', false, DATEADD(DAY, -9, NOW())),
-('분리수거 배출 방법 안내', '지정된 장소에 재활용품을 철저히 분리하여 배출해 주시기 바랍니다.', false, DATEADD(DAY, -8, NOW())),
-('반려견 동반 수칙 강화 안내', '캠핑장 내 리드줄 착용 및 배설물 수거는 필수입니다.', false, DATEADD(DAY, -7, NOW())),
-('장작 및 숯 판매 안내', '관리동에서 고품질 참나무 장작과 숯을 판매하고 있습니다.', false, DATEADD(DAY, -6, NOW())),
-('주변 관광지 추천 (1) - 산책로', '캠핑장 입구에서 시작되는 숲길 산책로를 추천합니다.', false, DATEADD(DAY, -5, NOW())),
-('주변 관광지 추천 (2) - 맛집', '차로 10분 거리에 있는 지역 맛집 지도를 배부해 드립니다.', false, DATEADD(DAY, -4, NOW())),
-('개별 화장실 이용 안내', 'B구역 글램핑 고객님들을 위한 개별 화장실 이용 수칙입니다.', false, DATEADD(DAY, -3, NOW())),
-('와이파이 비밀번호 안내', '각 구역별 전용 와이파이 비밀번호는 예약 문자를 확인해 주세요.', false, DATEADD(DAY, -2, NOW())),
-('분실물 센터 운영 안내', '습득하신 물건이나 잃어버린 물건은 관리동으로 문의해 주세요.', false, DATEADD(DAY, -1, NOW())),
-('정기 소독 작업 안내', '매주 화요일 오전 10시부터 캠핑장 전 구역 방역을 실시합니다.', false, NOW()),
-('전기 사용량 제한 안내', '고용량 전열기구 사용 시 차단기가 내려갈 수 있으니 주의 바랍니다.', false, NOW()),
-('수영장 오픈 예정 안내', '다가오는 6월부터 수영장을 개장할 예정입니다.', false, NOW()),
-('샤워실 온수 시간 안내', '샤워실 온수는 24시간 상시 제공됩니다.', false, NOW()),
-('주차장 이용 안내', '사이트당 1대의 차량만 주차 가능하며, 추가 차량은 공용 주차장을 이용해 주세요.', false, NOW()),
-('심야 시간 정숙 안내', '밤 11시 이후 소음 발생 시 퇴실 조치될 수 있음을 알려드립니다.', false, NOW()),
-('흡연 구역 지정 안내', '지정된 흡연 구역 외 전 지역은 금연입니다.', false, NOW()),
-('비상 연락망 안내', '야간 비상 상황 발생 시 010-XXXX-XXXX로 연락 바랍니다.', false, NOW()),
-('장기 숙박 할인 안내', '7박 이상 장기 숙박 시 이용 요금의 20%를 할인해 드립니다.', false, NOW()),
-('포토존 이벤트 안내', '갤러리에 멋진 사진을 올려주시는 분들께 커피 쿠폰을 드립니다.', false, NOW());
-
+INSERT INTO notice_tb (id, title, content, is_top, created_at) VALUES 
+(1, '2026년 봄 시즌 정식 오픈 안내', '정식 오픈합니다.', true, NOW()),
+(2, '성수기 요금 안내', '성수기 요금이 적용됩니다.', false, NOW()),
+(3, '매너타임 준수 안내', '밤 10시부터 매너타임입니다.', false, NOW());
 
 -- ==========================================================
--- 8. 포토 갤러리 (gallery_tb)
+-- 8. Q&A 및 답변 (qna_tb, comment_tb)
 -- ==========================================================
-INSERT INTO gallery_tb (title, content, created_at) VALUES 
-('A구역 산책로의 아침 풍경', '피톤치드 가득한 A구역의 산책길입니다.', NOW()),
-('B구역 럭셔리 글램핑 텐트 내부', '호텔급 침구류와 개별 화장실을 갖춘 내부 모습입니다.', NOW());
+INSERT INTO qna_tb (id, user_id, title, content, is_answered, created_at) VALUES 
+(1, 2, '반려견 동반 입실?', '가능할까요?', true, NOW()),
+(2, 3, '주차 공간 문의', '텐트 옆 주차 가능한가요?', false, NOW());
 
-INSERT INTO gallery_tb (title, content, created_at) VALUES 
-('노을 지는 캠핑장의 풍경', '어제 찍은 서쪽 하늘 노을 사진입니다. 정말 아름답네요.', DATEADD(DAY, -20, NOW())),
-('아이들과 함께하는 캠핑', '잔디 광장에서 뛰어노는 아이들의 모습이 즐거워 보입니다.', DATEADD(DAY, -19, NOW())),
-('우중 캠핑의 낭만', '빗소리를 들으며 마시는 커피 한 잔의 여유.', DATEADD(DAY, -18, NOW())),
-('겨울 밤의 불멍', '추운 날씨지만 장작불 앞에서는 마음까지 따뜻해집니다.', DATEADD(DAY, -17, NOW())),
-('C구역 카라반 내부 모습', '깔끔하게 정돈된 카라반 내부입니다. 시설이 참 좋네요.', DATEADD(DAY, -16, NOW())),
-('산책로에서 만난 다람쥐', '아침 산책 중에 귀여운 다람쥐를 만났어요!', DATEADD(DAY, -15, NOW())),
-('직접 만든 캠핑 요리', '오늘 점심은 토마토 파스타와 스테이크입니다.', DATEADD(DAY, -14, NOW())),
-('새벽 안개 속의 텐트', '새벽 공기가 참 맑고 안개가 운치 있네요.', DATEADD(DAY, -13, NOW())),
-('봄 꽃이 활짝 핀 캠핑장', '벚꽃 나무 아래에서 즐기는 봄 캠핑!', DATEADD(DAY, -12, NOW())),
-('별이 쏟아지는 밤하늘', '도시에서는 볼 수 없던 수많은 별들을 담아봤습니다.', DATEADD(DAY, -11, NOW())),
-('단풍이 물든 캠핑장 전경', '작년 가을에 찍은 사진인데 다시 봐도 예쁘네요.', DATEADD(DAY, -10, NOW())),
-('캠핑 필수 아이템 공유', '이번에 새로 산 감성 랜턴인데 분위기 최고입니다.', DATEADD(DAY, -9, NOW())),
-('친구들과의 즐거운 파티', '오랜만에 친구들과 모여서 즐거운 시간을 보냈습니다.', DATEADD(DAY, -8, NOW())),
-('나홀로 즐기는 솔로 캠핑', '조용한 숲 속에서 나만의 시간을 가져봅니다.', DATEADD(DAY, -7, NOW())),
-('장비 정리 꿀팁 공유', '테트리스하듯 차곡차곡 쌓는 장비 정리 노하우입니다.', DATEADD(DAY, -6, NOW())),
-('우리 강아지와 함께', '강아지도 캠핑이 좋은가 봐요. 하루 종일 신나 있네요.', DATEADD(DAY, -5, NOW())),
-('여름철 물놀이 풍경', '계곡물에 발 담그고 수박 먹으니 천국이 따로 없네요.', DATEADD(DAY, -4, NOW())),
-('캠핑장의 아침 식사', '간단하게 구운 샌드위치와 우유 한 잔.', DATEADD(DAY, -3, NOW())),
-('드론으로 촬영한 캠핑장', '위에서 내려다보니 또 다른 매력이 있네요.', DATEADD(DAY, -2, NOW())),
-('다시 오고 싶은 곳', '시설도 깨끗하고 친절해서 다음 달에 또 오려고요.', DATEADD(DAY, -1, NOW()));
-
+INSERT INTO comment_tb (id, qna_id, admin_id, content, created_at) VALUES 
+(1, 1, 1, 'A구역만 소형견 가능합니다.', NOW());
 
 -- ==========================================================
--- 9. Q&A 및 관리자 답변 (qna_tb, comment_tb)
+-- 9. 이용 후기 (review_tb) - 1예약 1리뷰 원칙 준수
 -- ==========================================================
-INSERT INTO qna_tb (user_id, title, content, is_answered, created_at) VALUES 
-(2, '반려견 동반 입실이 가능한가요?', '10kg 미만 소형견 1마리와 동반하고 싶은데 A구역 가능할까요?', true, NOW()),
-(3, '주차 공간이 사이트 바로 옆인가요?', '텐트 바로 옆에 차를 댈 수 있는지 궁금합니다.', false, NOW());
-
-INSERT INTO qna_tb (user_id, title, content, is_answered, created_at) VALUES 
-(7, '사이트 간격이 어느 정도 되나요?', '옆 사이트 소음이 많이 들릴까 봐 걱정돼서 문의드립니다.', true, DATEADD(DAY, -15, NOW())),
-(8, '주변에 마트가 있나요?', '깜빡하고 안 가져온 게 있는데 근처에 큰 마트가 있는지 궁금합니다.', true, DATEADD(DAY, -14, NOW())),
-(9, '전기 릴선 길이는 얼마가 적당한가요?', '10m 릴선으로 충분할까요 아니면 20m를 챙겨야 할까요?', true, DATEADD(DAY, -13, NOW())),
-(10, '개별 개수대가 포함된 구역이 있나요?', '공용 개수대 말고 사이트 내에 개별로 있는지 궁금합니다.', true, DATEADD(DAY, -12, NOW())),
-(11, '데크 사이즈가 어떻게 되나요?', '제 텐트가 대형 리빙쉘인데 데크 위에 올라갈지 확인하고 싶습니다.', true, DATEADD(DAY, -11, NOW())),
-(12, '화롯대 사용 가능한가요?', '장작을 태워도 되는지, 아니면 숯만 가능한지 알고 싶습니다.', false, DATEADD(DAY, -10, NOW())),
-(13, '체크인 시간보다 일찍 가도 되나요?', '오전 11시쯤 도착할 것 같은데 혹시 조기 입실이 가능할까요?', false, DATEADD(DAY, -9, NOW())),
-(14, '예약 취소 위약금 규정 문의', '갑작스러운 사정으로 취소해야 할 것 같은데 환불 금액이 어떻게 되나요?', false, DATEADD(DAY, -8, NOW())),
-(15, '겨울철 등유 판매 하시나요?', '난로에 쓸 등유를 관리동에서 살 수 있는지 궁금합니다.', false, DATEADD(DAY, -7, NOW())),
-(7, '해당 날짜에 예약 가능 여부 확인', '4월 25일부터 2박 3일 A구역 예약 가능할까요?', false, DATEADD(DAY, -6, NOW())),
-(8, '해충 방역 정기적으로 하시나요?', '벌레를 무서워해서 방역을 자주 하는지 궁금합니다.', false, DATEADD(DAY, -5, NOW())),
-(9, '샤워실 이용 시간에 제한이 있나요?', '밤 12시 이후에도 샤워가 가능한가요?', false, DATEADD(DAY, -4, NOW())),
-(10, '근처 계곡에서 낚시 가능한가요?', '낚시 도구를 챙겨가려는데 근처에서 할 수 있는지 문의합니다.', false, DATEADD(DAY, -3, NOW())),
-(11, '와이파이가 잘 안 터져요.', 'C구역 끝쪽 사이트인데 와이파이 신호가 너무 약합니다.', false, DATEADD(DAY, -2, NOW())),
-(12, '매너타임 관리가 잘 되나요?', '이전에 다른 곳에서 소음 때문에 고생한 적이 있어서요.', false, DATEADD(DAY, -1, NOW())),
-(13, '배달 음식이 캠핑장 입구까지 오나요?', '치킨이나 피자 배달이 가능한 곳이 있는지 알고 싶습니다.', false, NOW()),
-(14, '단합 대회로 여러 사이트 예약 문의', '총 5개 사이트를 한꺼번에 빌리고 싶은데 할인이 되나요?', false, NOW()),
-(15, '여름철 그늘이 많은 사이트 추천', '햇빛이 너무 뜨거운 건 싫어서 나무 그늘이 많은 곳 추천해 주세요.', false, NOW()),
-(7, '전기차 충전 시설이 있나요?', '캠핑장 내부에 전기차를 충전할 수 있는 공간이 있는지 궁금합니다.', false, NOW()),
-(8, '블로그 리뷰 작성하면 혜택 있나요?', '정성껏 후기 남기고 싶은데 이벤트 같은 건 없는지 문의드려요.', false, NOW());
-
-INSERT INTO comment_tb (qna_id, admin_id, content, created_at) VALUES 
-(1, 1, '안녕하세요! A구역은 사이트당 1마리(소형견)에 한해 동반이 가능합니다. 목줄 착용은 필수입니다.', NOW()),
-(3, 1, '사이트 간격은 약 5~7m로 여유롭게 배치되어 있습니다.', NOW());
-
+INSERT INTO review_tb (id, user_id, reservation_id, rating, content, created_at) VALUES 
+(1, 2, 1, 5, '너무 깨끗하고 좋았습니다.', NOW()),
+(2, 3, 2, 4, '조용하게 힐링하고 왔어요.', DATEADD(DAY, -15, NOW()));
 
 -- ==========================================================
--- 10. 이용 후기 (review_tb) - 예약 ID 중복 제거 및 상태 동기화 완료
+-- 10. 이미지 관리 (image_tb)
 -- ==========================================================
-INSERT INTO review_tb (user_id, reservation_id, rating, content, created_at) VALUES 
-(2, 1, 5, '화장실과 개수대가 너무 깨끗해서 좋았어요! 사장님도 정말 친절하십니다.', NOW()),
-(3, 2, 4, '조용하고 공기도 좋아서 힐링 제대로 하고 왔습니다.', DATEADD(DAY, -15, NOW())),
-(12, 6, 5, '카라반 내부가 너무 아늑하고 깨끗해요.', NOW()),
-(13, 13, 4, '전체적으로 깔끔하고 조용해서 쉬기 좋습니다.', DATEADD(DAY, -6, NOW())),
-(15, 15, 5, '별이 정말 많이 보여요! 밤하늘이 예술입니다.', DATEADD(DAY, -9, NOW()));
-
-
--- ==========================================================
--- 11. 이미지 관리 (image_tb)
--- ==========================================================
-INSERT INTO image_tb (gallery_id, review_id, zone_id, site_id, file_path, file_name, created_at) VALUES 
-(1, null, null, null, '/upload/gallery/', 'morning_forest_01.jpg', NOW()),
-(1, null, null, null, '/upload/gallery/', 'morning_forest_02.jpg', NOW()),
-(2, null, null, null, '/upload/gallery/', 'glamping_inside.jpg', NOW()),
-(null, 1, null, null, '/upload/review/', 'my_camping_pic.jpg', NOW()),
-(null, null, 1, null, '/upload/zone/', 'zone_a_main.jpg', NOW()),
-(null, null, null, 1, '/upload/site/', 'site_a1_detail.jpg', NOW());
+INSERT INTO image_tb (id, gallery_id, review_id, zone_id, site_id, file_path, file_name, created_at) VALUES 
+(1, null, null, 1, null, '/upload/zone/', 'zone_a_main.jpg', NOW()),
+(2, null, 1, null, null, '/upload/review/', 'my_pic.jpg', NOW());
