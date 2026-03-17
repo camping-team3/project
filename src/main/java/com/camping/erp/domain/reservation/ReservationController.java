@@ -40,7 +40,7 @@ public class ReservationController {
             searchDTO.setPeopleCount(2);
         }
 
-        List<SiteResponse.ResevationAbailableListDTO> sites = reservationService.findAvailableSites(searchDTO);
+        List<SiteResponse.ResevationAvailableListDTO> sites = reservationService.findAvailableSites(searchDTO);
 
         long nights = ChronoUnit.DAYS.between(searchDTO.getCheckIn(), searchDTO.getCheckOut());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);

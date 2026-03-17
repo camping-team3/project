@@ -22,5 +22,7 @@ public class ReservationRequest {
         private LocalDate checkOut;
         private Integer peopleCount;
         private Long totalPrice;
+        private String visitorName;  // 방문객 성함 추가
+        private String visitorPhone; // 방문객 연락처 추가
     }
 }
