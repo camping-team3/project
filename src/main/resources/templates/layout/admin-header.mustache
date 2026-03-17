@@ -11,21 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <!-- Common CSS -->
     <link href="/css/common.css" rel="stylesheet"/>
-    <!-- Admin Page CSS -->
+    <!-- Admin Page CSS (페이지별 필요한 스타일은 각 Mustache 파일 상단에서 로드하는 것이 좋으나, 현재는 대시보드 기준으로 유지) -->
     <link href="/css/admin/dashboard.css" rel="stylesheet"/>
-    <link href="/css/admin/stat.css" rel="stylesheet"/>
-    <link href="/css/admin/reservation/list.css" rel="stylesheet"/>
-    <link href="/css/admin/reservation/change-detail.css" rel="stylesheet"/>
-    <link href="/css/admin/reservation/cancel-detail.css" rel="stylesheet"/>
-    <link href="/css/admin/user/list.css" rel="stylesheet"/>
-    <link href="/css/admin/user/detail.css" rel="stylesheet"/>
-    <link href="/css/admin/notice/list.css" rel="stylesheet"/>
-    <link href="/css/admin/notice/new.css" rel="stylesheet"/>
-    <link href="/css/admin/gallery/list.css" rel="stylesheet"/>
-    <link href="/css/admin/gallery/new.css" rel="stylesheet"/>
-    <link href="/css/admin/qna/list.css" rel="stylesheet"/>
-    <link href="/css/admin/qna/answer.css" rel="stylesheet"/>
-    <link href="/css/admin/site/season.css" rel="stylesheet"/>
 </head>
 <body class="bg-light">
     <div class="fh-admin-layout">
@@ -67,6 +54,10 @@
                         <span class="material-symbols-outlined">bar_chart</span>
                         <span class="small fw-medium">통계 리포트</span>
                     </a>
+                    <a href="/admin/sites" class="nav-item">
+                        <span class="material-symbols-outlined">map</span>
+                        <span class="small fw-medium">구역/사이트 관리</span>
+                    </a>
                     <a href="/admin/sites/season" class="nav-item">
                         <span class="material-symbols-outlined">event_note</span>
                         <span class="small fw-medium">시즌 관리</span>
@@ -91,8 +82,8 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="admin-content">
+        <!-- Main Content Wrapper -->
+        <div class="admin-content">
             <!-- Header -->
             <header class="admin-header">
                 <div class="d-flex align-items-center gap-4 flex-grow-1">
@@ -125,3 +116,6 @@
                     </div>
                 </div>
             </header>
+
+            <!-- Main Page Content Starts Here -->
+            <main class="p-4 p-lg-5">

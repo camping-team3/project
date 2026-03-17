@@ -57,7 +57,7 @@ public class ReservationIntegrationTest {
         searchDTO.setPeopleCount(2);
 
         // when
-        List<SiteResponse.ListDTO> sites = reservationService.findAvailableSites(searchDTO);
+        List<SiteResponse.ResevationAbailableListDTO> sites = reservationService.findAvailableSites(searchDTO);
 
         // then
         assertThat(sites).isNotEmpty();
@@ -81,7 +81,7 @@ public class ReservationIntegrationTest {
         assertThat(response.getId()).isNotNull();
         // 가격 검증: (A구역 평시 50,000 + 추가인원 20,000) * 2박 = 140,000
         assertThat(response.getTotalPrice()).isEqualTo(140000L);
-        
+
         Reservation saved = reservationRepository.findById(response.getId()).orElseThrow();
         assertThat(saved.getStatus()).isEqualTo(ReservationStatus.CONFIRMED);
     }

@@ -1,6 +1,7 @@
 package com.camping.erp.domain.reservation;
 
 import com.camping.erp.domain.site.SiteResponse;
+import com.camping.erp.domain.site.SiteService;
 import com.camping.erp.domain.user.User;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.Locale;
 @Controller
 @RequiredArgsConstructor
 public class ReservationController {
+    private final SiteService siteService;
 
     private final ReservationService reservationService;
     private final HttpSession session;
@@ -38,7 +40,7 @@ public class ReservationController {
             searchDTO.setPeopleCount(2);
         }
 
-        List<SiteResponse.ListDTO> sites = reservationService.findAvailableSites(searchDTO);
+        List<SiteResponse.ResevationAbailableListDTO> sites = reservationService.findAvailableSites(searchDTO);
 
         long nights = ChronoUnit.DAYS.between(searchDTO.getCheckIn(), searchDTO.getCheckOut());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);
@@ -55,16 +57,16 @@ public class ReservationController {
     @GetMapping("/reservations/payment")
     public String paymentForm(ReservationRequest.ReserveDTO request, Model model) {
         ReservationResponse.PaymentFormDTO paymentInfo = reservationService.getPaymentForm(request);
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);
-        String dateRange = String.format("%s - %s (%d박)", 
-                paymentInfo.getCheckIn().format(formatter), 
-                paymentInfo.getCheckOut().format(formatter), 
+        String dateRange = String.format("%s - %s (%d박)",
+                paymentInfo.getCheckIn().format(formatter),
+                paymentInfo.getCheckOut().format(formatter),
                 paymentInfo.getNights());
 
         model.addAttribute("payment", paymentInfo);
         model.addAttribute("dateRange", dateRange);
-        
+
         return "reservation/payment";
     }
 
@@ -78,12 +80,12 @@ public class ReservationController {
     @GetMapping("/reservations/complete")
     public String complete(@RequestParam("id") Long id, Model model) {
         ReservationResponse.CompleteDTO reservation = reservationService.getCompleteDetails(id);
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);
         model.addAttribute("reservation", reservation);
         model.addAttribute("checkInDisplay", reservation.getCheckIn().format(formatter));
         model.addAttribute("checkOutDisplay", reservation.getCheckOut().format(formatter));
-        
+
         return "reservation/complete";
     }
 }

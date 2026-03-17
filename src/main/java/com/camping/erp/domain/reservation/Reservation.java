@@ -37,16 +37,20 @@ public class Reservation extends BaseTimeEntity {
     private LocalDate checkOut;
 
     @Column(nullable = false)
-    private Integer peopleCount;
-
-    @Column(nullable = false)
     private Long totalPrice;
 
+    @Column(nullable = false)
+    private Integer peopleCount; // 예약 인원
+
+    private String visitorName; // 방문자 성함
+    private String visitorPhone; // 방문자 연락처
+
     @Enumerated(EnumType.STRING)
-    private ReservationStatus status; // PENDING, CONFIRMED, CANCEL_REQ, CANCEL_COMP
+    private ReservationStatus status; // PENDING, CONFIRMED, CANCEL_REQ, CANCEL_COMP, COMPLETED
 
     @Builder
-    public Reservation(Long id, User user, Site site, LocalDate checkIn, LocalDate checkOut, Integer peopleCount, Long totalPrice, ReservationStatus status) {
+    public Reservation(Long id, User user, Site site, LocalDate checkIn, LocalDate checkOut, Long totalPrice,
+            Integer peopleCount, String visitorName, String visitorPhone, ReservationStatus status) {
         this.id = id;
         this.user = user;
         this.site = site;
@@ -54,6 +58,9 @@ public class Reservation extends BaseTimeEntity {
         this.checkOut = checkOut;
         this.peopleCount = peopleCount;
         this.totalPrice = totalPrice;
+        this.peopleCount = peopleCount;
+        this.visitorName = visitorName;
+        this.visitorPhone = visitorPhone;
         this.status = status;
     }
 }

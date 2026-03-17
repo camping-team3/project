@@ -33,13 +33,13 @@
             <section class="mb-5">
                 <div class="d-flex justify-content-between align-items-end mb-3">
                     <div>
-                        <h1 class="display-5 fw-black text-primary mb-2">A-1 데크 (Forest View)</h1>
-                        <p class="text-secondary fw-medium fs-5 m-0">탁 트인 전망과 프라이빗한 휴식 공간</p>
+                        <h1 class="display-5 fw-black text-primary mb-2">{{site.siteName}} ({{site.zoneName}} 구역)</h1>
+                        <p class="text-secondary fw-medium fs-5 m-0">자연과 함께하는 특별한 캠핑 경험</p>
                     </div>
                     <div class="text-end">
                         <p class="text-secondary small fw-bold mb-1">리뷰 평점</p>
                         <div class="d-flex align-items-center gap-2 text-primary fw-black fs-4">
-                            <span class="material-symbols-outlined icon-fill-1">star</span> 4.9
+                            <span class="material-symbols-outlined icon-fill-1">star</span> {{site.rating}}
                         </div>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                             <span class="material-symbols-outlined text-primary fs-4">group</span>
                             <span class="text-secondary small fw-bold">수용 인원</span>
                         </div>
-                        <span class="fw-black text-dark">기준 2인 / 최대 4인</span>
+                        <span class="fw-black text-dark">최대 {{site.maxPeople}}인</span>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -63,7 +63,7 @@
                             <span class="material-symbols-outlined text-primary fs-4">payments</span>
                             <span class="text-secondary small fw-bold">1박 요금</span>
                         </div>
-                        <span class="fw-black text-primary fs-5">150,000원 ~</span>
+                        <span class="fw-black text-primary fs-5">{{site.normalPrice}}원 ~</span>
                     </div>
                 </div>
             </section>
