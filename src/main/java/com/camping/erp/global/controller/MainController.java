@@ -1,4 +1,4 @@
-package com.camping.erp.domain.auth;
+package com.camping.erp.global.controller;
 
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class AuthController {
+public class MainController {
     private final SiteService siteService;
 
     @GetMapping("/")
@@ -19,15 +19,5 @@ public class AuthController {
         List<SiteResponse.ListDTO> sites = siteService.findAll();
         model.addAttribute("sites", sites);
         return "index";
-    }
-
-    @GetMapping("/login-form")
-    public String loginForm() {
-        return "auth/login-form";
-    }
-
-    @GetMapping("/join-form")
-    public String joinForm() {
-        return "auth/join-form";
     }
 }
