@@ -348,35 +348,44 @@ body {
 .fh-admin-layout {
     display: flex;
     min-height: 100vh;
+    background-color: var(--fh-bg-light);
 }
 
 .admin-sidebar {
-    width: 260px;
+    width: 280px;
     height: 100vh;
-    position: fixed;
+    position: sticky;
     top: 0;
-    left: 0;
     z-index: 1030;
     background: white;
     border-right: 1px solid var(--fh-border);
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
+}
+
+.admin-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .admin-header {
-    height: 64px;
-    position: fixed;
+    height: 70px;
+    position: sticky;
     top: 0;
-    left: 260px;
-    right: 0;
     z-index: 1020;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--fh-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
+    flex-shrink: 0;
 }
 
 .search-wrapper {
@@ -405,50 +414,6 @@ body {
     font-weight: 600;
     color: var(--fh-text-muted);
     text-transform: uppercase;
-}
-
-.admin-content {
-    margin-left: 260px;
-    padding-top: 64px;
-    flex: 1;
-    min-height: 100vh;
-}
-
-.fh-admin-wrapper {
-    display: flex;
-    min-height: 100vh;
-}
-
-.fh-admin-sidebar {
-    width: 280px;
-    background: white;
-    border-right: 1px solid var(--fh-border);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    height: 100vh;
-    z-index: 1000;
-}
-
-.fh-admin-main {
-    flex: 1;
-    margin-left: 280px;
-    background: var(--fh-bg-light);
-    min-height: 100vh;
-}
-
-.fh-admin-header {
-    height: 70px;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--fh-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 900;
 }
 
 /* --- Admin Table --- */

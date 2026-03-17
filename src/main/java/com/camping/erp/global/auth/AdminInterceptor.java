@@ -16,6 +16,10 @@ public class AdminInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
+        // [TEMP] 관리자 권한 체크 일시 비활성화 (테스트용)
+        return true; 
+        
+        /* 
         HttpSession session = request.getSession();
         User sessionUser = (User) session.getAttribute("sessionUser");
 
@@ -28,5 +32,6 @@ public class AdminInterceptor implements HandlerInterceptor {
         }
 
         return true;
+        */
     }
 }
