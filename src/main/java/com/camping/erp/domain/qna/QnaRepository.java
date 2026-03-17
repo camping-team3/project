@@ -15,4 +15,7 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
 
     @Query("select q from Qna q join fetch q.user left join fetch q.comments c left join fetch c.admin where q.id = :id")
     Optional<Qna> findByIdWithUserAndComments(Long id);
-}
+
+    @Query("select count(q) from Qna q where q.isAnswered = false")
+    Long countUnanswered();
+    }

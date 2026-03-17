@@ -51,7 +51,12 @@
                             {{/isAnswered}}
                         </td>
                         <td class="px-4 text-end">
-                            <a href="/admin/qna/{{id}}/answer" class="btn-detail-link">상세보기 <span class="material-symbols-outlined">chevron_right</span></a>
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="/admin/qna/{{id}}/answer" class="btn btn-sm btn-outline-primary fw-bold px-3 rounded-3">상세보기</a>
+                                <form action="/admin/qna/{{id}}/delete" method="post" onsubmit="return confirm('관리자 권한으로 이 문의를 삭제하시겠습니까?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold px-3 rounded-3">삭제</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     {{/qnas}}
@@ -80,30 +85,21 @@
 
     <!-- Stats Summary -->
     <div class="row g-4">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="fh-card d-flex align-items-center gap-4 p-4 border-0 shadow-sm bg-white">
                 <div class="icon-box-48 icon-box-pending"><span class="material-symbols-outlined fs-4">pending_actions</span></div>
                 <div>
                     <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider mb-1">미처리 문의</p>
-                    <p class="h3 fw-black text-danger m-0">2건</p>
+                    <p class="h3 fw-black text-danger m-0">{{unansweredCount}}건</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="fh-card d-flex align-items-center gap-4 p-4 border-0 shadow-sm bg-white">
                 <div class="icon-box-48 icon-box-completed"><span class="material-symbols-outlined fs-4">done_all</span></div>
                 <div>
                     <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider mb-1">오늘 완료된 답변</p>
-                    <p class="h3 fw-black text-primary m-0">12건</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="fh-card d-flex align-items-center gap-4 p-4 border-0 shadow-sm bg-white">
-                <div class="icon-box-48 icon-box-time"><span class="material-symbols-outlined fs-4">timer</span></div>
-                <div>
-                    <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider mb-1">평균 답변 시간</p>
-                    <p class="h3 fw-black text-dark m-0">1시간 15분</p>
+                    <p class="h3 fw-black text-primary m-0">{{todayAnsweredCount}}건</p>
                 </div>
             </div>
         </div>

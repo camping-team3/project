@@ -8,7 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +21,20 @@ import java.util.List;
 public class QnaService {
     private final QnaRepository qnaRepository;
     private final CommentRepository commentRepository;
+
+    // 통계 데이터 조회
+    public Map<String, Long> getStatistics() {
+        Map<String, Long> stats = new HashMap<>();
+        
+        // 1. 미처리 문의 수
+        stats.put("unansweredCount", qnaRepository.countUnanswered());
+        
+        // 2. 오늘 완료된 답변 수
+        LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        stats.put("todayAnsweredCount", commentRepository.countTodayComments(startOfDay));
+        
+        return stats;
+    }
 
     // 전체 목록 조회 (필터링 포함)
     public List<QnaResponse.ListDTO> findAll(String status, User sessionUser) {
@@ -73,8 +92,11 @@ public class QnaService {
         Qna qna = qnaRepository.findById(id)
                 .orElseThrow(() -> new Exception404("해당 질문을 찾을 수 없습니다."));
 
-        // 권한 체크 (작성자 또는 관리자만 삭제 가능 - 여기서는 일단 작성자만)
-        if (!qna.getUser().getId().equals(sessionUser.getId())) {
+        // 권한 체크 (작성자 본인 또는 관리자만 삭제 가능)
+        boolean isOwner = qna.getUser().getId().equals(sessionUser.getId());
+        boolean isAdmin = sessionUser.getRole().name().equals("ADMIN");
+
+        if (!isOwner && !isAdmin) {
             throw new Exception403("삭제 권한이 없습니다.");
         }
 
