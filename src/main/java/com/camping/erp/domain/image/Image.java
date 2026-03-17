@@ -1,6 +1,7 @@
 package com.camping.erp.domain.image;
 
 import com.camping.erp.domain.gallery.Gallery;
+import com.camping.erp.domain.notice.Notice;
 import com.camping.erp.domain.review.Review;
 import com.camping.erp.domain.site.Site;
 import com.camping.erp.domain.site.Zone;
@@ -30,6 +31,10 @@ public class Image extends BaseTimeEntity {
     private Review review;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "notice_id")
+    private Notice notice;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zone_id")
     private Zone zone; // 구역 사진 지원
 
@@ -44,13 +49,26 @@ public class Image extends BaseTimeEntity {
     private String fileName;
 
     @Builder
-    public Image(Long id, Gallery gallery, Review review, Zone zone, Site site, String filePath, String fileName) {
+    public Image(Long id, Gallery gallery, Review review, Notice notice, Zone zone, Site site, String filePath, String fileName) {
         this.id = id;
         this.gallery = gallery;
         this.review = review;
+        this.notice = notice;
         this.zone = zone;
         this.site = site;
         this.filePath = filePath;
         this.fileName = fileName;
+    }
+
+    public void setNotice(Notice notice) {
+        this.notice = notice;
+    }
+
+    public void setGallery(Gallery gallery) {
+        this.gallery = gallery;
+    }
+
+    public void setReview(Review review) {
+        this.review = review;
     }
 }
