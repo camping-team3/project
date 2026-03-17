@@ -12,7 +12,7 @@
             <!-- Order Number Card -->
             <div class="reservation-number-box mb-5 text-center shadow-sm bg-white">
                 <span class="text-secondary small fw-bold text-uppercase tracking-wider">예약 번호</span>
-                <h3 class="h2 fw-black text-primary m-0 mt-1">#RSV-20240524-001</h3>
+                <h3 class="h2 fw-black text-primary m-0 mt-1">#RSV-{{reservation.id}}</h3>
             </div>
 
             <!-- Details Card -->
@@ -23,23 +23,23 @@
                 <div class="d-flex flex-column gap-1">
                     <div class="info-grid-row">
                         <span class="text-secondary fw-medium">예약 사이트</span>
-                        <span class="text-dark fw-bold">A-1 데크 (Forest View)</span>
+                        <span class="text-dark fw-bold">{{reservation.siteName}} ({{reservation.zoneName}})</span>
                     </div>
                     <div class="info-grid-row">
                         <span class="text-secondary fw-medium">이용 일정</span>
-                        <span class="text-dark fw-bold">2024.05.24 - 2024.05.26 (2박)</span>
+                        <span class="text-dark fw-bold">{{checkInDisplay}} - {{checkOutDisplay}} ({{reservation.nights}}박)</span>
                     </div>
                     <div class="info-grid-row">
                         <span class="text-secondary fw-medium">이용 인원</span>
-                        <span class="text-dark fw-bold">성인 2명</span>
+                        <span class="text-dark fw-bold">성인 {{reservation.peopleCount}}명</span>
                     </div>
                     <div class="info-grid-row">
                         <span class="text-secondary fw-medium">결제 금액</span>
-                        <span class="text-primary fw-black fs-5">150,000원</span>
+                        <span class="text-primary fw-black fs-5">₩ {{reservation.totalPrice}}</span>
                     </div>
                     <div class="info-grid-row">
                         <span class="text-secondary fw-medium">결제 수단</span>
-                        <span class="text-dark fw-bold">신용카드 (현대 4421-****)</span>
+                        <span class="text-dark fw-bold">신용카드 (결제 완료)</span>
                     </div>
                 </div>
             </div>
@@ -47,7 +47,7 @@
             <!-- Action Buttons -->
             <div class="row g-3">
                 <div class="col-sm-6">
-                    <button onclick="location.href='/'" class="btn btn-primary w-100 py-3.5 fw-bold shadow-lg border-0 rounded-3">예약 확인하기</button>
+                    <button onclick="location.href='/mypage/reservations'" class="btn btn-primary w-100 py-3.5 fw-bold shadow-lg border-0 rounded-3">예약 확인하기</button>
                 </div>
                 <div class="col-sm-6">
                     <button onclick="location.href='/'" class="btn btn-light bg-secondary bg-opacity-10 text-secondary w-100 py-3.5 fw-bold border-0 shadow-sm rounded-3">홈으로 이동</button>
