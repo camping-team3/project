@@ -114,6 +114,7 @@ INSERT INTO image_tb (gallery_id, review_id, zone_id, site_id, file_path, file_n
 (null, 1, null, null, '/upload/review/', 'my_camping_pic.jpg', NOW()),
 (null, null, 1, null, '/upload/zone/', 'zone_a_main.jpg', NOW()), -- A구역 대표 사진
 (null, null, null, 1, '/upload/site/', 'site_a1_detail.jpg', NOW()); -- A-1 사이트 상세 사진
+<<<<<<< HEAD
 
 
 -- ==========================================================
@@ -257,3 +258,5 @@ INSERT INTO reservation_tb (user_id, site_id, check_in, check_out, total_price, 
 (15, 6, '2026-08-25', '2026-08-27', 240000, 2, '박지성', '010-1003-1003', 'CONFIRMED', NOW()),
 (7, 1, '2026-09-01', '2026-09-03', 100000, 2, '손흥민', '010-1004-1004', 'PENDING', NOW()),
 (8, 2, '2026-09-05', '2026-09-07', 100000, 2, '김연아', '010-1005-1005', 'CONFIRMED', NOW());
+=======
+>>>>>>> dev
