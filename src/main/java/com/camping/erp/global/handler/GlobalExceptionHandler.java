@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
     public Object exUnknown(Exception e, HttpServletRequest request) {
         e.printStackTrace();
         if (isAjaxRequest(request)) {
-            return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 문의하세요");
+            return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 문의하세요: " + e.getMessage());
         }
         // 리다이렉트이므로 @ResponseBody를 붙이지 않음
         return "redirect:/login-form";
