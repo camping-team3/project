@@ -118,8 +118,20 @@ INSERT INTO review_tb (id, user_id, reservation_id, rating, content, created_at)
 
 
 -- ==========================================================
--- 10. 이미지 관리 (image_tb)
+-- 10. 갤러리 (gallery_tb) - 누락 데이터 추가
 -- ==========================================================
-INSERT INTO image_tb (id, gallery_id, review_id, zone_id, site_id, file_path, file_name, created_at) VALUES 
-(1, null, null, 1, null, '/upload/zone/', 'zone_a_main.jpg', NOW()),
-(2, null, 1, null, null, '/upload/review/', 'my_pic.jpg', NOW());
+INSERT INTO gallery_tb (id, title, category, shooting_date, content, view_count, created_at) VALUES 
+(1, '안개 낀 숲속의 아침', '캠핑장 전경', '2026-03-01', '숲속 아침 풍경입니다.', 0, NOW()),
+(2, '글램핑 내부 시설 공개', '캠핑장 전경', '2026-03-05', '깨끗하고 아늑합니다.', 0, NOW());
+
+-- ==========================================================
+-- 11. 이미지 관리 (image_tb)
+-- 역할: 갤러리, 리뷰, 공지사항 및 구역/사이트 이미지 파일 정보
+-- ==========================================================
+INSERT INTO image_tb (id, gallery_id, review_id, notice_id, zone_id, site_id, file_path, file_name, created_at) VALUES 
+(1, null, null, null, 1, null, '/upload/zone/', 'zone_a_main.jpg', NOW()),
+(2, null, 1, null, null, null, '/upload/review/', 'my_pic.jpg', NOW()),
+(3, 1, null, null, null, null, '/upload/gallery/', 'morning_forest_01.jpg', NOW()),
+(4, 1, null, null, null, null, '/upload/gallery/', 'morning_forest_02.jpg', NOW()),
+(5, 2, null, null, null, null, '/upload/gallery/', 'glamping_inside.jpg', NOW()),
+(6, null, 1, null, null, null, '/upload/review/', 'my_camping_pic.jpg', NOW());

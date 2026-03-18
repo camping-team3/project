@@ -19,29 +19,31 @@
 - [x] **데이터 검증:** `testData.sql` 구축 및 JPA Repository 기본 동작 확인 완료
 - [x] **UI 프로토타입 변환:** `zBackup/html/` 내 37개 HTML을 Mustache SSR 템플릿(35개)으로 100% 변환 완료 (전체 페이즈 공통)
 
-## 🔑 Phase 2: MVP 핵심 도메인 (60%) - 🟢 진행 중
+## 🔑 Phase 2: MVP 핵심 도메인 (80%) - 🟢 진행 중
 
 **목표:** 결제 없이 '예약 → 관리자 수동 확정' 플로우가 동작하는 MVP 완성
 
 > 각 도메인은 **User-facing + Admin CRUD**를 함께 구현한다.
 
-- [ ] **User 도메인:**
+- [x] **User 도메인 (100%):**
   - [x] UI: 로그인(`login-form`), 회원가입(`join-form`) 템플릿 완료
   - [x] 인증: `LoginInterceptor` 및 `AdminInterceptor` 기반 권한 인가 기반 마련
-  - [ ] 기능: 회원가입 로직(`UserService.join`) 및 로그인 로직 구현 필요
-  - [ ] 관리자: 회원 목록 조회(`AdminController.userList`) 로직 구현 필요
+  - [x] 기능: 회원가입 로직 구현 (완료)
+  - [x] 관리자: 회원 목록 조회, 권한 변경 로직 (완료)
 - [x] **Zone & Site 도메인 (100%):**
-  - [x] 고객: 메인 페이지(`index`) 구역·사이트 목록 동적 렌더링 및 상세 정보 조회 완료
-  - [x] 고객: 실시간 예약 페이지(`reservation/new`) 날짜별 예약 가능 사이트 필터링 로직 완료
-  - [x] 관리자: 구역·사이트 CRUD(전체 기능) 구현 완료
-- [ ] **Reservation 도메인:**
-  - [x] UI: 예약 생성(`reservation/new`), 관리자 예약 목록 템플릿 완료
-  - [ ] 고객: 예약 생성(PENDING) 로직(`BookingService.reserve`) 구현 필요
-  - [ ] 관리자: 예약 현황 목록 조회 및 수동 확정/취소 처리 로직 구현 필요
+  - [x] 고객: 메인 페이지(`index`) 구역·사이트 목록 동적 렌더링 완료
+  - [x] 고객: 사이트 상세(`site/detail`) 정보 조회 및 연동 완료
+  - [x] 고객: 실시간 예약 페이지(`reservation/new`) 날짜별 예약 가능 사이트 필터링 로직 구현 완료
+  - [x] 관리자: 구역·사이트 CRUD, 요금 설정 로직
+- [x] **Reservation 도메인:**
+  - [x] 고객: 예약 생성 플로우
+  - [x] 관리자: 예약 현황 목록 조회, 수동 확정/취소 처리
 - [ ] **독립 도메인 (Notice + Gallery):**
+=======
+- [x] **독립 도메인 (Notice + Gallery):**
   - [x] UI: 공지사항·갤러리 목록 및 관리자 CRUD 템플릿 완료
-  - [x] 고객: 기본 목록 조회 로직(`NoticeService.findAll`) 완료
-  - [ ] 관리자: 공지·갤러리 CRUD 및 **Image 다중 업로드** 로직 구현 필요
+  - [x] 고객: 목록 조회 로직 완료
+  - [x] 관리자: 공지·갤러리 CRUD, Image 다중 업로드 및 데이터 통합 완료
 
 ## 💬 Phase 3: 확장 도메인 (10%)
 

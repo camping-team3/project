@@ -46,15 +46,15 @@
 
 ### 2.4 커뮤니티 (Notice, Gallery, Qna, Review, Comment)
 - **Notice (공지사항):** `id`, `title`, `content`, `is_top` (상단 고정 여부), `created_at`
-- **Gallery (포토 갤러리):** `id`, `title`, `content`, `created_at`
-- **Qna (질문 답변):** 
-  - `id` (PK), `user_id` (FK), `title`, `content`, `category` (RESERVATION, FACILITY, ETC), `hits` (조회수), `is_answered` (답변 여부), `created_at`
+- **Gallery (포토 갤러리):** 
+  - `id` (PK), `title`, `category` (카테고리), `shooting_date` (촬영일), `content` (내용), `view_count` (조회수), `created_at`
+- **Qna (질문 답변):** `id`, `user_id` (FK), `title`, `content`, `is_answered` (답변 여부), `created_at`
 - **Comment (관리자 답변):** `id`, `qna_id` (FK), `admin_id` (FK), `content`, `created_at`
 - **Review (이용 후기):** `id`, `user_id` (FK), `reservation_id` (FK, Unique), `rating` (별점), `content`, `created_at`
 
 ### 2.5 파일 관리 (Image)
 - **Image (공통 이미지):** 다중 이미지 지원
-  - `id` (PK), `gallery_id` (FK, Nullable), `review_id` (FK, Nullable), `zone_id` (FK, Nullable), `site_id` (FK, Nullable), `file_path`, `file_name`
+  - `id` (PK), `gallery_id` (FK, Nullable), `review_id` (FK, Nullable), `notice_id` (FK, Nullable), `zone_id` (FK, Nullable), `site_id` (FK, Nullable), `file_path`, `file_name`
 
 ---
 
@@ -68,6 +68,7 @@
 7. **Qna : Comment** (1:N)
 8. **Gallery : Image** (1:N)
 9. **Review : Image** (1:N)
-10. **Zone : Image** (1:N) - 구역 대표/상세 사진
-11. **Site : Image** (1:N) - 사이트 상세 사진
-12. **User : Review** (1:N)
+10. **Notice : Image** (1:N) - 공지사항 내 첨부 이미지
+11. **Zone : Image** (1:N) - 구역 대표/상세 사진
+12. **Site : Image** (1:N) - 사이트 상세 사진
+13. **User : Review** (1:N)

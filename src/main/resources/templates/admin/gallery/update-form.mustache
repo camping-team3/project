@@ -1,0 +1,182 @@
+{{> layout/admin-header}}
+
+<div class="p-5" style="max-width: 896px; margin: 0 auto;">
+    <form id="galleryUpdateForm" action="/admin/galleries/{{gallery.id}}/update" method="POST" enctype="multipart/form-data">
+        <!-- Page Title Section -->
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="display-6 fw-bold text-dark mb-1 tracking-tight">갤러리 게시글 수정</h2>
+                <p class="text-secondary small mt-1">기존 포토갤러리 게시글의 내용을 수정합니다.</p>
+            </div>
+            <div class="d-flex gap-3">
+                <button type="button" onclick="history.back()" class="btn btn-light px-4 py-2.5 fw-bold text-secondary border bg-white rounded-3 small">취소</button>
+                <button type="button" class="btn btn-primary px-4 py-2.5 fw-bold shadow-md border-0 rounded-3 small btn-gallery-update">수정 완료</button>
+            </div>
+        </div>
+
+        <div id="deleteInputArea">
+            <!-- 삭제할 이미지 ID들이 hidden input으로 여기에 쌓입니다 -->
+        </div>
+
+        <div class="space-y-6">
+            <!-- Form Card -->
+            <div class="form-card shadow-sm p-4 bg-white rounded-4 border border-secondary border-opacity-10">
+                <!-- Title & Category -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-8">
+                        <label class="form-label small fw-bold text-dark mb-2">게시글 제목</label>
+                        <input type="text" name="title" class="form-control py-2.5 shadow-none border-secondary border-opacity-25 text-sm" placeholder="제목을 입력해주세요" value="{{gallery.title}}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-dark mb-2">카테고리</label>
+                        <select name="category" id="categorySelect" class="form-select py-2.5 shadow-none border-secondary border-opacity-25 text-sm">
+                            <option value="특별 이벤트">특별 이벤트</option>
+                            <option value="캠핑장 전경">캠핑장 전경</option>
+                            <option value="기타">기타</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Shooting Date -->
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-dark mb-2">촬영일</label>
+                    <input type="date" name="shootingDate" class="form-control py-2.5 shadow-none border-secondary border-opacity-25 text-sm" value="{{gallery.shootingDate}}" required>
+                </div>
+
+                <!-- Content -->
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-dark mb-2">게시글 내용</label>
+                    <textarea name="content" class="form-control py-2.5 shadow-none border-secondary border-opacity-25 text-sm" rows="5" placeholder="내용을 입력해주세요" required>{{gallery.content}}</textarea>
+                </div>
+
+                <!-- File Upload -->
+                <div class="mb-0">
+                    <label class="form-label small fw-bold text-dark mb-3">첨부 이미지 수정</label>
+                    
+                    <input type="file" id="imageInput" name="images" multiple accept="image/*" style="display:none">
+                    
+                    <div id="dropZone" class="file-drop-zone border-dashed p-5 text-center bg-light rounded-4" style="border: 2px dashed #dee2e6; cursor: pointer; transition: all 0.3s ease;">
+                        <span class="material-symbols-outlined icon-upload fs-1 text-secondary opacity-50">upload_file</span>
+                        <p class="small fw-medium text-dark mb-1 mt-2">이미지 파일을 추가로 드래그하거나 클릭하세요</p>
+                    </div>
+
+                    <!-- 프리뷰 그리드 영역 (기존 이미지 + 새로 선택한 이미지) -->
+                    <div id="previewGrid" class="d-flex flex-wrap gap-3 mt-3">
+                        {{#gallery.images}}
+                        <div class="position-relative" style="width: 120px; height: 120px;">
+                            <img src="{{filePath}}" class="w-100 h-100 object-fit-cover rounded-3 border shadow-sm">
+                            <div class="position-absolute top-0 start-0 bg-primary text-white text-xs px-2 py-0.5 rounded-br-3 small" style="font-size: 10px;">기존</div>
+                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-0 d-flex align-items-center justify-content-center" 
+                                    style="width: 24px; height: 24px; border-radius: 50%; transform: translate(30%, -30%); border: 2px solid white;" 
+                                    onclick="removeExistingFile(this, {{id}})">×</button>
+                        </div>
+                        {{/gallery.images}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Actions -->
+            <div class="d-flex align-items-center justify-content-end gap-3 pt-4">
+                <button type="button" onclick="history.back()" class="btn btn-light px-4 py-2.5 rounded-lg border border-secondary border-opacity-10 bg-white small fw-bold text-secondary">취소</button>
+                <button type="button" class="btn btn-primary px-4 py-2.5 rounded-lg fw-bold shadow-md border-0 small btn-gallery-update">수정 완료</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- JQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // 기존 카테고리 선택 상태 반영
+        const currentCategory = "{{gallery.category}}";
+        if (currentCategory) {
+            $("#categorySelect").val(currentCategory);
+        }
+
+        // 이미지 업로드 로직 (새로운 파일)
+        const dropZone = document.getElementById('dropZone');
+        const imageInput = document.getElementById('imageInput');
+        const previewGrid = document.getElementById('previewGrid');
+        let selectedFiles = [];
+        let existingImageCount = {{gallery.images.size}};
+        let deletedImageCount = 0;
+
+        // 수정 완료 버튼 클릭
+        $('.btn-gallery-update').on('click', function() {
+            const title = $('input[name="title"]').val();
+            const content = $('textarea[name="content"]').val();
+
+            if (!title || title.trim() === '') { alert('제목을 입력해주세요.'); return; }
+            if (!content || content.trim() === '') { alert('내용을 입력해주세요.'); return; }
+
+            // 이미지 개수 최종 검증 (기존 - 삭제 + 신규)
+            const finalImageCount = existingImageCount - deletedImageCount + selectedFiles.length;
+            if (finalImageCount < 1) {
+                alert('갤러리 게시글에는 최소 한 장 이상의 사진이 있어야 합니다.');
+                return;
+            }
+
+            $('#galleryUpdateForm').submit();
+        });
+
+        dropZone.addEventListener('click', () => imageInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#0d6efd'; });
+        dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = '#dee2e6'; });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault(); dropZone.style.borderColor = '#dee2e6';
+            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+            handleFiles(files);
+        });
+
+        imageInput.addEventListener('change', (e) => handleFiles(Array.from(e.target.files)));
+
+        function handleFiles(files) {
+            files.forEach(file => {
+                selectedFiles.push(file);
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'position-relative';
+                    previewItem.style.width = '120px'; previewItem.style.height = '120px';
+                    previewItem.innerHTML = `
+                        <img src="${e.target.result}" class="w-100 h-100 object-fit-cover rounded-3 border shadow-sm">
+                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-0 d-flex align-items-center justify-content-center" 
+                                style="width: 24px; height: 24px; border-radius: 50%; transform: translate(30%, -30%); border: 2px solid white;" 
+                                onclick="removeFile(this, '${file.name}')">×</button>
+                        <div class="position-absolute top-0 start-0 bg-success text-white text-xs px-2 py-0.5 rounded-br-3 small" style="font-size: 10px;">신규</div>
+                    `;
+                    previewGrid.appendChild(previewItem);
+                };
+                reader.readAsDataURL(file);
+            });
+            updateInputFiles();
+        }
+
+        window.removeFile = function(btn, fileName) {
+            btn.parentElement.remove();
+            selectedFiles = selectedFiles.filter(f => f.name !== fileName);
+            updateInputFiles();
+        };
+
+        window.removeExistingFile = function(btn, imageId) {
+            btn.parentElement.remove();
+<<<<<<< HEAD
+            deletedImageCount++; // 삭제 카운트 증가
+=======
+>>>>>>> dev
+            const deleteInput = document.createElement('input');
+            deleteInput.type = 'hidden'; deleteInput.name = 'deleteImageIds'; deleteInput.value = imageId;
+            document.getElementById('deleteInputArea').appendChild(deleteInput);
+        };
+
+        function updateInputFiles() {
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            imageInput.files = dataTransfer.files;
+        }
+    });
+</script>
+
+{{> layout/admin-footer}}
