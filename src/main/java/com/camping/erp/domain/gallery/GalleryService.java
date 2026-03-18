@@ -1,8 +1,8 @@
 package com.camping.erp.domain.gallery;
 
 import com.camping.erp.global.util.FileUtil;
-import lombok.RequiredArgsConstructor;<<<<<<<HEAD=======
-import org.springframework.beans.factory.annotation.Value;>>>>>>>dev
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -88,46 +88,27 @@ public class GalleryService {
     public void delete(Long id) {
         Gallery gallery = galleryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("갤러리 게시글을 찾을 수 없습니다."));
-<<<<<<< HEAD
-        
+
         // 연관된 물리 이미지 파일들 모두 삭제
         if (gallery.getImages() != null && !gallery.getImages().isEmpty()) {
             gallery.getImages().forEach(img -> fileUtil.deleteFile(img.getFileName()));
         }
-        
-=======
->>>>>>> dev
+
         galleryRepository.delete(gallery);
     }
 
     private void saveGalleryImages(Gallery gallery, List<MultipartFile> images) {
         for (MultipartFile file : images) {
-            if (file.isEmpty()) continue;
+            if (file.isEmpty())
+                continue;
 
-<<<<<<< HEAD
             String fileName = fileUtil.uploadFile(file);
             if (fileName != null) {
-=======
-            String originFileName = file.getOriginalFilename();
-            String uuid = UUID.randomUUID().toString();
-            String fileName = uuid + "_" + originFileName;
-            Path filePath = Paths.get(uploadDir + fileName);
-
-            try {
-                Files.createDirectories(filePath.getParent());
-                Files.write(filePath, file.getBytes());
-
->>>>>>> dev
                 com.camping.erp.domain.image.Image image = com.camping.erp.domain.image.Image.builder()
                         .fileName(fileName)
                         .filePath("/upload/" + fileName)
                         .build();
                 gallery.addImage(image);
-<<<<<<< HEAD
-=======
-            } catch (IOException e) {
-                throw new RuntimeException("파일 저장 중 오류가 발생했습니다.", e);
->>>>>>> dev
             }
         }
     }
