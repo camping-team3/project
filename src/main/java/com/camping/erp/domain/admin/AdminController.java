@@ -102,39 +102,4 @@ public class AdminController {
     public String reservationCancelDetail(@PathVariable Long id) {
         return "admin/reservation/cancel-detail";
     }
-
-    @GetMapping("/admin/users")
-    public String userList() {
-        return "admin/user/list";
-    }
-
-    @GetMapping("/admin/users/{id}")
-    public String userDetail(@PathVariable Long id) {
-        return "admin/user/detail";
-    }
-
-    @GetMapping("/admin/notices")
-    public String noticeList() {
-        return "admin/notice/list";
-    }
-
-    @GetMapping("/admin/notices/new")
-    public String noticeNew() {
-        return "admin/notice/new";
-    }
-
-    @GetMapping("/admin/qna")
-    public String qnaList() {
-        return "admin/qna/list";
-    }
-
-    @GetMapping("/admin/qna/{id}/answer")
-    public String qnaAnswer(@PathVariable Long id) {
-        return "admin/qna/answer";
-    }
-
-    @GetMapping("/admin/sites/season")
-    public String siteSeason() {
-        return "admin/site/season";
-    }
 }
