@@ -103,16 +103,6 @@ public class AdminController {
         return "admin/reservation/cancel-detail";
     }
 
-    @GetMapping("/admin/users")
-    public String userList() {
-        return "admin/user/list";
-    }
-
-    @GetMapping("/admin/users/{id}")
-    public String userDetail(@PathVariable Long id) {
-        return "admin/user/detail";
-    }
-
     @GetMapping("/admin/notices")
     public String noticeList() {
         return "admin/notice/list";
@@ -128,10 +118,10 @@ public class AdminController {
         return "admin/gallery/list";
     }
 
-    @GetMapping("/admin/galleries/new")
-    public String galleryNew() {
-        return "admin/gallery/new";
-    }
+    //@GetMapping("/admin/galleries/new")
+    //public String galleryNew() {
+     //   return "admin/gallery/new";
+    //}
 
     @GetMapping("/admin/qna")
     public String qnaList() {
