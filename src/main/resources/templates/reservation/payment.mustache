@@ -116,11 +116,7 @@
 
                         <div class="price-breakdown mb-2">
                             <div class="price-breakdown-row"><span class="text-secondary">객실 금액 ({{payment.nights}}박)</span><span class="fw-bold">₩ {{payment.pricePerNight}}</span></div>
-<<<<<<< HEAD
                             <div class="price-breakdown-row"><span class="text-secondary">인원 추가 요금 ({{payment.basePeople}}인 초과 시 인당 ₩{{payment.extraPersonFee}})</span><span class="text-primary fw-bold">+ ₩ {{payment.extraPrice}}</span></div>
-=======
-                            <div class="price-breakdown-row"><span class="text-secondary">인원 추가 요금</span><span class="text-primary fw-bold">+ ₩ {{payment.extraPrice}}</span></div>
->>>>>>> dev
                             <div class="total-price-row">
                                 <span class="h6 fw-bold text-dark m-0">최종 결제 금액</span>
                                 <span class="h3 fw-black text-primary m-0">₩ {{payment.totalPrice}}</span>
@@ -133,11 +129,8 @@
                             <input type="hidden" name="checkOut" value="{{payment.checkOut}}">
                             <input type="hidden" name="peopleCount" value="{{payment.peopleCount}}">
                             <input type="hidden" name="totalPrice" value="{{payment.totalPrice}}">
-<<<<<<< HEAD
                             <input type="hidden" name="visitorName" id="visitorNameHidden">
                             <input type="hidden" name="visitorPhone" id="visitorPhoneHidden">
-=======
->>>>>>> dev
                             
                             <button type="submit" class="btn btn-primary btn-lg w-100 py-3.5 mt-4 fw-bold shadow-lg border-0 rounded-3">
                                 ₩ {{payment.totalPrice}} 결제하기
@@ -152,14 +145,11 @@
     <!-- Terms Agreement Logic -->
     <script>
         const paymentForm = document.getElementById('payment-form');
-<<<<<<< HEAD
         const visitorNameInput = document.getElementById('visitorNameInput');
         const visitorPhoneInput = document.getElementById('visitorPhoneInput');
         const visitorNameHidden = document.getElementById('visitorNameHidden');
         const visitorPhoneHidden = document.getElementById('visitorPhoneHidden');
         
-=======
->>>>>>> dev
         const allCheck = document.getElementById('all-check');
         const termChecks = [
             document.getElementById('term1'),
@@ -184,15 +174,11 @@
 
         // 폼 제출 시 검증
         paymentForm.addEventListener('submit', (e) => {
-<<<<<<< HEAD
             // 1. 약관 동의 검증
-=======
->>>>>>> dev
             const allChecked = termChecks.every(c => c.checked);
             if (!allChecked) {
                 e.preventDefault();
                 alert('모든 필수 약관에 동의하셔야 결제가 가능합니다.');
-<<<<<<< HEAD
                 return;
             }
 
@@ -206,9 +192,6 @@
 
             visitorNameHidden.value = visitorNameInput.value.trim();
             visitorPhoneHidden.value = visitorPhoneInput.value.trim();
-=======
-            }
->>>>>>> dev
         });
     </script>
 {{> layout/footer}}
