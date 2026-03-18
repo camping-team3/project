@@ -58,6 +58,10 @@ public class Gallery extends BaseTimeEntity {
 
     public void addImage(Image image) {
         this.images.add(image);
+<<<<<<< HEAD
         image.updateGallery(this);
+=======
+        image.setGallery(this);
+>>>>>>> dev
     }
 }

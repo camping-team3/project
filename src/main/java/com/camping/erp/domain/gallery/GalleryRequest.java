@@ -1,8 +1,11 @@
 package com.camping.erp.domain.gallery;
 
+<<<<<<< HEAD
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+=======
+>>>>>>> dev
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
@@ -15,6 +18,7 @@ public class GalleryRequest {
     @AllArgsConstructor
     @Builder
     public static class SaveDTO {
+<<<<<<< HEAD
         @NotBlank(message = "제목은 필수 입력 사항입니다.")
         @Size(max = 100, message = "제목은 100자 이내로 입력해주세요.")
         private String title;
@@ -29,6 +33,12 @@ public class GalleryRequest {
         private String content;
         
         @NotEmpty(message = "최소 한 장 이상의 사진을 업로드해야 합니다.")
+=======
+        private String title;
+        private String category;
+        private String shootingDate;
+        private String content;
+>>>>>>> dev
         private List<MultipartFile> images;
     }
 
@@ -38,6 +48,7 @@ public class GalleryRequest {
     @AllArgsConstructor
     @Builder
     public static class UpdateDTO {
+<<<<<<< HEAD
         @NotBlank(message = "제목은 필수 입력 사항입니다.")
         @Size(max = 100, message = "제목은 100자 이내로 입력해주세요.")
         private String title;
@@ -51,6 +62,12 @@ public class GalleryRequest {
         @NotBlank(message = "내용은 필수 입력 사항입니다.")
         private String content;
         
+=======
+        private String title;
+        private String category;
+        private String shootingDate;
+        private String content;
+>>>>>>> dev
         private List<MultipartFile> images; // 추가
         private List<Long> deleteImageIds; // 추가
     }
