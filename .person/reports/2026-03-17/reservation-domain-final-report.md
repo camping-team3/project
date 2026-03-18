@@ -32,69 +32,226 @@ graph TD
 
 ---
 
-## 💻 2. 핵심 코드 분석 (상세 주석 포함)
+## 💻 2. 핵심 코드 분석 (실행 순서별 전체 메서드 구현)
 
-### A. 마법의 중복 체크 쿼리 (Repository)
-가장 중요한 로직은 "내가 빌리려는 시간과 이미 빌려간 시간이 겹치지 않는가?"를 찾는 것입니다.
+사용자가 캠핑장을 예약하고 관리자가 이를 확인하는 전체 과정을 소스 코드 레벨에서 상세히 살펴봅니다.
+
+### Step 1. 가용 사이트 검색 및 중복 체크 (Task 1)
+사용자가 날짜와 인원을 입력하면, 시스템은 해당 기간에 이미 예약된 사이트를 제외하고 검색합니다.
 
 ```java
-// ReservationRepository.java
+// ReservationRepository.java - [Task 1-2] 중복 예약 제외 가용 사이트 조회 JPQL
 @Query("SELECT s FROM Site s JOIN FETCH s.zone z WHERE " +
-        "(:zoneId IS NULL OR z.id = :zoneId) AND " + // 구역 필터링 (선택사항)
-        "(:peopleCount IS NULL OR s.maxPeople >= :peopleCount) AND " + // 인원수 필터링
-        "s.id NOT IN (" + // 아래 조건에 해당하는 사이트는 제외하고 가져옴
+        "(:zoneId IS NULL OR z.id = :zoneId) AND " + 
+        "(:peopleCount IS NULL OR s.maxPeople >= :peopleCount) AND " + 
+        "s.id NOT IN (" + 
         "  SELECT r.site.id FROM Reservation r " +
-        "  WHERE (r.checkIn < :checkOut AND r.checkOut > :checkIn) " + // 💡 핵심: 기간 중복 공식
-        "  AND r.status IN :statuses" + // 예약 대기/확정 상태인 것만 체크
+        "  WHERE (r.checkIn < :checkOut AND r.checkOut > :checkIn) " + // 💡 기간 중복 공식: 내 시작 < 남의 종료 AND 내 종료 > 남의 시작
+        "  AND r.status IN :statuses" + // PENDING, CONFIRMED 등 활성화된 예약만 대상
         ")")
 List<Site> findAvailableSites(@Param("checkIn") LocalDate checkIn, 
                               @Param("checkOut") LocalDate checkOut, 
                               @Param("statuses") List<ReservationStatus> statuses,
                               @Param("zoneId") Long zoneId,
                               @Param("peopleCount") Integer peopleCount);
+
+// ReservationService.java - [Task 1-2] 검색 조건에 따른 가용 사이트 목록 반환
+public List<SiteResponse.ResevationAvailableListDTO> findAvailableSites(ReservationRequest.SearchDTO searchDTO) {
+    LocalDate checkIn = searchDTO.getCheckIn();
+    LocalDate checkOut = searchDTO.getCheckOut();
+
+    // 1. 체크 대상 예약 상태 정의 (신청 중, 확정, 취소 요청 중인 건들)
+    List<ReservationStatus> activeStatuses = List.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED,
+                    ReservationStatus.CANCEL_REQ);
+
+    // 2. Repository를 통해 중복되지 않은 사이트 목록 조회
+    List<Site> availableSites = reservationRepository.findAvailableSites(
+                    checkIn, checkOut, activeStatuses, searchDTO.getZoneId(), searchDTO.getPeopleCount());
+
+    // 3. Entity를 화면용 DTO로 변환하여 반환
+    return availableSites.stream()
+                    .map(site -> new SiteResponse.ResevationAvailableListDTO(site))
+                    .toList();
+}
 ```
 
-### B. 관리자용 페이징 및 검색 로직 (Service)
-수만 건의 예약 내역을 한꺼번에 불러오면 서버가 멈출 수 있습니다. 이를 '페이지' 단위로 나누어 가져오는 핵심 로직입니다.
+### Step 2. 사이트 선택 및 실시간 가격 계산 (Task 1, 4)
+배치도에서 구역을 필터링하고 사이트를 선택하면 JavaScript가 실시간으로 최종 요금을 계산합니다.
+
+```javascript
+/* reservation/new.mustache - [Task 4-2] 구역(Zone) 필터링 */
+function filterByZone(zoneName, element) {
+    const cards = document.querySelectorAll('.site-card');
+    const pins = document.querySelectorAll('.zone-pin');
+
+    // 1. 이미 선택된 구역을 다시 클릭하면 필터 해제 (토글)
+    if (currentFilterZone === zoneName) {
+        currentFilterZone = null;
+        pins.forEach(p => p.classList.remove('active'));
+        cards.forEach(c => c.classList.remove('d-none'));
+    } else {
+        // 2. 새로운 구역 선택 시 핀 스타일 업데이트 및 카드 필터링
+        currentFilterZone = zoneName;
+        pins.forEach(p => p.classList.remove('active'));
+        element.classList.add('active');
+
+        cards.forEach(card => {
+            if (card.dataset.zone === zoneName) {
+                card.classList.remove('d-none');
+            } else {
+                card.classList.add('d-none');
+            }
+        });
+    }
+}
+
+/* reservation/new.mustache - [Task 1-4] 실시간 요금 계산 */
+function updateSummary() {
+    const namesContainer = document.getElementById('selected-sites-names');
+    const priceDisplay = document.getElementById('total-price-display');
+    const paymentBtn = document.getElementById('payment-btn');
+
+    if (!selectedSite) {
+        // 사이트가 선택되지 않았을 때의 초기화 상태
+        namesContainer.innerHTML = '<span class="text-secondary fw-normal opacity-50 small">리스트에서 선택해 주세요.</span>';
+        priceDisplay.innerText = '₩ 0';
+        return;
+    }
+
+    // [Task 1-4] 인원 및 박수에 따른 최종 가격 계산 로직
+    const extraPeople = Math.max(0, peopleCount - selectedSite.basePeople);
+    const totalPrice = (selectedSite.pricePerNight + (extraPeople * selectedSite.extraFee)) * nights;
+    
+    // 계산된 금액 화면 출력
+    priceDisplay.innerText = `₩ ${totalPrice.toLocaleString()}`;
+    namesContainer.innerHTML = `<div>${selectedSite.name}</div>`;
+}
+```
+
+### Step 3. 예약 생성 및 최종 검증 (Task 2)
+사용자가 결제 페이지로 이동하고 '예약하기'를 누르면 서버는 찰나의 중복을 한 번 더 막습니다.
 
 ```java
-// ReservationService.java
-public AdminResponse.ReservationPageDTO findAllForAdmin(AdminRequest.ReservationSearchDTO searchDTO, Pageable pageable) {
-    // 1. DB에서 검색 조건에 맞는 데이터를 '한 페이지 분량'만 가져옴 (예: 10개)
-    Page<Reservation> page = reservationRepository.findAllAdminSearch(
-            searchDTO.getKeyword(), 
-            searchDTO.getCheckIn(), 
-            searchDTO.getStatus(),
-            pageable);
+// ReservationService.java - [Task 2-1] 예약 생성 및 동시성 방지 최종 검증
+@Transactional
+public ReservationResponse.ReserveDTO reserve(ReservationRequest.ReserveDTO request, User sessionUser) {
+    // 1. 사이트 존재 확인
+    Site site = siteRepository.findById(request.getSiteId())
+                    .orElseThrow(() -> new Exception404("해당 사이트를 찾을 수 없습니다."));
+    Zone zone = site.getZone();
 
-    // 2. DB에서 가져온 알맹이(Entity)를 화면에 보여줄 바구니(DTO)로 변환
+    // 2. [최종 중복 체크] 결제 직전, 그 찰나에 다른 사람이 먼저 예약했는지 확인
+    List<ReservationStatus> activeStatuses = List.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED);
+    boolean isExist = reservationRepository.existsBySiteIdAndDateRange(
+                    site.getId(), request.getCheckIn(), request.getCheckOut(), activeStatuses);
+
+    if (isExist) {
+            throw new Exception400("이미 예약된 기간입니다.");
+    }
+
+    // 3. 서버 측 가격 재계산 (클라이언트 변조 방지 보안 로직)
+    long nights = ChronoUnit.DAYS.between(request.getCheckIn(), request.getCheckOut());
+    int extraPeople = Math.max(0, request.getPeopleCount() - zone.getBasePeople());
+    long calculatedPrice = (zone.getNormalPrice() + ((long) extraPeople * zone.getExtraPersonFee())) * nights;
+
+    // 4. 엔티티 생성 및 저장 (초기 상태 CONFIRMED로 설정)
+    Reservation reservation = Reservation.builder()
+                    .user(sessionUser)
+                    .site(site)
+                    .checkIn(request.getCheckIn())
+                    .checkOut(request.getCheckOut())
+                    .peopleCount(request.getPeopleCount())
+                    .totalPrice(calculatedPrice)
+                    .visitorName(request.getVisitorName())
+                    .visitorPhone(request.getVisitorPhone())
+                    .status(ReservationStatus.CONFIRMED)
+                    .build();
+
+    Reservation saved = reservationRepository.save(reservation);
+
+    // 5. 성공 후 결과 전송 (id 포함)
+    return ReservationResponse.ReserveDTO.builder()
+                    .id(saved.getId())
+                    .siteName(site.getSiteName())
+                    .checkIn(saved.getCheckIn())
+                    .checkOut(saved.getCheckOut())
+                    .totalPrice(saved.getTotalPrice())
+                    .build();
+}
+```
+
+### Step 4. 관리자 예약 현황 조회 및 페이징 (Task 3, 5)
+관리자는 수많은 예약 내역을 검색하고 페이지별로 나누어 관리합니다.
+
+```java
+// AdminController.java - [Task 5-2] 관리자 리스트 조회 및 페이징 요청 수신
+@GetMapping("/admin/reservations")
+public String reservationList(AdminRequest.ReservationSearchDTO searchDTO,
+        @RequestParam(name = "page", defaultValue = "0") int page, Model model) {
+    // 1. 페이징 설정 (0번 페이지부터, 10개씩, ID 내림차순 정렬)
+    Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+    
+    // 2. 검색 조건과 페이징 정보를 서비스에 전달
+    AdminResponse.ReservationPageDTO response = reservationService.findAllForAdmin(searchDTO, pageable);
+    
+    // 3. 결과를 모델에 담아 Mustache 뷰로 전달
+    model.addAttribute("response", response);
+    model.addAttribute("search", searchDTO);
+    return "admin/reservation/list";
+}
+
+// ReservationService.java - [Task 5-1] 페이징 메타데이터 생성 및 DTO 변환
+public AdminResponse.ReservationPageDTO findAllForAdmin(AdminRequest.ReservationSearchDTO searchDTO, Pageable pageable) {
+    // 1. DB에서 검색 조건에 맞는 데이터를 '한 페이지 분량'만 가져옴
+    Page<Reservation> page = reservationRepository.findAllAdminSearch(
+                    searchDTO.getKeyword(), searchDTO.getCheckIn(), searchDTO.getStatus(), pageable);
+
+    // 2. DB 결과(Entity)를 화면용 DTO로 변환 및 상태별 스타일 클래스 결정
     List<AdminResponse.ReservationListDTO> dtoList = page.getContent().stream()
-            .map(r -> {
-                // 숙박 일수 및 상태별 CSS 클래스 결정 (화면 디자인용)
-                long nights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
-                return AdminResponse.ReservationListDTO.builder()
-                        .id(r.getId())
-                        .username(r.getUser().getName())
-                        .siteName(r.getSite().getSiteName())
-                        .checkIn(r.getCheckIn())
-                        .checkOut(r.getCheckOut())
-                        .totalPrice(r.getTotalPrice())
-                        .statusText(r.getStatus().getName()) // "확정됨", "취소요청" 등
-                        .build();
-            })
-            .toList();
+                    .map(r -> {
+                        // ... (중략: 상태 텍스트 및 클래스 매핑 로직)
+                        return AdminResponse.ReservationListDTO.builder()
+                                        .id(r.getId()).username(r.getUser().getName())
+                                        .siteName(r.getSite().getSiteName())
+                                        .checkIn(r.getCheckIn()).checkOut(r.getCheckOut())
+                                        .totalPrice(r.getTotalPrice())
+                                        .statusText(statusText).statusClass(statusClass)
+                                        .build();
+                    }).toList();
 
     // 3. 하단 페이징 버튼 정보 계산 (예: [1] [2] [3] [4] [5] 다음)
-    int totalPages = page.getTotalPages(); // 전체가 몇 페이지인지
-    int currentPage = page.getNumber(); // 지금 내가 보고 있는 페이지
-    int startPage = Math.max(0, (currentPage / 5) * 5); // 시작 번호
-    int endPage = Math.min(startPage + 4, totalPages - 1); // 끝 번호
+    int totalPages = page.getTotalPages();
+    int currentPage = page.getNumber();
+    int startPage = Math.max(0, (currentPage / 5) * 5); // 5개 단위로 페이지 번호 그룹화
+    int endPage = Math.min(startPage + 4, totalPages - 1);
 
-    // 4. 최종적으로 데이터 목록과 페이징 정보를 합쳐서 반환
+    // 4. 최종 데이터 및 페이징 정보를 합쳐서 반환
     return AdminResponse.ReservationPageDTO.builder()
-            .reservations(dtoList)
-            .pagination(pagination)
-            .build();
+                    .reservations(dtoList)
+                    .pagination(pagination) // 위에서 계산한 메타데이터 포함
+                    .build();
+}
+```
+
+### Step 5. 통합 검증 및 결과 확인 (Task 6)
+모든 과정이 끝나면 PRG 패턴을 통해 안전하게 결과를 확인합니다.
+
+```java
+// ReservationController.java - [Task 2-3] 예약 완료 페이지 (PRG 패턴 적용)
+@GetMapping("/reservations/complete")
+public String complete(@RequestParam("id") Long id, Model model) {
+    // 1. 저장된 예약 상세 정보를 ID로 조회
+    ReservationResponse.CompleteDTO reservation = reservationService.getCompleteDetails(id);
+
+    // 2. 날짜 포맷팅 및 모델 바인딩
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);
+    model.addAttribute("reservation", reservation);
+    model.addAttribute("checkInDisplay", reservation.getCheckIn().format(formatter));
+    model.addAttribute("checkOutDisplay", reservation.getCheckOut().format(formatter));
+
+    // 3. 완료 페이지 렌더링
+    return "reservation/complete";
+    // 💡 POST(결제성공) 후 Redirect를 거쳐 이 메서드로 오기 때문에 새로고침 시 중복 결제 위험이 없음
 }
 ```
 
