@@ -6,6 +6,7 @@ import com.camping.erp.domain.reservation.enums.ReservationStatus;
 import com.camping.erp.domain.site.Site;
 import com.camping.erp.domain.site.SiteRepository;
 import com.camping.erp.domain.site.SiteResponse;
+import com.camping.erp.domain.site.Zone;
 import com.camping.erp.domain.user.User;
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.handler.ex.Exception404;
@@ -29,7 +30,8 @@ public class ReservationService {
         private final ReservationRepository reservationRepository;
         private final SiteRepository siteRepository;
 
-        public List<SiteResponse.ResevationAbailableListDTO> findAvailableSites(
+        // 예약 가능한 사이트 목록 조회
+        public List<SiteResponse.ResevationAvailableListDTO> findAvailableSites(
                         ReservationRequest.SearchDTO searchDTO) {
                 LocalDate checkIn = searchDTO.getCheckIn();
                 LocalDate checkOut = searchDTO.getCheckOut();
@@ -41,15 +43,7 @@ public class ReservationService {
                                 checkIn, checkOut, activeStatuses, searchDTO.getZoneId(), searchDTO.getPeopleCount());
 
                 return availableSites.stream()
-                                .map(s -> SiteResponse.ResevationAbailableListDTO.builder()
-                                                .id(s.getId())
-                                                .siteName(s.getSiteName())
-                                                .zoneName(s.getZone().getName())
-                                                .basePeople(2) // 모든 사이트 기준 2인 고정
-                                                .maxPeople(s.getMaxPeople())
-                                                .pricePerNight(s.getZone().getNormalPrice()) // 1박 요금 고정
-                                                .isAvailable(true)
-                                                .build())
+                                .map(site -> new SiteResponse.ResevationAvailableListDTO(site)) // 람다식 적용
                                 .toList();
         }
 
@@ -138,19 +132,21 @@ public class ReservationService {
         public ReservationResponse.PaymentFormDTO getPaymentForm(ReservationRequest.ReserveDTO request) {
                 Site site = siteRepository.findById(request.getSiteId())
                                 .orElseThrow(() -> new Exception404("해당 사이트를 찾을 수 없습니다."));
+                Zone zone = site.getZone();
 
                 long nights = ChronoUnit.DAYS.between(request.getCheckIn(), request.getCheckOut());
-                int basePeople = 2; // 비즈니스 룰: 기준 인원 2명
-                int extraPeople = Math.max(0, request.getPeopleCount() - basePeople);
+                Integer basePeople = zone.getBasePeople();
+                Integer extraPeople = Math.max(0, request.getPeopleCount() - basePeople);
 
-                long pricePerNight = site.getZone().getNormalPrice();
-                long extraPriceTotal = (long) extraPeople * 10000 * nights;
-                long totalPrice = (pricePerNight + (extraPeople * 10000)) * nights;
+                Long pricePerNight = zone.getNormalPrice();
+                Long extraPersonFee = zone.getExtraPersonFee();
+                Long extraPriceTotal = extraPersonFee * extraPeople * nights;
+                Long totalPrice = (pricePerNight + (extraPeople * extraPersonFee)) * nights;
 
                 return ReservationResponse.PaymentFormDTO.builder()
                                 .siteId(site.getId())
                                 .siteName(site.getSiteName())
-                                .zoneName(site.getZone().getName())
+                                .zoneName(zone.getName())
                                 .checkIn(request.getCheckIn())
                                 .checkOut(request.getCheckOut())
                                 .nights(nights)
@@ -159,6 +155,7 @@ public class ReservationService {
                                 .pricePerNight(pricePerNight)
                                 .extraPrice(extraPriceTotal)
                                 .totalPrice(totalPrice)
+                                .extraPersonFee(extraPersonFee)
                                 .build();
         }
 
@@ -168,6 +165,7 @@ public class ReservationService {
                 // 1. 사이트 존재 확인
                 Site site = siteRepository.findById(request.getSiteId())
                                 .orElseThrow(() -> new Exception404("해당 사이트를 찾을 수 없습니다."));
+                Zone zone = site.getZone();
 
                 // 2. 최종 중복 체크
                 List<ReservationStatus> activeStatuses = List.of(ReservationStatus.PENDING,
@@ -181,8 +179,9 @@ public class ReservationService {
 
                 // 3. 서버 측 가격 재계산 및 검증 (보안)
                 long nights = ChronoUnit.DAYS.between(request.getCheckIn(), request.getCheckOut());
-                int extraPeople = Math.max(0, request.getPeopleCount() - 2);
-                long calculatedPrice = (site.getZone().getNormalPrice() + ((long) extraPeople * 10000)) * nights;
+                int extraPeople = Math.max(0, request.getPeopleCount() - zone.getBasePeople());
+                long calculatedPrice = (zone.getNormalPrice() + ((long) extraPeople * zone.getExtraPersonFee()))
+                                * nights;
 
                 // 4. 엔티티 생성 및 저장
                 Reservation reservation = Reservation.builder()
@@ -192,6 +191,8 @@ public class ReservationService {
                                 .checkOut(request.getCheckOut())
                                 .peopleCount(request.getPeopleCount())
                                 .totalPrice(calculatedPrice)
+                                .visitorName(request.getVisitorName())
+                                .visitorPhone(request.getVisitorPhone())
                                 .status(ReservationStatus.CONFIRMED)
                                 .build();
 

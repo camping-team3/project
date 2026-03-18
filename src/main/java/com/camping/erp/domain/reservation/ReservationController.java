@@ -25,6 +25,7 @@ public class ReservationController {
     private final ReservationService reservationService;
     private final HttpSession session;
 
+    // 예약 페이지 (예약 가능 사이트 목록 조회)
     @GetMapping("/reservations/new")
     public String newForm(ReservationRequest.SearchDTO searchDTO, Model model) {
         if (searchDTO.getCheckIn() == null) {
@@ -40,7 +41,7 @@ public class ReservationController {
             searchDTO.setPeopleCount(2);
         }
 
-        List<SiteResponse.ResevationAbailableListDTO> sites = reservationService.findAvailableSites(searchDTO);
+        List<SiteResponse.ResevationAvailableListDTO> sites = reservationService.findAvailableSites(searchDTO);
 
         long nights = ChronoUnit.DAYS.between(searchDTO.getCheckIn(), searchDTO.getCheckOut());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);
@@ -54,6 +55,7 @@ public class ReservationController {
         return "reservation/new";
     }
 
+    // 결제 페이지 (결제 폼 데이터 준비)
     @GetMapping("/reservations/payment")
     public String paymentForm(ReservationRequest.ReserveDTO request, Model model) {
         ReservationResponse.PaymentFormDTO paymentInfo = reservationService.getPaymentForm(request);
@@ -70,6 +72,7 @@ public class ReservationController {
         return "reservation/payment";
     }
 
+    // 예약 실행 (최종 검증 및 저장)
     @PostMapping("/reservations/reserve")
     public String reserve(ReservationRequest.ReserveDTO request) {
         User sessionUser = (User) session.getAttribute("sessionUser");
@@ -77,6 +80,7 @@ public class ReservationController {
         return "redirect:/reservations/complete?id=" + response.getId();
     }
 
+    // 예약 완료 페이지 (예약 정보 확인 가능)
     @GetMapping("/reservations/complete")
     public String complete(@RequestParam("id") Long id, Model model) {
         ReservationResponse.CompleteDTO reservation = reservationService.getCompleteDetails(id);
