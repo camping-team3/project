@@ -1,35 +1,47 @@
-# Forest Haven ERP 개발 진행 현황 (TODO)
+# 🛠️ Emergency: Merge Conflict Cleanup & Structure Normalization
 
-## 🚨 [Task 0] 코드베이스 컨플릭트(Conflict) 완전 해결
-- [ ] **0-1. 문서 및 로드맵 정리**
-  - [ ] `.person/docs/phases.md`: Notice/Gallery 및 Reservation 진행도 병합
-- [ ] **0-2. 머스태시(Mustache) 템플릿 복구**
-  - [ ] `src/main/resources/templates/reservation/new.mustache`: 검색/필터 디자인 병합
-  - [ ] `src/main/resources/templates/reservation/payment.mustache`: 결제 폼 및 방문자 정보 입력란 병합
-  - [ ] `src/main/resources/templates/admin/gallery/update-form.mustache`: 갤러리 수정 로직 병합
-- [ ] **0-3. 최종 검증**
-  - [ ] 전체 빌드 및 뷰 렌더링 확인 (컨플릭트 마커 잔존 여부 재검색)
+## Phase 0: 컨플릭트 잔재 제거 및 구조 정상화
 
-## 🔑 Phase 2: MVP 핵심 도메인 (완료 단계)
-- [x] **User 도메인 (100%):** 회원가입, 로그인, 관리자 회원 관리
-- [x] **Zone & Site 도메인 (100%):** 구역/사이트 CRUD, 실시간 예약 가능 여부 조회
-- [x] **Reservation 도메인 (90%):** 예약 신청 flow, 관리자 현황 조회 및 페이징 (컨플릭트 해결 후 100%)
-- [x] **독립 도메인 (Notice + Gallery):** 공지사항/갤러리 CRUD 및 이미지 업로드 통합 (컨플릭트 해결 후 100%)
+### 1. 템플릿 파일 컨플릭트 마커 제거 (HEAD 기준 통합) [x]
+- [x] `src/main/resources/templates/reservation/new.mustache` 수정
+- [x] `src/main/resources/templates/reservation/payment.mustache` 수정
+- [x] `src/main/resources/templates/admin/gallery/update-form.mustache` 수정
 
-## 💬 Phase 3: 확장 도메인 (진행 예정)
-- [ ] **[Task 1] Payment 도메인 (포트원 연동)**
-  - [ ] 고객: 포트원 V2 연동 결제 검증 및 예약 즉시 확정
-  - [ ] 관리자: 결제 내역 조회 및 취소/환불 연동 기초
-- [ ] **[Task 2] Qna & Comment 도메인**
-  - [ ] 고객: Q&A 작성 및 비공개 여부 처리
-  - [ ] 관리자: 답변 등록 및 답변 완료 시 수정 잠금 로직
-- [ ] **[Task 3] Review 도메인**
-  - [ ] 고객: '이용 완료' 예약 건 대상 별점/사진 리뷰 작성
-  - [ ] 시스템: 리뷰 등록 시 사이트/구역 평점 즉시 반영
-- [ ] **[Task 4] 마이페이지 (MyPage) 확장**
-  - [ ] 고객: 본인 예약 내역 상세 조회 및 취소 요청
+### 2. 중복 프로젝트 구조(`project/` 폴더) 조사 및 정리 [x]
+- [x] 루트의 `project/` 디렉토리 내용 상세 조사 및 삭제 완료
 
-## 🛡️ Phase 4: 고도화 및 안정화 (대기)
-- [ ] Refund 도메인 (위약금 자동 계산 및 환불)
-- [ ] Admin Dashboard 통계 시각화
-- [ ] 시즌별(성수기) 요금 정책 동적 관리
+### 4. 결제 시 세션 불일치 버그 수정 [x]
+- [x] `ReservationController.reserve()` 세션 유저 타입 수정 (`User` -> `UserResponse.LoginDTO`)
+- [x] `ReservationService.reserve()` 파라미터 타입 수정 및 유저 엔티티 조회 로직 추가
+- [x] 결제 완료 리다이렉트 정상 작동 확인
+
+---
+
+# 📅 Phase 3: Review 도메인 구현 (커뮤니티 및 로열티)
+
+## 1. 리뷰 도메인 설계 및 엔티티 구현 [ ]
+- [ ] `com.camping.erp.domain.review` 패키지 생성
+- [ ] `Review` 엔티티 구현 (JPA 매핑, `BaseTimeEntity` 상속, `Reservation`과 1:1 관계)
+- [ ] `ReviewRepository` 인터페이스 및 기본 쿼리 메서드 생성
+
+## 2. 리뷰 등록 기능 (사용자) [ ]
+- [ ] `ReviewRequest.SaveDTO` 구현 (별점, 내용, 이미지 파일 포함)
+- [ ] `ReviewService.saveReview()` 구현:
+    - 예약 상태(`CONFIRMED`) 및 이용 종료일 검증
+    - 중복 리뷰 작성 여부 체크
+    - 이미지 업로드 처리 (최대 5장, UUID 파일명) 및 `Image` 엔티티 연관관계 설정
+- [ ] `ReviewController.save()` 구현:
+    - `/review/save` (POST) 매핑 및 유효성 검사
+    - 등록 완료 시 알림 및 리다이렉트 (PRG 패턴)
+
+## 3. 리뷰 관리 및 조회 기능 (사용자/관리자) [ ]
+- [ ] `ReviewService.updateReview()` 구현 (작성자 본인 검증)
+- [ ] `ReviewService.deleteReview()` 구현 (작성자 또는 관리자 권한)
+- [ ] `ReviewController` 수정/삭제 API 매핑 (`/review/update`, `/review/delete`)
+- [ ] 마이페이지 연동: '리뷰 작성 가능 예약 건' 및 '내가 작성한 리뷰' 목록 로직
+- [ ] 사이트 상세 페이지(`site/detail`) 연동: 해당 구역/사이트에 대한 리뷰 목록 렌더링
+
+## 4. 최종 검증 및 보고서 [ ]
+- [ ] 단위 테스트 및 통합 테스트 수행 (권한, 유효성 검사, 예외 처리)
+- [ ] `.person/reports/2026-03-18/review-domain-report.md` 작성
+- [ ] `TODO.md` 및 `phases.md` 상태 동기화 및 최종 커밋
