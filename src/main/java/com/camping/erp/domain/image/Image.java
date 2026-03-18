@@ -49,7 +49,8 @@ public class Image extends BaseTimeEntity {
     private String fileName;
 
     @Builder
-    public Image(Long id, Gallery gallery, Review review, Notice notice, Zone zone, Site site, String filePath, String fileName) {
+    public Image(Long id, Gallery gallery, Review review, Notice notice, Zone zone, Site site, String filePath,
+            String fileName) {
         this.id = id;
         this.gallery = gallery;
         this.review = review;
@@ -60,7 +61,6 @@ public class Image extends BaseTimeEntity {
         this.fileName = fileName;
     }
 
-<<<<<<< HEAD
     public void updateNotice(Notice notice) {
         this.notice = notice;
     }
@@ -70,17 +70,6 @@ public class Image extends BaseTimeEntity {
     }
 
     public void updateReview(Review review) {
-=======
-    public void setNotice(Notice notice) {
-        this.notice = notice;
-    }
-
-    public void setGallery(Gallery gallery) {
-        this.gallery = gallery;
-    }
-
-    public void setReview(Review review) {
->>>>>>> dev
         this.review = review;
     }
 }

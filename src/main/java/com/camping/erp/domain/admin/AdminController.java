@@ -109,18 +109,7 @@ public class AdminController {
         return "admin/reservation/cancel-detail";
     }
 
-<<<<<<< HEAD
     // --- 공지사항 관리 ---
-=======
-    @GetMapping("/admin/users")
-    public String userList() {
-        return "admin/user/list";
-    }
-
-    @GetMapping("/admin/users/{id}")
-    public String userDetail(@PathVariable Long id) {
-        return "admin/user/detail";
->>>>>>> dev
     @GetMapping("/admin/notices")
     public String noticeList(@RequestParam(name = "keyword", defaultValue = "") String keyword,
             @PageableDefault(size = 10) Pageable pageable, Model model) {

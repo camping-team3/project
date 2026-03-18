@@ -95,7 +95,6 @@
             $("#categorySelect").val(currentCategory);
         }
 
-<<<<<<< HEAD
         // 이미지 업로드 로직 (새로운 파일)
         const dropZone = document.getElementById('dropZone');
         const imageInput = document.getElementById('imageInput');
@@ -104,8 +103,6 @@
         let existingImageCount = {{gallery.images.size}};
         let deletedImageCount = 0;
 
-=======
->>>>>>> dev
         // 수정 완료 버튼 클릭
         $('.btn-gallery-update').on('click', function() {
             const title = $('input[name="title"]').val();
@@ -114,7 +111,6 @@
             if (!title || title.trim() === '') { alert('제목을 입력해주세요.'); return; }
             if (!content || content.trim() === '') { alert('내용을 입력해주세요.'); return; }
 
-<<<<<<< HEAD
             // 이미지 개수 최종 검증 (기존 - 삭제 + 신규)
             const finalImageCount = existingImageCount - deletedImageCount + selectedFiles.length;
             if (finalImageCount < 1) {
@@ -125,17 +121,6 @@
             $('#galleryUpdateForm').submit();
         });
 
-=======
-            $('#galleryUpdateForm').submit();
-        });
-
-        // 이미지 업로드 로직 (새로운 파일)
-        const dropZone = document.getElementById('dropZone');
-        const imageInput = document.getElementById('imageInput');
-        const previewGrid = document.getElementById('previewGrid');
-        let selectedFiles = [];
-
->>>>>>> dev
         dropZone.addEventListener('click', () => imageInput.click());
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#0d6efd'; });
         dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = '#dee2e6'; });

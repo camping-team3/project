@@ -1,11 +1,8 @@
 package com.camping.erp.domain.gallery;
 
 import com.camping.erp.global.util.FileUtil;
-import lombok.RequiredArgsConstructor;
-<<<<<<< HEAD
-=======
-import org.springframework.beans.factory.annotation.Value;
->>>>>>> dev
+import lombok.RequiredArgsConstructor;<<<<<<<HEAD=======
+import org.springframework.beans.factory.annotation.Value;>>>>>>>dev
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,12 +23,6 @@ public class GalleryService {
     private final GalleryRepository galleryRepository;
     private final FileUtil fileUtil;
 
-<<<<<<< HEAD
-=======
-    @Value("${file.upload-dir:./upload/}")
-    private String uploadDir;
-
->>>>>>> dev
     public Page<GalleryResponse.ListDTO> findAll(Pageable pageable) {
         return galleryRepository.findAllOrderByIdDesc(pageable)
                 .map(GalleryResponse.ListDTO::new);
@@ -51,11 +42,11 @@ public class GalleryService {
                 .shootingDate(saveDTO.getShootingDate())
                 .content(saveDTO.getContent())
                 .build();
-        
+
         if (saveDTO.getImages() != null && !saveDTO.getImages().isEmpty()) {
             saveGalleryImages(gallery, saveDTO.getImages());
         }
-        
+
         galleryRepository.save(gallery);
     }
 
@@ -63,14 +54,16 @@ public class GalleryService {
     public void update(Long id, GalleryRequest.UpdateDTO updateDTO) {
         Gallery gallery = galleryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("갤러리 게시글을 찾을 수 없습니다."));
-        
-        gallery.update(updateDTO.getTitle(), updateDTO.getCategory(), updateDTO.getShootingDate(), updateDTO.getContent());
 
-<<<<<<< HEAD
+        gallery.update(updateDTO.getTitle(), updateDTO.getCategory(), updateDTO.getShootingDate(),
+                updateDTO.getContent());
+
         // 최종 이미지 개수 검증 (기존 - 삭제 + 신규)
         int currentCount = gallery.getImages().size();
         int deleteCount = (updateDTO.getDeleteImageIds() != null) ? updateDTO.getDeleteImageIds().size() : 0;
-        int newCount = (updateDTO.getImages() != null) ? (int) updateDTO.getImages().stream().filter(img -> !img.isEmpty()).count() : 0;
+        int newCount = (updateDTO.getImages() != null)
+                ? (int) updateDTO.getImages().stream().filter(img -> !img.isEmpty()).count()
+                : 0;
 
         if (currentCount - deleteCount + newCount < 1) {
             throw new RuntimeException("갤러리 게시글에는 최소 한 장 이상의 사진이 있어야 합니다.");
@@ -81,11 +74,7 @@ public class GalleryService {
             gallery.getImages().stream()
                     .filter(img -> updateDTO.getDeleteImageIds().contains(img.getId()))
                     .forEach(img -> fileUtil.deleteFile(img.getFileName()));
-            
-=======
-        // 기존 이미지 삭제 처리
-        if (updateDTO.getDeleteImageIds() != null && !updateDTO.getDeleteImageIds().isEmpty()) {
->>>>>>> dev
+
             gallery.getImages().removeIf(img -> updateDTO.getDeleteImageIds().contains(img.getId()));
         }
 
