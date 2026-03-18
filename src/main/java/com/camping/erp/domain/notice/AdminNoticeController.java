@@ -1,6 +1,8 @@
 package com.camping.erp.domain.notice;
 
 import com.camping.erp.global.dto.PageResponse;
+import com.camping.erp.global.handler.ex.Exception400;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -8,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -33,13 +36,12 @@ public class AdminNoticeController {
     }
 
     @PostMapping("/save")
-    public String save(NoticeRequest.SaveDTO saveDTO) {
+    public String save(@Valid NoticeRequest.SaveDTO saveDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new Exception400(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
         log.info("--- Notice Save Request ---");
-        log.info("Title: {}", saveDTO.getTitle());
-        log.info("Content Length: {}", saveDTO.getContent() != null ? saveDTO.getContent().length() : 0);
-        log.info("IsTop: {}", saveDTO.getIsTop());
-        log.info("Images Count: {}", saveDTO.getImages() != null ? saveDTO.getImages().size() : 0);
-        
+        // ... 생략
         noticeService.save(saveDTO);
         return "redirect:/admin/notices";
     }
@@ -52,14 +54,12 @@ public class AdminNoticeController {
     }
 
     @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") Long id, NoticeRequest.UpdateDTO updateDTO) {
+    public String update(@PathVariable("id") Long id, @Valid NoticeRequest.UpdateDTO updateDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new Exception400(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
         log.info("--- Notice Update Request ---");
-        log.info("ID: {}", id);
-        log.info("Title: {}", updateDTO.getTitle());
-        log.info("IsTop: {}", updateDTO.getIsTop());
-        log.info("New Images: {}", updateDTO.getImages() != null ? updateDTO.getImages().size() : 0);
-        log.info("Delete Image IDs: {}", updateDTO.getDeleteImageIds() != null ? updateDTO.getDeleteImageIds().size() : 0);
-        
+        // ... 생략
         noticeService.update(id, updateDTO);
         return "redirect:/admin/notices";
     }

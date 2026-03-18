@@ -60,15 +60,15 @@ public class Image extends BaseTimeEntity {
         this.fileName = fileName;
     }
 
-    public void setNotice(Notice notice) {
+    public void updateNotice(Notice notice) {
         this.notice = notice;
     }
 
-    public void setGallery(Gallery gallery) {
+    public void updateGallery(Gallery gallery) {
         this.gallery = gallery;
     }
 
-    public void setReview(Review review) {
+    public void updateReview(Review review) {
         this.review = review;
     }
 }

@@ -108,6 +108,8 @@ public class AdminController {
     @GetMapping("/admin/users/{id}")
     public String userDetail(@PathVariable Long id) {
         return "admin/user/detail";
+    }
+
     @GetMapping("/admin/notices")
     public String noticeList() {
         return "admin/notice/list";

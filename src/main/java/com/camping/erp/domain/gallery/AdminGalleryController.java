@@ -1,6 +1,8 @@
 package com.camping.erp.domain.gallery;
 
 import com.camping.erp.global.dto.PageResponse;
+import com.camping.erp.global.handler.ex.Exception400;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -8,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +37,10 @@ public class AdminGalleryController {
     }
 
     @PostMapping("/save")
-    public String save(GalleryRequest.SaveDTO saveDTO) {
+    public String save(@Valid GalleryRequest.SaveDTO saveDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new Exception400(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
         galleryService.save(saveDTO);
         return "redirect:/admin/galleries";
     }
@@ -47,7 +53,10 @@ public class AdminGalleryController {
     }
 
     @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") Long id, GalleryRequest.UpdateDTO updateDTO) {
+    public String update(@PathVariable("id") Long id, @Valid GalleryRequest.UpdateDTO updateDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new Exception400(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
         galleryService.update(id, updateDTO);
         return "redirect:/admin/galleries";
     }

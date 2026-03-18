@@ -1,28 +1,21 @@
 package com.camping.erp.domain.gallery;
 
+import com.camping.erp.global.util.FileUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class GalleryService {
     private final GalleryRepository galleryRepository;
-
-    @Value("${file.upload-dir:./upload/}")
-    private String uploadDir;
+    private final FileUtil fileUtil;
 
     public Page<GalleryResponse.ListDTO> findAll(Pageable pageable) {
         return galleryRepository.findAllOrderByIdDesc(pageable)
@@ -58,8 +51,21 @@ public class GalleryService {
         
         gallery.update(updateDTO.getTitle(), updateDTO.getCategory(), updateDTO.getShootingDate(), updateDTO.getContent());
 
-        // 기존 이미지 삭제 처리
+        // 최종 이미지 개수 검증 (기존 - 삭제 + 신규)
+        int currentCount = gallery.getImages().size();
+        int deleteCount = (updateDTO.getDeleteImageIds() != null) ? updateDTO.getDeleteImageIds().size() : 0;
+        int newCount = (updateDTO.getImages() != null) ? (int) updateDTO.getImages().stream().filter(img -> !img.isEmpty()).count() : 0;
+
+        if (currentCount - deleteCount + newCount < 1) {
+            throw new RuntimeException("갤러리 게시글에는 최소 한 장 이상의 사진이 있어야 합니다.");
+        }
+
+        // 물리적 이미지 파일 삭제 로직 추가
         if (updateDTO.getDeleteImageIds() != null && !updateDTO.getDeleteImageIds().isEmpty()) {
+            gallery.getImages().stream()
+                    .filter(img -> updateDTO.getDeleteImageIds().contains(img.getId()))
+                    .forEach(img -> fileUtil.deleteFile(img.getFileName()));
+            
             gallery.getImages().removeIf(img -> updateDTO.getDeleteImageIds().contains(img.getId()));
         }
 
@@ -73,6 +79,12 @@ public class GalleryService {
     public void delete(Long id) {
         Gallery gallery = galleryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("갤러리 게시글을 찾을 수 없습니다."));
+        
+        // 연관된 물리 이미지 파일들 모두 삭제
+        if (gallery.getImages() != null && !gallery.getImages().isEmpty()) {
+            gallery.getImages().forEach(img -> fileUtil.deleteFile(img.getFileName()));
+        }
+        
         galleryRepository.delete(gallery);
     }
 
@@ -80,22 +92,13 @@ public class GalleryService {
         for (MultipartFile file : images) {
             if (file.isEmpty()) continue;
 
-            String originFileName = file.getOriginalFilename();
-            String uuid = UUID.randomUUID().toString();
-            String fileName = uuid + "_" + originFileName;
-            Path filePath = Paths.get(uploadDir + fileName);
-
-            try {
-                Files.createDirectories(filePath.getParent());
-                Files.write(filePath, file.getBytes());
-
+            String fileName = fileUtil.uploadFile(file);
+            if (fileName != null) {
                 com.camping.erp.domain.image.Image image = com.camping.erp.domain.image.Image.builder()
                         .fileName(fileName)
                         .filePath("/upload/" + fileName)
                         .build();
                 gallery.addImage(image);
-            } catch (IOException e) {
-                throw new RuntimeException("파일 저장 중 오류가 발생했습니다.", e);
             }
         }
     }

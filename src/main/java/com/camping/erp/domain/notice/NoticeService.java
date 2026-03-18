@@ -1,28 +1,21 @@
 package com.camping.erp.domain.notice;
 
+import com.camping.erp.global.util.FileUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class NoticeService {
     private final NoticeRepository noticeRepository;
-
-    @Value("${file.upload-dir:./upload/}")
-    private String uploadDir;
+    private final FileUtil fileUtil;
 
     public Page<NoticeResponse.ListDTO> findAll(String keyword, Pageable pageable) {
         if (keyword == null || keyword.isBlank()) {
@@ -60,14 +53,31 @@ public class NoticeService {
         boolean isTop = updateDTO.getIsTop() != null && updateDTO.getIsTop();
         notice.update(updateDTO.getTitle(), updateDTO.getContent(), isTop);
 
-        // 기존 이미지 삭제 처리
+        // 물리적 이미지 파일 삭제 로직 추가
         if (updateDTO.getDeleteImageIds() != null && !updateDTO.getDeleteImageIds().isEmpty()) {
+            notice.getImages().stream()
+                    .filter(img -> updateDTO.getDeleteImageIds().contains(img.getId()))
+                    .forEach(img -> fileUtil.deleteFile(img.getFileName()));
+            
             notice.getImages().removeIf(img -> updateDTO.getDeleteImageIds().contains(img.getId()));
         }
 
         if (updateDTO.getImages() != null && !updateDTO.getImages().isEmpty()) {
             saveNoticeImages(notice, updateDTO.getImages());
         }
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("공지사항을 찾을 수 없습니다."));
+        
+        // 연관된 물리 이미지 파일들 모두 삭제
+        if (notice.getImages() != null && !notice.getImages().isEmpty()) {
+            notice.getImages().forEach(img -> fileUtil.deleteFile(img.getFileName()));
+        }
+        
+        noticeRepository.delete(notice);
     }
 
     /**
@@ -77,30 +87,14 @@ public class NoticeService {
         for (MultipartFile file : images) {
             if (file.isEmpty()) continue;
 
-            String originFileName = file.getOriginalFilename();
-            String uuid = UUID.randomUUID().toString();
-            String fileName = uuid + "_" + originFileName;
-            Path filePath = Paths.get(uploadDir + fileName);
-
-            try {
-                Files.createDirectories(filePath.getParent());
-                Files.write(filePath, file.getBytes());
-
+            String fileName = fileUtil.uploadFile(file);
+            if (fileName != null) {
                 com.camping.erp.domain.image.Image image = com.camping.erp.domain.image.Image.builder()
                         .fileName(fileName)
                         .filePath("/upload/" + fileName)
                         .build();
                 notice.addImage(image);
-            } catch (IOException e) {
-                throw new RuntimeException("파일 저장 중 오류가 발생했습니다.", e);
             }
         }
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        Notice notice = noticeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("공지사항을 찾을 수 없습니다."));
-        noticeRepository.delete(notice);
     }
 }
