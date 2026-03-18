@@ -39,6 +39,23 @@
                         </div>
                     </section>
 
+                    <!-- Visitor Information -->
+                    <section class="fh-card shadow-sm border-0 p-4 p-md-5 mb-4 bg-white rounded-4">
+                        <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined text-primary fs-4">person</span> 방문객 정보
+                        </h3>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="visitorNameInput" class="form-label small fw-bold text-secondary">방문객 성함</label>
+                                <input type="text" id="visitorNameInput" class="form-control border-light bg-light rounded-3 shadow-none" placeholder="실명을 입력해 주세요" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="visitorPhoneInput" class="form-label small fw-bold text-secondary">연락처</label>
+                                <input type="tel" id="visitorPhoneInput" class="form-control border-light bg-light rounded-3 shadow-none" placeholder="010-0000-0000" required>
+                            </div>
+                        </div>
+                    </section>
+
                     <!-- Terms Agreement -->
                     <section class="fh-card shadow-sm border-0 p-4 p-md-5 bg-white rounded-4">
                         <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
@@ -99,7 +116,11 @@
 
                         <div class="price-breakdown mb-2">
                             <div class="price-breakdown-row"><span class="text-secondary">객실 금액 ({{payment.nights}}박)</span><span class="fw-bold">₩ {{payment.pricePerNight}}</span></div>
+<<<<<<< HEAD
+                            <div class="price-breakdown-row"><span class="text-secondary">인원 추가 요금 ({{payment.basePeople}}인 초과 시 인당 ₩{{payment.extraPersonFee}})</span><span class="text-primary fw-bold">+ ₩ {{payment.extraPrice}}</span></div>
+=======
                             <div class="price-breakdown-row"><span class="text-secondary">인원 추가 요금</span><span class="text-primary fw-bold">+ ₩ {{payment.extraPrice}}</span></div>
+>>>>>>> dev
                             <div class="total-price-row">
                                 <span class="h6 fw-bold text-dark m-0">최종 결제 금액</span>
                                 <span class="h3 fw-black text-primary m-0">₩ {{payment.totalPrice}}</span>
@@ -112,6 +133,11 @@
                             <input type="hidden" name="checkOut" value="{{payment.checkOut}}">
                             <input type="hidden" name="peopleCount" value="{{payment.peopleCount}}">
                             <input type="hidden" name="totalPrice" value="{{payment.totalPrice}}">
+<<<<<<< HEAD
+                            <input type="hidden" name="visitorName" id="visitorNameHidden">
+                            <input type="hidden" name="visitorPhone" id="visitorPhoneHidden">
+=======
+>>>>>>> dev
                             
                             <button type="submit" class="btn btn-primary btn-lg w-100 py-3.5 mt-4 fw-bold shadow-lg border-0 rounded-3">
                                 ₩ {{payment.totalPrice}} 결제하기
@@ -126,6 +152,14 @@
     <!-- Terms Agreement Logic -->
     <script>
         const paymentForm = document.getElementById('payment-form');
+<<<<<<< HEAD
+        const visitorNameInput = document.getElementById('visitorNameInput');
+        const visitorPhoneInput = document.getElementById('visitorPhoneInput');
+        const visitorNameHidden = document.getElementById('visitorNameHidden');
+        const visitorPhoneHidden = document.getElementById('visitorPhoneHidden');
+        
+=======
+>>>>>>> dev
         const allCheck = document.getElementById('all-check');
         const termChecks = [
             document.getElementById('term1'),
@@ -150,11 +184,31 @@
 
         // 폼 제출 시 검증
         paymentForm.addEventListener('submit', (e) => {
+<<<<<<< HEAD
+            // 1. 약관 동의 검증
+=======
+>>>>>>> dev
             const allChecked = termChecks.every(c => c.checked);
             if (!allChecked) {
                 e.preventDefault();
                 alert('모든 필수 약관에 동의하셔야 결제가 가능합니다.');
+<<<<<<< HEAD
+                return;
             }
+
+            // 2. 방문객 정보 검증 및 동기화
+            if (!visitorNameInput.value.trim() || !visitorPhoneInput.value.trim()) {
+                e.preventDefault();
+                alert('방문객 정보를 모두 입력해 주세요.');
+                visitorNameInput.focus();
+                return;
+            }
+
+            visitorNameHidden.value = visitorNameInput.value.trim();
+            visitorPhoneHidden.value = visitorPhoneInput.value.trim();
+=======
+            }
+>>>>>>> dev
         });
     </script>
 {{> layout/footer}}
