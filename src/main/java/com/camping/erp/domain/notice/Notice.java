@@ -49,6 +49,6 @@ public class Notice extends BaseTimeEntity {
 
     public void addImage(com.camping.erp.domain.image.Image image) {
         this.images.add(image);
-        image.setNotice(this);
+        image.updateNotice(this);
     }
 }
