@@ -119,7 +119,11 @@
                                 </div>
                                 <button type="button" 
                                         class="btn btn-outline-primary w-100 mt-4 py-2.5 fw-bold shadow-sm rounded-3 select-site-btn"
+<<<<<<< HEAD
                                         onclick="selectSite('{{id}}', '{{siteName}}', '{{pricePerNight}}', '{{basePeople}}', '{{extraPersonFee}}')">
+=======
+                                        onclick="selectSite('{{id}}', '{{siteName}}', '{{pricePerNight}}', '{{basePeople}}')">
+>>>>>>> dev
                                     선택하기
                                 </button>
                             </div>
@@ -220,10 +224,16 @@
             }
 
             // --- 3. 사이트 선택 기능 (기존 로직 유지) ---
+<<<<<<< HEAD
             function selectSite(id, name, price, basePeople, extraFee) {
                 const pricePerNight = parseInt(price);
                 const base = parseInt(basePeople);
                 const extra = parseInt(extraFee);
+=======
+            function selectSite(id, name, price, basePeople) {
+                const pricePerNight = parseInt(price);
+                const base = parseInt(basePeople);
+>>>>>>> dev
 
                 if (selectedSite && selectedSite.id === id) {
                     deselectSite(id);
@@ -236,7 +246,11 @@
                     deselectSite(selectedSite.id);
                 }
 
+<<<<<<< HEAD
                 selectedSite = { id, name, pricePerNight, basePeople: base, extraFee: extra };
+=======
+                selectedSite = { id, name, pricePerNight, basePeople: base };
+>>>>>>> dev
                 
                 const btn = document.querySelector(`#site-card-${id} .select-site-btn`);
                 btn.innerText = '선택됨';
@@ -276,7 +290,11 @@
                 namesContainer.innerHTML = `<div>${selectedSite.name}</div>`;
 
                 const extraPeople = Math.max(0, peopleCount - selectedSite.basePeople);
+<<<<<<< HEAD
                 const totalPrice = (selectedSite.pricePerNight + (extraPeople * selectedSite.extraFee)) * nights;
+=======
+                const totalPrice = (selectedSite.pricePerNight + (extraPeople * 10000)) * nights;
+>>>>>>> dev
                 
                 priceDisplay.innerText = `₩ ${totalPrice.toLocaleString()}`;
 

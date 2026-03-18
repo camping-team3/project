@@ -2,7 +2,7 @@ package com.camping.erp.global.auth;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.camping.erp.domain.user.User;
+import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.domain.user.enums.UserRole;
 import com.camping.erp.global.handler.ex.Exception401;
 import com.camping.erp.global.handler.ex.Exception403;
@@ -16,12 +16,9 @@ public class AdminInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        // [TEMP] 관리자 권한 체크 일시 비활성화 (테스트용)
-        return true; 
         
-        /* 
         HttpSession session = request.getSession();
-        User sessionUser = (User) session.getAttribute("sessionUser");
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
 
         if (sessionUser == null) {
             throw new Exception401("인증이 필요합니다");
@@ -32,6 +29,5 @@ public class AdminInterceptor implements HandlerInterceptor {
         }
 
         return true;
-        */
     }
 }

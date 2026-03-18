@@ -7,6 +7,7 @@ import com.camping.erp.global.auth.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -20,8 +21,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${dev.auto-login.username:ssar}")
     private String devAutoLoginUsername;
 
+    @Value("${file.upload-dir:./upload/}")
+    private String uploadDir;
+
     public WebMvcConfig(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/upload/**")
+                .addResourceLocations("file:" + uploadDir, "classpath:/static/upload/");
     }
 
     @Override

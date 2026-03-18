@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.handler.ex.Exception401;
@@ -23,17 +24,26 @@ public class GlobalExceptionHandler {
         return "XMLHttpRequest".equals(header) || (acceptHeader != null && acceptHeader.contains("application/json"));
     }
 
-    @ExceptionHandler(Exception400.class)
-    public @ResponseBody Object ex400(Exception400 e, HttpServletRequest request) {
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public Object handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e, HttpServletRequest request) {
+        String message = "업로드 가능한 파일 크기를 초과했습니다.";
         if (isAjaxRequest(request)) {
-            return Resp.fail(HttpStatus.BAD_REQUEST, e.getMessage());
+            return Resp.fail(HttpStatus.PAYLOAD_TOO_LARGE, message);
         }
         return String.format("""
                 <script>
                     alert('%s');
                     history.back();
                 </script>
-                """, e.getMessage());
+                """, message);
+    }
+
+    @ExceptionHandler(Exception400.class)
+    public @ResponseBody Object ex400(Exception400 e, HttpServletRequest request) {
+        if (isAjaxRequest(request)) {
+            return Resp.fail(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return scriptAlert(e.getMessage(), "history.back();");
     }
 
     @ExceptionHandler(Exception401.class)
@@ -41,12 +51,7 @@ public class GlobalExceptionHandler {
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
-        return String.format("""
-                <script>
-                    alert('%s');
-                    location.href = '/login-form';
-                </script>
-                """, e.getMessage());
+        return scriptAlert(e.getMessage(), "location.href = '/login-form';");
     }
 
     @ExceptionHandler(Exception403.class)
@@ -54,12 +59,7 @@ public class GlobalExceptionHandler {
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.FORBIDDEN, e.getMessage());
         }
-        return String.format("""
-                <script>
-                    alert('%s');
-                    history.back();
-                </script>
-                """, e.getMessage());
+        return scriptAlert(e.getMessage(), "history.back();");
     }
 
     @ExceptionHandler(Exception404.class)
@@ -67,12 +67,7 @@ public class GlobalExceptionHandler {
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.NOT_FOUND, e.getMessage());
         }
-        return String.format("""
-                <script>
-                    alert('%s');
-                    history.back();
-                </script>
-                """, e.getMessage());
+        return scriptAlert(e.getMessage(), "history.back();");
     }
 
     @ExceptionHandler(Exception500.class)
@@ -80,28 +75,25 @@ public class GlobalExceptionHandler {
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-        return String.format("""
-                <script>
-                    alert('%s');
-                    history.back();
-                </script>
-                """, e.getMessage());
+        return scriptAlert(e.getMessage(), "history.back();");
     }
 
     @ExceptionHandler(Exception.class)
-    public @ResponseBody Object exUnknown(Exception e, HttpServletRequest request) {
-        // 상세 에러 로그 출력 (서버 콘솔 확인용)
+    public Object exUnknown(Exception e, HttpServletRequest request) {
         e.printStackTrace();
-
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 문의하세요: " + e.getMessage());
         }
-        
+        // 리다이렉트이므로 @ResponseBody를 붙이지 않음
+        return "redirect:/login-form";
+    }
+
+    private String scriptAlert(String msg, String action) {
         return String.format("""
                 <script>
-                    alert('에러가 발생했습니다: %s');
-                    history.back();
+                    alert('%s');
+                    %s
                 </script>
-                """, e.getMessage());
+                """, msg, action);
     }
 }
