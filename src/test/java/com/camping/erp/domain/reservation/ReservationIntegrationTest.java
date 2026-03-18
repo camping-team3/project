@@ -57,7 +57,7 @@ public class ReservationIntegrationTest {
         searchDTO.setPeopleCount(2);
 
         // when
-        List<SiteResponse.ResevationAbailableListDTO> sites = reservationService.findAvailableSites(searchDTO);
+        List<SiteResponse.ResevationAvailableListDTO> sites = reservationService.findAvailableSites(searchDTO);
 
         // then
         assertThat(sites).isNotEmpty();

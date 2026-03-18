@@ -49,7 +49,7 @@ public class UserService {
                 .orElseThrow(() -> new Exception400("아이디 또는 비밀번호가 일치하지 않습니다."));
 
         // 2. 비밀번호 비교 (평문 비교 OR BCrypt 비교)
-        boolean isMatch = request.getPassword().equals(user.getPassword()) 
+        boolean isMatch = request.getPassword().equals(user.getPassword())
                 || passwordEncoder.matches(request.getPassword(), user.getPassword());
 
         if (!isMatch) {

@@ -8,37 +8,26 @@ import java.time.LocalDate;
 
 public class ReservationResponse {
 
-    @Getter @Setter
+    @Getter
+    @Setter
+    @Builder
     public static class PaymentFormDTO {
         private Long siteId;
         private String siteName;
         private String zoneName;
         private LocalDate checkIn;
         private LocalDate checkOut;
-        private long nights;
+        private Long nights;
         private Integer peopleCount;
         private Integer basePeople;
         private Long pricePerNight;
         private Long extraPrice;
         private Long totalPrice;
-
-        @Builder
-        public PaymentFormDTO(Long siteId, String siteName, String zoneName, LocalDate checkIn, LocalDate checkOut, long nights, Integer peopleCount, Integer basePeople, Long pricePerNight, Long extraPrice, Long totalPrice) {
-            this.siteId = siteId;
-            this.siteName = siteName;
-            this.zoneName = zoneName;
-            this.checkIn = checkIn;
-            this.checkOut = checkOut;
-            this.nights = nights;
-            this.peopleCount = peopleCount;
-            this.basePeople = basePeople;
-            this.pricePerNight = pricePerNight;
-            this.extraPrice = extraPrice;
-            this.totalPrice = totalPrice;
-        }
+        private Long extraPersonFee; // 추가 요금 단가 추가
     }
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @Builder
     public static class ReserveDTO {
         private Long id;
@@ -48,7 +37,8 @@ public class ReservationResponse {
         private Long totalPrice;
     }
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @Builder
     public static class CompleteDTO {
         private Long id;
@@ -56,7 +46,7 @@ public class ReservationResponse {
         private String zoneName;
         private LocalDate checkIn;
         private LocalDate checkOut;
-        private long nights;
+        private Long nights;
         private Integer peopleCount;
         private Long totalPrice;
         private String username;

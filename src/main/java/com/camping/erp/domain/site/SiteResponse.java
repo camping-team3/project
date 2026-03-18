@@ -10,25 +10,26 @@ public class SiteResponse {
 
     @Getter
     @Setter
-    public static class ResevationAbailableListDTO {
+    public static class ResevationAvailableListDTO {
         private Long id;
         private String siteName;
         private String zoneName;
         private Integer maxPeople;
         private Integer basePeople; // 기준 인원 필드 추가
         private Long pricePerNight; // 1박 요금 필드 추가
+        private Long extraPersonFee;
         private Boolean isAvailable;
 
         @Builder
-        public ResevationAbailableListDTO(Long id, String siteName, String zoneName, Integer maxPeople,
-                Integer basePeople, Long pricePerNight, Boolean isAvailable) {
-            this.id = id;
-            this.siteName = siteName;
-            this.zoneName = zoneName;
-            this.maxPeople = maxPeople;
-            this.basePeople = basePeople;
-            this.pricePerNight = pricePerNight;
-            this.isAvailable = isAvailable;
+        public ResevationAvailableListDTO(Site site) {
+            this.id = site.getId();
+            this.siteName = site.getSiteName();
+            this.zoneName = site.getZone().getName();
+            this.maxPeople = site.getMaxPeople();
+            this.basePeople = site.getZone().getBasePeople();
+            this.pricePerNight = site.getZone().getNormalPrice();
+            this.extraPersonFee = site.getZone().getExtraPersonFee();
+            this.isAvailable = true;
         }
     }
 
