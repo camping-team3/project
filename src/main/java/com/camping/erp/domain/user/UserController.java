@@ -75,12 +75,6 @@ public class UserController {
         return "mypage/home";
     }
 
-    // 예약 내역
-    @GetMapping("/mypage/reservations")
-    public String reservations() {
-        return "mypage/reservations";
-    }
-
     // 내 리뷰
     @GetMapping("/mypage/reviews")
     public String reviews() {

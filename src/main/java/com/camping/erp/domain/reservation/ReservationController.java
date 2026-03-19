@@ -95,4 +95,26 @@ public class ReservationController {
 
         return "reservation/complete";
     }
+
+    // 마이페이지 예약 목록 조회
+    @GetMapping("/mypage/reservations")
+    public String reservations(Model model) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        // 본인 예약 목록 조회 (최신순)
+        List<Reservation> reservationList = reservationService.findByUserIdOrderByCreatedAtDesc(sessionUser.getId());
+
+        // DTO 변환 및 오늘 날짜 기준 버튼 노출 로직 계산
+        LocalDate today = LocalDate.now();
+        List<ReservationResponse.ListDTO> dtos = reservationList.stream()
+                .map(r -> ReservationResponse.ListDTO.fromEntity(r, today))
+                .toList();
+
+        model.addAttribute("reservations", dtos);
+        model.addAttribute("userName", sessionUser.getName());
+        return "mypage/reservations";
+    }
 }

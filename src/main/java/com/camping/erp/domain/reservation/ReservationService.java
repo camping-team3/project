@@ -242,4 +242,11 @@ public class ReservationService {
         public void cancel(Long id) {
                 // 취소 로직은 추후 구현
         }
+
+        /**
+         * 사용자별 예약 목록 조회
+         */
+        public List<Reservation> findByUserIdOrderByCreatedAtDesc(Long userId) {
+                return reservationRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        }
 }
