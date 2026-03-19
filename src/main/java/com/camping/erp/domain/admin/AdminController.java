@@ -12,7 +12,7 @@ import com.camping.erp.domain.reservation.ReservationService;
 import com.camping.erp.domain.site.SiteRequest;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
-import com.camping.erp.domain.user.User;
+import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.global.dto.PageResponse;
 import com.camping.erp.global.handler.ex.Exception400;
 import jakarta.servlet.http.HttpSession;
@@ -217,7 +217,7 @@ public class AdminController {
 
     @GetMapping("/admin/qna")
     public String qnaList(@RequestParam(value = "status", defaultValue = "all") String status, Model model) {
-        User sessionAdmin = (User) session.getAttribute("sessionUser");
+        UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         List<QnaResponse.ListDTO> qnas = qnaService.findAll(status, sessionAdmin);
         model.addAttribute("qnas", qnas);
 
@@ -235,13 +235,16 @@ public class AdminController {
     }
 
     @GetMapping("/admin/qna/{id}/answer")
-    public String qnaAnswer(@PathVariable("id") Long id) {
+    public String qnaAnswer(@PathVariable("id") Long id, Model model) {
+        UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        QnaResponse.DetailDTO qna = qnaService.findById(id, sessionAdmin);
+        model.addAttribute("qna", qna);
         return "admin/qna/answer";
     }
 
     @PostMapping("/admin/qna/{id}/comment")
     public String saveComment(@PathVariable("id") Long id, String content) {
-        User sessionAdmin = (User) session.getAttribute("sessionUser");
+        UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         qnaService.saveComment(id, content, sessionAdmin);
         return "redirect:/admin/qna";
     }
@@ -249,7 +252,7 @@ public class AdminController {
     @PostMapping("/admin/qna/{id}/delete")
     @ResponseBody
     public String qnaDelete(@PathVariable("id") Long id) {
-        User sessionAdmin = (User) session.getAttribute("sessionUser");
+        UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         qnaService.delete(id, sessionAdmin);
         return """
                 <script>

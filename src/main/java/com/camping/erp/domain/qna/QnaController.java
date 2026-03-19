@@ -1,6 +1,6 @@
 package com.camping.erp.domain.qna;
 
-import com.camping.erp.domain.user.User;
+import com.camping.erp.domain.user.UserResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -18,7 +18,7 @@ public class QnaController {
 
     @GetMapping("/qna")
     public String list(@RequestParam(value = "status", defaultValue = "all") String status, Model model) {
-        User sessionUser = (User) session.getAttribute("sessionUser");
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         List<QnaResponse.ListDTO> qnas = qnaService.findAll(status, sessionUser);
         model.addAttribute("qnas", qnas);
         
@@ -37,14 +37,14 @@ public class QnaController {
 
     @PostMapping("/qna/save")
     public String save(QnaRequest.SaveDTO requestDTO) {
-        User sessionUser = (User) session.getAttribute("sessionUser");
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         qnaService.save(requestDTO, sessionUser);
         return "redirect:/qna";
     }
 
     @GetMapping("/qna/{id}")
     public String detail(@PathVariable Long id, Model model) {
-        User sessionUser = (User) session.getAttribute("sessionUser");
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         QnaResponse.DetailDTO qna = qnaService.findById(id, sessionUser);
         model.addAttribute("qna", qna);
         return "qna/detail";
@@ -52,7 +52,7 @@ public class QnaController {
 
     @GetMapping("/qna/{id}/edit-form")
     public String editForm(@PathVariable Long id, Model model) {
-        User sessionUser = (User) session.getAttribute("sessionUser");
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         QnaResponse.DetailDTO qna = qnaService.findById(id, sessionUser);
         
         // 답변 완료된 경우 수정 폼 접근 차단
@@ -66,7 +66,7 @@ public class QnaController {
 
     @PostMapping("/qna/{id}/update")
     public String update(@PathVariable Long id, QnaRequest.UpdateDTO requestDTO) {
-        User sessionUser = (User) session.getAttribute("sessionUser");
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         qnaService.update(id, requestDTO, sessionUser);
         return "redirect:/qna";
     }
@@ -74,7 +74,7 @@ public class QnaController {
     @PostMapping("/qna/{id}/delete")
     @ResponseBody
     public String delete(@PathVariable Long id) {
-        User sessionUser = (User) session.getAttribute("sessionUser");
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         qnaService.delete(id, sessionUser);
         
         return """

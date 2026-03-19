@@ -2,6 +2,7 @@ package com.camping.erp.domain.qna;
 
 import com.camping.erp.domain.qna.enums.QnaCategory;
 import com.camping.erp.domain.user.User;
+import com.camping.erp.domain.user.UserResponse;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +23,7 @@ public class QnaResponse {
         private Boolean isAnswered;
         private Boolean isOwner; // 본인 글 여부
 
-        public ListDTO(Qna qna, User sessionUser) {
+        public ListDTO(Qna qna, UserResponse.LoginDTO sessionUser) {
             this.id = qna.getId();
             this.title = qna.getTitle();
             this.username = qna.getUser() != null ? qna.getUser().getUsername() : "알 수 없음";
@@ -50,7 +51,7 @@ public class QnaResponse {
         private Boolean isOwner; // 본인 글 여부
         private List<CommentDTO> comments;
 
-        public DetailDTO(Qna qna, User sessionUser) {
+        public DetailDTO(Qna qna, UserResponse.LoginDTO sessionUser) {
             this.id = qna.getId();
             this.title = qna.getTitle();
             this.content = qna.getContent();
