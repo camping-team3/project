@@ -6,12 +6,16 @@ import com.camping.erp.domain.gallery.GalleryService;
 import com.camping.erp.domain.notice.NoticeRequest;
 import com.camping.erp.domain.notice.NoticeResponse;
 import com.camping.erp.domain.notice.NoticeService;
+import com.camping.erp.domain.qna.QnaResponse;
+import com.camping.erp.domain.qna.QnaService;
 import com.camping.erp.domain.reservation.ReservationService;
 import com.camping.erp.domain.site.SiteRequest;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
+import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.global.dto.PageResponse;
 import com.camping.erp.global.handler.ex.Exception400;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +31,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -38,6 +44,8 @@ public class AdminController {
     private final ReservationService reservationService;
     private final NoticeService noticeService;
     private final GalleryService galleryService;
+    private final QnaService qnaService;
+    private final HttpSession session;
 
     @GetMapping("/admin")
     public String dashboard() {
@@ -208,13 +216,50 @@ public class AdminController {
     }
 
     @GetMapping("/admin/qna")
-    public String qnaList() {
+    public String qnaList(@RequestParam(value = "status", defaultValue = "all") String status, Model model) {
+        UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        List<QnaResponse.ListDTO> qnas = qnaService.findAll(status, sessionAdmin);
+        model.addAttribute("qnas", qnas);
+
+        // 통계 데이터 추가
+        Map<String, Long> stats = qnaService.getStatistics();
+        model.addAllAttributes(stats);
+
+        // 필터링 활성화 상태 표시용
+        model.addAttribute("status", "all".equalsIgnoreCase(status) ? null : status);
+        model.addAttribute("isAll", "all".equalsIgnoreCase(status));
+        model.addAttribute("isPending", "pending".equalsIgnoreCase(status));
+        model.addAttribute("isCompleted", "completed".equalsIgnoreCase(status));
+
         return "admin/qna/list";
     }
 
     @GetMapping("/admin/qna/{id}/answer")
-    public String qnaAnswer(@PathVariable("id") Long id) {
+    public String qnaAnswer(@PathVariable("id") Long id, Model model) {
+        UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        QnaResponse.DetailDTO qna = qnaService.findById(id, sessionAdmin);
+        model.addAttribute("qna", qna);
         return "admin/qna/answer";
+    }
+
+    @PostMapping("/admin/qna/{id}/comment")
+    public String saveComment(@PathVariable("id") Long id, String content) {
+        UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        qnaService.saveComment(id, content, sessionAdmin);
+        return "redirect:/admin/qna";
+    }
+
+    @PostMapping("/admin/qna/{id}/delete")
+    @ResponseBody
+    public String qnaDelete(@PathVariable("id") Long id) {
+        UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        qnaService.delete(id, sessionAdmin);
+        return """
+                <script>
+                    alert('해당 문의가 삭제되었습니다.');
+                    location.href = '/admin/qna';
+                </script>
+                """;
     }
 
     @GetMapping("/admin/sites/season")

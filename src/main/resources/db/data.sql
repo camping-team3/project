@@ -102,9 +102,9 @@ INSERT INTO notice_tb (id, title, content, is_top, created_at) VALUES
 -- ==========================================================
 -- 8. Q&A 및 답변 (qna_tb, comment_tb)
 -- ==========================================================
-INSERT INTO qna_tb (id, user_id, title, content, is_answered, created_at) VALUES 
-(1, 2, '반려견 동반 입실?', '가능할까요?', true, NOW()),
-(2, 3, '주차 공간 문의', '텐트 옆 주차 가능한가요?', false, NOW());
+INSERT INTO qna_tb (id, user_id, title, content, category, hits, is_answered, created_at) VALUES 
+(1, 2, '반려견 동반 입실?', '가능할까요?', 'FACILITY', 10, true, NOW()),
+(2, 3, '주차 공간 문의', '텐트 옆 주차 가능한가요?', 'FACILITY', 5, false, NOW());
 
 INSERT INTO comment_tb (id, qna_id, admin_id, content, created_at) VALUES 
 (1, 1, 1, 'A구역만 소형견 가능합니다.', NOW());
@@ -113,8 +113,9 @@ INSERT INTO comment_tb (id, qna_id, admin_id, content, created_at) VALUES
 -- 9. 이용 후기 (review_tb) - 1예약 1리뷰 원칙 준수
 -- ==========================================================
 INSERT INTO review_tb (id, user_id, reservation_id, rating, content, created_at) VALUES 
-(1, 2, 1, 5, '너무 깨끗하고 좋았습니다.', NOW()),
-(2, 3, 2, 4, '조용하게 힐링하고 왔어요.', DATEADD(DAY, -15, NOW()));
+(1, 2, 1, 5, '정말 좋았습니다. 다음에도 꼭 오고 싶어요!', NOW()),
+(2, 3, 2, 4, '조용하고 공기가 좋아서 힐링되었습니다.', NOW());
+
 
 -- ==========================================================
 -- 10. 갤러리 (gallery_tb) - 누락 데이터 추가

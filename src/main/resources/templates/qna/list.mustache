@@ -3,15 +3,15 @@
         <main class="container py-5" style="max-width: 960px; margin: 0 auto;">
             <div class="mb-5 px-2">
                 <h2 class="display-5 fw-black text-dark mb-2">Q&A 커뮤니티</h2>
-                <p class="text-secondary fw-medium fs-5 opacity-75">캠핑 장비, 장소, 팁 등 궁금한 점을 고수들에게 물어보세요.</p>
+                <p class="text-secondary fw-medium fs-5 opacity-75">캠핑장과 관련해 궁금한 점을 관리자에게 물어보세요.</p>
             </div>
 
             <!-- Filter & Action Bar -->
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4 mb-5 px-2">
                 <div class="d-flex gap-2">
-                    <button class="btn btn-primary rounded-pill px-4 fw-bold small">전체보기</button>
-                    <button class="btn btn-light bg-white border border-secondary border-opacity-10 rounded-pill px-4 fw-bold small text-secondary btn-filter-hover transition-all">답변대기</button>
-                    <button class="btn btn-light bg-white border border-secondary border-opacity-10 rounded-pill px-4 fw-bold small text-secondary btn-filter-hover transition-all">답변완료</button>
+                    <a href="/qna?status=all" class="btn {{#isAll}}btn-primary{{/isAll}}{{^isAll}}btn-light bg-white border border-secondary border-opacity-10 text-secondary{{/isAll}} rounded-pill px-4 fw-bold small transition-all">전체보기</a>
+                    <a href="/qna?status=pending" class="btn {{#isPending}}btn-primary{{/isPending}}{{^isPending}}btn-light bg-white border border-secondary border-opacity-10 text-secondary{{/isPending}} rounded-pill px-4 fw-bold small transition-all">답변대기</a>
+                    <a href="/qna?status=completed" class="btn {{#isCompleted}}btn-primary{{/isCompleted}}{{^isCompleted}}btn-light bg-white border border-secondary border-opacity-10 text-secondary{{/isCompleted}} rounded-pill px-4 fw-bold small transition-all">답변완료</a>
                 </div>
                 <button onclick="location.href='/qna/new'" class="btn btn-primary px-4 py-2.5 fw-bold shadow-lg border-0 d-flex align-items-center gap-2 rounded-3">
                     <span class="material-symbols-outlined fs-5">edit</span>
@@ -21,62 +21,61 @@
 
             <!-- Question List -->
             <div class="d-flex flex-column gap-3">
-                <!-- Item 1: Pending -->
+                {{#qnas}}
+                <!-- Item: {{id}} -->
                 <div class="fh-card question-item p-4 border-0 shadow-sm rounded-4 transition-all bg-white">
                     <div class="d-flex gap-4">
-                        <div class="status-icon-box status-pending shadow-sm"><span class="material-symbols-outlined">pending</span></div>
+                        <div class="status-icon-box {{#isAnswered}}status-completed{{/isAnswered}}{{^isAnswered}}status-pending{{/isAnswered}} shadow-sm">
+                            <span class="material-symbols-outlined">{{#isAnswered}}task_alt{{/isAnswered}}{{^isAnswered}}pending{{/isAnswered}}</span>
+                        </div>
                         <div class="flex-grow-1">
                             <div class="d-flex align-items-center gap-2 mb-1">
+                                {{#isAnswered}}
+                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold badge-res-status">답변완료</span>
+                                {{/isAnswered}}
+                                {{^isAnswered}}
                                 <span class="badge bg-warning bg-opacity-10 text-warning fw-bold badge-res-status">답변대기</span>
-                                <span class="text-secondary small fw-bold opacity-50">장비 추천</span>
+                                {{/isAnswered}}
+                                <span class="text-secondary small fw-bold opacity-50">{{categoryName}}</span>
+                                {{#isAnswered}}
+                                <span class="lock-badge"><span class="material-symbols-outlined icon-14">lock</span> 수정제한</span>
+                                {{/isAnswered}}
                             </div>
-                            <h3 class="h6 fw-bold text-dark mb-3 hover-primary transition-colors cursor-pointer">겨울 캠핑용 등유 난로 브랜드 추천 부탁드립니다.</h3>
+                            <a href="/qna/{{id}}" class="text-decoration-none">
+                                <h3 class="h6 fw-bold text-dark mb-3 hover-primary transition-colors cursor-pointer">{{title}}</h3>
+                            </a>
                             <div class="d-flex align-items-center gap-3 text-secondary text-xxs">
-                                <span class="fw-black text-dark">캠핑초보22</span>
+                                <span class="fw-black text-dark">{{username}}</span>
                                 <span class="opacity-25">•</span>
-                                <span>2023.11.24</span>
+                                <span>{{createdAt}}</span>
                                 <span class="opacity-25">•</span>
-                                <span class="d-flex align-items-center gap-1"><span class="material-symbols-outlined icon-14">visibility</span> 124</span>
+                                <span class="d-flex align-items-center gap-1"><span class="material-symbols-outlined icon-14">visibility</span> {{hits}}</span>
                             </div>
                         </div>
                         <div class="d-flex gap-2 align-self-start">
-                            <button class="btn btn-sm fw-bold px-3 border-0 transition-all btn-edit-action">수정</button>
-                            <button class="btn btn-sm fw-bold px-3 border-0 transition-all btn-delete-action">삭제</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item 2: Completed -->
-                <div class="fh-card question-item p-4 border-0 shadow-sm rounded-4 transition-all bg-white">
-                    <div class="d-flex gap-4">
-                        <div class="status-icon-box status-completed shadow-sm"><span class="material-symbols-outlined">task_alt</span></div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex align-items-center gap-2 mb-1">
-                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold badge-res-status">답변완료</span>
-                                <span class="text-secondary small fw-bold opacity-50">캠핑장 정보</span>
-                                <span class="lock-badge"><span class="material-symbols-outlined icon-14">lock</span> 수정제한</span>
-                            </div>
-                            <h3 class="h6 fw-bold text-dark mb-3">경기도 인근에 별 잘 보이는 캠핑장 있을까요?</h3>
-                            <div class="d-flex align-items-center gap-3 text-secondary text-xxs">
-                                <span class="fw-black text-dark">별헤는밤</span>
-                                <span class="opacity-25">•</span>
-                                <span>2023.11.22</span>
-                                <span class="opacity-25">•</span>
-                                <span class="d-flex align-items-center gap-1"><span class="material-symbols-outlined icon-14">visibility</span> 342</span>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column align-items-end justify-content-between">
-                            <span class="badge bg-primary text-white fw-bold px-2 py-1 badge-best-answer">BEST 답변 있음</span>
-                            <div class="d-flex gap-2 mt-3">
+                            {{#isOwner}}
+                                {{#isAnswered}}
                                 <div class="custom-tooltip">
                                     <button class="btn btn-sm fw-bold px-3 border-0 opacity-50 cursor-not-allowed bg-light text-secondary rounded-3" disabled>수정</button>
                                     <span class="tooltip-text">답변이 완료되어 수정할 수 없습니다.</span>
                                 </div>
-                                <button class="btn btn-sm fw-bold px-3 border-0 transition-all btn-delete-action">삭제</button>
-                            </div>
+                                {{/isAnswered}}
+                                {{^isAnswered}}
+                                <button onclick="location.href='/qna/{{id}}/edit-form'" class="btn btn-sm fw-bold px-3 border-0 transition-all btn-edit-action">수정</button>
+                                {{/isAnswered}}
+                                <form action="/qna/{{id}}/delete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                    <button type="submit" class="btn btn-sm fw-bold px-3 border-0 transition-all btn-delete-action">삭제</button>
+                                </form>
+                            {{/isOwner}}
                         </div>
                     </div>
                 </div>
+                {{/qnas}}
+                {{^qnas}}
+                <div class="text-center py-5">
+                    <p class="text-secondary">등록된 질문이 없습니다.</p>
+                </div>
+                {{/qnas}}
             </div>
 
             <!-- Pagination -->
