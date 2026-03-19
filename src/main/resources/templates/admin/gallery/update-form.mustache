@@ -162,10 +162,7 @@
 
         window.removeExistingFile = function(btn, imageId) {
             btn.parentElement.remove();
-<<<<<<< HEAD
             deletedImageCount++; // 삭제 카운트 증가
-=======
->>>>>>> dev
             const deleteInput = document.createElement('input');
             deleteInput.type = 'hidden'; deleteInput.name = 'deleteImageIds'; deleteInput.value = imageId;
             document.getElementById('deleteInputArea').appendChild(deleteInput);

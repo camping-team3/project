@@ -8,7 +8,11 @@ import com.camping.erp.domain.site.SiteRepository;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.Zone;
 import com.camping.erp.domain.user.User;
+import com.camping.erp.domain.user.UserRepository;
+import com.camping.erp.domain.user.UserResponse;
+import com.camping.erp.domain.user.UserResponse.LoginDTO;
 import com.camping.erp.global.handler.ex.Exception400;
+import com.camping.erp.global.handler.ex.Exception401;
 import com.camping.erp.global.handler.ex.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,6 +33,7 @@ public class ReservationService {
 
         private final ReservationRepository reservationRepository;
         private final SiteRepository siteRepository;
+        private final UserRepository userRepository; // 유저 조회를 위해 추가
 
         // 예약 가능한 사이트 목록 조회
         public List<SiteResponse.ResevationAvailableListDTO> findAvailableSites(
@@ -43,7 +48,7 @@ public class ReservationService {
                                 checkIn, checkOut, activeStatuses, searchDTO.getZoneId(), searchDTO.getPeopleCount());
 
                 return availableSites.stream()
-                                .map(site -> new SiteResponse.ResevationAvailableListDTO(site)) // 람다식 적용
+                                .map(site -> new SiteResponse.ResevationAvailableListDTO(site))
                                 .toList();
         }
 
@@ -97,7 +102,6 @@ public class ReservationService {
                                 })
                                 .toList();
 
-                // 페이징 메타데이터 계산 (예: 5개씩 번호 표시)
                 int totalPages = page.getTotalPages();
                 int currentPage = page.getNumber();
                 int startPage = Math.max(0, (currentPage / 5) * 5);
@@ -161,13 +165,20 @@ public class ReservationService {
 
         // 예약 실행 (최종 검증 및 저장)
         @Transactional
-        public ReservationResponse.ReserveDTO reserve(ReservationRequest.ReserveDTO request, User sessionUser) {
-                // 1. 사이트 존재 확인
+        public ReservationResponse.ReserveDTO reserve(ReservationRequest.ReserveDTO request, LoginDTO sessionUser) {
+                // 1. 유저 엔티티 조회 (DTO -> Entity 변환)
+                if (sessionUser == null) {
+                        throw new Exception401("로그인이 필요한 서비스입니다.");
+                }
+                User user = userRepository.findById(sessionUser.getId())
+                                .orElseThrow(() -> new Exception404("인증된 유저 정보를 찾을 수 없습니다."));
+
+                // 2. 사이트 존재 확인
                 Site site = siteRepository.findById(request.getSiteId())
                                 .orElseThrow(() -> new Exception404("해당 사이트를 찾을 수 없습니다."));
                 Zone zone = site.getZone();
 
-                // 2. 최종 중복 체크
+                // 3. 최종 중복 체크
                 List<ReservationStatus> activeStatuses = List.of(ReservationStatus.PENDING,
                                 ReservationStatus.CONFIRMED);
                 boolean isExist = reservationRepository.existsBySiteIdAndDateRange(
@@ -177,15 +188,15 @@ public class ReservationService {
                         throw new Exception400("이미 예약된 기간입니다.");
                 }
 
-                // 3. 서버 측 가격 재계산 및 검증 (보안)
+                // 4. 서버 측 가격 재계산 및 검증 (보안)
                 long nights = ChronoUnit.DAYS.between(request.getCheckIn(), request.getCheckOut());
                 int extraPeople = Math.max(0, request.getPeopleCount() - zone.getBasePeople());
                 long calculatedPrice = (zone.getNormalPrice() + ((long) extraPeople * zone.getExtraPersonFee()))
                                 * nights;
 
-                // 4. 엔티티 생성 및 저장
+                // 5. 엔티티 생성 및 저장
                 Reservation reservation = Reservation.builder()
-                                .user(sessionUser)
+                                .user(user) // 조회된 유저 엔티티 사용
                                 .site(site)
                                 .checkIn(request.getCheckIn())
                                 .checkOut(request.getCheckOut())
