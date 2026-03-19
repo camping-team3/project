@@ -11,7 +11,7 @@
 - [x] **1-2. ReservationChangeRequest 엔티티 생성**
     - 경로: `src/main/java/com/camping/erp/domain/reservation/ReservationChangeRequest.java`
     - 필드: `id`, `reservation` (ManyToOne), `newStartDate`, `newEndDate`, `newSiteId`, `status` (RequestStatus), `rejectionReason`, `BaseTimeEntity` 상속
-- [ ] **1-3. ReservationCancelRequest 엔티티 생성**
+- [x] **1-3. ReservationCancelRequest 엔티티 생성**
     - 경로: `src/main/java/com/camping/erp/domain/reservation/ReservationCancelRequest.java`
     - 필드: `id`, `reservation` (ManyToOne), `reason`, `status` (RequestStatus), `rejectionReason`, `BaseTimeEntity` 상속
 - [ ] **1-4. Reservation 엔티티 연관관계 추가**
