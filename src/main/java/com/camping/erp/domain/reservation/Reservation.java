@@ -48,6 +48,17 @@ public class Reservation extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status; // PENDING, CONFIRMED, CANCEL_REQ, CANCEL_COMP, COMPLETED
 
+    // --- 양방향 연관관계 추가 (이력 관리용) ---
+
+    // mappedBy: 연관관계의 주인이 ReservationChangeRequest의 'reservation' 필드임을 명시
+    // cascade = CascadeType.ALL: 부모(Reservation)의 저장/삭제가 자식에게도 전파됨
+    // orphanRemoval = true: 리스트에서 제거된 자식 객체를 DB에서도 자동으로 삭제함
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReservationChangeRequest> changeRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReservationCancelRequest> cancelRequests = new ArrayList<>();
+
     @Builder
     public Reservation(Long id, User user, Site site, LocalDate checkIn, LocalDate checkOut, Long totalPrice,
             Integer peopleCount, String visitorName, String visitorPhone, ReservationStatus status) {
@@ -63,4 +74,26 @@ public class Reservation extends BaseTimeEntity {
         this.visitorPhone = visitorPhone;
         this.status = status;
     }
+
+    // --- 비즈니스 로직 추가 ---
+
+    /**
+     * 예약 상태 변경
+     */
+    public void updateStatus(ReservationStatus status) {
+        this.status = status;
+    }
+
+    /**
+     * 예약 정보 업데이트 (변경 승인 시 사용)
+     */
+    public void updateReservationInfo(LocalDate checkIn, LocalDate checkOut, Site site, Integer peopleCount, String visitorName, String visitorPhone) {
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+        this.site = site;
+        this.peopleCount = peopleCount;
+        this.visitorName = visitorName;
+        this.visitorPhone = visitorPhone;
+    }
 }
+
