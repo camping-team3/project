@@ -1,0 +1,66 @@
+{{> layout/header}}
+
+<main class="container py-5" style="max-width: 800px; margin: 0 auto;">
+    {{#qna}}
+    <div class="mb-5 px-2">
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="badge {{#isAnswered}}bg-primary{{/isAnswered}}{{^isAnswered}}bg-warning{{/isAnswered}} bg-opacity-10 {{#isAnswered}}text-primary{{/isAnswered}}{{^isAnswered}}text-warning{{/isAnswered}} fw-bold px-3 py-2 rounded-pill">
+                {{#isAnswered}}답변완료{{/isAnswered}}{{^isAnswered}}답변대기{{/isAnswered}}
+            </span>
+            <span class="text-secondary fw-bold small">[{{categoryName}}]</span>
+        </div>
+        <h2 class="display-6 fw-black text-dark mb-2">{{title}}</h2>
+        <div class="d-flex align-items-center gap-3 text-secondary small opacity-75">
+            <span>작성자: {{username}}</span>
+            <span>•</span>
+            <span>작성일: {{createdAt}}</span>
+            <span>•</span>
+            <span class="d-flex align-items-center gap-1"><span class="material-symbols-outlined icon-14">visibility</span> {{hits}}</span>
+        </div>
+    </div>
+
+    <!-- Question Content -->
+    <div class="fh-card shadow-sm border-0 p-4 p-md-5 bg-white rounded-4 mb-4">
+        <div class="text-dark leading-relaxed content-text" style="min-height: 200px;">
+            {{{content}}}
+        </div>
+    </div>
+
+    <!-- Admin Answers -->
+    {{#comments}}
+    <div class="fh-card shadow-sm border-0 p-0 overflow-hidden mb-4 bg-light bg-opacity-50 rounded-4">
+        <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2 text-primary">
+                <span class="material-symbols-outlined">chat_bubble</span>
+                <h3 class="h6 fw-bold m-0">관리자 답변</h3>
+            </div>
+            <span class="text-secondary small fw-bold">작성일: {{createdAt}}</span>
+        </div>
+        <div class="p-4">
+            <div class="text-dark">{{content}}</div>
+            <div class="text-end mt-2 small text-secondary">- 담당자: {{adminName}}</div>
+        </div>
+    </div>
+    {{/comments}}
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-between align-items-center mt-5">
+        <button onclick="location.href='/qna'" class="btn btn-outline-secondary px-4 py-2.5 fw-bold rounded-3">
+            목록으로
+        </button>
+        
+        <div class="d-flex gap-2">
+            {{#isOwner}}
+                {{^isAnswered}}
+                <button onclick="location.href='/qna/{{id}}/edit-form'" class="btn btn-primary px-4 py-2.5 fw-bold rounded-3">수정하기</button>
+                {{/isAnswered}}
+                <form action="/qna/{{id}}/delete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                    <button type="submit" class="btn btn-danger px-4 py-2.5 fw-bold rounded-3">삭제하기</button>
+                </form>
+            {{/isOwner}}
+        </div>
+    </div>
+    {{/qna}}
+</main>
+
+{{> layout/footer}}
