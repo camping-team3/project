@@ -8,6 +8,8 @@ import com.camping.erp.domain.site.SiteRepository;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.Zone;
 import com.camping.erp.domain.user.User;
+import com.camping.erp.domain.user.UserRepository;
+import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.handler.ex.Exception404;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class ReservationService {
 
         private final ReservationRepository reservationRepository;
         private final SiteRepository siteRepository;
+        private final UserRepository userRepository;
 
         // 예약 가능한 사이트 목록 조회
         public List<SiteResponse.ResevationAvailableListDTO> findAvailableSites(
@@ -161,7 +164,8 @@ public class ReservationService {
 
         // 예약 실행 (최종 검증 및 저장)
         @Transactional
-        public ReservationResponse.ReserveDTO reserve(ReservationRequest.ReserveDTO request, User sessionUser) {
+        public ReservationResponse.ReserveDTO reserve(ReservationRequest.ReserveDTO request,
+                        UserResponse.LoginDTO sessionUser) {
                 // 1. 사이트 존재 확인
                 Site site = siteRepository.findById(request.getSiteId())
                                 .orElseThrow(() -> new Exception404("해당 사이트를 찾을 수 없습니다."));
@@ -183,9 +187,16 @@ public class ReservationService {
                 long calculatedPrice = (zone.getNormalPrice() + ((long) extraPeople * zone.getExtraPersonFee()))
                                 * nights;
 
-                // 4. 엔티티 생성 및 저장
+                // 4. 세션 유저가 있을 경우 유저 엔티티 조회 (연관관계 설정용)
+                User user = null;
+                if (sessionUser != null) {
+                        user = userRepository.findById(sessionUser.getId())
+                                        .orElseThrow(() -> new Exception404("유저 정보를 찾을 수 없습니다."));
+                }
+
+                // 5. 엔티티 생성 및 저장
                 Reservation reservation = Reservation.builder()
-                                .user(sessionUser)
+                                .user(user)
                                 .site(site)
                                 .checkIn(request.getCheckIn())
                                 .checkOut(request.getCheckOut())

@@ -3,6 +3,8 @@ package com.camping.erp.domain.reservation;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
 import com.camping.erp.domain.user.User;
+import com.camping.erp.domain.user.UserResponse;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -75,7 +77,7 @@ public class ReservationController {
     // 예약 실행 (최종 검증 및 저장)
     @PostMapping("/reservations/reserve")
     public String reserve(ReservationRequest.ReserveDTO request) {
-        User sessionUser = (User) session.getAttribute("sessionUser");
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         ReservationResponse.ReserveDTO response = reservationService.reserve(request, sessionUser);
         return "redirect:/reservations/complete?id=" + response.getId();
     }

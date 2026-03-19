@@ -6,6 +6,7 @@ import com.camping.erp.domain.site.SiteRepository;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.user.User;
 import com.camping.erp.domain.user.UserRepository;
+import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.global.handler.ex.Exception400;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,13 +37,14 @@ public class ReservationIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    private User testUser;
+    private UserResponse.LoginDTO testUser;
     private Site testSite;
 
     @BeforeEach
     void setUp() {
         // 테스트용 사용자 (ssar)
-        testUser = userRepository.findById(2L).orElseThrow();
+        User user = userRepository.findById(2L).orElseThrow();
+        testUser = new UserResponse.LoginDTO(user);
         // 테스트용 사이트 (A-1, id=1)
         testSite = siteRepository.findById(1L).orElseThrow();
     }
