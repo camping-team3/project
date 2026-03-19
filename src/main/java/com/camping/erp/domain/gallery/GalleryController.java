@@ -17,7 +17,7 @@ public class GalleryController {
 
     // 사용자용 포토 갤러리 목록
     @GetMapping("/galleries")
-    public String list(@PageableDefault(size = 12) Pageable pageable, Model model) {
+    public String list(@PageableDefault(size = 8) Pageable pageable, Model model) {
         Page<GalleryResponse.ListDTO> galleryPage = galleryService.findAll(pageable);
         model.addAttribute("galleries", new PageResponse<>(galleryPage));
         return "gallery/list";
