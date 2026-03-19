@@ -80,25 +80,4 @@ public class UserController {
     public String reviews() {
         return "mypage/reviews";
     }
-
-    // 예약 변경
-    @GetMapping("/mypage/reservations/{id}/change")
-    public String reservationChange(@PathVariable("id") Long id) {
-        return "mypage/reservation-change";
-    }
-
-    @GetMapping("/mypage/reservations/{id}/change-done")
-    public String reservationChangeDone(@PathVariable("id") Long id) {
-        return "mypage/reservation-change-done";
-    }
-
-    @GetMapping("/mypage/reservations/{id}/cancel")
-    public String reservationCancel(@PathVariable("id") Long id) {
-        return "mypage/reservation-cancel";
-    }
-
-    @GetMapping("/mypage/reservations/{id}/cancel-done")
-    public String reservationCancelDone(@PathVariable("id") Long id) {
-        return "mypage/reservation-cancel-done";
-    }
 }

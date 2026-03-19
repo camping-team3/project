@@ -45,7 +45,7 @@
                         {{#reservations}}
                         <div class="fh-card p-0 overflow-hidden shadow-sm mb-4" 
                              style="cursor: pointer;" 
-                             onclick="if(!event.target.closest('.btn') && !event.target.closest('.nav-item')) location.href='/mypage/reservation/detail/{{id}}';">
+                             onclick="if(!event.target.closest('.btn') && !event.target.closest('.nav-item')) location.href='/mypage/reservation/{{id}}/detail';">
                             <div class="d-flex flex-column flex-sm-row p-4 gap-4">
                                 <div class="reservation-thumb flex-shrink-0 rounded-3 overflow-hidden" style="width: 12rem; height: 8rem;">
                                     <img src="{{siteImage}}" alt="{{siteName}}" class="w-100 h-100 object-fit-cover">

@@ -51,18 +51,18 @@
                                 <h3 class="h6 fw-bold text-primary m-0">기존 예약 정보</h3>
                             </div>
                             <div class="p-4 d-flex flex-column flex-sm-row gap-4 align-items-center align-items-sm-start">
-                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHyMKTeMqjJTgxf0uBjZHTHwK5AWKmOLlpVDJ7GFfZFmgi6GL6T2a3fSBoFFzr9warOZhd9WXfOAP7TP6ATy6uXSaOhTNnDRMe4RBlMJTbKwY82ed-oepKGdAeSvv-3jSwtG4g463zwHO8ardIGrptYFGn4pR-1ScOYgB80a2jJP-E4gh6lcBn9AuXMIkFyUrYDeBj5BVkluyBvwXHrDWT_fxYTLcdthZXX17oi2dX-0RJcJyCt1CLTK2yjJNUrz1O4ZGR-Cwkko7T" alt="Reservation Preview" class="reservation-preview-img shadow-sm">
+                                <img src="{{reservation.siteImage}}" alt="Reservation Preview" class="reservation-preview-img shadow-sm">
                                 <div class="flex-grow-1">
                                     <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-2 mb-2">예약 완료</span>
-                                    <h4 class="h4 fw-bold mb-3">A-1 데크</h4>
+                                    <h4 class="h4 fw-bold mb-3">{{reservation.siteName}}</h4>
                                     <div class="d-flex flex-column gap-2 text-secondary small">
                                         <div class="d-flex align-items-center gap-2">
                                             <span class="material-symbols-outlined fs-6 text-primary">calendar_today</span>
-                                            <span class="fw-medium">2023.12.25</span>
+                                            <span class="fw-medium">{{reservation.checkIn}} ~ {{reservation.checkOut}}</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
                                             <span class="material-symbols-outlined fs-6 text-primary">group</span>
-                                            <span class="fw-medium">성인 2인</span>
+                                            <span class="fw-medium">예약 인원: {{reservation.peopleCount}}명</span>
                                         </div>
                                     </div>
                                 </div>
@@ -72,25 +72,39 @@
 
                     <!-- Change Request Form -->
                     <section>
-                        <form class="fh-card shadow-sm">
+                        <form action="/mypage/reservations/change-request" method="POST" class="fh-card shadow-sm">
+                            <input type="hidden" name="reservationId" value="{{reservation.id}}">
+                            <!-- 임시로 기존 사이트 ID를 새 사이트 ID로 설정 (추후 사이트 선택 UI 고도화 가능) -->
+                            <input type="hidden" name="newSiteId" value="1"> 
+
                             <div class="row g-4 mb-4">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold text-dark small mb-2">변경 희망 날짜</label>
+                                    <label class="form-label fw-bold text-dark small mb-2">변경 희망 체크인</label>
                                     <div class="form-icon-wrapper">
                                         <span class="material-symbols-outlined">calendar_month</span>
-                                        <input type="date" class="form-control py-2.5 shadow-none border-secondary border-opacity-25" value="2023-12-25">
+                                        <input type="date" name="newCheckIn" class="form-control py-2.5 shadow-none border-secondary border-opacity-25" value="{{reservation.checkIn}}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
+                                    <label class="form-label fw-bold text-dark small mb-2">변경 희망 체크아웃</label>
+                                    <div class="form-icon-wrapper">
+                                        <span class="material-symbols-outlined">calendar_month</span>
+                                        <input type="date" name="newCheckOut" class="form-control py-2.5 shadow-none border-secondary border-opacity-25" value="{{reservation.checkOut}}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-12">
                                     <label class="form-label fw-bold text-dark small mb-2">변경 희망 인원</label>
                                     <div class="form-icon-wrapper">
                                         <span class="material-symbols-outlined">groups</span>
-                                        <select class="form-select py-2.5 shadow-none border-secondary border-opacity-25">
-                                            <option>1인</option>
-                                            <option selected>2인</option>
-                                            <option>3인</option>
-                                            <option>4인</option>
-                                            <option>5인 이상</option>
+                                        <select name="newPeopleCount" class="form-select py-2.5 shadow-none border-secondary border-opacity-25">
+                                            <option value="1">1인</option>
+                                            <option value="2" selected>2인</option>
+                                            <option value="3">3인</option>
+                                            <option value="4">4인</option>
+                                            <option value="5">5인 이상</option>
                                         </select>
                                     </div>
                                 </div>
@@ -98,7 +112,7 @@
 
                             <div class="mb-4">
                                 <label class="form-label fw-bold text-dark small mb-2">변경 사유</label>
-                                <textarea class="form-control py-2.5 shadow-none border-secondary border-opacity-25" rows="4" placeholder="예약 날짜를 변경하시려는 사유를 간단히 입력해주세요."></textarea>
+                                <textarea name="reason" class="form-control py-2.5 shadow-none border-secondary border-opacity-25" rows="4" placeholder="예약 날짜를 변경하시려는 사유를 간단히 입력해주세요."></textarea>
                             </div>
 
                             <div class="info-banner d-flex gap-3 p-4 mb-5 border-dashed">

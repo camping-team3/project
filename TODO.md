@@ -49,17 +49,17 @@
     - `COMPLETED`: [리뷰 작성하기] (Placeholder 확보)
     - `CHANGE_REQ`/`CANCEL_REQ`: "승인 대기 중" 상태 표시
 - [ ] **3-2. 예약 상세 페이지 구현**
-  - 컨트롤러: `/mypage/reservation/detail/{id}`
+  - 컨트롤러: `/mypage/reservation/{id}/detail`
   - 머스타치: `templates/mypage/reservation-detail.mustache` (신규 생성/구현 예정)
   - 기능: 기본 예약 정보 + 요청 이력(상태, 거절 사유 포함) 리스트 출력
-- [ ] **3-3. 예약 변경 요청 기능 및 가예약(Lock) 로직 구현**
-  - 컨트롤러: `/mypage/reservation/change-form/{id}` (GET, POST)
+- [x] **3-3. 예약 변경 요청 기능 및 가예약(Lock) 로직 구현**
+  - 컨트롤러: `/mypage/reservation/{id}/change-form` (GET, POST)
   - 머스타치: `templates/mypage/reservation-change.mustache`, `templates/mypage/reservation-change-done.mustache`
   - 서비스 로직:
     - 변경 요청 시 `Reservation`의 상태를 `CHANGE_REQ`로 변경
     - 중복 예약 체크 시 `Reservation.status = CHANGE_REQ`인 원본 자리 보호 및 `ReservationChangeRequest.status = PENDING`인 새로운 자리 가예약 처리
 - [ ] **3-4. 예약 취소 요청 기능 구현**
-  - 컨트롤러: `/mypage/reservation/cancel-form/{id}` (GET, POST)
+  - 컨트롤러: `/mypage/reservation/{id}/cancel-form` (GET, POST)
   - 머스타치: `templates/mypage/reservation-cancel.mustache`, `templates/mypage/reservation-cancel-done.mustache`
   - 서비스 로직: 취소 요청 시 `Reservation`의 상태를 `CANCEL_REQ`로 변경
 - [ ] **3-5. 상태 기반 UI 제어 로직 적용**

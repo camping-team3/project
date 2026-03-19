@@ -150,4 +150,37 @@ public class ReservationResponse {
                     .build();
         }
     }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ChangeFormDTO {
+        private Long id;
+        private String siteName;
+        private String zoneName;
+        private String siteImage;
+        private String checkIn;
+        private String checkOut;
+        private Integer peopleCount;
+        private Long totalPrice;
+        private String visitorName;
+        private String visitorPhone;
+
+        public static ChangeFormDTO fromEntity(Reservation reservation) {
+            return ChangeFormDTO.builder()
+                    .id(reservation.getId())
+                    .siteName(reservation.getSite().getSiteName())
+                    .zoneName(reservation.getSite().getZone().getName())
+                    .siteImage("/upload/1df7d7fc-2f49-4f29-a27b-71f68cbfb104_wesley-shen-2l2EslhTaOM-unsplash.jpg")
+                    .checkIn(reservation.getCheckIn().toString())
+                    .checkOut(reservation.getCheckOut().toString())
+                    .peopleCount(reservation.getPeopleCount())
+                    .totalPrice(reservation.getTotalPrice())
+                    .visitorName(reservation.getVisitorName())
+                    .visitorPhone(reservation.getVisitorPhone())
+                    .build();
+        }
+    }
 }

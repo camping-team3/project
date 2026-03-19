@@ -120,7 +120,7 @@ public class ReservationController {
     }
 
     // 마이페이지 예약 상세 조회
-    @GetMapping("/mypage/reservation/detail/{id}")
+    @GetMapping("/mypage/reservation/{id}/detail")
     public String reservationDetail(@PathVariable("id") Long id, Model model) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         if (sessionUser == null) {
@@ -130,5 +130,37 @@ public class ReservationController {
         ReservationResponse.DetailDTO reservation = reservationService.getReservationDetail(id);
         model.addAttribute("reservation", reservation);
         return "mypage/reservation-detail";
+    }
+
+    // 예약 변경 폼 조회
+    @GetMapping("/mypage/reservations/{id}/change")
+    public String changeForm(@PathVariable("id") Long id, Model model) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        ReservationResponse.ChangeFormDTO reservation = reservationService.getChangeForm(id);
+        model.addAttribute("reservation", reservation);
+        return "mypage/reservation-change";
+    }
+
+    // 예약 변경 요청 처리
+    @PostMapping("/mypage/reservations/change-request")
+    public String changeRequest(ReservationRequest.ChangeDTO dto) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        reservationService.requestChange(dto, sessionUser);
+        return "redirect:/mypage/reservations/" + dto.getReservationId() + "/change-done";
+    }
+
+    // 예약 변경 완료 페이지
+    @GetMapping("/mypage/reservations/{id}/change-done")
+    public String changeDone(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("id", id);
+        return "mypage/reservation-change-done";
     }
     }
