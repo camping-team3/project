@@ -6,12 +6,16 @@ import com.camping.erp.domain.gallery.GalleryService;
 import com.camping.erp.domain.notice.NoticeRequest;
 import com.camping.erp.domain.notice.NoticeResponse;
 import com.camping.erp.domain.notice.NoticeService;
+import com.camping.erp.domain.qna.QnaResponse;
+import com.camping.erp.domain.qna.QnaService;
 import com.camping.erp.domain.reservation.ReservationService;
 import com.camping.erp.domain.site.SiteRequest;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
+import com.camping.erp.domain.user.User;
 import com.camping.erp.global.dto.PageResponse;
 import com.camping.erp.global.handler.ex.Exception400;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +44,8 @@ public class AdminController {
     private final ReservationService reservationService;
     private final NoticeService noticeService;
     private final GalleryService galleryService;
+    private final QnaService qnaService;
+    private final HttpSession session;
 
     @GetMapping("/admin")
     public String dashboard() {
@@ -233,7 +240,7 @@ public class AdminController {
     }
 
     @PostMapping("/admin/qna/{id}/comment")
-    public String saveComment(@PathVariable Long id, String content) {
+    public String saveComment(@PathVariable("id") Long id, String content) {
         User sessionAdmin = (User) session.getAttribute("sessionUser");
         qnaService.saveComment(id, content, sessionAdmin);
         return "redirect:/admin/qna";
@@ -241,7 +248,7 @@ public class AdminController {
 
     @PostMapping("/admin/qna/{id}/delete")
     @ResponseBody
-    public String qnaDelete(@PathVariable Long id) {
+    public String qnaDelete(@PathVariable("id") Long id) {
         User sessionAdmin = (User) session.getAttribute("sessionUser");
         qnaService.delete(id, sessionAdmin);
         return """
