@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -117,4 +118,17 @@ public class ReservationController {
         model.addAttribute("userName", sessionUser.getName());
         return "mypage/reservations";
     }
-}
+
+    // 마이페이지 예약 상세 조회
+    @GetMapping("/mypage/reservation/detail/{id}")
+    public String reservationDetail(@PathVariable("id") Long id, Model model) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        ReservationResponse.DetailDTO reservation = reservationService.getReservationDetail(id);
+        model.addAttribute("reservation", reservation);
+        return "mypage/reservation-detail";
+    }
+    }
