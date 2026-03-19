@@ -172,6 +172,17 @@
             });
         });
 
+        // 휴대폰 번호 자동 하이픈 로직
+        visitorPhoneInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/[^0-9]/g, '');
+            if (val.length > 3 && val.length <= 7) {
+                val = val.substring(0, 3) + '-' + val.substring(3);
+            } else if (val.length > 7) {
+                val = val.substring(0, 3) + '-' + val.substring(3, 7) + '-' + val.substring(7, 11);
+            }
+            e.target.value = val;
+        });
+
         // 폼 제출 시 검증
         paymentForm.addEventListener('submit', (e) => {
             // 1. 약관 동의 검증

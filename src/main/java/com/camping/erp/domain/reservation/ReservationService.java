@@ -168,7 +168,7 @@ public class ReservationService {
         public ReservationResponse.ReserveDTO reserve(ReservationRequest.ReserveDTO request, LoginDTO sessionUser) {
                 // 1. 유저 엔티티 조회 (DTO -> Entity 변환)
                 if (sessionUser == null) {
-                    throw new Exception401("로그인이 필요한 서비스입니다.");
+                        throw new Exception401("로그인이 필요한 서비스입니다.");
                 }
                 User user = userRepository.findById(sessionUser.getId())
                                 .orElseThrow(() -> new Exception404("인증된 유저 정보를 찾을 수 없습니다."));
