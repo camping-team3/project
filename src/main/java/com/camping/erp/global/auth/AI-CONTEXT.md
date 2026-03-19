@@ -14,8 +14,8 @@ HandlerInterceptor 구현체.
 
 ## 세션 구조
 - **세션 키**: `"sessionUser"`
-- **세션 값 타입**: `com.camping.erp.domain.user.User` 엔티티
-- **로그인 처리**: 인증 성공 시 `session.setAttribute("sessionUser", user)` 저장
+- **세션 값 타입**: `com.camping.erp.domain.user.UserResponse.LoginDTO` DTO
+- **로그인 처리**: 인증 성공 시 `session.setAttribute("sessionUser", loginDto)` 저장
 - **로그아웃 처리**: `session.invalidate()` 호출
 
 ## 예외 흐름
