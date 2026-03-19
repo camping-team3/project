@@ -77,7 +77,7 @@ public class ReservationController {
     public String reserve(ReservationRequest.ReserveDTO request) {
         // 세션에서 DTO 타입으로 안전하게 꺼내기 (Casting 오류 해결)
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
-        
+
         // 서비스를 통해 예약 처리 (서비스 내부에서 유저 엔티티 조회)
         ReservationResponse.ReserveDTO response = reservationService.reserve(request, sessionUser);
         return "redirect:/reservations/complete?id=" + response.getId();
