@@ -51,4 +51,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                         @Param("checkIn") LocalDate checkIn,
                         @Param("status") ReservationStatus status,
                         Pageable pageable);
+
+        List<Reservation> findByUserIdOrderByCheckInDesc(Long userId);
 }

@@ -1,28 +1,34 @@
-# Camping ERP Project TODO List
+# 📋 Forest Haven ERP Project TODO
 
-## 🏗️ Phase 2: MVP 핵심 도메인 고도화 (완료)
-- [x] 공지사항/갤러리 이미지 업로드 및 관리자 CRUD 완료
-- [x] 이미지 데이터 통합 및 DB 무결성 확보
-- [x] 업로드 용량 증설 및 예외 처리
+## Phase 2: MVP 핵심 도메인 (완료)
+- [x] User 도메인 (가입/로그인/관리자)
+- [x] Site & Zone 도메인 (목록/상세/관리자)
+- [x] Reservation 도메인 (검색/가용조회/신청/관리자)
+- [x] Notice & Gallery 도메인 (목록/상세/다중이미지/관리자)
 
-## 💬 Phase 3: 확장 도메인 및 상세보기 구현 (진행 중)
+## Phase 3: 확장 도메인 (진행 중)
 
-### 1. 포토 갤러리 사용자 기능 강화
-- [ ] **21단계: 사용자용 포토 갤러리 상세보기 구현**
-  - [ ] `GalleryController`: `/galleries/{id}` 상세 조회 매핑 추가
-  - [ ] `GalleryService`: ID 기반 상세 데이터(이미지 포함) 조회 로직 구현
-  - [ ] `GalleryResponse.DetailDTO` 구성
-  - [ ] `gallery/detail.mustache` 템플릿 생성 (**design-rule 준수**)
-  - [ ] `gallery/list.mustache` 하드코딩 제거 및 상세 페이지 링크 연결
+### 1. Review 도메인 (완료)
+- [x] Review 엔티티 및 Repository 구현
+- [x] ReviewService (저장/삭제/평점 동기화) 구현
+- [x] ReviewController (등록/삭제/목록 API) 구현
+- [x] review/new.mustache (리뷰 작성 폼) 연동
+- [x] review/list.mustache (전체 리뷰 목록) 구현 및 연동
+- [x] 마이페이지 예약 내역(`reservation/list.mustache`)에서 '리뷰 쓰기' 버튼 활성화 (Task 9)
+- [x] 관리자 리뷰 관리 페이지(`admin/review/list.mustache`) 구현 및 연동 (Task 10)
 
-### 2. 리뷰 도메인 구현 (Next)
-- [ ] 리뷰 엔티티 및 Repository 생성
-- [ ] 이용 완료 예약 건 대상 리뷰 작성 로직
-- [ ] 마이페이지 리뷰 목록 및 사이트 상세 연동
+### 2. Payment 도메인 (대기)
+- [ ] 포트원(PortOne) V2 연동 (JavaScript SDK)
+- [ ] 결제 검증 로직 구현 (Backend)
+- [ ] 결제 완료 시 예약 상태 자동 변경 (`PENDING` -> `CONFIRMED`)
 
----
+### 3. Qna & Comment 도메인 (대기)
+- [ ] Q&A 목록 및 상세 조회 로직
+- [ ] Q&A 작성 및 수정 (답변 완료 전까지만)
+- [ ] 관리자 답변(Comment) 등록 및 상태 전이 로직
 
-## 🛠️ 공통 작업 및 안정화
-- [x] 디자인 시스템 표준 수립 (`design-rule.md`)
-- [x] UI 레퍼런스 체계 구축 (`.ai/references/`)
-- [ ] 전반적인 UI 상세보기 기능 점검 (공지사항/갤러리 관리자 포함)
+## 사후 처리 및 문서화
+- [x] 2026-03-19 Review 도메인 구현 리포트 작성
+- [x] 2026-03-19 Review 전체 목록 페이지 구현 완료
+- [x] 2026-03-19 마이페이지 & 관리자 리뷰 연동 완료
+- [x] TODO.md 및 phases.md 상태 동기화

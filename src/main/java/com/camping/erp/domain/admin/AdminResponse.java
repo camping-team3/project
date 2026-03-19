@@ -12,6 +12,26 @@ public class AdminResponse {
 
     @Getter @Setter
     @Builder
+    public static class ReviewPageDTO {
+        private List<ReviewListDTO> reviews;
+        private PaginationDTO pagination;
+    }
+
+    @Getter @Setter
+    @Builder
+    public static class ReviewListDTO {
+        private Long id;
+        private String username;
+        private Integer rating;
+        private String content;
+        private String zoneName;
+        private String siteName;
+        private String createdAt;
+        private List<String> images; // 썸네일용
+    }
+
+    @Getter @Setter
+    @Builder
     public static class ReservationPageDTO {
         private List<ReservationListDTO> reservations;
         private PaginationDTO pagination;

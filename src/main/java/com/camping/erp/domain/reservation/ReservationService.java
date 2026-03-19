@@ -3,6 +3,8 @@ package com.camping.erp.domain.reservation;
 import com.camping.erp.domain.admin.AdminRequest;
 import com.camping.erp.domain.admin.AdminResponse;
 import com.camping.erp.domain.reservation.enums.ReservationStatus;
+import com.camping.erp.domain.review.Review;
+import com.camping.erp.domain.review.ReviewRepository;
 import com.camping.erp.domain.site.Site;
 import com.camping.erp.domain.site.SiteRepository;
 import com.camping.erp.domain.site.SiteResponse;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Service
@@ -33,7 +36,77 @@ public class ReservationService {
 
         private final ReservationRepository reservationRepository;
         private final SiteRepository siteRepository;
-        private final UserRepository userRepository; // 유저 조회를 위해 추가
+        private final UserRepository userRepository;
+        private final ReviewRepository reviewRepository;
+
+        // 마이페이지용 예약 목록 조회 (리뷰 가능 여부 포함)
+        public ReservationResponse.MyPageWrapperDTO findAllByUserId(Long userId) {
+                List<Reservation> reservations = reservationRepository.findByUserIdOrderByCheckInDesc(userId);
+                LocalDate now = LocalDate.now();
+
+                List<ReservationResponse.MyPageListDTO> dtoList = reservations.stream()
+                                .map(r -> {
+                                        long nights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
+
+                                        // 리뷰 가능 조건: 상태가 COMPLETED 이고 퇴실일(checkOut)이 오늘이거나 오늘보다 이전인 경우
+                                        // 비즈니스 규칙: 퇴실 직후부터 가능 (checkOut <= now)
+                                        boolean isReviewable = r.getStatus() == ReservationStatus.COMPLETED &&
+                                                        (r.getCheckOut().isBefore(now) || r.getCheckOut().isEqual(now));
+
+                                        // 이미 리뷰를 작성했는지 확인
+                                        Optional<Review> reviewOp = reviewRepository.findByReservationId(r.getId());
+                                        boolean hasReview = reviewOp.isPresent();
+                                        Long reviewId = hasReview ? reviewOp.get().getId() : null;
+
+                                        String statusText = "";
+                                        String statusClass = "";
+
+                                        switch (r.getStatus()) {
+                                                case PENDING -> {
+                                                        statusText = "대기 중";
+                                                        statusClass = "warning";
+                                                }
+                                                case CONFIRMED -> {
+                                                        statusText = "확정됨";
+                                                        statusClass = "success";
+                                                }
+                                                case COMPLETED -> {
+                                                        statusText = "이용 완료";
+                                                        statusClass = "primary";
+                                                }
+                                                case CANCEL_REQ -> {
+                                                        statusText = "취소 요청";
+                                                        statusClass = "info";
+                                                }
+                                                case CANCEL_COMP -> {
+                                                        statusText = "취소 완료";
+                                                        statusClass = "secondary";
+                                                }
+                                        }
+
+                                        return ReservationResponse.MyPageListDTO.builder()
+                                                        .id(r.getId())
+                                                        .siteName(r.getSite().getSiteName())
+                                                        .zoneName(r.getSite().getZone().getName())
+                                                        .checkIn(r.getCheckIn())
+                                                        .checkOut(r.getCheckOut())
+                                                        .nights(nights)
+                                                        .totalPrice(r.getTotalPrice())
+                                                        .status(r.getStatus())
+                                                        .statusText(statusText)
+                                                        .statusClass(statusClass)
+                                                        .isReviewable(isReviewable && !hasReview) // 리뷰 가능하고 아직 안 썼을 때
+                                                        .hasReview(hasReview)
+                                                        .reviewId(reviewId)
+                                                        .build();
+                                })
+                                .toList();
+
+                return ReservationResponse.MyPageWrapperDTO.builder()
+                                .reservations(dtoList)
+                                .totalCount(dtoList.size())
+                                .build();
+        }
 
         // 예약 가능한 사이트 목록 조회
         public List<SiteResponse.ResevationAvailableListDTO> findAvailableSites(

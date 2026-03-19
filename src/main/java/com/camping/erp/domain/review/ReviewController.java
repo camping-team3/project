@@ -3,10 +3,14 @@ package com.camping.erp.domain.review;
 import com.camping.erp.domain.reservation.Reservation;
 import com.camping.erp.domain.reservation.ReservationRepository;
 import com.camping.erp.domain.review.dto.ReviewRequest;
+import com.camping.erp.domain.review.dto.ReviewResponse;
 import com.camping.erp.domain.user.User;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -21,6 +25,13 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final ReservationRepository reservationRepository;
     private final HttpSession session;
+
+    @GetMapping("/reviews")
+    public String list(@PageableDefault(size = 6, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
+        ReviewResponse.ListWrapperDTO respDTO = reviewService.findAll(pageable);
+        model.addAttribute("model", respDTO);
+        return "review/list";
+    }
 
     @GetMapping("/reviews/new")
     public String newForm(@RequestParam(name = "reservationId") Long reservationId, Model model) {
