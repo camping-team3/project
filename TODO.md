@@ -18,31 +18,42 @@
     - 경로: `src/main/java/com/camping/erp/domain/reservation/Reservation.java`
     - 내용: `OneToMany`로 `changeRequests`, `cancelRequests` 리스트 추가 (이력 관리용)
 
-### Task 2: 데이터 저장소 설정
+### Task 2: 데이터 저장소 및 자동화 설정
 - [x] **2-1. 전용 Repository 인터페이스 신규 생성**
     - `ReservationChangeRequestRepository` 생성
     - `ReservationCancelRequestRepository` 생성
     - 목적: 각 요청 건의 저장(save), 상태별 조회(findByStatus) 등 핵심 기능 확보
+- [x] **2-2. 예약 상태 자동 업데이트 스케줄러 구현**
+    - 경로: `src/main/java/com/camping/erp/global/scheduler/ReservationScheduler.java` (신규 생성)
+    - 기능: 매일 자정(00:00) 체크아웃 날짜(`checkOut`)가 현재 날짜 이전인 `CONFIRMED` 예약 건들을 `COMPLETED` 상태로 일괄 변경
+    - 로직: `@Scheduled(cron = "0 0 0 * * *")` 활용
 
 ## 2단계: 고객 마이페이지 (Customer Side)
 
 ### Task 3: 상세 조회 및 요청 프로세스 구현
-- [ ] **3-1. 예약 상세 페이지 구현**
-    - 컨트롤러: `ReservationController` (`/mypage/reservation/detail/{id}`)
-    - 머스타치: `templates/mypage/reservation-detail.mustache`
-    - 기능: 기본 예약 정보 + 변경/취소 요청 이력(상태, 거절 사유 포함) 출력
-- [ ] **3-2. 예약 변경 요청 기능 및 가예약(Lock) 로직 구현**
+- [ ] **3-1. 예약 목록 페이지 구현**
+    - 컨트롤러: `ReservationController` (`/mypage/reservations`)
+    - 머스타치: `templates/mypage/reservations.mustache` 수정
+    - 기능: 
+        - 세션 기반 본인 예약 목록 조회
+        - `CONFIRMED`: 예약변경/예약취소 버튼 노출
+        - `COMPLETED`: [리뷰 작성하기] (Placeholder 확보)
+        - `CHANGE_REQ`/`CANCEL_REQ`: "승인 대기 중" 상태 표시
+- [ ] **3-2. 예약 상세 페이지 구현**
+    - 컨트롤러: `/mypage/reservation/detail/{id}`
+    - 머스타치: `templates/mypage/reservation-detail.mustache` (신규 생성/구현 예정)
+    - 기능: 기본 예약 정보 + 요청 이력(상태, 거절 사유 포함) 리스트 출력
+- [ ] **3-3. 예약 변경 요청 기능 및 가예약(Lock) 로직 구현**
     - 컨트롤러: `/mypage/reservation/change-form/{id}` (GET, POST)
     - 머스타치: `templates/mypage/reservation-change.mustache`, `templates/mypage/reservation-change-done.mustache`
     - 서비스 로직:
         - 변경 요청 시 `Reservation`의 상태를 `CHANGE_REQ`로 변경
         - 중복 예약 체크 시 `Reservation.status = CHANGE_REQ`인 원본 자리 보호 및 `ReservationChangeRequest.status = PENDING`인 새로운 자리 가예약 처리
-- [ ] **3-3. 예약 취소 요청 기능 구현**
+- [ ] **3-4. 예약 취소 요청 기능 구현**
     - 컨트롤러: `/mypage/reservation/cancel-form/{id}` (GET, POST)
     - 머스타치: `templates/mypage/reservation-cancel.mustache`, `templates/mypage/reservation-cancel-done.mustache`
     - 서비스 로직: 취소 요청 시 `Reservation`의 상태를 `CANCEL_REQ`로 변경
-- [ ] **3-4. 상태 기반 UI 제어 로직 적용**
-    - 머스타치: `templates/mypage/reservations.mustache` 수정
+- [ ] **3-5. 상태 기반 UI 제어 로직 적용**
     - 로직: `checkInDate`가 현재 날짜 이후인 경우에만 변경/취소 버튼 노출 (Mustache 내에서 처리)
 
 ## 3단계: 관리자 예약 관리 (Admin Side)

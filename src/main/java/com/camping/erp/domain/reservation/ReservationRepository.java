@@ -51,4 +51,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                         @Param("checkIn") LocalDate checkIn,
                         @Param("status") ReservationStatus status,
                         Pageable pageable);
+    /**
+     * 특정 상태이면서 체크아웃 날짜가 기준 날짜 이전인 예약 목록 조회
+     */
+    List<Reservation> findByStatusAndCheckOutBefore(ReservationStatus status, LocalDate date);
 }
