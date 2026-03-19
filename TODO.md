@@ -8,7 +8,7 @@
         - 경로: `src/main/java/com/camping/erp/domain/reservation/enums/ReservationStatus.java`
     - `RequestStatus` 생성: `PENDING` (승인 대기), `APPROVED` (승인 완료), `REJECTED` (거절됨) 정의
         - 경로: `src/main/java/com/camping/erp/domain/reservation/enums/RequestStatus.java`
-- [ ] **1-2. ReservationChangeRequest 엔티티 생성**
+- [x] **1-2. ReservationChangeRequest 엔티티 생성**
     - 경로: `src/main/java/com/camping/erp/domain/reservation/ReservationChangeRequest.java`
     - 필드: `id`, `reservation` (ManyToOne), `newStartDate`, `newEndDate`, `newSiteId`, `status` (RequestStatus), `rejectionReason`, `BaseTimeEntity` 상속
 - [ ] **1-3. ReservationCancelRequest 엔티티 생성**
