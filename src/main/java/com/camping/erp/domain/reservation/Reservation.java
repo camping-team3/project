@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "reservation_tb")
@@ -87,7 +89,8 @@ public class Reservation extends BaseTimeEntity {
     /**
      * 예약 정보 업데이트 (변경 승인 시 사용)
      */
-    public void updateReservationInfo(LocalDate checkIn, LocalDate checkOut, Site site, Integer peopleCount, String visitorName, String visitorPhone) {
+    public void updateReservationInfo(LocalDate checkIn, LocalDate checkOut, Site site, Integer peopleCount,
+            String visitorName, String visitorPhone) {
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         this.site = site;
@@ -96,4 +99,3 @@ public class Reservation extends BaseTimeEntity {
         this.visitorPhone = visitorPhone;
     }
 }
-
