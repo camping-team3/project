@@ -18,27 +18,31 @@
     - 경로: `src/main/java/com/camping/erp/domain/reservation/Reservation.java`
     - 내용: `OneToMany`로 `changeRequests`, `cancelRequests` 리스트 추가 (이력 관리용)
 
-### Task 2: 데이터 저장소 및 초기 데이터 설정
-- [ ] **2-1. Repository 기능 확장 및 더미 데이터 추가**
-    - 경로: `src/main/java/com/camping/erp/domain/reservation/ReservationRepository.java` (조회 쿼리 추가)
-    - 경로: `src/main/resources/db/data.sql` (테스트용 요청 데이터 `INSERT` 문 추가)
+### Task 2: 데이터 저장소 설정
+- [x] **2-1. 전용 Repository 인터페이스 신규 생성**
+    - `ReservationChangeRequestRepository` 생성
+    - `ReservationCancelRequestRepository` 생성
+    - 목적: 각 요청 건의 저장(save), 상태별 조회(findByStatus) 등 핵심 기능 확보
 
 ## 2단계: 고객 마이페이지 (Customer Side)
 
 ### Task 3: 상세 조회 및 요청 프로세스 구현
 - [ ] **3-1. 예약 상세 페이지 구현**
     - 컨트롤러: `ReservationController` (`/mypage/reservation/detail/{id}`)
-    - 머스타치: `templates/mypage/reservation/detail.mustache`
+    - 머스타치: `templates/mypage/reservation-detail.mustache`
     - 기능: 기본 예약 정보 + 변경/취소 요청 이력(상태, 거절 사유 포함) 출력
 - [ ] **3-2. 예약 변경 요청 기능 및 가예약(Lock) 로직 구현**
     - 컨트롤러: `/mypage/reservation/change-form/{id}` (GET, POST)
+    - 머스타치: `templates/mypage/reservation-change.mustache`, `templates/mypage/reservation-change-done.mustache`
     - 서비스 로직:
         - 변경 요청 시 `Reservation`의 상태를 `CHANGE_REQ`로 변경
         - 중복 예약 체크 시 `Reservation.status = CHANGE_REQ`인 원본 자리 보호 및 `ReservationChangeRequest.status = PENDING`인 새로운 자리 가예약 처리
 - [ ] **3-3. 예약 취소 요청 기능 구현**
     - 컨트롤러: `/mypage/reservation/cancel-form/{id}` (GET, POST)
+    - 머스타치: `templates/mypage/reservation-cancel.mustache`, `templates/mypage/reservation-cancel-done.mustache`
     - 서비스 로직: 취소 요청 시 `Reservation`의 상태를 `CANCEL_REQ`로 변경
 - [ ] **3-4. 상태 기반 UI 제어 로직 적용**
+    - 머스타치: `templates/mypage/reservations.mustache` 수정
     - 로직: `checkInDate`가 현재 날짜 이후인 경우에만 변경/취소 버튼 노출 (Mustache 내에서 처리)
 
 ## 3단계: 관리자 예약 관리 (Admin Side)
