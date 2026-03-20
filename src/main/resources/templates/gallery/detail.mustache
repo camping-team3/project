@@ -1,0 +1,60 @@
+{{> layout/header}}
+
+<main class="container py-5">
+    <!-- Breadcrumb or Back Button -->
+    <div class="mb-4">
+        <a href="/galleries" class="btn btn-link text-primary fw-bold text-decoration-none d-flex align-items-center gap-1 p-0">
+            <span class="material-symbols-outlined fs-5">arrow_back</span>
+            갤러리 목록으로 돌아가기
+        </a>
+    </div>
+
+    <!-- Main Content Card -->
+    <article class="fh-card shadow-sm border-0 bg-white overflow-hidden">
+        <!-- Header Section -->
+        <header class="p-4 p-lg-5 border-bottom border-light-subtle">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1.5 rounded-pill">{{gallery.category}}</span>
+                <span class="text-secondary small fw-medium">촬영일: {{gallery.shootingDate}}</span>
+            </div>
+            <h1 class="display-6 fw-black text-dark mb-3">{{gallery.title}}</h1>
+            <div class="d-flex align-items-center gap-3 text-secondary small">
+                <div class="d-flex align-items-center gap-1">
+                    <span class="material-symbols-outlined fs-6">calendar_today</span>
+                    {{gallery.getCreatedAt}}
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                    <span class="material-symbols-outlined fs-6">visibility</span>
+                    조회수 {{gallery.viewCount}}
+                </div>
+            </div>
+        </header>
+
+        <!-- Image Gallery Section (수정: 이미지 크기 최적화) -->
+        <section class="p-4 p-lg-5 text-center">
+            <div class="d-flex flex-column gap-4 align-items-center">
+                {{#gallery.images}}
+                <div class="gallery-detail-img-wrapper rounded-4 overflow-hidden shadow-sm bg-white" style="max-width: 700px; width: 100%;">
+                    <img src="{{filePath}}" alt="Gallery Image" class="w-100 object-fit-cover" style="max-height: 500px;">
+                </div>
+                {{/gallery.images}}
+            </div>
+        </section>
+
+        <!-- Content Section -->
+        <section class="p-4 p-lg-5 border-top border-light-subtle">
+            <div class="fs-5 text-dark lh-base mb-5" style="white-space: pre-wrap;">
+                {{gallery.content}}
+            </div>
+            
+            <!-- Bottom Actions -->
+            <div class="d-flex justify-content-center pt-5 border-top border-light-subtle">
+                <button onclick="location.href='/galleries'" class="btn btn-primary px-5 py-2.5 fw-bold rounded-pill shadow-sm transition-all">
+                    목록으로 돌아가기
+                </button>
+            </div>
+        </section>
+    </article>
+</main>
+
+{{> layout/footer}}
