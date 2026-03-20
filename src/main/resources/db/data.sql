@@ -29,21 +29,21 @@ INSERT INTO user_tb (id, username, password, name, email, phone, role, status, c
 -- ==========================================================
 -- 2. 구역 정보 (zone_tb) - ID 명시
 -- ==========================================================
-INSERT INTO zone_tb (id, name, normal_price, peak_price, base_people, extra_person_fee, created_at) VALUES 
-(1, 'A구역(오토캠핑)', 50000, 80000, 2, 10000, NOW()),
-(2, 'B구역(글램핑)', 150000, 250000, 2, 20000, NOW()),
-(3, 'C구역(카라반)', 120000, 200000, 2, 15000, NOW());
+INSERT INTO zone_tb (id, name, normal_price, peak_price, base_people, extra_person_fee, avg_rating, review_count, created_at) VALUES 
+(1, 'A구역(오토캠핑)', 50000, 80000, 2, 10000, 0.0, 0, NOW()),
+(2, 'B구역(글램핑)', 150000, 250000, 2, 20000, 0.0, 0, NOW()),
+(3, 'C구역(카라반)', 120000, 200000, 2, 15000, 0.0, 0, NOW());
 
 -- ==========================================================
 -- 3. 사이트 정보 (site_tb) - ID 명시 및 정확한 FK 참조
 -- ==========================================================
-INSERT INTO site_tb (id, zone_id, site_name, max_people, is_available, created_at) VALUES 
-(1, 1, 'A-1', 4, true, NOW()), 
-(2, 1, 'A-2', 4, true, NOW()), 
-(3, 1, 'A-3', 6, true, NOW()),
-(4, 2, 'B-1', 2, true, NOW()), 
-(5, 2, 'B-2', 4, false, NOW()), 
-(6, 3, 'C-1', 4, true, NOW());
+INSERT INTO site_tb (id, zone_id, site_name, max_people, is_available, avg_rating, review_count, created_at) VALUES 
+(1, 1, 'A-1', 4, true, 0.0, 0, NOW()), 
+(2, 1, 'A-2', 4, true, 0.0, 0, NOW()), 
+(3, 1, 'A-3', 6, true, 0.0, 0, NOW()),
+(4, 2, 'B-1', 2, true, 0.0, 0, NOW()), 
+(5, 2, 'B-2', 4, false, 0.0, 0, NOW()), 
+(6, 3, 'C-1', 4, true, 0.0, 0, NOW());
 
 -- ==========================================================
 -- 4. 성수기 정보 (season_tb)
@@ -106,8 +106,30 @@ INSERT INTO qna_tb (id, user_id, title, content, category, hits, is_answered, cr
 (1, 2, '반려견 동반 입실?', '가능할까요?', 'FACILITY', 10, true, NOW()),
 (2, 3, '주차 공간 문의', '텐트 옆 주차 가능한가요?', 'FACILITY', 5, false, NOW());
 
+-- QnA 더미 데이터 추가 (ID 3~15번)
+INSERT INTO qna_tb (id, user_id, title, content, category, hits, is_answered, created_at) VALUES 
+(3, 4, '전기 사용 가능한가요?', 'A구역 전기 릴선 길이 얼마나 필요한가요?', 'FACILITY', 15, false, DATEADD(MINUTE, 5, NOW())),
+(4, 7, '겨울철 눈이 오면 제설 해주나요?', '다음 주 예약인데 눈 소식이 있어서요.', 'ETC', 20, true, DATEADD(MINUTE, 10, NOW())),
+(5, 8, '화장실 온수 잘 나오나요?', '아이들이랑 가는데 온수가 중요한가요.', 'FACILITY', 12, false, DATEADD(MINUTE, 15, NOW())),
+(6, 9, '주변 마트 위치 문의', '장작이나 고기 살만한 곳이 근처에 있나요?', 'ETC', 8, true, DATEADD(MINUTE, 20, NOW())),
+(7, 10, '글램핑 식기류 구비 현황', '따로 챙겨갈 식기가 있을까요?', 'FACILITY', 30, false, DATEADD(MINUTE, 25, NOW())),
+(8, 11, '밤에 별이 잘 보이나요?', '아이들과 별 보러 가려고 합니다.', 'ETC', 45, true, DATEADD(MINUTE, 30, NOW())),
+(9, 12, '사이트 크기 문의', '리빙쉘 텐트 피칭 가능한 사이즈인가요?', 'FACILITY', 22, false, DATEADD(MINUTE, 35, NOW())),
+(10, 13, '소음 관련 문의', '매너타임 관리가 잘 되고 있는지 궁금합니다.', 'ETC', 18, true, DATEADD(MINUTE, 40, NOW())),
+(11, 14, '불멍 장작 판매 하나요?', '매점에서 장작 얼마에 파나요?', 'FACILITY', 50, false, DATEADD(MINUTE, 45, NOW())),
+(12, 15, '취소 위약금 관련', '갑자기 일이 생겨서 취소하려고 하는데...', 'ETC', 14, true, DATEADD(MINUTE, 50, NOW())),
+(13, 2, '와이파이 속도 어떤가요?', '노트북 작업이 좀 필요한데 끊기지 않을까요?', 'FACILITY', 9, false, DATEADD(MINUTE, 55, NOW())),
+(14, 3, '해충 방역 정기적으로 하나요?', '여름이라 벌레가 걱정되어서요.', 'ETC', 11, true, DATEADD(MINUTE, 60, NOW())),
+(15, 4, '주말 예약 오픈 시간', '언제 다음 달 예약이 열리나요?', 'ETC', 60, false, DATEADD(MINUTE, 65, NOW()));
+
 INSERT INTO comment_tb (id, qna_id, admin_id, content, created_at) VALUES 
-(1, 1, 1, 'A구역만 소형견 가능합니다.', NOW());
+(1, 1, 1, 'A구역만 소형견 가능합니다.', NOW()),
+(2, 4, 1, '네, 제설 장비가 상시 대기 중입니다.', NOW()),
+(3, 6, 1, '차로 10분 거리에 하나로마트가 있습니다.', NOW()),
+(4, 8, 1, '네, 지대가 높고 공기가 맑아 아주 잘 보입니다.', NOW()),
+(5, 10, 1, '순찰을 돌며 철저히 관리하고 있습니다.', NOW()),
+(6, 12, 1, '공지사항의 환불 규정을 확인 부탁드립니다.', NOW()),
+(7, 14, 1, '매주 수요일 전문 업체 방역을 실시합니다.', NOW());
 
 -- ==========================================================
 -- 9. 이용 후기 (review_tb) - 1예약 1리뷰 원칙 준수

@@ -8,10 +8,10 @@
                         <div class="fh-profile-card">
                             <div class="profile-section">
                                 <div class="profile-img">
-                                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuArVyFD1kByWmCBF0Rz4ccl-L4vIMovS-krTT4u-KVYHhX2hMPUkaQzOLuSXFNkjKwDG0hbQZ7gaRgh8ytv6BK6xFB6ClZmg6H-wq586rl1mmMaOrnlkhWvj-w0KNrgyc3qLGo11qHIdPwOfdKeuTDw6OltxRnbG17NoLNHNk1YZI1Li_g3-PSh5baMbRafh3KgP2jo5_izMzuKYzAJm9zDtUrAJHJSePSvnmDcctJdXnbujZtx4x7j3Nub2X0XNELdrx0zZBwepMns" alt="Profile">
+                                    <img src="https://ui-avatars.com/api/?name={{sessionUser.username}}&background=2c5926&color=fff" alt="Profile">
                                 </div>
                                 <div class="profile-info">
-                                    <h3>김철수 님</h3>
+                                    <h3>{{userName}} 님</h3>
                                     <p>Forest Member</p>
                                 </div>
                             </div>
@@ -42,24 +42,26 @@
                     <!-- Reservation List -->
                     <div class="d-flex flex-column gap-4">
 
-                        <!-- Item 1: Upcoming -->
-                        <div class="fh-card p-0 overflow-hidden shadow-sm">
+                        {{#reservations}}
+                        <div class="fh-card p-0 overflow-hidden shadow-sm mb-4"
+                             style="cursor: pointer;"
+                             onclick="if(!event.target.closest('.btn') && !event.target.closest('.nav-item')) location.href='/mypage/reservations/{{id}}/detail';">
                             <div class="d-flex flex-column flex-sm-row p-4 gap-4">
                                 <div class="reservation-thumb flex-shrink-0 rounded-3 overflow-hidden" style="width: 12rem; height: 8rem;">
-                                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvFIuaJiOJbAjBDwTx3dkIBLrA5OFie1w264Jk0F4DcQJYUSJ5GyUlc-3KrVTsi4YdgCWQ59ItKh2sOxOCBQlBZDc1AdYRcRm3P6_1s1_b8wCVSCqPXOFRpGLJXZmbnFn8-YLwscQkzEoOWFUq1Dy3cNfK77nj77MSedzSY2TTkm6iNX1naOstolyd29OQCYwY2rpH_AlhcFRv39GCHHRFNy34Bd3q5A_ZkYRk-_7A6S-67cw72Fat8KmMjbOqwCDG9m_ycux9Hols" alt="Premium Studio" class="w-100 h-100 object-fit-cover">
+                                    <img src="{{siteImage}}" alt="{{siteName}}" class="w-100 h-100 object-fit-cover">
                                 </div>
                                 <div class="flex-grow-1">
                                     <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <span class="small fw-semibold text-uppercase text-primary">RESERV-20231225A</span>
-                                        <span class="small text-secondary">예약일: 2023.11.20</span>
+                                        <span class="small fw-semibold text-uppercase text-primary">RESERV-{{id}}</span>
+                                        <span class="small text-secondary">예약일: {{reservationDate}}</span>
                                     </div>
-                                    <h4 class="fw-bold mb-2">프리미엄 스튜디오 촬영 - A 패키지</h4>
+                                    <h4 class="fw-bold mb-2">{{siteName}}</h4>
                                     <div class="d-flex align-items-center gap-2 small text-secondary mb-3">
                                         <span class="material-symbols-outlined fs-6">calendar_today</span>
-                                        <span>2023.12.25 (일) | 14:00 - 17:00</span>
+                                        <span>{{checkIn}} ~ {{checkOut}}</span>
                                     </div>
                                     <div class="d-flex align-items-center justify-content-between pt-2 border-top">
-                                        <span class="fs-5 fw-bold">250,000원</span>
+                                        <span class="fs-5 fw-bold">{{totalPrice}}</span>
                                         <div class="d-flex gap-2">
                                             <a href="/mypage/reservations/1" class="btn btn-outline-fh btn-sm d-flex align-items-center gap-1">
                                                 <span class="material-symbols-outlined fs-6">visibility</span>
@@ -69,15 +71,17 @@
                                                 <span class="material-symbols-outlined fs-6">edit_calendar</span>
                                                 예약 변경
                                             </a>
-                                            <a href="/mypage/reservations/1/cancel" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                                            <a href="/mypage/reservations/{{id}}/cancel-form" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
                                                 <span class="material-symbols-outlined fs-6">cancel</span>
                                                 예약 취소
                                             </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                            {{/canModify}}
+                                            {{#isWait}}
+                                            <div class="d-flex align-items-center gap-1 text-warning">
+                                                <span class="material-symbols-outlined small">pending</span>
+                                                <span class="small fw-bold">{{statusDescription}} 중</span>
+                                            </div>
+                                            {{/isWait}}
 
                         <!-- Item 2: Completed -->
                         <div class="fh-card p-0 overflow-hidden shadow-sm">
@@ -102,38 +106,29 @@
                                                 <span class="material-symbols-outlined fs-6">rate_review</span>
                                                 리뷰 작성하기
                                             </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                            {{/isCompleted}}
 
-                        <!-- Item 3: Review Done -->
-                        <div class="fh-card p-0 overflow-hidden shadow-sm" style="opacity: 0.9;">
-                            <div class="d-flex flex-column flex-sm-row p-4 gap-4">
-                                <div class="reservation-thumb flex-shrink-0 rounded-3 overflow-hidden" style="width: 12rem; height: 8rem; filter: grayscale(0.8);">
-                                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpbUxSGTAuYd1_NI_fwD-5hg8ICyxD_zTCVyvuuA2vJq2lrZMLneIP3e53H6Nor9vX97UpZD9hsmoBWJfNCofhP78jAZdJ7ymwivKr63Eg_mt8xkPU_Y8QmqYVMKgb_ksHE1pomovZoJW0kzUf-1QB4Rkpv77ioo9LHU0exdnY6AWQvD5oD75BZuAWPd7HFYpt0VNudqtd89plt4O824811_RJyPQi90152WC1OlJ2E5Oe8lPLfhGh6fxhLfRKKc2WuD4-Ln6uiAOh" alt="Co-working space" class="w-100 h-100 object-fit-cover">
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <span class="small fw-semibold text-uppercase text-secondary">RESERV-20231012C</span>
-                                        <span class="small text-secondary">예약일: 2023.09.28</span>
-                                    </div>
-                                    <h4 class="fw-bold mb-2">강남 도심 오피스 일일 이용권</h4>
-                                    <div class="d-flex align-items-center gap-2 small text-secondary mb-3">
-                                        <span class="material-symbols-outlined fs-6">calendar_today</span>
-                                        <span>2023.10.12 (금) | 09:00 - 18:00</span>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between pt-2 border-top">
-                                        <span class="fs-5 fw-bold">45,000원</span>
-                                        <div class="d-flex align-items-center gap-1 text-primary">
-                                            <span class="material-symbols-outlined small">stars</span>
-                                            <span class="small fw-bold">리뷰 작성 완료</span>
+                                            {{#isReviewDone}}
+                                            <div class="d-flex align-items-center gap-1 text-primary">
+                                                <span class="material-symbols-outlined small">stars</span>
+                                                <span class="small fw-bold">리뷰 작성 완료</span>
+                                            </div>
+                                            {{/isReviewDone}}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        {{/reservations}}
+
+                        {{^reservations}}
+                        <div class="fh-card p-5 text-center shadow-sm">
+                            <span class="material-symbols-outlined fs-1 text-secondary mb-3">calendar_today</span>
+                            <h4 class="fw-bold text-secondary">예약 내역이 없습니다.</h4>
+                            <p class="text-muted">다양한 캠핑 구역을 둘러보고 첫 예약을 진행해 보세요!</p>
+                            <a href="/reservations/new" class="btn btn-primary mt-3">예약하러 가기</a>
+                        </div>
+                        {{/reservations}}
 
                     </div>
                 </main>

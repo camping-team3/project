@@ -2,28 +2,32 @@ package com.camping.erp.domain.reservation;
 
 import com.camping.erp.domain.admin.AdminRequest;
 import com.camping.erp.domain.admin.AdminResponse;
+import com.camping.erp.domain.reservation.enums.RequestStatus;
 import com.camping.erp.domain.reservation.enums.ReservationStatus;
+import com.camping.erp.domain.review.Review;
+import com.camping.erp.domain.review.ReviewRepository;
 import com.camping.erp.domain.site.Site;
 import com.camping.erp.domain.site.SiteRepository;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.Zone;
 import com.camping.erp.domain.user.User;
 import com.camping.erp.domain.user.UserRepository;
-import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.domain.user.UserResponse.LoginDTO;
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.handler.ex.Exception401;
+import com.camping.erp.global.handler.ex.Exception403;
 import com.camping.erp.global.handler.ex.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Service
@@ -34,14 +38,18 @@ public class ReservationService {
         private final ReservationRepository reservationRepository;
         private final SiteRepository siteRepository;
         private final UserRepository userRepository; // 유저 조회를 위해 추가
+        private final ReservationChangeRequestRepository reservationChangeRequestRepository; // 변경 요청 처리를 위해 추가
 
-        // 예약 가능한 사이트 목록 조회
+        // 예약 가능한 사이트 목록 조회 (가예약 Lock 로직 포함됨)
         public List<SiteResponse.ResevationAvailableListDTO> findAvailableSites(
                         ReservationRequest.SearchDTO searchDTO) {
                 LocalDate checkIn = searchDTO.getCheckIn();
                 LocalDate checkOut = searchDTO.getCheckOut();
 
-                List<ReservationStatus> activeStatuses = List.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED,
+                List<ReservationStatus> activeStatuses = List.of(
+                                ReservationStatus.PENDING,
+                                ReservationStatus.CONFIRMED,
+                                ReservationStatus.CHANGE_REQ,
                                 ReservationStatus.CANCEL_REQ);
 
                 List<Site> availableSites = reservationRepository.findAvailableSites(
@@ -179,8 +187,10 @@ public class ReservationService {
                 Zone zone = site.getZone();
 
                 // 3. 최종 중복 체크
-                List<ReservationStatus> activeStatuses = List.of(ReservationStatus.PENDING,
-                                ReservationStatus.CONFIRMED);
+                List<ReservationStatus> activeStatuses = List.of(
+                                ReservationStatus.PENDING,
+                                ReservationStatus.CONFIRMED,
+                                ReservationStatus.CHANGE_REQ);
                 boolean isExist = reservationRepository.existsBySiteIdAndDateRange(
                                 site.getId(), request.getCheckIn(), request.getCheckOut(), activeStatuses);
 
@@ -241,5 +251,102 @@ public class ReservationService {
         @Transactional
         public void cancel(Long id) {
                 // 취소 로직은 추후 구현
+        }
+
+        /**
+         * 사용자별 예약 목록 조회
+         */
+        public List<Reservation> findByUserIdOrderByCreatedAtDesc(Long userId) {
+                return reservationRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        }
+
+        /**
+         * 예약 상세 정보 조회 (DTO 변환 포함)
+         */
+        public ReservationResponse.DetailDTO getReservationDetail(Long id) {
+                Reservation reservation = reservationRepository.findById(id)
+                                .orElseThrow(() -> new Exception404("해당 예약을 찾을 수 없습니다."));
+                return ReservationResponse.DetailDTO.fromEntity(reservation);
+        }
+
+        /**
+         * 예약 변경 폼 정보 조회
+         */
+        public ReservationResponse.ChangeFormDTO getChangeForm(Long id) {
+                Reservation reservation = reservationRepository.findById(id)
+                                .orElseThrow(() -> new Exception404("해당 예약을 찾을 수 없습니다."));
+                return ReservationResponse.ChangeFormDTO.fromEntity(reservation);
+        }
+
+        /**
+         * 예약 변경 완료 상세 정보 조회
+         */
+        public ReservationResponse.ChangeDoneDTO getChangeDoneDetails(Long reservationId) {
+                // 해당 예약의 가장 최근 변경 요청(PENDING) 조회
+                List<ReservationChangeRequest> requests = reservationChangeRequestRepository
+                                .findByReservationId(reservationId);
+
+                ReservationChangeRequest latest = requests.stream()
+                                .filter(r -> r.getStatus() == RequestStatus.PENDING)
+                                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
+                                .findFirst()
+                                .orElseThrow(() -> new Exception404("변경 요청 내역을 찾을 수 없습니다."));
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
+                return ReservationResponse.ChangeDoneDTO.builder()
+                                .reservationId(reservationId)
+                                .newSiteName(latest.getNewSite().getSiteName())
+                                .newZoneName(latest.getNewSite().getZone().getName())
+                                .newCheckIn(latest.getNewCheckIn().format(formatter))
+                                .newCheckOut(latest.getNewCheckOut().format(formatter))
+                                .newPeopleCount(latest.getNewPeopleCount())
+                                .requestDate(latest.getCreatedAt().format(formatter))
+                                .build();
+        }
+
+        /**
+         * 예약 변경 요청 처리
+         */
+        @Transactional
+        public void requestChange(ReservationRequest.ChangeDTO dto, LoginDTO sessionUser) {
+                // 1. 원본 예약 조회 및 소유권 검증
+                Reservation reservation = reservationRepository.findById(dto.getReservationId())
+                                .orElseThrow(() -> new Exception404("예약을 찾을 수 없습니다."));
+
+                if (!reservation.getUser().getId().equals(sessionUser.getId())) {
+                        throw new Exception403("본인의 예약만 변경 요청할 수 있습니다.");
+                }
+
+                // 2. 새로운 사이트 조회
+                Site newSite = siteRepository.findById(dto.getNewSiteId())
+                                .orElseThrow(() -> new Exception404("변경하려는 사이트를 찾을 수 없습니다."));
+
+                // 3. 중복 예약 최종 체크 (가예약 Lock 로직 포함됨)
+                List<ReservationStatus> activeStatuses = List.of(
+                                ReservationStatus.PENDING,
+                                ReservationStatus.CONFIRMED,
+                                ReservationStatus.CHANGE_REQ);
+                boolean isExist = reservationRepository.existsBySiteIdAndDateRange(
+                                newSite.getId(), dto.getNewCheckIn(), dto.getNewCheckOut(), activeStatuses);
+
+                if (isExist) {
+                        throw new Exception400("해당 기간은 이미 예약되었거나 변경 요청 중인 자리입니다.");
+                }
+
+                // 4. 원본 예약 상태 변경 (CONFIRMED -> CHANGE_REQ)
+                reservation.updateStatus(ReservationStatus.CHANGE_REQ);
+
+                // 5. 변경 요청 기록 생성 및 저장
+                ReservationChangeRequest changeRequest = ReservationChangeRequest.builder()
+                                .reservation(reservation)
+                                .newCheckIn(dto.getNewCheckIn())
+                                .newCheckOut(dto.getNewCheckOut())
+                                .newSite(newSite)
+                                .newPeopleCount(dto.getNewPeopleCount())
+                                .status(com.camping.erp.domain.reservation.enums.RequestStatus.PENDING)
+                                .build();
+
+                reservationChangeRequestRepository.save(changeRequest);
         }
 }
