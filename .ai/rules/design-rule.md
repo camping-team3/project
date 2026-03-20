@@ -35,10 +35,12 @@
 ---
 
 ## 1. 디자인 토큰 전략 (Design Token Strategy)
+
 ... (기존 내용 동일)
 모든 UI 작업 시 하드코딩된 값 대신 `static/css/common.css`에 정의된 CSS 변수(`var(--fh-...)`)를 반드시 사용한다.
 
 ### 1.1 색상 시스템 (Color System)
+
 - **Primary**: `var(--fh-primary)` (#2c5926) - 브랜드 시그니처, 메인 버튼, 핵심 강조.
 - **Secondary**: `var(--fh-primary-light)` - 강조 요소 배경, 호버 배경.
 - **Background**: `var(--fh-bg-light)` (#f6f7f6) - 전체 페이지 기본 배경색.
@@ -47,6 +49,7 @@
 - **Border**: `var(--fh-border)` - 컴포넌트 간 부드러운 구분선.
 
 ### 1.2 레이아웃 및 형태 (Geometry)
+
 - **Radius**: `var(--fh-radius)` (1rem/16px) - 모든 카드, 버튼, 입력 필드에 공통 적용.
 - **Shadow**: Bootstrap `.shadow-sm` (일반), `.shadow` (카드), `.shadow-lg` (강조/배너) 표준 준수.
 
@@ -55,15 +58,18 @@
 ## 2. 공통 컴포넌트 표준 (Component Standards)
 
 ### 2.1 카드 컴포넌트 (.fh-card)
+
 - **구조**: 정보 단위를 담는 기본 컨테이너로 활용.
 - **스타일**: `background: white; border-radius: var(--fh-radius); border: 1px solid var(--fh-border);` 기본 적용.
 
 ### 2.2 버튼 컴포넌트 (.btn)
+
 - **Primary**: `.btn-primary` - 핵심 행동(등록, 예약, 저장).
 - **Secondary**: `.btn-outline` - 취소, 목록 이동 등 보조 행동.
 - **Icon Button**: `.btn-icon` 또는 `.btn-icon-square` - 호버 시 배경색 변화 효과 포함.
 
 ### 2.3 테이블 컴포넌트 (.fh-table)
+
 - **구조**: 관리자 및 사용자 목록형 데이터 표시용.
 - **헤더**: `.bg-light` 배경, `.text-xs fw-bold` 폰트 스타일 적용 필수.
 - **행**: `tr:hover` 시 `var(--fh-primary-light)` 배경색 적용으로 시각적 피드백 제공.

@@ -27,4 +27,15 @@ public class ReservationRequest {
         private String visitorName; // 방문객 성함 추가
         private String visitorPhone; // 방문객 연락처 추가
     }
+
+    @Getter
+    @Setter
+    public static class ChangeDTO {
+        private Long reservationId;
+        private Long newSiteId;
+        private LocalDate newCheckIn;
+        private LocalDate newCheckOut;
+        private Integer newPeopleCount;
+        private String reason;
+    }
 }

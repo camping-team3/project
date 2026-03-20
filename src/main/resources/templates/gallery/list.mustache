@@ -7,10 +7,6 @@
             <h2 class="display-6 fw-black text-primary mb-1">포토 갤러리</h2>
             <p class="text-secondary fw-medium m-0 small">커뮤니티 회원들의 소중한 순간들을 만나보세요.</p>
         </div>
-        <div class="d-flex gap-2">
-            <button class="btn btn-primary btn-sm rounded-pill px-3 fw-bold shadow-sm">최신순</button>
-            <button class="btn btn-light bg-white border border-secondary border-opacity-10 btn-sm rounded-pill px-3 fw-bold text-secondary">인기순</button>
-        </div>
     </div>
 
     <!-- Gallery Grid -->
@@ -47,6 +43,7 @@
     <div class="mt-5 pt-4 d-flex justify-content-center border-top border-light-subtle">
         <nav>
             <ul class="pagination pagination-sm m-0 gap-1">
+                <!-- Previous Button -->
                 {{#galleries.hasPrevious}}
                 <li class="page-item">
                     <a class="page-link border-0 rounded-2 text-dark fw-bold bg-white shadow-sm d-flex align-items-center justify-content-center" href="?page={{galleries.previousPage}}" style="width: 36px; height: 36px;">
@@ -54,16 +51,32 @@
                     </a>
                 </li>
                 {{/galleries.hasPrevious}}
+                {{^galleries.hasPrevious}}
+                <li class="page-item disabled">
+                    <a class="page-link border-0 rounded-2 text-secondary bg-white opacity-50 d-flex align-items-center justify-content-center" href="#" style="width: 36px; height: 36px; pointer-events: none;">
+                        <span class="material-symbols-outlined fs-6">chevron_left</span>
+                    </a>
+                </li>
+                {{/galleries.hasPrevious}}
                 
+                <!-- Page Numbers -->
                 {{#galleries.pageNumbers}}
                 <li class="page-item {{#active}}active{{/active}}">
                     <a class="page-link border-0 rounded-2 {{#active}}bg-primary text-white{{/active}}{{^active}}bg-white text-dark{{/active}} fw-bold shadow-sm d-flex align-items-center justify-content-center" href="?page={{pageIndex}}" style="width: 36px; height: 36px;">{{number}}</a>
                 </li>
                 {{/galleries.pageNumbers}}
                 
+                <!-- Next Button -->
                 {{#galleries.hasNext}}
                 <li class="page-item">
                     <a class="page-link border-0 rounded-2 text-dark fw-bold bg-white shadow-sm d-flex align-items-center justify-content-center" href="?page={{galleries.nextPage}}" style="width: 36px; height: 36px;">
+                        <span class="material-symbols-outlined fs-6">chevron_right</span>
+                    </a>
+                </li>
+                {{/galleries.hasNext}}
+                {{^galleries.hasNext}}
+                <li class="page-item disabled">
+                    <a class="page-link border-0 rounded-2 text-secondary bg-white opacity-50 d-flex align-items-center justify-content-center" href="#" style="width: 36px; height: 36px; pointer-events: none;">
                         <span class="material-symbols-outlined fs-6">chevron_right</span>
                     </a>
                 </li>

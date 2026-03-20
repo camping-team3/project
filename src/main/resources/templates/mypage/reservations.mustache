@@ -11,7 +11,7 @@
                                     <img src="https://ui-avatars.com/api/?name={{sessionUser.username}}&background=2c5926&color=fff" alt="Profile">
                                 </div>
                                 <div class="profile-info">
-                                    <h3>{{sessionUser.username}} 님</h3>
+                                    <h3>{{userName}} 님</h3>
                                     <p>Forest Member</p>
                                 </div>
                             </div>
@@ -42,67 +42,73 @@
                     <!-- Reservation List -->
                     <div class="d-flex flex-column gap-4">
 
-                        {{#model.reservations}}
-                        <div class="fh-card p-0 overflow-hidden shadow-sm">
+                        {{#reservations}}
+                        <div class="fh-card p-0 overflow-hidden shadow-sm mb-4"
+                             style="cursor: pointer;"
+                             onclick="if(!event.target.closest('.btn') && !event.target.closest('.nav-item')) location.href='/mypage/reservations/{{id}}/detail';">
                             <div class="d-flex flex-column flex-sm-row p-4 gap-4">
-                                <div class="reservation-thumb flex-shrink-0 rounded-3 overflow-hidden" style="width: 12rem; height: 8rem; {{#hasReview}}filter: grayscale(0.8);{{/hasReview}}">
-                                    <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=2070&auto=format&fit=crop" alt="Camping Site" class="w-100 h-100 object-fit-cover">
+                                <div class="reservation-thumb flex-shrink-0 rounded-3 overflow-hidden" style="width: 12rem; height: 8rem;">
+                                    <img src="{{siteImage}}" alt="{{siteName}}" class="w-100 h-100 object-fit-cover">
                                 </div>
                                 <div class="flex-grow-1">
                                     <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <span class="small fw-semibold text-uppercase text-{{statusClass}}">RSV-{{id}}</span>
-                                        <span class="badge bg-{{statusClass}} text-white px-3 py-1 small">{{statusText}}</span>
+                                        <span class="small fw-semibold text-uppercase text-primary">RESERV-{{id}}</span>
+                                        <span class="small text-secondary">예약일: {{reservationDate}}</span>
                                     </div>
-                                    <h4 class="fw-bold mb-2">{{zoneName}} - {{siteName}}</h4>
+                                    <h4 class="fw-bold mb-2">{{siteName}}</h4>
                                     <div class="d-flex align-items-center gap-2 small text-secondary mb-3">
                                         <span class="material-symbols-outlined fs-6">calendar_today</span>
-                                        <span>{{checkIn}} ~ {{checkOut}} ({{nights}}박)</span>
+                                        <span>{{checkIn}} ~ {{checkOut}}</span>
                                     </div>
                                     <div class="d-flex align-items-center justify-content-between pt-2 border-top">
-                                        <span class="fs-5 fw-bold">{{totalPrice}}원</span>
+                                        <span class="fs-5 fw-bold">{{totalPrice}}</span>
                                         <div class="d-flex gap-2">
-                                            {{#isReviewable}}
-                                            <a href="/reviews/new?reservationId={{id}}" class="btn btn-primary btn-sm d-flex align-items-center gap-1 shadow-sm">
+                                            {{#canModify}}
+                                            <a href="/mypage/reservations/{{id}}/change-form" class="btn btn-primary btn-sm d-flex align-items-center gap-1">
+                                                <span class="material-symbols-outlined fs-6">edit_calendar</span>
+                                                예약 변경
+                                            </a>
+                                            <a href="/mypage/reservations/{{id}}/cancel-form" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                                                <span class="material-symbols-outlined fs-6">cancel</span>
+                                                예약 취소
+                                            </a>
+                                            {{/canModify}}
+                                            {{#isWait}}
+                                            <div class="d-flex align-items-center gap-1 text-warning">
+                                                <span class="material-symbols-outlined small">pending</span>
+                                                <span class="small fw-bold">{{statusDescription}} 중</span>
+                                            </div>
+                                            {{/isWait}}
+
+                                            {{#isCompleted}}
+                                            <!-- 리뷰 도메인 담당자 작업 영역 -->
+                                            <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1">
                                                 <span class="material-symbols-outlined fs-6">rate_review</span>
                                                 리뷰 작성하기
-                                            </a>
-                                            {{/isReviewable}}
-                                            
-                                            {{#hasReview}}
+                                            </button>
+                                            {{/isCompleted}}
+
+                                            {{#isReviewDone}}
                                             <div class="d-flex align-items-center gap-1 text-primary">
                                                 <span class="material-symbols-outlined small">stars</span>
                                                 <span class="small fw-bold">리뷰 작성 완료</span>
                                             </div>
-                                            {{/hasReview}}
-
-                                            {{^isReviewable}}
-                                                {{^hasReview}}
-                                                <div class="d-flex gap-2">
-                                                    <a href="/mypage/reservations/{{id}}/change" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1">
-                                                        <span class="material-symbols-outlined fs-6">edit_calendar</span>
-                                                        예약 변경
-                                                    </a>
-                                                    <a href="/mypage/reservations/{{id}}/cancel" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
-                                                        <span class="material-symbols-outlined fs-6">cancel</span>
-                                                        예약 취소
-                                                    </a>
-                                                </div>
-                                                {{/hasReview}}
-                                            {{/isReviewable}}
+                                            {{/isReviewDone}}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        {{/model.reservations}}
+                        {{/reservations}}
 
-                        {{^model.reservations}}
+                        {{^reservations}}
                         <div class="fh-card p-5 text-center shadow-sm">
-                            <span class="material-symbols-outlined text-muted opacity-25 mb-3" style="font-size: 4rem;">event_busy</span>
-                            <p class="text-muted mb-0">예약 내역이 없습니다.</p>
-                            <a href="/reservations/new" class="btn btn-primary mt-3 px-4">예약하러 가기</a>
+                            <span class="material-symbols-outlined fs-1 text-secondary mb-3">calendar_today</span>
+                            <h4 class="fw-bold text-secondary">예약 내역이 없습니다.</h4>
+                            <p class="text-muted">다양한 캠핑 구역을 둘러보고 첫 예약을 진행해 보세요!</p>
+                            <a href="/reservations/new" class="btn btn-primary mt-3">예약하러 가기</a>
                         </div>
-                        {{/model.reservations}}
+                        {{/reservations}}
 
                     </div>
                 </main>
