@@ -110,6 +110,87 @@ public class ReviewService {
         return reviewRepository.findAll();
     }
 
+    // 마이페이지용 내 리뷰 조회
+    public List<ReviewResponse.ListDTO> findByUserId(Long userId) {
+        return reviewRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+                .map(ReviewResponse.ListDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public Review findById(Long id) {
+        return reviewRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+    }
+
+    @Transactional
+    public void update(Long reviewId, User user, ReviewRequest.UpdateDTO req) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+
+        if (!review.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("본인의 리뷰만 수정할 수 있습니다.");
+        }
+
+        // 평점 업데이트 (차이만큼 가감)
+        Site site = review.getReservation().getSite();
+        Zone zone = site.getZone();
+        
+        // 기존 점수 제거 후 새 점수 추가
+        site.removeRating(review.getRating());
+        zone.removeRating(review.getRating());
+        site.addRating(req.getRating());
+        zone.addRating(req.getRating());
+
+        // 내용 수정
+        review.update(req.getRating(), req.getContent());
+
+        // 이미지 업데이트 (이미지가 있는 경우 기존 것 삭제 후 새로 등록)
+        if (req.getImages() != null && !req.getImages().isEmpty() && !req.getImages().get(0).isEmpty()) {
+            // 기존 이미지 물리적 삭제
+            for (Image image : review.getImages()) {
+                fileUtil.deleteFile(image.getFileName());
+                imageRepository.delete(image);
+            }
+            review.getImages().clear();
+
+            // 새 이미지 저장
+            for (MultipartFile file : req.getImages()) {
+                if (file.isEmpty()) continue;
+                String fileName = fileUtil.uploadFile(file);
+                Image image = Image.builder()
+                        .review(review)
+                        .filePath("/upload/" + fileName)
+                        .fileName(fileName)
+                        .build();
+                imageRepository.save(image);
+            }
+        }
+    }
+
+    @Transactional
+    public void deleteByUser(Long reviewId, User user) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+
+        if (!review.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("본인의 리뷰만 삭제할 수 있습니다.");
+        }
+
+        // 평점 차감
+        Site site = review.getReservation().getSite();
+        Zone zone = site.getZone();
+        site.removeRating(review.getRating());
+        zone.removeRating(review.getRating());
+
+        // 이미지 물리적 삭제
+        for (Image image : review.getImages()) {
+            fileUtil.deleteFile(image.getFileName());
+            imageRepository.delete(image);
+        }
+
+        reviewRepository.delete(review);
+    }
+
     @Transactional
     public void save(User user, ReviewRequest.SaveDTO req) {
         // 1. 예약 검증

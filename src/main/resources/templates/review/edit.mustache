@@ -1,0 +1,65 @@
+{{> layout/header}}
+
+<div class="container py-5" style="max-width: 800px;">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-primary text-white p-4">
+            <h3 class="fw-bold m-0 d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined">edit_note</span>
+                리뷰 수정하기
+            </h3>
+            <p class="m-0 mt-1 opacity-75 small">{{review.reservation.site.siteName}} ({{review.reservation.site.zone.name}})</p>
+        </div>
+        <div class="card-body p-4 p-lg-5">
+            <form action="/reviews/{{review.id}}/update" method="post" enctype="multipart/form-data">
+                <!-- Rating Selection -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-dark d-block">별점을 선택해주세요</label>
+                    <div class="rating-input d-flex gap-2">
+                        <input type="radio" name="rating" value="1" id="star1" class="btn-check">
+                        <label for="star1" class="star-btn"><span class="material-symbols-outlined fs-2">star</span></label>
+                        
+                        <input type="radio" name="rating" value="2" id="star2" class="btn-check">
+                        <label for="star2" class="star-btn"><span class="material-symbols-outlined fs-2">star</span></label>
+                        
+                        <input type="radio" name="rating" value="3" id="star3" class="btn-check">
+                        <label for="star3" class="star-btn"><span class="material-symbols-outlined fs-2">star</span></label>
+                        
+                        <input type="radio" name="rating" value="4" id="star4" class="btn-check">
+                        <label for="star4" class="star-btn"><span class="material-symbols-outlined fs-2">star</span></label>
+                        
+                        <input type="radio" name="rating" value="5" id="star5" class="btn-check">
+                        <label for="star5" class="star-btn"><span class="material-symbols-outlined fs-2">star</span></label>
+                    </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="mb-4">
+                    <label for="content" class="form-label fw-bold text-dark">방문 경험을 들려주세요</label>
+                    <textarea name="content" id="content" class="form-control rounded-3 p-3" rows="8" placeholder="최소 10자 이상 작성해주세요.">{{review.content}}</textarea>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="mb-5">
+                    <label for="images" class="form-label fw-bold text-dark">사진 수정 (최대 5장)</label>
+                    <p class="small text-muted mb-2">* 새로운 사진을 업로드하면 기존 사진은 모두 교체됩니다.</p>
+                    <input type="file" name="images" id="images" class="form-control rounded-3" multiple accept="image/*">
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-primary btn-lg flex-grow-1 py-3 fw-bold rounded-3">수정 완료</button>
+                    <button type="button" onclick="history.back();" class="btn btn-light btn-lg px-4 py-3 fw-bold rounded-3 text-secondary">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .star-btn { cursor: pointer; color: #dee2e6; transition: color 0.2s; }
+    .btn-check:checked + .star-btn { color: #ffc107; }
+    .rating-input:has(.btn-check:checked) label:hover,
+    .rating-input:has(.btn-check:checked) label:hover ~ label { color: #ffca2c; }
+</style>
+
+{{> layout/footer}}

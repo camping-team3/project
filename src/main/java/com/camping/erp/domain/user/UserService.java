@@ -70,6 +70,11 @@ public class UserService {
                 .build();
     }
 
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
+    }
+
     // 전체 회원 목록 조회 (페이징)
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
