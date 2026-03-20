@@ -167,7 +167,13 @@ public class ReservationController {
     // 예약 변경 완료 페이지
     @GetMapping("/mypage/reservations/{id}/change-done")
     public String changeDone(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("id", id);
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        ReservationResponse.ChangeDoneDTO changeRequest = reservationService.getChangeDoneDetails(id);
+        model.addAttribute("changeRequest", changeRequest);
         return "mypage/reservation-change-done";
     }
     }

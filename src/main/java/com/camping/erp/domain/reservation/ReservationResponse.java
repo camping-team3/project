@@ -183,4 +183,19 @@ public class ReservationResponse {
                     .build();
         }
     }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ChangeDoneDTO {
+        private Long reservationId;
+        private String newSiteName;
+        private String newZoneName;
+        private String newCheckIn;
+        private String newCheckOut;
+        private Integer newPeopleCount;
+        private String requestDate;
+    }
 }

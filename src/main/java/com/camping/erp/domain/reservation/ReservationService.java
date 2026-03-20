@@ -44,7 +44,10 @@ public class ReservationService {
                 LocalDate checkIn = searchDTO.getCheckIn();
                 LocalDate checkOut = searchDTO.getCheckOut();
 
-                List<ReservationStatus> activeStatuses = List.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED,
+                List<ReservationStatus> activeStatuses = List.of(
+                                ReservationStatus.PENDING,
+                                ReservationStatus.CONFIRMED,
+                                ReservationStatus.CHANGE_REQ,
                                 ReservationStatus.CANCEL_REQ);
 
                 List<Site> availableSites = reservationRepository.findAvailableSites(
@@ -182,8 +185,10 @@ public class ReservationService {
                 Zone zone = site.getZone();
 
                 // 3. 최종 중복 체크
-                List<ReservationStatus> activeStatuses = List.of(ReservationStatus.PENDING,
-                                ReservationStatus.CONFIRMED);
+                List<ReservationStatus> activeStatuses = List.of(
+                                ReservationStatus.PENDING,
+                                ReservationStatus.CONFIRMED,
+                                ReservationStatus.CHANGE_REQ);
                 boolean isExist = reservationRepository.existsBySiteIdAndDateRange(
                                 site.getId(), request.getCheckIn(), request.getCheckOut(), activeStatuses);
 
@@ -272,6 +277,33 @@ public class ReservationService {
         }
 
         /**
+         * 예약 변경 완료 상세 정보 조회
+         */
+        public ReservationResponse.ChangeDoneDTO getChangeDoneDetails(Long reservationId) {
+                // 해당 예약의 가장 최근 변경 요청(PENDING) 조회
+                List<ReservationChangeRequest> requests = reservationChangeRequestRepository
+                                .findByReservationId(reservationId);
+
+                ReservationChangeRequest latest = requests.stream()
+                                .filter(r -> r.getStatus() == com.camping.erp.domain.reservation.enums.RequestStatus.PENDING)
+                                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
+                                .findFirst()
+                                .orElseThrow(() -> new Exception404("변경 요청 내역을 찾을 수 없습니다."));
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
+                return ReservationResponse.ChangeDoneDTO.builder()
+                                .reservationId(reservationId)
+                                .newSiteName(latest.getNewSite().getSiteName())
+                                .newZoneName(latest.getNewSite().getZone().getName())
+                                .newCheckIn(latest.getNewCheckIn().format(formatter))
+                                .newCheckOut(latest.getNewCheckOut().format(formatter))
+                                .newPeopleCount(latest.getNewPeopleCount())
+                                .requestDate(latest.getCreatedAt().format(formatter))
+                                .build();
+        }
+
+        /**
          * 예약 변경 요청 처리
          */
         @Transactional
@@ -289,7 +321,10 @@ public class ReservationService {
                                 .orElseThrow(() -> new Exception404("변경하려는 사이트를 찾을 수 없습니다."));
 
                 // 3. 중복 예약 최종 체크 (가예약 Lock 로직 포함됨)
-                List<ReservationStatus> activeStatuses = List.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED);
+                List<ReservationStatus> activeStatuses = List.of(
+                                ReservationStatus.PENDING,
+                                ReservationStatus.CONFIRMED,
+                                ReservationStatus.CHANGE_REQ);
                 boolean isExist = reservationRepository.existsBySiteIdAndDateRange(
                                 newSite.getId(), dto.getNewCheckIn(), dto.getNewCheckOut(), activeStatuses);
 
