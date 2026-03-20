@@ -1,21 +1,28 @@
 package com.camping.erp.domain.review;
 
+import com.camping.erp.domain.admin.AdminResponse;
 import com.camping.erp.domain.image.Image;
 import com.camping.erp.domain.image.ImageRepository;
 import com.camping.erp.domain.reservation.Reservation;
 import com.camping.erp.domain.reservation.ReservationRepository;
 import com.camping.erp.domain.reservation.enums.ReservationStatus;
 import com.camping.erp.domain.review.dto.ReviewRequest;
+import com.camping.erp.domain.review.dto.ReviewResponse;
 import com.camping.erp.domain.site.Site;
 import com.camping.erp.domain.site.Zone;
 import com.camping.erp.domain.user.User;
 import com.camping.erp.global.util.FileUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +32,79 @@ public class ReviewService {
     private final ReservationRepository reservationRepository;
     private final ImageRepository imageRepository;
     private final FileUtil fileUtil;
+
+    // 관리자용 리뷰 목록 조회 (페이징)
+    public AdminResponse.ReviewPageDTO findAllForAdmin(Pageable pageable) {
+        Page<Review> page = reviewRepository.findAllWithDetails(pageable);
+
+        List<AdminResponse.ReviewListDTO> dtoList = page.getContent().stream()
+                .map(r -> AdminResponse.ReviewListDTO.builder()
+                        .id(r.getId())
+                        .username(r.getUser().getUsername())
+                        .rating(r.getRating())
+                        .content(r.getContent())
+                        .zoneName(r.getReservation().getSite().getZone().getName())
+                        .siteName(r.getReservation().getSite().getSiteName())
+                        .createdAt(r.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                        .images(r.getImages().stream().map(Image::getFileName).collect(Collectors.toList()))
+                        .build())
+                .toList();
+
+        int totalPages = page.getTotalPages();
+        int currentPage = page.getNumber();
+        int startPage = Math.max(0, (currentPage / 5) * 5);
+        int endPage = Math.min(startPage + 4, totalPages - 1);
+
+        List<AdminResponse.PageNumberDTO> pageNumbers = IntStream.rangeClosed(startPage, endPage)
+                .mapToObj(n -> AdminResponse.PageNumberDTO.builder()
+                        .number(n)
+                        .displayDigit(n + 1)
+                        .isCurrent(n == currentPage)
+                        .build())
+                .toList();
+
+        AdminResponse.PaginationDTO pagination = AdminResponse.PaginationDTO.builder()
+                .totalPages(totalPages)
+                .totalElements(page.getTotalElements())
+                .currentPage(currentPage)
+                .pageNumbers(pageNumbers)
+                .hasPrev(page.hasPrevious())
+                .hasNext(page.hasNext())
+                .prevPage(currentPage - 1)
+                .nextPage(currentPage + 1)
+                .build();
+
+        return AdminResponse.ReviewPageDTO.builder()
+                .reviews(dtoList)
+                .pagination(pagination)
+                .build();
+    }
+
+    public ReviewResponse.ListWrapperDTO findAll(Pageable pageable) {
+        Page<Review> reviewPage = reviewRepository.findAllWithDetails(pageable);
+        Double avgRating = reviewRepository.findAverageRating();
+        long totalCount = reviewRepository.count();
+
+        List<ReviewResponse.ListDTO> reviews = reviewPage.getContent().stream()
+                .map(ReviewResponse.ListDTO::new)
+                .collect(Collectors.toList());
+
+        List<ReviewResponse.PageNumberDTO> pages = IntStream.range(0, reviewPage.getTotalPages())
+                .boxed()
+                .map(n -> new ReviewResponse.PageNumberDTO(n, reviewPage.getNumber()))
+                .collect(Collectors.toList());
+
+        return ReviewResponse.ListWrapperDTO.builder()
+                .reviews(reviews)
+                .avgRating(avgRating != null ? Math.round(avgRating * 10) / 10.0 : 0.0)
+                .totalCount(totalCount)
+                .hasPrev(reviewPage.hasPrevious())
+                .hasNext(reviewPage.hasNext())
+                .pages(pages)
+                .prevPage(reviewPage.getNumber() - 1)
+                .nextPage(reviewPage.getNumber() + 1)
+                .build();
+    }
 
     public List<Review> findAll() {
         return reviewRepository.findAll();
