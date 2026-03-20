@@ -70,6 +70,7 @@
                     </td>
                     <td class="px-4 py-4 text-end">
                         <div class="d-flex justify-content-end gap-2">
+                            <button class="btn btn-icon text-primary" onclick="location.href='/admin/reservations/{{id}}'"><span class="material-symbols-outlined fs-5">visibility</span></button>
                             {{#isPending}}
                             <button class="btn btn-primary btn-sm px-3 fw-bold border-0">승인</button>
                             <button class="btn btn-light bg-danger bg-opacity-10 text-danger btn-sm px-3 fw-bold border-0">거절</button>

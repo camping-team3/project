@@ -12,6 +12,19 @@
         </button>
     </div>
 
+    <!-- Search Bar -->
+    <div class="mb-4">
+        <form action="/admin/galleries" method="GET" class="d-flex gap-2" style="max-width: 400px;">
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white border-end-0">
+                    <span class="material-symbols-outlined fs-5 text-secondary">search</span>
+                </span>
+                <input type="text" name="keyword" class="form-control border-start-0 ps-0" placeholder="제목 또는 내용 검색" value="{{#keyword}}{{keyword}}{{/keyword}}">
+                <button class="btn btn-primary fw-bold" type="submit">검색</button>
+            </div>
+        </form>
+    </div>
+
     <!-- Table Card -->
     <div class="fh-card shadow-sm border-primary border-opacity-10 overflow-hidden bg-white mb-4">
         <div class="table-responsive">
@@ -57,7 +70,7 @@
                     {{/galleries.content}}
                     {{^galleries.content}}
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-secondary fw-medium">등록된 포토갤러리 게시글이 없습니다.</td>
+                        <td colspan="6" class="text-center py-5 text-secondary fw-medium">검색 결과가 없거나 등록된 포토갤러리 게시글이 없습니다.</td>
                     </tr>
                     {{/galleries.content}}
                 </tbody>
@@ -65,13 +78,14 @@
         </div>
 
         <!-- Pagination -->
+        {{#galleries.pageNumbers.size}}
         <div class="px-4 py-3 bg-light bg-opacity-50 d-flex justify-content-between align-items-center border-top">
             <div class="text-secondary small">총 {{galleries.totalElements}}개 항목</div>
             <nav>
                 <ul class="pagination pagination-sm m-0 gap-1">
                     {{#galleries.hasPrevious}}
                     <li class="page-item">
-                        <a class="page-link border-0 rounded-2 text-dark fw-bold bg-white shadow-sm d-flex align-items-center justify-content-center" href="?page={{galleries.previousPage}}" style="width: 32px; height: 32px;">
+                        <a class="page-link border-0 rounded-2 text-dark fw-bold bg-white shadow-sm d-flex align-items-center justify-content-center" href="?page={{galleries.previousPage}}&keyword={{#keyword}}{{keyword}}{{/keyword}}" style="width: 32px; height: 32px;">
                             <span class="material-symbols-outlined fs-6">chevron_left</span>
                         </a>
                     </li>
@@ -86,13 +100,13 @@
                     
                     {{#galleries.pageNumbers}}
                     <li class="page-item {{#active}}active{{/active}}">
-                        <a class="page-link border-0 rounded-2 {{#active}}bg-primary text-white{{/active}}{{^active}}bg-white text-dark{{/active}} fw-bold shadow-sm d-flex align-items-center justify-content-center" href="?page={{pageIndex}}" style="width: 32px; height: 32px;">{{number}}</a>
+                        <a class="page-link border-0 rounded-2 {{#active}}bg-primary text-white{{/active}}{{^active}}bg-white text-dark{{/active}} fw-bold shadow-sm d-flex align-items-center justify-content-center" href="?page={{pageIndex}}&keyword={{#keyword}}{{keyword}}{{/keyword}}" style="width: 32px; height: 32px;">{{number}}</a>
                     </li>
                     {{/galleries.pageNumbers}}
                     
                     {{#galleries.hasNext}}
                     <li class="page-item">
-                        <a class="page-link border-0 rounded-2 text-dark fw-bold bg-white shadow-sm d-flex align-items-center justify-content-center" href="?page={{galleries.nextPage}}" style="width: 32px; height: 32px;">
+                        <a class="page-link border-0 rounded-2 text-dark fw-bold bg-white shadow-sm d-flex align-items-center justify-content-center" href="?page={{galleries.nextPage}}&keyword={{#keyword}}{{keyword}}{{/keyword}}" style="width: 32px; height: 32px;">
                             <span class="material-symbols-outlined fs-6">chevron_right</span>
                         </a>
                     </li>
@@ -107,6 +121,7 @@
                 </ul>
             </nav>
         </div>
+        {{/galleries.pageNumbers.size}}
     </div>
 </div>
 {{> layout/admin-footer}}
