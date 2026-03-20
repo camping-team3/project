@@ -16,8 +16,8 @@
 - [x] **Task 2: Payment(결제 이력) 엔티티 및 Repository 구현**
   - [x] `Payment` 엔티티 생성: 결제 고유 ID(imp_uid), 결제 수단, 결제 금액, 상태(PAID, CANCELLED), 결제 시각 등 저장
   - [x] `Reservation` 엔티티와 1:1 연관관계 설정
-- [ ] **Task 3: 예약 선점(Lock) 스케줄러 구현**
-  - `ReservationScheduler`: `PENDING` 상태로 생성된 지 10분이 초과된 예약 데이터를 1분 주기로 자동 삭제
+- [x] **Task 3: 예약 선점(Lock) 스케줄러 구현**
+  - [x] `ReservationScheduler`: `PENDING` 상태로 생성된 지 10분이 초과된 예약 데이터를 1분 주기로 자동 삭제
 
 ### 2단계: 결제 프로세스 및 선점 해제 구현 (Phase 3-2.2)
 - [ ] **Task 4: 선점 즉시 해제 API 구현**
