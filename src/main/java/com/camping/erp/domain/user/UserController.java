@@ -25,7 +25,7 @@ public class UserController {
     @GetMapping("/api/users/check-username")
     public @ResponseBody ResponseEntity<?> checkUsername(@RequestParam("username") String username) {
         boolean isDuplicate = userService.existsByUsername(username);
-        if (isDuplicate) {  
+        if (isDuplicate) {
             return Resp.fail(org.springframework.http.HttpStatus.BAD_REQUEST, "이미 존재하는 아이디입니다.");
         }
         return Resp.ok("사용 가능한 아이디입니다.");
