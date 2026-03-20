@@ -19,13 +19,9 @@
                 <h3 class="h5 fw-bold text-primary mb-4 border-bottom pb-3">변경 신청 상세 내역</h3>
                 
                 <div class="row g-4">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <div class="small text-secondary mb-1">예약 번호</div>
                         <div class="fw-bold">RESERV-{{changeRequest.reservationId}}</div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="small text-secondary mb-1">신청 일자</div>
-                        <div class="fw-bold">{{changeRequest.requestDate}}</div>
                     </div>
                     <div class="col-sm-12">
                         <div class="small text-secondary mb-1">신청 사이트</div>
@@ -38,7 +34,7 @@
                             <span class="fw-bold">{{changeRequest.newCheckIn}} ~ {{changeRequest.newCheckOut}}</span>
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <div class="small text-secondary mb-1">변경 인원</div>
                         <div class="fw-bold">{{changeRequest.newPeopleCount}}인</div>
                     </div>
