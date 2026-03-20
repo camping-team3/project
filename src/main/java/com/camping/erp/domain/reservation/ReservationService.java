@@ -268,7 +268,7 @@ public class ReservationService {
         public ReservationResponse.DetailDTO getReservationDetail(Long id) {
                 Reservation reservation = reservationRepository.findById(id)
                                 .orElseThrow(() -> new Exception404("해당 예약을 찾을 수 없습니다."));
-                return ReservationResponse.DetailDTO.fromEntity(reservation);
+                return ReservationResponse.DetailDTO.fromEntity(reservation, LocalDate.now());
         }
 
         /**

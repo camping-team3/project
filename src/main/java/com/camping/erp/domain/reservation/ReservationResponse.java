@@ -4,8 +4,10 @@ import com.camping.erp.domain.reservation.enums.ReservationStatus;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Locale;
 
 public class ReservationResponse {
@@ -120,15 +122,32 @@ public class ReservationResponse {
         private String totalPrice;
         private String visitorName;
         private String visitorPhone;
+        private Integer peopleCount;
         private String reservationDate;
         private String status;
         private String statusDescription;
 
-        public static DetailDTO fromEntity(Reservation reservation) {
+        // 상태 제어 플래그
+        private boolean canModify;
+        private boolean isWait;
+        private boolean isCompleted;
+
+        // 요청 이력
+        private List<ChangeRequestHistoryDTO> changeRequests;
+        private List<CancelRequestHistoryDTO> cancelRequests;
+
+        public static DetailDTO fromEntity(Reservation reservation, LocalDate today) {
             long nights = ChronoUnit.DAYS.between(reservation.getCheckIn(), reservation.getCheckOut());
             String dayOfWeekIn = reservation.getCheckIn().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
-            String dayOfWeekOut = reservation.getCheckOut().getDayOfWeek().getDisplayName(TextStyle.SHORT,
-                    Locale.KOREAN);
+            String dayOfWeekOut = reservation.getCheckOut().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+
+            List<ChangeRequestHistoryDTO> changeHistories = reservation.getChangeRequests().stream()
+                    .map(ChangeRequestHistoryDTO::fromEntity)
+                    .toList();
+
+            List<CancelRequestHistoryDTO> cancelHistories = reservation.getCancelRequests().stream()
+                    .map(CancelRequestHistoryDTO::fromEntity)
+                    .toList();
 
             return DetailDTO.builder()
                     .id(reservation.getId())
@@ -141,13 +160,75 @@ public class ReservationResponse {
                     .totalPrice(String.format("%,d원", reservation.getTotalPrice()))
                     .visitorName(reservation.getVisitorName())
                     .visitorPhone(reservation.getVisitorPhone())
-                    .reservationDate(reservation.getCreatedAt().toLocalDate().toString().replace("-", "."))
+                    .peopleCount(reservation.getPeopleCount())
+                    .reservationDate(reservation.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))
                     .status(reservation.getStatus().name())
                     .statusDescription(reservation.getStatus() == ReservationStatus.CONFIRMED ? "예약 확정"
                             : reservation.getStatus() == ReservationStatus.CHANGE_REQ ? "변경 승인 대기"
                                     : reservation.getStatus() == ReservationStatus.CANCEL_REQ ? "취소 승인 대기"
                                             : reservation.getStatus() == ReservationStatus.COMPLETED ? "이용 완료"
                                                     : "취소 완료")
+                    .canModify(reservation.getStatus() == ReservationStatus.CONFIRMED
+                            && reservation.getCheckIn().isAfter(today))
+                    .isWait(reservation.getStatus() == ReservationStatus.CHANGE_REQ
+                            || reservation.getStatus() == ReservationStatus.CANCEL_REQ)
+                    .isCompleted(reservation.getStatus() == ReservationStatus.COMPLETED)
+                    .changeRequests(changeHistories)
+                    .cancelRequests(cancelHistories)
+                    .build();
+        }
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ChangeRequestHistoryDTO {
+        private Long id;
+        private String requestDate;
+        private String newCheckIn;
+        private String newCheckOut;
+        private String newSiteName;
+        private String status;
+        private String statusDescription;
+        private String rejectionReason;
+
+        public static ChangeRequestHistoryDTO fromEntity(ReservationChangeRequest request) {
+            return ChangeRequestHistoryDTO.builder()
+                    .id(request.getId())
+                    .requestDate(request.getCreatedAt().toLocalDate().toString().replace("-", "."))
+                    .newCheckIn(request.getNewCheckIn().toString().replace("-", "."))
+                    .newCheckOut(request.getNewCheckOut().toString().replace("-", "."))
+                    .newSiteName(request.getNewSite().getSiteName())
+                    .status(request.getStatus().name())
+                    .statusDescription(request.getStatus().getDescription())
+                    .rejectionReason(request.getRejectionReason())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CancelRequestHistoryDTO {
+        private Long id;
+        private String requestDate;
+        private String reason;
+        private String status;
+        private String statusDescription;
+        private String rejectionReason;
+
+        public static CancelRequestHistoryDTO fromEntity(ReservationCancelRequest request) {
+            return CancelRequestHistoryDTO.builder()
+                    .id(request.getId())
+                    .requestDate(request.getCreatedAt().toLocalDate().toString().replace("-", "."))
+                    .reason(request.getReason())
+                    .status(request.getStatus().name())
+                    .statusDescription(request.getStatus().getDescription())
+                    .rejectionReason(request.getRejectionReason())
                     .build();
         }
     }

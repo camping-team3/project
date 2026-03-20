@@ -48,10 +48,15 @@
     - `CONFIRMED`: 예약변경/예약취소 버튼 노출
     - `COMPLETED`: [리뷰 작성하기] (Placeholder 확보)
     - `CHANGE_REQ`/`CANCEL_REQ`: "승인 대기 중" 상태 표시
-- [ ] **3-2. 예약 상세 페이지 구현**
-  - 컨트롤러: `/mypage/reservation/{id}/detail`
-  - 머스타치: `templates/mypage/reservation-detail.mustache` (신규 생성/구현 예정)
-  - 기능: 기본 예약 정보 + 요청 이력(상태, 거절 사유 포함) 리스트 출력
+- [x] **3-2. 예약 상세 페이지 구현 (고객용)**
+  - 컨트롤러: `/mypage/reservations/{id}/detail` (기존 매핑 활용)
+  - 머스타치: `templates/mypage/reservation-detail.mustache` (더미 데이터 교체 및 기능 구현)
+  - 세부 구현 내용:
+    - `ReservationResponse.DetailDTO` 확장: 요청 이력(변경/취소) 리스트 및 상태 플래그(`canModify`, `isWait` 등) 추가
+    - `ReservationService.getReservationDetail` 보완: 연관된 요청 이력 데이터를 포함하여 DTO 변환
+    - UI 구현: `reservations.mustache`와 동일한 버튼 스타일(색상, 아이콘, 크기) 적용 및 기능 연결
+    - 이력 섹션 추가: 과거 변경/취소 요청들의 처리 상태 및 거절 사유 출력
+    - 디자인 원칙: 기존 상세 페이지의 레이아웃과 CSS를 100% 보존하며 데이터만 연동
 - [x] **3-3. 예약 변경 요청 기능 및 가예약(Lock) 로직 구현**
   - 컨트롤러: `/mypage/reservation/{id}/change-form` (GET, POST)
   - 머스타치: `templates/mypage/reservation-change.mustache`, `templates/mypage/reservation-change-done.mustache`
