@@ -1,8 +1,175 @@
 {{> layout/header}}
 
-예약 상세 페이지입니당! 추후 개발 예정
-{{reservation.id}}
-{{reservation.checkIn}}
-{{reservation.checkOut}}
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Sidebar Navigation (공통 스타일 적용) -->
+        <aside class="col-lg-3">
+            <div class="fh-card p-4 mb-4">
+                <div class="fh-profile-card">
+                    <div class="profile-section">
+                        <div class="profile-img">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuArVyFD1kByWmCBF0Rz4ccl-L4vIMovS-krTT4u-KVYHhX2hMPUkaQzOLuSXFNkjKwDG0hbQZ7gaRgh8ytv6BK6xFB6ClZmg6H-wq586rl1mmMaOrnlkhWvj-w0KNrgyc3qLGo11qHIdPwOfdKeuTDw6OltxRnbG17NoLNHNk1YZI1Li_g3-PSh5baMbRafh3KgP2jo5_izMzuKYzAJm9zDtUrAJHJSePSvnmDcctJdXnbujZtx4x7j3Nub2X0XNELdrx0zZBwepMns" alt="Profile">
+                        </div>
+                        <div class="profile-info">
+                            <h3>{{user.name}} 님</h3>
+                            <p>{{user.role}} Member</p>
+                        </div>
+                    </div>
+                </div>
+                <nav class="fh-sidebar-nav">
+                    <a href="/mypage" class="nav-item">
+                        <span class="material-symbols-outlined">home</span>
+                        <span>홈</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="material-symbols-outlined">person</span>
+                        <span>회원 정보</span>
+                    </a>
+                    <a href="/mypage/reservations" class="nav-item active">
+                        <span class="material-symbols-outlined">calendar_today</span>
+                        <span>예약 내역</span>
+                    </a>
+                    <a href="/mypage/reviews" class="nav-item">
+                        <span class="material-symbols-outlined">rate_review</span>
+                        <span>내가 적은 리뷰</span>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="col-lg-9">
+            <!-- Back Link (제목 위로 이동) -->
+            <nav class="mb-3 px-1">
+                <a href="/mypage/reservations" class="text-decoration-none text-primary fw-bold small d-inline-flex align-items-center gap-1">
+                    <span class="material-symbols-outlined fs-6">arrow_back</span>
+                    예약 내역으로 돌아가기
+                </a>
+            </nav>
+
+            <section class="mb-5">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 fw-bold mb-0">예약 상세 내역</h1>
+                    <span class="badge bg-primary px-3 py-2 fs-6">예약 완료</span>
+                </div>
+
+                <!-- Summary Card -->
+                <div class="fh-card p-4 mb-4 border-primary border-start border-4 shadow-sm">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <span class="small text-muted text-uppercase fw-bold">Reservation ID</span>
+                            <h2 class="h4 fw-bold text-primary mb-3">RSV-20231024-001</h2>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="d-flex align-items-center gap-1 text-dark fw-bold">
+                                    <span class="material-symbols-outlined fs-5">forest</span>
+                                    오크우드 03
+                                </div>
+                                <div class="text-muted">|</div>
+                                <div class="d-flex align-items-center gap-1 text-secondary small">
+                                    <span class="material-symbols-outlined fs-5">payments</span>
+                                    총 250,000원
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <p class="small text-muted mb-1">예약 일시</p>
+                            <p class="fw-bold mb-0">2023.10.24 14:30</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Grid -->
+                <div class="row g-4 mb-4">
+                    <!-- Schedule Info -->
+                    <div class="col-md-6">
+                        <div class="fh-card p-4 h-100 shadow-sm">
+                            <h3 class="h6 fw-bold mb-4 d-flex align-items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">calendar_month</span>
+                                이용 일정 정보
+                            </h3>
+                            <div class="d-flex flex-column gap-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted small">체크인</span>
+                                    <span class="fw-bold">2023.11.10 (금) 14:00</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted small">체크아웃</span>
+                                    <span class="fw-bold">2023.11.12 (일) 11:00</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                                    <span class="text-muted small">숙박 기간</span>
+                                    <span class="badge bg-light text-dark border fw-bold px-3">2박 3일</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Visitor Info -->
+                    <div class="col-md-6">
+                        <div class="fh-card p-4 h-100 shadow-sm">
+                            <h3 class="h6 fw-bold mb-4 d-flex align-items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">person</span>
+                                예약자 및 방문 정보
+                            </h3>
+                            <div class="d-flex flex-column gap-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted small">방문자 성함</span>
+                                    <span class="fw-bold">홍길동</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted small">연락처</span>
+                                    <span class="fw-bold">010-1234-5678</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                                    <span class="text-muted small">이용 인원</span>
+                                    <span class="fw-bold">성인 2, 아동 1 (총 3명)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Details -->
+                <div class="fh-card p-4 mb-5 shadow-sm">
+                    <h3 class="h6 fw-bold mb-4 d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">receipt_long</span>
+                        결제 정보 상세
+                    </h3>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted">기본 숙박 요금 (오크우드 03)</span>
+                            <span>180,000원</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted">추가 인원 요금 (1명)</span>
+                            <span>20,000원</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted">성수기 할증</span>
+                            <span>50,000원</span>
+                        </div>
+                        <hr class="my-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 fw-bold mb-0">총 결제 금액</span>
+                            <span class="h4 fw-bold text-primary mb-0">250,000원</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="/mypage/reservations/1/change" class="btn btn-primary px-4 py-2.5 fw-bold d-flex align-items-center gap-2 shadow-sm">
+                        <span class="material-symbols-outlined fs-5">edit_calendar</span>
+                        예약 일정 변경
+                    </a>
+                    <a href="/mypage/reservations/1/cancel" class="btn btn-outline-danger px-4 py-2.5 fw-bold d-flex align-items-center gap-2 shadow-sm">
+                        <span class="material-symbols-outlined fs-5">cancel</span>
+                        예약 취소 신청
+                    </a>
+                    <a href="/mypage/reservations" class="btn btn-outline-secondary px-4 py-2.5 fw-bold ms-auto">목록으로</a>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
 
 {{> layout/footer}}
