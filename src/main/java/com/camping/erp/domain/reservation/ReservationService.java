@@ -10,7 +10,6 @@ import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.Zone;
 import com.camping.erp.domain.user.User;
 import com.camping.erp.domain.user.UserRepository;
-import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.domain.user.UserResponse.LoginDTO;
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.handler.ex.Exception401;
@@ -19,11 +18,11 @@ import com.camping.erp.global.handler.ex.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -285,7 +284,7 @@ public class ReservationService {
                                 .findByReservationId(reservationId);
 
                 ReservationChangeRequest latest = requests.stream()
-                                .filter(r -> r.getStatus() == com.camping.erp.domain.reservation.enums.RequestStatus.PENDING)
+                                .filter(r -> r.getStatus() == RequestStatus.PENDING)
                                 .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
                                 .findFirst()
                                 .orElseThrow(() -> new Exception404("변경 요청 내역을 찾을 수 없습니다."));

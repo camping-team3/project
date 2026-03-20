@@ -32,7 +32,8 @@ public class ReservationResponse {
         private boolean isReviewDone; // 리뷰 작성 완료 (추후 확장용)
 
         public static ListDTO fromEntity(Reservation reservation, LocalDate today) {
-            String dayOfWeek = reservation.getCheckIn().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+            String dayOfWeekIn = reservation.getCheckIn().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+            String dayOfWeekOut = reservation.getCheckOut().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
 
             // TODO: Site/Zone 이미지 연관관계 확정 후 이미지 경로 로직 보완 예정
             // 현재 Site 엔티티에 images 연관관계가 없어 임시로 upload 폴더의 이미지를 사용함
@@ -42,8 +43,8 @@ public class ReservationResponse {
                     .id(reservation.getId())
                     .siteName(reservation.getSite().getSiteName())
                     .siteImage(imageUrl)
-                    .checkIn(reservation.getCheckIn().toString().replace("-", ".") + " (" + dayOfWeek + ")")
-                    .checkOut(reservation.getCheckOut().toString().replace("-", "."))
+                    .checkIn(reservation.getCheckIn().toString().replace("-", ".") + " (" + dayOfWeekIn + ")")
+                    .checkOut(reservation.getCheckOut().toString().replace("-", ".") + " (" + dayOfWeekOut + ")")
                     .totalPrice(String.format("%,d원", reservation.getTotalPrice()))
                     .reservationDate(reservation.getCreatedAt().toLocalDate().toString().replace("-", "."))
                     .canModify(reservation.getStatus() == ReservationStatus.CONFIRMED
