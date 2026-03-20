@@ -1,5 +1,8 @@
 package com.camping.erp.domain.user;
 
+import com.camping.erp.domain.reservation.ReservationResponse;
+import com.camping.erp.domain.reservation.ReservationService;
+import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.global.util.Resp;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class UserController {
 
     private final UserService userService;
+    private final ReservationService reservationService;
 
     @GetMapping("/api/users/check-username")
     public @ResponseBody ResponseEntity<?> checkUsername(@RequestParam("username") String username) {
