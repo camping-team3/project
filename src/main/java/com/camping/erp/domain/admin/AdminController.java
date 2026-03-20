@@ -50,7 +50,16 @@ public class AdminController {
     private final HttpSession session;
 
     @GetMapping("/admin")
-    public String dashboard() {
+    public String dashboard(Model model) {
+        // 1. 미처리 QnA 통계 개수 조회 (unansweredCount 포함)
+        Map<String, Long> stats = qnaService.getStatistics();
+        model.addAllAttributes(stats);
+
+        // 2. 미처리 QnA 목록 최신 5개 조회 (status="pending" 필터 적용)
+        Pageable pageable = PageRequest.of(0, 5, Sort.by("id").descending());
+        QnaResponse.PageDTO pageDTO = qnaService.findAll("pending", null, pageable);
+        model.addAttribute("unansweredQnas", pageDTO.getQnas());
+
         return "admin/dashboard";
     }
 
