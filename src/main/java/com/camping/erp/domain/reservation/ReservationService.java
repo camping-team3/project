@@ -191,7 +191,8 @@ public class ReservationService {
                 List<ReservationStatus> activeStatuses = List.of(
                                 ReservationStatus.PENDING,
                                 ReservationStatus.CONFIRMED,
-                                ReservationStatus.CHANGE_REQ);
+                                ReservationStatus.CHANGE_REQ,
+                                ReservationStatus.CANCEL_REQ);
                 boolean isExist = reservationRepository.existsBySiteIdAndDateRange(
                                 site.getId(), request.getCheckIn(), request.getCheckOut(), activeStatuses);
 
@@ -327,7 +328,8 @@ public class ReservationService {
                 List<ReservationStatus> activeStatuses = List.of(
                                 ReservationStatus.PENDING,
                                 ReservationStatus.CONFIRMED,
-                                ReservationStatus.CHANGE_REQ);
+                                ReservationStatus.CHANGE_REQ,
+                                ReservationStatus.CANCEL_REQ);
                 boolean isExist = reservationRepository.existsBySiteIdAndDateRange(
                                 newSite.getId(), dto.getNewCheckIn(), dto.getNewCheckOut(), activeStatuses);
 
