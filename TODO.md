@@ -10,9 +10,9 @@
 ## 🛠️ 개발 단계 및 태스크 (Implementation Plan)
 
 ### 1단계: 환경 구축 및 데이터 모델 설계 (Phase 3-2.1)
-- [ ] **Task 1: 결제 환경 설정 및 Mock 구조 설계**
-  - `application.properties` 내 포트원 API 키(`STORE_ID`, `CHANNEL_KEY` 등) 구조 정의
-  - 테스트 계정 부재 시를 대비한 Mock 결제 서비스 인터페이스 설계
+- [x] **Task 1: 결제 환경 설정 및 Mock 구조 설계**
+  - [x] `application.properties` 내 포트원 API 키(`STORE_ID`, `CHANNEL_KEY` 등) 구조 정의
+  - [x] 테스트 계정 부재 시를 대비한 Mock 결제 서비스 인터페이스 설계
 - [ ] **Task 2: Payment(결제 이력) 엔티티 및 Repository 구현**
   - `Payment` 엔티티 생성: 결제 고유 ID(imp_uid), 결제 수단, 결제 금액, 상태(PAID, CANCELLED), 결제 시각 등 저장
   - `Reservation` 엔티티와 1:1 연관관계 설정
