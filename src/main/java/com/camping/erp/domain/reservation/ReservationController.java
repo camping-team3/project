@@ -7,10 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -142,7 +139,16 @@ public class ReservationController {
 
         ReservationResponse.ChangeFormDTO reservation = reservationService.getChangeForm(id);
         model.addAttribute("reservation", reservation);
+        model.addAttribute("userName", sessionUser.getName()); // 사용자 이름 추가
         return "mypage/reservation-change";
+    }
+
+    // [API] 예약 변경을 위한 가용 사이트 실시간 조회 (AJAX)
+    @GetMapping("/api/reservations/available-sites")
+    @ResponseBody
+    public List<SiteResponse.ResevationAvailableListDTO> getAvailableSites(ReservationRequest.SearchDTO searchDTO) {
+        // 기존 서비스 로직 재활용
+        return reservationService.findAvailableSites(searchDTO);
     }
 
     // 예약 변경 요청 처리
