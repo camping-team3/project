@@ -69,18 +69,34 @@
             </table>
         </div>
         <!-- Pagination -->
+        {{#pagination}}
         <div class="px-4 py-3 bg-light bg-opacity-50 d-flex justify-content-between align-items-center border-top">
-            <div class="text-secondary small">전체 105건 중 1-5 표시</div>
+            <div class="text-secondary small">전체 {{totalElements}}건 중 현재 페이지 표시</div>
             <nav>
                 <ul class="pagination pagination-sm m-0 gap-1">
+                    {{#hasPrev}}
+                    <li class="page-item"><a class="page-link border bg-transparent text-secondary rounded" href="/admin/qna?status={{status}}&page={{prevPage}}"><span class="material-symbols-outlined fs-6">chevron_left</span></a></li>
+                    {{/hasPrev}}
+                    {{^hasPrev}}
                     <li class="page-item disabled"><a class="page-link border bg-transparent text-secondary rounded" href="#"><span class="material-symbols-outlined fs-6">chevron_left</span></a></li>
-                    <li class="page-item active"><a class="page-link border-0 rounded bg-primary text-white fw-bold" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link border rounded text-dark fw-bold" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link border rounded text-dark fw-bold" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link border bg-transparent text-secondary rounded" href="#"><span class="material-symbols-outlined fs-6">chevron_right</span></a></li>
+                    {{/hasPrev}}
+
+                    {{#pageNumbers}}
+                    <li class="page-item {{#isCurrent}}active{{/isCurrent}}">
+                        <a class="page-link border {{^isCurrent}}rounded text-dark fw-bold{{/isCurrent}} {{#isCurrent}}border-0 rounded bg-primary text-white fw-bold{{/isCurrent}}" href="/admin/qna?status={{status}}&page={{number}}">{{displayDigit}}</a>
+                    </li>
+                    {{/pageNumbers}}
+
+                    {{#hasNext}}
+                    <li class="page-item"><a class="page-link border bg-transparent text-secondary rounded" href="/admin/qna?status={{status}}&page={{nextPage}}"><span class="material-symbols-outlined fs-6">chevron_right</span></a></li>
+                    {{/hasNext}}
+                    {{^hasNext}}
+                    <li class="page-item disabled"><a class="page-link border bg-transparent text-secondary rounded" href="#"><span class="material-symbols-outlined fs-6">chevron_right</span></a></li>
+                    {{/hasNext}}
                 </ul>
             </nav>
         </div>
+        {{/pagination}}
     </div>
 
     <!-- Stats Summary -->

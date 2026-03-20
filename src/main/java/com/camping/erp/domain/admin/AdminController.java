@@ -233,17 +233,27 @@ public class AdminController {
     }
 
     @GetMapping("/admin/qna")
-    public String qnaList(@RequestParam(value = "status", defaultValue = "all") String status, Model model) {
+    public String qnaList(
+            @RequestParam(value = "status", defaultValue = "all") String status,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
+        
         UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
-        List<QnaResponse.ListDTO> qnas = qnaService.findAll(status, sessionAdmin);
-        model.addAttribute("qnas", qnas);
+        
+        // 관리자용도 동일하게 5개씩 최신순 페이징 적용
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
+        
+        QnaResponse.PageDTO pageDTO = qnaService.findAll(status, sessionAdmin, pageable);
+        
+        model.addAttribute("qnas", pageDTO.getQnas());
+        model.addAttribute("pagination", pageDTO);
 
         // 통계 데이터 추가
         Map<String, Long> stats = qnaService.getStatistics();
         model.addAllAttributes(stats);
 
         // 필터링 활성화 상태 표시용
-        model.addAttribute("status", "all".equalsIgnoreCase(status) ? null : status);
+        model.addAttribute("status", status);
         model.addAttribute("isAll", "all".equalsIgnoreCase(status));
         model.addAttribute("isPending", "pending".equalsIgnoreCase(status));
         model.addAttribute("isCompleted", "completed".equalsIgnoreCase(status));

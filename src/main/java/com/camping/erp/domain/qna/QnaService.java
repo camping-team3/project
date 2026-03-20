@@ -6,6 +6,8 @@ import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.handler.ex.Exception403;
 import com.camping.erp.global.handler.ex.Exception404;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -37,20 +40,48 @@ public class QnaService {
         return stats;
     }
 
-    // 전체 목록 조회 (필터링 포함)
-    public List<QnaResponse.ListDTO> findAll(String status, UserResponse.LoginDTO sessionUser) {
-        List<Qna> qnas;
+    // 전체 목록 조회 (페이징 및 필터링 포함)
+    public QnaResponse.PageDTO findAll(String status, UserResponse.LoginDTO sessionUser, Pageable pageable) {
+        Page<Qna> page;
         if ("pending".equalsIgnoreCase(status)) {
-            qnas = qnaRepository.findByIsAnsweredWithUser(false);
+            page = qnaRepository.findByIsAnsweredWithUser(false, pageable);
         } else if ("completed".equalsIgnoreCase(status)) {
-            qnas = qnaRepository.findByIsAnsweredWithUser(true);
+            page = qnaRepository.findByIsAnsweredWithUser(true, pageable);
         } else {
-            qnas = qnaRepository.findAllWithUser();
+            page = qnaRepository.findAllWithUser(pageable);
         }
         
-        return qnas.stream()
+        List<QnaResponse.ListDTO> dtoList = page.getContent().stream()
                 .map(qna -> new QnaResponse.ListDTO(qna, sessionUser))
                 .toList();
+
+        int totalPages = page.getTotalPages();
+        int currentPage = page.getNumber();
+
+        // 하단 페이지 번호 5개씩 노출 로직
+        int startPage = Math.max(0, (currentPage / 5) * 5);
+        int endPage = Math.min(startPage + 4, totalPages - 1);
+
+        List<QnaResponse.PageNumberDTO> pageNumbers = IntStream.rangeClosed(startPage, endPage)
+                .mapToObj(n -> QnaResponse.PageNumberDTO.builder()
+                        .number(n)
+                        .displayDigit(n + 1)
+                        .isCurrent(n == currentPage)
+                        .build())
+                .toList();
+
+        return QnaResponse.PageDTO.builder()
+                .qnas(dtoList)
+                .status(status)
+                .currentPage(currentPage)
+                .totalPages(totalPages)
+                .totalElements(page.getTotalElements())
+                .pageNumbers(pageNumbers)
+                .hasPrev(page.hasPrevious())
+                .hasNext(page.hasNext())
+                .prevPage(currentPage - 1)
+                .nextPage(currentPage + 1)
+                .build();
     }
 
     // 상세 조회

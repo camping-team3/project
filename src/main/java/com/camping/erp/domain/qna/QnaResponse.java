@@ -4,6 +4,7 @@ import com.camping.erp.domain.qna.enums.QnaCategory;
 import com.camping.erp.domain.user.User;
 import com.camping.erp.domain.user.UserResponse;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,6 +36,29 @@ public class QnaResponse {
             // 본인 확인 로직
             this.isOwner = sessionUser != null && qna.getUser() != null && qna.getUser().getId().equals(sessionUser.getId());
         }
+    }
+
+    @Getter @Setter
+    @Builder
+    public static class PageDTO {
+        private List<ListDTO> qnas;
+        private String status;
+        private Integer currentPage;
+        private Integer totalPages;
+        private Long totalElements;
+        private List<PageNumberDTO> pageNumbers;
+        private boolean hasPrev;
+        private boolean hasNext;
+        private Integer prevPage;
+        private Integer nextPage;
+    }
+
+    @Getter @Setter
+    @Builder
+    public static class PageNumberDTO {
+        private Integer number;
+        private Integer displayDigit;
+        private boolean isCurrent;
     }
 
     @Getter @Setter

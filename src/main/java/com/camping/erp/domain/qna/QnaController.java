@@ -3,6 +3,9 @@ package com.camping.erp.domain.qna;
 import com.camping.erp.domain.user.UserResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +20,20 @@ public class QnaController {
     private final HttpSession session;
 
     @GetMapping("/qna")
-    public String list(@RequestParam(value = "status", defaultValue = "all") String status, Model model) {
+    public String list(
+            @RequestParam(value = "status", defaultValue = "all") String status,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
+        
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
-        List<QnaResponse.ListDTO> qnas = qnaService.findAll(status, sessionUser);
-        model.addAttribute("qnas", qnas);
+        
+        // 5개씩, 최신순(ID 기준) 정렬
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
+        
+        QnaResponse.PageDTO pageDTO = qnaService.findAll(status, sessionUser, pageable);
+        
+        model.addAttribute("qnas", pageDTO.getQnas());
+        model.addAttribute("pagination", pageDTO);
         
         // 필터링 활성화 상태 표시용
         model.addAttribute("isAll", "all".equalsIgnoreCase(status));
