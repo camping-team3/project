@@ -29,21 +29,21 @@ INSERT INTO user_tb (id, username, password, name, email, phone, role, status, c
 -- ==========================================================
 -- 2. 구역 정보 (zone_tb) - ID 명시
 -- ==========================================================
-INSERT INTO zone_tb (id, name, normal_price, peak_price, base_people, extra_person_fee, created_at) VALUES 
-(1, 'A구역(오토캠핑)', 50000, 80000, 2, 10000, NOW()),
-(2, 'B구역(글램핑)', 150000, 250000, 2, 20000, NOW()),
-(3, 'C구역(카라반)', 120000, 200000, 2, 15000, NOW());
+INSERT INTO zone_tb (id, name, normal_price, peak_price, base_people, extra_person_fee, avg_rating, review_count, created_at) VALUES 
+(1, 'A구역(오토캠핑)', 50000, 80000, 2, 10000, 0.0, 0, NOW()),
+(2, 'B구역(글램핑)', 150000, 250000, 2, 20000, 0.0, 0, NOW()),
+(3, 'C구역(카라반)', 120000, 200000, 2, 15000, 0.0, 0, NOW());
 
 -- ==========================================================
 -- 3. 사이트 정보 (site_tb) - ID 명시 및 정확한 FK 참조
 -- ==========================================================
-INSERT INTO site_tb (id, zone_id, site_name, max_people, is_available, created_at) VALUES 
-(1, 1, 'A-1', 4, true, NOW()), 
-(2, 1, 'A-2', 4, true, NOW()), 
-(3, 1, 'A-3', 6, true, NOW()),
-(4, 2, 'B-1', 2, true, NOW()), 
-(5, 2, 'B-2', 4, false, NOW()), 
-(6, 3, 'C-1', 4, true, NOW());
+INSERT INTO site_tb (id, zone_id, site_name, max_people, is_available, avg_rating, review_count, created_at) VALUES 
+(1, 1, 'A-1', 4, true, 0.0, 0, NOW()), 
+(2, 1, 'A-2', 4, true, 0.0, 0, NOW()), 
+(3, 1, 'A-3', 6, true, 0.0, 0, NOW()),
+(4, 2, 'B-1', 2, true, 0.0, 0, NOW()), 
+(5, 2, 'B-2', 4, false, 0.0, 0, NOW()), 
+(6, 3, 'C-1', 4, true, 0.0, 0, NOW());
 
 -- ==========================================================
 -- 4. 성수기 정보 (season_tb)

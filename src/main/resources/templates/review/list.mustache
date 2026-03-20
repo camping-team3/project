@@ -1,0 +1,119 @@
+{{> layout/header}}
+
+<main class="container py-5">
+    <!-- Hero Section -->
+    <section class="text-center mb-5">
+        <h2 class="fw-black text-primary mb-2" style="font-size: 2.5rem;">캠퍼들의 생생한 후기</h2>
+        <p class="text-muted">포레스트 헤이븐에서 만든 소중한 추억들을 공유합니다.</p>
+    </section>
+
+    <!-- Review Stats -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8">
+            <div class="fh-card p-4 shadow-sm bg-white d-flex align-items-center justify-content-around text-center">
+                <div>
+                    <div class="text-muted small mb-1">전체 평균 평점</div>
+                    <div class="d-flex align-items-center gap-2 justify-content-center">
+                        <span class="material-symbols-outlined text-warning" style="font-variation-settings: 'FILL' 1;">star</span>
+                        <h3 class="fw-bold mb-0">{{model.avgRating}}</h3>
+                    </div>
+                </div>
+                <div style="width: 1px; height: 40px; background: var(--fh-border);"></div>
+                <div>
+                    <div class="text-muted small mb-1">총 리뷰 수</div>
+                    <h3 class="fw-bold mb-0">{{model.totalCount}}건</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Grid -->
+    <div class="row g-4">
+        {{#model.reviews}}
+        <div class="col-md-6 col-lg-4">
+            <article class="fh-card h-100 shadow-sm hover-shadow transition-all bg-white overflow-hidden">
+                <!-- Review Images -->
+                {{#images.0}}
+                <div class="ratio ratio-16x9">
+                    <img src="/upload/{{fileName}}" class="object-fit-cover" alt="Review Image">
+                    {{#hasMoreImages}}
+                    <div class="position-absolute bottom-0 end-0 m-2 px-2 py-1 bg-dark bg-opacity-75 text-white small rounded">
+                        +{{imageCount}}
+                    </div>
+                    {{/hasMoreImages}}
+                </div>
+                {{/images.0}}
+                {{^images}}
+                <div class="ratio ratio-16x9 bg-light d-flex align-items-center justify-content-center">
+                    <span class="material-symbols-outlined text-muted opacity-25" style="font-size: 3rem;">image</span>
+                </div>
+                {{/images}}
+
+                <div class="p-4">
+                    <!-- Rating & Date -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex gap-1 text-warning">
+                            {{#ratingStars}}
+                            <span class="material-symbols-outlined small" style="font-variation-settings: 'FILL' 1;">star</span>
+                            {{/ratingStars}}
+                        </div>
+                        <span class="text-muted small">{{createdAt}}</span>
+                    </div>
+
+                    <!-- Content -->
+                    <h5 class="fw-bold text-truncate mb-2">{{username}}님의 후기</h5>
+                    <p class="text-muted small mb-4 review-content" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; height: 4.5em;">
+                        {{content}}
+                    </p>
+
+                    <!-- Footer Info -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <span class="badge bg-primary-light text-primary fw-bold rounded-pill px-3">
+                            {{zoneName}} - {{siteName}}
+                        </span>
+                        <a href="/sites/{{siteId}}" class="text-primary text-decoration-none small fw-bold d-flex align-items-center gap-1 hover-underline">
+                            사이트 보기 <span class="material-symbols-outlined small">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </div>
+        {{/model.reviews}}
+        {{^model.reviews}}
+        <div class="col-12 text-center py-5">
+            <span class="material-symbols-outlined text-muted opacity-25 mb-3" style="font-size: 4rem;">rate_review</span>
+            <p class="text-muted">아직 작성된 리뷰가 없습니다. 첫 번째 후기를 기다릴게요!</p>
+        </div>
+        {{/model.reviews}}
+    </div>
+
+    <!-- Pagination -->
+    <nav class="d-flex justify-content-center mt-5">
+        <ul class="pagination gap-2">
+            {{#model.hasPrev}}
+            <li class="page-item"><a class="page-link rounded-circle border-0 bg-light" href="?page={{model.prevPage}}"><span class="material-symbols-outlined">chevron_left</span></a></li>
+            {{/model.hasPrev}}
+            
+            {{#model.pages}}
+            <li class="page-item {{#active}}active{{/active}}">
+                <a class="page-link rounded-circle border-0 {{^active}}bg-light{{/active}}" href="?page={{number}}">{{displayNumber}}</a>
+            </li>
+            {{/model.pages}}
+
+            {{#model.hasNext}}
+            <li class="page-item"><a class="page-link rounded-circle border-0 bg-light" href="?page={{model.nextPage}}"><span class="material-symbols-outlined">chevron_right</span></a></li>
+            {{/model.hasNext}}
+        </ul>
+    </nav>
+</main>
+
+<style>
+    .hover-shadow:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+    .transition-all { transition: all 0.3s ease; }
+    .bg-primary-light { background-color: var(--fh-primary-light); }
+    .page-link { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--fh-text-main); font-weight: 600; }
+    .page-item.active .page-link { background-color: var(--fh-primary); color: white; }
+    .object-fit-cover { object-fit: cover; }
+</style>
+
+{{> layout/footer}}
