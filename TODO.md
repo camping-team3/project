@@ -1,4 +1,25 @@
 <<<<<<< HEAD
+# 🌲 Forest Haven ERP 개발 체크리스트
+
+## ✅ Phase 2: MVP 핵심 도메인 로직 완료
+- [x] 사용자/관리자 상세보기 및 포토 갤러리 조회수 구현 완료
+
+## 🚀 Phase 3: 확장 도메인 - 예약 상세 보기 (MyPage & Admin) [완료]
+
+### 1. MyPage 예약 상세 보기 [✅ 완료]
+- [x] **UI 구현**: `reservation-detail.mustache` 생성 및 `reservation-detail.css` 작성
+- [x] **링크 연결**: `home.mustache`, `reservations.mustache` 버튼에 상세 보기 링크 연결
+- [x] **매핑 추가**: `UserController`에 상세 보기 엔드포인트 추가
+
+### 2. Admin 예약 상세 보기 [✅ 완료]
+- [x] **UI 구현**: `admin/reservation/detail.mustache` 생성 및 `detail.css` 작성
+- [x] **링크 연결**: `admin/reservation/list.mustache`에 상세 보기(눈 아이콘) 버튼 추가
+- [x] **매핑 추가**: `AdminController`에 상세 보기 엔드포인트 추가
+
+---
+*(이후 작업은 Payment 및 예약 선점 로직으로 이어집니다.)*
+=======
+<<<<<<< HEAD
 # 📋 Forest Haven ERP Project TODO
 
 ## Phase 2: MVP 핵심 도메인 (완료)
@@ -123,4 +144,5 @@
 - [ ] **5-2. 비즈니스 규칙 및 예외 처리 검증**: 이용일(체크인)이 이미 지난 예약에 대해 변경/취소 요청 시도 시 예외 처리 확인
 - [ ] **5-3. 최종 리포트 작성 및 TODO.md 완료 체크**
   - 경로: `.person/reports/{YYYY-MM-DD}/reservation-extension-report.md` 작성
+>>>>>>> dev
 >>>>>>> dev
