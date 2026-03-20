@@ -72,7 +72,7 @@
 
                     <!-- Change Request Form -->
                     <section>
-                        <form action="/mypage/reservations/change-request" method="POST" class="fh-card shadow-sm">
+                        <form action="/mypage/reservations/{{reservation.id}}/change-request" method="POST" class="fh-card shadow-sm">
                             <input type="hidden" name="reservationId" value="{{reservation.id}}">
                             <!-- 임시로 기존 사이트 ID를 새 사이트 ID로 설정 (추후 사이트 선택 UI 고도화 가능) -->
                             <input type="hidden" name="newSiteId" value="1"> 

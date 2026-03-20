@@ -43,9 +43,9 @@
                     <div class="d-flex flex-column gap-4">
 
                         {{#reservations}}
-                        <div class="fh-card p-0 overflow-hidden shadow-sm mb-4" 
-                             style="cursor: pointer;" 
-                             onclick="if(!event.target.closest('.btn') && !event.target.closest('.nav-item')) location.href='/mypage/reservation/{{id}}/detail';">
+                        <div class="fh-card p-0 overflow-hidden shadow-sm mb-4"
+                             style="cursor: pointer;"
+                             onclick="if(!event.target.closest('.btn') && !event.target.closest('.nav-item')) location.href='/mypage/reservations/{{id}}/detail';">
                             <div class="d-flex flex-column flex-sm-row p-4 gap-4">
                                 <div class="reservation-thumb flex-shrink-0 rounded-3 overflow-hidden" style="width: 12rem; height: 8rem;">
                                     <img src="{{siteImage}}" alt="{{siteName}}" class="w-100 h-100 object-fit-cover">
@@ -64,16 +64,15 @@
                                         <span class="fs-5 fw-bold">{{totalPrice}}</span>
                                         <div class="d-flex gap-2">
                                             {{#canModify}}
-                                            <a href="/mypage/reservation/change-form/{{id}}" class="btn btn-primary btn-sm d-flex align-items-center gap-1">
+                                            <a href="/mypage/reservations/{{id}}/change-form" class="btn btn-primary btn-sm d-flex align-items-center gap-1">
                                                 <span class="material-symbols-outlined fs-6">edit_calendar</span>
                                                 예약 변경
                                             </a>
-                                            <a href="/mypage/reservation/cancel-form/{{id}}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                                            <a href="/mypage/reservations/{{id}}/cancel-form" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
                                                 <span class="material-symbols-outlined fs-6">cancel</span>
                                                 예약 취소
                                             </a>
                                             {{/canModify}}
-
                                             {{#isWait}}
                                             <div class="d-flex align-items-center gap-1 text-warning">
                                                 <span class="material-symbols-outlined small">pending</span>
