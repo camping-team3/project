@@ -39,6 +39,7 @@ public class ReservationService {
         private final SiteRepository siteRepository;
         private final UserRepository userRepository; // 유저 조회를 위해 추가
         private final ReservationChangeRequestRepository reservationChangeRequestRepository; // 변경 요청 처리를 위해 추가
+        private final ReservationCancelRequestRepository reservationCancelRequestRepository; // 취소 요청 처리를 위해 추가
 
         // 예약 가능한 사이트 목록 조회 (가예약 Lock 로직 포함됨)
         public List<SiteResponse.ResevationAvailableListDTO> findAvailableSites(
@@ -348,5 +349,60 @@ public class ReservationService {
                                 .build();
 
                 reservationChangeRequestRepository.save(changeRequest);
+        }
+
+        /**
+         * 예약 취소 요청 처리
+         */
+        @Transactional
+        public void requestCancel(ReservationRequest.CancelDTO dto, LoginDTO sessionUser) {
+                // 1. 원본 예약 조회 및 소유권 검증
+                Reservation reservation = reservationRepository.findById(dto.getReservationId())
+                                .orElseThrow(() -> new Exception404("예약을 찾을 수 없습니다."));
+
+                if (!reservation.getUser().getId().equals(sessionUser.getId())) {
+                        throw new Exception403("본인의 예약만 취소 요청할 수 있습니다.");
+                }
+
+                // 2. 비즈니스 규칙 검증 (이용일 3일 전 체크)
+                LocalDate limitDate = reservation.getCheckIn().minusDays(3);
+                if (LocalDate.now().isAfter(limitDate)) {
+                        throw new Exception400("이용일 3일 전까지만 온라인 취소가 가능합니다. 고객센터로 문의해주세요.");
+                }
+
+                // 3. 원본 예약 상태 변경 (CONFIRMED -> CANCEL_REQ)
+                reservation.updateStatus(ReservationStatus.CANCEL_REQ);
+
+                // 4. 취소 요청 기록 생성 및 저장
+                ReservationCancelRequest cancelRequest = ReservationCancelRequest.builder()
+                                .reservation(reservation)
+                                .reason(dto.getReason())
+                                .refundBank(dto.getRefundBank())
+                                .refundAccount(dto.getRefundAccount())
+                                .refundAccountHolder(dto.getRefundAccountHolder())
+                                .status(RequestStatus.PENDING)
+                                .build();
+
+                reservationCancelRequestRepository.save(cancelRequest);
+        }
+
+        /**
+         * 예약 취소 요청 완료 정보 조회
+         */
+        public ReservationResponse.CancelDoneDTO getCancelDoneDetails(Long reservationId) {
+                List<ReservationCancelRequest> requests = reservationCancelRequestRepository
+                                .findByReservationId(reservationId);
+
+                ReservationCancelRequest latest = requests.stream()
+                                .filter(r -> r.getStatus() == RequestStatus.PENDING)
+                                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
+                                .findFirst()
+                                .orElseThrow(() -> new Exception404("취소 요청 내역을 찾을 수 없습니다."));
+
+                return ReservationResponse.CancelDoneDTO.builder()
+                                .reservationId(reservationId)
+                                .reason(latest.getReason())
+                                .requestDate(latest.getCreatedAt().toLocalDate().toString().replace("-", "."))
+                                .build();
         }
 }

@@ -38,4 +38,14 @@ public class ReservationRequest {
         private Integer newPeopleCount;
         private String reason;
     }
+
+    @Getter
+    @Setter
+    public static class CancelDTO {
+        private Long reservationId;
+        private String reason; // 취소 사유
+        private String refundBank; // 환불 은행
+        private String refundAccount; // 환불 계좌번호
+        private String refundAccountHolder; // 예금주
+    }
 }

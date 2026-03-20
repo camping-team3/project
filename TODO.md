@@ -58,11 +58,11 @@
   - 서비스 로직:
     - 변경 요청 시 `Reservation`의 상태를 `CHANGE_REQ`로 변경
     - 중복 예약 체크 시 `Reservation.status = CHANGE_REQ`인 원본 자리 보호 및 `ReservationChangeRequest.status = PENDING`인 새로운 자리 가예약 처리
-- [ ] **3-4. 예약 취소 요청 기능 구현**
+- [x] **3-4. 예약 취소 요청 기능 구현**
   - 컨트롤러: `/mypage/reservation/{id}/cancel-form` (GET, POST)
   - 머스타치: `templates/mypage/reservation-cancel.mustache`, `templates/mypage/reservation-cancel-done.mustache`
   - 서비스 로직: 취소 요청 시 `Reservation`의 상태를 `CANCEL_REQ`로 변경
-- [ ] **3-5. 상태 기반 UI 제어 로직 적용**
+- [x] **3-5. 상태 기반 UI 제어 로직 적용**
   - 로직: `checkInDate`가 현재 날짜 이후인 경우에만 변경/취소 버튼 노출 (Mustache 내에서 처리)
 
 ## 3단계: 관리자 예약 관리 (Admin Side)

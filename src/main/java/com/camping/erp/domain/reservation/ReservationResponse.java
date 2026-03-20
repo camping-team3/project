@@ -199,4 +199,15 @@ public class ReservationResponse {
         private Integer newPeopleCount;
         private String requestDate;
     }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CancelDoneDTO {
+        private Long reservationId;
+        private String reason;
+        private String requestDate;
+    }
 }
