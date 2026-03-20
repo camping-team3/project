@@ -9,6 +9,7 @@ import com.camping.erp.domain.notice.NoticeService;
 import com.camping.erp.domain.qna.QnaResponse;
 import com.camping.erp.domain.qna.QnaService;
 import com.camping.erp.domain.reservation.ReservationService;
+import com.camping.erp.domain.review.ReviewService;
 import com.camping.erp.domain.site.SiteRequest;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
@@ -45,11 +46,27 @@ public class AdminController {
     private final NoticeService noticeService;
     private final GalleryService galleryService;
     private final QnaService qnaService;
+    private final ReviewService reviewService;
     private final HttpSession session;
 
     @GetMapping("/admin")
     public String dashboard() {
         return "admin/dashboard";
+    }
+
+    // --- 리뷰 관리 ---
+    @GetMapping("/admin/reviews")
+    public String reviewList(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+        AdminResponse.ReviewPageDTO response = reviewService.findAllForAdmin(pageable);
+        model.addAttribute("response", response);
+        return "admin/review/list";
+    }
+
+    @PostMapping("/admin/reviews/{id}/delete")
+    public String deleteReview(@PathVariable("id") Long id) {
+        reviewService.deleteByAdmin(id);
+        return "redirect:/admin/reviews";
     }
 
     // --- 사이트 관리 ---
