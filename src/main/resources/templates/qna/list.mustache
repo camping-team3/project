@@ -79,13 +79,38 @@
             </div>
 
             <!-- Pagination -->
+            {{#pagination}}
             <div class="d-flex justify-content-center gap-2 mt-5">
-                <button class="btn btn-icon border border-secondary border-opacity-10 btn-light bg-white rounded-3"><span class="material-symbols-outlined fs-6">chevron_left</span></button>
-                <button class="btn btn-primary px-3 py-1.5 small fw-bold rounded-3">1</button>
-                <button class="btn btn-light bg-white border border-secondary border-opacity-10 px-3 py-1.5 small fw-bold text-secondary rounded-3">2</button>
-                <button class="btn btn-light bg-white border border-secondary border-opacity-10 px-3 py-1.5 small fw-bold text-secondary rounded-3">3</button>
-                <button class="btn btn-icon border border-secondary border-opacity-10 btn-light bg-white rounded-3"><span class="material-symbols-outlined fs-6">chevron_right</span></button>
+                {{#hasPrev}}
+                <a href="/qna?status={{status}}&page={{prevPage}}" class="btn btn-icon border border-secondary border-opacity-10 btn-light bg-white rounded-3">
+                    <span class="material-symbols-outlined fs-6">chevron_left</span>
+                </a>
+                {{/hasPrev}}
+                {{^hasPrev}}
+                <button class="btn btn-icon border border-secondary border-opacity-10 btn-light bg-white rounded-3 opacity-50 cursor-not-allowed" disabled>
+                    <span class="material-symbols-outlined fs-6">chevron_left</span>
+                </button>
+                {{/hasPrev}}
+
+                {{#pageNumbers}}
+                <a href="/qna?status={{status}}&page={{number}}" 
+                   class="btn {{#isCurrent}}btn-primary{{/isCurrent}}{{^isCurrent}}btn-light bg-white border border-secondary border-opacity-10 text-secondary{{/isCurrent}} px-3 py-1.5 small fw-bold rounded-3">
+                   {{displayDigit}}
+                </a>
+                {{/pageNumbers}}
+
+                {{#hasNext}}
+                <a href="/qna?status={{status}}&page={{nextPage}}" class="btn btn-icon border border-secondary border-opacity-10 btn-light bg-white rounded-3">
+                    <span class="material-symbols-outlined fs-6">chevron_right</span>
+                </a>
+                {{/hasNext}}
+                {{^hasNext}}
+                <button class="btn btn-icon border border-secondary border-opacity-10 btn-light bg-white rounded-3 opacity-50 cursor-not-allowed" disabled>
+                    <span class="material-symbols-outlined fs-6">chevron_right</span>
+                </button>
+                {{/hasNext}}
             </div>
+            {{/pagination}}
         </main>
 
 {{> layout/footer}}
