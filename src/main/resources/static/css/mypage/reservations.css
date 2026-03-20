@@ -1,5 +1,24 @@
 /* 04마이페이지_예약내역.css - My Reservation History Specific Styles */
 
+/* 브랜드 전용 버튼 스타일 강화 (테두리 및 가독성 개선) */
+.btn-outline-fh {
+    color: var(--fh-primary) !important;
+    border: 1.5px solid var(--fh-primary) !important;
+    background-color: rgba(44, 89, 38, 0.03) !important;
+    font-weight: 700 !important;
+    padding: 0.4rem 0.8rem !important;
+    transition: all 0.2s ease-in-out !important;
+    border-radius: 0.5rem !important;
+}
+
+.btn-outline-fh:hover {
+    color: white !important;
+    background-color: var(--fh-primary) !important;
+    border-color: var(--fh-primary) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(44, 89, 38, 0.2) !important;
+}
+
 /* Navbar Brand Icon */
 .navbar-brand-icon {
     background: var(--fh-primary);

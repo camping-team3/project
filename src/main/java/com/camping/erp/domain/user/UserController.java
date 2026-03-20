@@ -107,4 +107,16 @@ public class UserController {
     public String reservationCancelDone(@PathVariable("id") Long id) {
         return "mypage/reservation-cancel-done";
     }
+
+    // 예약 상세 보기
+    @GetMapping("/mypage/reservations/{id}")
+    public String reservationDetail(@PathVariable("id") Long id, Model model, HttpSession session) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
+        return "mypage/reservation-detail";
+    }
 }

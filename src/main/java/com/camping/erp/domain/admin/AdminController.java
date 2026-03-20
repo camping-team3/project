@@ -117,6 +117,12 @@ public class AdminController {
         return "admin/reservation/cancel-detail";
     }
 
+    // 예약 상세 보기
+    @GetMapping("/admin/reservations/{id}")
+    public String reservationDetail(@PathVariable("id") Long id) {
+        return "admin/reservation/detail";
+    }
+
     // --- 공지사항 관리 ---
     @GetMapping("/admin/notices")
     public String noticeList(@RequestParam(name = "keyword", defaultValue = "") String keyword,
@@ -166,9 +172,12 @@ public class AdminController {
 
     // --- 갤러리 관리 ---
     @GetMapping("/admin/galleries")
-    public String galleryList(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        Page<GalleryResponse.ListDTO> galleryPage = galleryService.findAll(pageable);
+    public String galleryList(@PageableDefault(size = 10) Pageable pageable, 
+                              @RequestParam(value = "keyword", required = false) String keyword, 
+                              Model model) {
+        Page<GalleryResponse.ListDTO> galleryPage = galleryService.findAll(pageable, keyword);
         model.addAttribute("galleries", new PageResponse<>(galleryPage));
+        model.addAttribute("keyword", keyword);
         return "admin/gallery/list";
     }
 
