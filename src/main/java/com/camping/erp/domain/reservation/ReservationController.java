@@ -7,9 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -95,4 +93,87 @@ public class ReservationController {
 
         return "reservation/complete";
     }
-}
+
+    // 마이페이지 예약 목록 조회
+    @GetMapping("/mypage/reservations")
+    public String reservations(Model model) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        // 본인 예약 목록 조회 (최신순)
+        List<Reservation> reservationList = reservationService.findByUserIdOrderByCreatedAtDesc(sessionUser.getId());
+
+        // DTO 변환 및 오늘 날짜 기준 버튼 노출 로직 계산
+        LocalDate today = LocalDate.now();
+        List<ReservationResponse.ListDTO> dtos = reservationList.stream()
+                .map(r -> ReservationResponse.ListDTO.fromEntity(r, today))
+                .toList();
+
+        model.addAttribute("reservations", dtos);
+        model.addAttribute("userName", sessionUser.getName());
+        return "mypage/reservations";
+    }
+
+    // 마이페이지 예약 상세 조회
+    @GetMapping("/mypage/reservations/{id}/detail")
+    public String reservationDetail(@PathVariable("id") Long id, Model model) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        ReservationResponse.DetailDTO reservation = reservationService.getReservationDetail(id);
+        model.addAttribute("reservation", reservation);
+        return "mypage/reservation-detail";
+    }
+
+    // 예약 변경 폼 조회
+    @GetMapping("/mypage/reservations/{id}/change-form")
+    public String changeForm(@PathVariable("id") Long id, Model model) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        ReservationResponse.ChangeFormDTO reservation = reservationService.getChangeForm(id);
+        model.addAttribute("reservation", reservation);
+        model.addAttribute("userName", sessionUser.getName()); // 사용자 이름 추가
+        return "mypage/reservation-change";
+    }
+
+    // [API] 예약 변경을 위한 가용 사이트 실시간 조회 (AJAX)
+    @GetMapping("/api/reservations/available-sites")
+    @ResponseBody
+    public List<SiteResponse.ResevationAvailableListDTO> getAvailableSites(ReservationRequest.SearchDTO searchDTO) {
+        // 기존 서비스 로직 재활용
+        return reservationService.findAvailableSites(searchDTO);
+    }
+
+    // 예약 변경 요청 처리
+    @PostMapping("/mypage/reservations/{id}/change-request")
+    public String changeRequest(@PathVariable("id") Long id, ReservationRequest.ChangeDTO dto) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        dto.setReservationId(id);
+        reservationService.requestChange(dto, sessionUser);
+        return "redirect:/mypage/reservations/" + id + "/change-done";
+    }
+
+    // 예약 변경 완료 페이지
+    @GetMapping("/mypage/reservations/{id}/change-done")
+    public String changeDone(@PathVariable("id") Long id, Model model) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        ReservationResponse.ChangeDoneDTO changeRequest = reservationService.getChangeDoneDetails(id);
+        model.addAttribute("changeRequest", changeRequest);
+        return "mypage/reservation-change-done";
+    }
+    }
