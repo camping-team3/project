@@ -68,6 +68,10 @@ public class GalleryResponse {
                     .collect(Collectors.toList());
         }
 
+        public String getCreatedAt() {
+            return createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        }
+
         @Getter
         @NoArgsConstructor
         public static class ImageDTO {
