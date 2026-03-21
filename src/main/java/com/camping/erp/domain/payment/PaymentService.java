@@ -60,7 +60,8 @@ public class PaymentService {
         // 금액 검증 (위변조 방지)
         if (!reservation.getTotalPrice().equals(detail.getAmount())) {
             log.warn("[Alert] 결제 금액 불일치! 예약금액: {}, 결제금액: {}", reservation.getTotalPrice(), detail.getAmount());
-            portOneService.cancelPayment(detail.getImpUid(), "결제 금액 불일치로 인한 자동 환불");
+            // 인자 개수 불일치 오류 수정: detail.getAmount() 추가
+            portOneService.cancelPayment(detail.getImpUid(), detail.getAmount(), "결제 금액 불일치로 인한 자동 환불");
             return;
         }
 
@@ -112,7 +113,8 @@ public class PaymentService {
         } else {
             // [복구 불가능] 선점 만료 후 다른 사람이 이미 예약함 -> 즉시 자동 환불
             log.warn("[Fail] 선점 만료 후 타인 예약 발생(오버부킹). 즉시 자동 환불 처리합니다.");
-            portOneService.cancelPayment(detail.getImpUid(), "선점 시간 만료 및 타인 예약 발생으로 인한 자동 환불");
+            // 인자 개수 불일치 오류 수정: detail.getAmount() 추가
+            portOneService.cancelPayment(detail.getImpUid(), detail.getAmount(), "선점 시간 만료 및 타인 예약 발생으로 인한 자동 환불");
         }
     }
 
@@ -126,7 +128,7 @@ public class PaymentService {
                 .amount(detail.getAmount())
                 .status(PaymentStatus.PAID)
                 .payMethod(detail.getPayMethod())
-                .payDate(java.time.LocalDateTime.now()) // 이전 작업에서 필드명 변경됨 (paidAt -> payDate)
+                .payDate(java.time.LocalDateTime.now())
                 .reservation(reservation)
                 .build();
         paymentRepository.save(payment);

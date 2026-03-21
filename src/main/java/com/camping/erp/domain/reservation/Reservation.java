@@ -72,7 +72,6 @@ public class Reservation extends BaseTimeEntity {
         this.site = site;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
-        this.peopleCount = peopleCount;
         this.totalPrice = totalPrice;
         this.peopleCount = peopleCount;
         this.visitorName = visitorName;
