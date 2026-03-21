@@ -59,21 +59,21 @@ public class ReservationResponse {
     }
 
     @Getter
-    @Setter
     @Builder
     public static class PaymentFormDTO {
+        private Long reservationId; // 가예약(PENDING) ID 추가
         private Long siteId;
         private String siteName;
         private String zoneName;
         private LocalDate checkIn;
         private LocalDate checkOut;
-        private Long nights;
+        private long nights;
         private Integer peopleCount;
         private Integer basePeople;
         private Long pricePerNight;
         private Long extraPrice;
         private Long totalPrice;
-        private Long extraPersonFee; // 추가 요금 단가 추가
+        private Long extraPersonFee;
     }
 
     @Getter

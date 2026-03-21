@@ -91,11 +91,6 @@ public class UserController {
         return "mypage/reservation-change";
     }
 
-    @GetMapping("/mypage/reservations/{id}/change-done")
-    public String reservationChangeDone(@PathVariable("id") Long id) {
-        return "mypage/reservation-change-done";
-    }
-
     @GetMapping("/mypage/reservations/{id}/cancel")
     public String reservationCancel(@PathVariable("id") Long id) {
         return "mypage/reservation-cancel";

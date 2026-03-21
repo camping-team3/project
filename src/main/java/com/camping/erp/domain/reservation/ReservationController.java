@@ -3,8 +3,10 @@ package com.camping.erp.domain.reservation;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
 import com.camping.erp.domain.user.UserResponse;
+import com.camping.erp.global.util.Resp;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -53,10 +55,16 @@ public class ReservationController {
         return "reservation/new";
     }
 
-    // 결제 페이지 (결제 폼 데이터 준비)
+    // 결제 페이지 (가예약/Lock 생성 로직 포함)
     @GetMapping("/reservations/payment")
     public String paymentForm(ReservationRequest.ReserveDTO request, Model model) {
-        ReservationResponse.PaymentFormDTO paymentInfo = reservationService.getPaymentForm(request);
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        // 서비스에서 PENDING 예약 생성 및 정보 조회
+        ReservationResponse.PaymentFormDTO paymentInfo = reservationService.getPaymentForm(request, sessionUser);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);
         String dateRange = String.format("%s - %s (%d박)",
@@ -176,4 +184,17 @@ public class ReservationController {
         model.addAttribute("changeRequest", changeRequest);
         return "mypage/reservation-change-done";
     }
+
+    // [API] 선점 즉시 해제 (결제창 이탈 시)
+    @DeleteMapping("/api/reservations/{id}/lock")
+    @ResponseBody
+    public ResponseEntity<?> releaseLock(@PathVariable("id") Long id) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return Resp.fail(org.springframework.http.HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+        }
+
+        reservationService.releaseLock(id, sessionUser);
+        return Resp.ok("선점이 해제되었습니다.");
     }
+}

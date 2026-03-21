@@ -37,7 +37,7 @@ public class Payment extends BaseTimeEntity {
     @Column(nullable = false)
     private PaymentStatus status; // PAID, CANCELLED
 
-    private LocalDateTime paidAt; // 결제 완료 시각
+    private LocalDateTime payDate; // 결제 완료 시각
 
     private String cancelReason; // 취소 사유
 

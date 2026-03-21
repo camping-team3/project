@@ -37,8 +37,8 @@ public class ReservationService {
 
         private final ReservationRepository reservationRepository;
         private final SiteRepository siteRepository;
-        private final UserRepository userRepository; // 유저 조회를 위해 추가
-        private final ReservationChangeRequestRepository reservationChangeRequestRepository; // 변경 요청 처리를 위해 추가
+        private final UserRepository userRepository;
+        private final ReservationChangeRequestRepository reservationChangeRequestRepository;
 
         // 예약 가능한 사이트 목록 조회 (가예약 Lock 로직 포함됨)
         public List<SiteResponse.ResevationAvailableListDTO> findAvailableSites(
@@ -140,22 +140,57 @@ public class ReservationService {
                                 .build();
         }
 
-        // 결제 폼 데이터 준비
-        public ReservationResponse.PaymentFormDTO getPaymentForm(ReservationRequest.ReserveDTO request) {
+        // 결제 폼 데이터 준비 및 가예약(Lock) 생성
+        @Transactional
+        public ReservationResponse.PaymentFormDTO getPaymentForm(ReservationRequest.ReserveDTO request, LoginDTO sessionUser) {
+                if (sessionUser == null) {
+                        throw new Exception401("로그인이 필요한 서비스입니다.");
+                }
+                User user = userRepository.findById(sessionUser.getId())
+                                .orElseThrow(() -> new Exception404("인증된 유저 정보를 찾을 수 없습니다."));
+
                 Site site = siteRepository.findById(request.getSiteId())
                                 .orElseThrow(() -> new Exception404("해당 사이트를 찾을 수 없습니다."));
                 Zone zone = site.getZone();
 
+                // 1. 중복 체크 (선점 중인 PENDING 포함)
+                List<ReservationStatus> activeStatuses = List.of(
+                                ReservationStatus.PENDING,
+                                ReservationStatus.CONFIRMED,
+                                ReservationStatus.CHANGE_REQ,
+                                ReservationStatus.CANCEL_REQ
+                );
+                boolean isExist = reservationRepository.existsBySiteIdAndDateRange(
+                                site.getId(), request.getCheckIn(), request.getCheckOut(), activeStatuses);
+
+                if (isExist) {
+                        throw new Exception400("이미 예약되었거나 결제 진행 중인 자리입니다.");
+                }
+
+                // 2. 가격 계산
                 long nights = ChronoUnit.DAYS.between(request.getCheckIn(), request.getCheckOut());
                 Integer basePeople = zone.getBasePeople();
                 Integer extraPeople = Math.max(0, request.getPeopleCount() - basePeople);
-
                 Long pricePerNight = zone.getNormalPrice();
                 Long extraPersonFee = zone.getExtraPersonFee();
                 Long extraPriceTotal = extraPersonFee * extraPeople * nights;
                 Long totalPrice = (pricePerNight + (extraPeople * extraPersonFee)) * nights;
 
+                // 3. 가예약(PENDING) 생성 - 10분간 선점됨
+                Reservation reservation = Reservation.builder()
+                                .user(user)
+                                .site(site)
+                                .checkIn(request.getCheckIn())
+                                .checkOut(request.getCheckOut())
+                                .peopleCount(request.getPeopleCount())
+                                .totalPrice(totalPrice)
+                                .status(ReservationStatus.PENDING)
+                                .build();
+
+                Reservation saved = reservationRepository.save(reservation);
+
                 return ReservationResponse.PaymentFormDTO.builder()
+                                .reservationId(saved.getId())
                                 .siteId(site.getId())
                                 .siteName(site.getSiteName())
                                 .zoneName(zone.getName())
@@ -206,7 +241,7 @@ public class ReservationService {
 
                 // 5. 엔티티 생성 및 저장
                 Reservation reservation = Reservation.builder()
-                                .user(user) // 조회된 유저 엔티티 사용
+                                .user(user)
                                 .site(site)
                                 .checkIn(request.getCheckIn())
                                 .checkOut(request.getCheckOut())
@@ -254,7 +289,26 @@ public class ReservationService {
         }
 
         /**
-         * 사용자별 예약 목록 조회
+         * 선점 즉시 해제 (결제창 이탈 시)
+         */
+        @Transactional
+        public void releaseLock(Long id, LoginDTO sessionUser) {
+                Reservation reservation = reservationRepository.findById(id)
+                                .orElseThrow(() -> new Exception404("해당 예약을 찾을 수 없습니다."));
+
+                // 본인 확인 (세션 유저와 예약자가 일치하는지)
+                if (!reservation.getUser().getId().equals(sessionUser.getId())) {
+                        throw new Exception403("본인의 선점 데이터만 해제할 수 있습니다.");
+                }
+
+                // PENDING 상태인 경우에만 물리적 삭제
+                if (reservation.getStatus() == ReservationStatus.PENDING) {
+                        reservationRepository.delete(reservation);
+                }
+        }
+
+        /**
+         * 마이페이지 예약 목록 조회
          */
         public List<Reservation> findByUserIdOrderByCreatedAtDesc(Long userId) {
                 return reservationRepository.findByUserIdOrderByCreatedAtDesc(userId);
