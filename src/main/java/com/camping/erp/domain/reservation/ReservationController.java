@@ -20,8 +20,12 @@ import java.util.Locale;
 @Controller
 @RequiredArgsConstructor
 public class ReservationController {
-    private final SiteService siteService;
+    
+    // PortOne 식별값 상수 (하드코딩 요청 반영)
+    private static final String PORTONE_STORE_ID = "store-4340798e-4f7f-4318-8686-3532f418d184";
+    private static final String PORTONE_CHANNEL_KEY = "channel-key-8e93010b-8d00-4740-975a-94d0c9f170e5";
 
+    private final SiteService siteService;
     private final ReservationService reservationService;
     private final HttpSession session;
 
@@ -55,7 +59,7 @@ public class ReservationController {
         return "reservation/new";
     }
 
-    // 결제 페이지 (가예약/Lock 생성 로직 포함)
+    // 결제 페이지 (가예약/Lock 생성 로직 및 PortOne 설정값 전달)
     @GetMapping("/reservations/payment")
     public String paymentForm(ReservationRequest.ReserveDTO request, Model model) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
@@ -74,6 +78,10 @@ public class ReservationController {
 
         model.addAttribute("payment", paymentInfo);
         model.addAttribute("dateRange", dateRange);
+        
+        // PortOne 설정값 추가
+        model.addAttribute("storeId", PORTONE_STORE_ID);
+        model.addAttribute("channelKey", PORTONE_CHANNEL_KEY);
 
         return "reservation/payment";
     }

@@ -16,16 +16,19 @@
 
 ### 2단계: 결제 프로세스 및 선점 해제 구현 (Phase 3-2.2)
 - [x] **Task 4: 가예약(Lock) 생성 및 즉시 해제 API 구현**
-  - `ReservationService.getPaymentForm`: 결제 페이지 진입 시 `PENDING` 상태의 예약 데이터 생성 (물리적 선점 시작)
-  - `DELETE /api/reservations/{id}/lock`: 세션 유저 검증 후 `PENDING` 예약을 **물리적으로 삭제(Hard Delete)** 하는 API 구현
-- [ ] **Task 5: 결제 페이지(payment.mustache) 고도화**
-  - PortOne V2 SDK 연동 및 컨트롤러에서 `storeId`, `channelKey` (상수 정의) 전달
-  - `beforeunload` / `visibilitychange` 이벤트를 활용한 브라우저 이탈 감지 스크립트 추가
-  - 이탈 시 `fetch` (keepalive: true)를 통한 Task 4 API 호출 로직 구현
+- [x] **Task 5: 결제 페이지(payment.mustache) 고도화**
+  - [x] PortOne V2 SDK 연동 및 컨트롤러에서 `storeId`, `channelKey` (상수 정의) 전달
+  - [x] `beforeunload` / `visibilitychange` 이벤트를 활용한 브라우저 이탈 감지 스크립트 추가
+  - [x] 이탈 시 `fetch` (keepalive: true)를 통한 Task 4 API 호출 로직 구현
 
 ### 3단계: 결제 검증 및 웹훅 처리 (Phase 3-2.3)
 - [ ] **Task 6: 결제 검증 및 웹훅 컨트롤러 구현**
+  - `POST /api/payment/webhook`: 포트원으로부터 결제 성공 신호를 받아 서버 측 최종 검증 수행
+  - 결제 내역 단건 조회 API 연동 및 `Reservation` 상태 변경(`PENDING` -> `CONFIRMED`)
 - [ ] **Task 7: 결제 성공 방어 로직 강화**
+  - 결제 처리 직전 데이터 존재 여부 재검증 (스케줄러에 의해 삭제되었을 경우에 대한 예외 처리)
 
 ### 4단계: 자동 환불 시스템 및 위약금 로직 (Phase 3-2.4)
 - [ ] **Task 8: 위약금 계산기 및 자동 환불 서비스**
+  - 이용일 기준 환불 규정(7일 전 100%, 3~6일 전 50%, 0~2일 전 0%) 자동 산출 로직
+  - 관리자 승인 시 포트원 취소 API 연동을 통한 자동 환불 실행

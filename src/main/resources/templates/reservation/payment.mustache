@@ -1,208 +1,264 @@
 {{> layout/header}}
+<!-- PortOne V2 SDK 로드 -->
+<script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
 
-        <main class="container py-5">
-            <div class="mb-5 px-2">
-                <h2 class="display-6 fw-black text-dark mb-2">결제하기</h2>
-                <p class="text-secondary fw-medium">예약 내역을 확인하고 결제 수단을 선택해 주세요.</p>
-            </div>
+<main class="container py-5">
+    <div class="mb-5 px-2">
+        <h2 class="display-6 fw-black text-dark mb-2">결제하기</h2>
+        <p class="text-secondary fw-medium">예약 내역을 확인하고 결제 수단을 선택해 주세요.</p>
+    </div>
 
-            <div class="row g-4">
-                <!-- Left Side: Order Info -->
-                <div class="col-lg-7">
-                    <!-- Reservation Summary -->
-                    <section class="fh-card shadow-sm border-0 p-4 p-md-5 mb-4 bg-white rounded-4">
-                        <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
-                            <span class="material-symbols-outlined text-primary fs-4">receipt_long</span> 예약 요약
-                        </h3>
-                        <div class="row g-4">
-                            <div class="col-sm-4">
-                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4ctAyqdw3ME68w9psGPbwAVD14PaaoeBGrbRbNFxrFN2YcW-g1QQzfIMLRioBkI7105rTyTwUUq64f2q6MQS-SD_fSYycpVdyxoIjiZOPEp5rH_WjNTOybUszI_o0tgUO_Oc4UYV7CTKDTzKWsCQyDG8usppaiAn_TkuzWbQouHSr796L-kKx-Fe12JOu5yitFjZqQuEiT1HZpCweW4Cr3a1NnY9SLsLcPr21Ws8EkCpWrO3l-b_SwX9cvHl-DFq0yjgzHbkgML0" class="rounded-4 w-100 shadow-sm summary-site-thumb" alt="Site">
+    <div class="row g-4">
+        <!-- Left Side: Order Info -->
+        <div class="col-lg-7">
+            <!-- Reservation Summary -->
+            <section class="fh-card shadow-sm border-0 p-4 p-md-5 mb-4 bg-white rounded-4">
+                <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-primary fs-4">receipt_long</span> 예약 요약
+                </h3>
+                <div class="row g-4">
+                    <div class="col-sm-4">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4ctAyqdw3ME68w9psGPbwAVD14PaaoeBGrbRbNFxrFN2YcW-g1QQzfIMLRioBkI7105rTyTwUUq64f2q6MQS-SD_fSYycpVdyxoIjiZOPEp5rH_WjNTOybUszI_o0tgUO_Oc4UYV7CTKDTzKWsCQyDG8usppaiAn_TkuzWbQouHSr796L-kKx-Fe12JOu5yitFjZqQuEiT1HZpCweW4Cr3a1NnY9SLsLcPr21Ws8EkCpWrO3l-b_SwX9cvHl-DFq0yjgzHbkgML0" class="rounded-4 w-100 shadow-sm summary-site-thumb" alt="Site">
+                    </div>
+                    <div class="col-sm-8 flex-grow-1">
+                        <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-2 py-1 mb-2 badge-site-type">{{payment.zoneName}}</span>
+                        <h4 class="h5 fw-bold text-dark mb-3">{{payment.siteName}}</h4>
+                        <div class="d-flex flex-column gap-2 text-secondary small fw-medium">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="material-symbols-outlined fs-6 text-primary">calendar_today</span>
+                                <span>{{dateRange}}</span>
                             </div>
-                            <div class="col-sm-8 flex-grow-1">
-                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-2 py-1 mb-2 badge-site-type">{{payment.zoneName}}</span>
-                                <h4 class="h5 fw-bold text-dark mb-3">{{payment.siteName}}</h4>
-                                <div class="d-flex flex-column gap-2 text-secondary small fw-medium">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="material-symbols-outlined fs-6 text-primary">calendar_today</span>
-                                        <span>{{dateRange}}</span>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="material-symbols-outlined fs-6 text-primary">group</span>
-                                        <span>성인 {{payment.peopleCount}}명</span>
-                                    </div>
-                                </div>
-                                <div class="mt-4 pt-3 border-top border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
-                                    <span class="text-secondary small fw-bold">총 결제 금액</span>
-                                    <span class="h5 fw-black text-primary m-0">₩ {{payment.totalPrice}}</span>
-                                </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="material-symbols-outlined fs-6 text-primary">group</span>
+                                <span>성인 {{payment.peopleCount}}명</span>
                             </div>
                         </div>
-                    </section>
-
-                    <!-- Visitor Information -->
-                    <section class="fh-card shadow-sm border-0 p-4 p-md-5 mb-4 bg-white rounded-4">
-                        <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
-                            <span class="material-symbols-outlined text-primary fs-4">person</span> 방문객 정보
-                        </h3>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="visitorNameInput" class="form-label small fw-bold text-secondary">방문객 성함</label>
-                                <input type="text" id="visitorNameInput" class="form-control border-light bg-light rounded-3 shadow-none" placeholder="실명을 입력해 주세요" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="visitorPhoneInput" class="form-label small fw-bold text-secondary">연락처</label>
-                                <input type="tel" id="visitorPhoneInput" class="form-control border-light bg-light rounded-3 shadow-none" placeholder="010-0000-0000" required>
-                            </div>
+                        <div class="mt-4 pt-3 border-top border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                            <span class="text-secondary small fw-bold">총 결제 금액</span>
+                            <span class="h5 fw-black text-primary m-0">₩ {{payment.totalPrice}}</span>
                         </div>
-                    </section>
+                    </div>
+                </div>
+            </section>
 
-                    <!-- Terms Agreement -->
-                    <section class="fh-card shadow-sm border-0 p-4 p-md-5 bg-white rounded-4">
-                        <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
-                            <span class="material-symbols-outlined text-primary fs-4">verified_user</span> 약관 동의
-                        </h3>
-                        <div class="d-flex flex-column gap-3">
-                            <div class="p-3 rounded-3 border border-secondary border-opacity-10 bg-light bg-opacity-50">
-                                <div class="form-check">
-                                    <input class="form-check-input shadow-none" type="checkbox" id="all-check">
-                                    <label class="form-check-label fw-bold text-dark small" for="all-check">전체 약관 동의</label>
-                                    <p class="text-secondary m-0 text-xxs">아래 모든 항목에 동의합니다.</p>
-                                </div>
-                            </div>
-                            <div class="px-2 d-flex flex-column gap-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="form-check">
-                                        <input class="form-check-input shadow-none" type="checkbox" id="term1">
-                                        <label class="form-check-label text-secondary small fw-medium" for="term1">[필수] 이용 약관 동의</label>
-                                    </div>
-                                    <button class="btn btn-link text-secondary small p-0 text-decoration-underline opacity-50">보기</button>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="form-check">
-                                        <input class="form-check-input shadow-none" type="checkbox" id="term2">
-                                        <label class="form-check-label text-secondary small fw-medium" for="term2">[필수] 개인정보 수집 및 이용 동의</label>
-                                    </div>
-                                    <button class="btn btn-link text-secondary small p-0 text-decoration-underline opacity-50">보기</button>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="form-check">
-                                        <input class="form-check-input shadow-none" type="checkbox" id="term3">
-                                        <label class="form-check-label text-secondary small fw-medium" for="term3">[필수] 취소 및 환불 규정 동의</label>
-                                    </div>
-                                    <button class="btn btn-link text-secondary small p-0 text-decoration-underline opacity-50">보기</button>
-                                </div>
-                            </div>
+            <!-- Visitor Information -->
+            <section class="fh-card shadow-sm border-0 p-4 p-md-5 mb-4 bg-white rounded-4">
+                <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-primary fs-4">person</span> 방문객 정보
+                </h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="visitorNameInput" class="form-label small fw-bold text-secondary">방문객 성함</label>
+                        <input type="text" id="visitorNameInput" class="form-control border-light bg-light rounded-3 shadow-none" placeholder="실명을 입력해 주세요" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="visitorPhoneInput" class="form-label small fw-bold text-secondary">연락처</label>
+                        <input type="tel" id="visitorPhoneInput" class="form-control border-light bg-light rounded-3 shadow-none" placeholder="010-0000-0000" required>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Terms Agreement -->
+            <section class="fh-card shadow-sm border-0 p-4 p-md-5 bg-white rounded-4">
+                <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-primary fs-4">verified_user</span> 약관 동의
+                </h3>
+                <div class="d-flex flex-column gap-3">
+                    <div class="p-3 rounded-3 border border-secondary border-opacity-10 bg-light bg-opacity-50">
+                        <div class="form-check">
+                            <input class="form-check-input shadow-none" type="checkbox" id="all-check">
+                            <label class="form-check-label fw-bold text-dark small" for="all-check">전체 약관 동의</label>
+                            <p class="text-secondary m-0 text-xxs">아래 모든 항목에 동의합니다.</p>
                         </div>
-                    </section>
+                    </div>
+                    <div class="px-2 d-flex flex-column gap-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="form-check">
+                                <input class="form-check-input shadow-none" type="checkbox" id="term1">
+                                <label class="form-check-label text-secondary small fw-medium" for="term1">[필수] 이용 약관 동의</label>
+                            </div>
+                            <button class="btn btn-link text-secondary small p-0 text-decoration-underline opacity-50">보기</button>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="form-check">
+                                <input class="form-check-input shadow-none" type="checkbox" id="term2">
+                                <label class="form-check-label text-secondary small fw-medium" for="term2">[필수] 개인정보 수집 및 이용 동의</label>
+                            </div>
+                            <button class="btn btn-link text-secondary small p-0 text-decoration-underline opacity-50">보기</button>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="form-check">
+                                <input class="form-check-input shadow-none" type="checkbox" id="term3">
+                                <label class="form-check-label text-secondary small fw-medium" for="term3">[필수] 취소 및 환불 규정 동의</label>
+                            </div>
+                            <button class="btn btn-link text-secondary small p-0 text-decoration-underline opacity-50">보기</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Right Side: Payment Methods -->
+        <div class="col-lg-5 sticky-top sticky-sidebar">
+            <section class="fh-card shadow-sm border-0 p-4 p-md-5 bg-white rounded-4">
+                <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-primary fs-4">account_balance_wallet</span> 결제 수단
+                </h3>
+
+                <div class="fh-selection-group mb-5">
+                    <div class="selection-item active shadow-sm">
+                        <div class="payment-method-icon"><span class="material-symbols-outlined">credit_card</span></div>
+                        <div>
+                            <p class="small fw-bold text-dark m-0">신용/체크카드</p>
+                            <p class="text-secondary m-0 text-xxs">일반 신용카드 결제</p>
+                        </div>
+                        <div class="selection-check"></div>
+                    </div>
                 </div>
 
-                <!-- Right Side: Payment Methods -->
-                <div class="col-lg-5 sticky-top sticky-sidebar">
-                    <section class="fh-card shadow-sm border-0 p-4 p-md-5 bg-white rounded-4">
-                        <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
-                            <span class="material-symbols-outlined text-primary fs-4">account_balance_wallet</span> 결제 수단
-                        </h3>
-
-                        <div class="fh-selection-group mb-5">
-                            <div class="selection-item active shadow-sm">
-                                <div class="payment-method-icon"><span class="material-symbols-outlined">credit_card</span></div>
-                                <div>
-                                    <p class="small fw-bold text-dark m-0">신용/체크카드</p>
-                                    <p class="text-secondary m-0 text-xxs">일반 신용카드 결제</p>
-                                </div>
-                                <div class="selection-check"></div>
-                            </div>
-                        </div>
-
-                        <div class="price-breakdown mb-2">
-                            <div class="price-breakdown-row"><span class="text-secondary">객실 금액 ({{payment.nights}}박)</span><span class="fw-bold">₩ {{payment.pricePerNight}}</span></div>
-                            <div class="price-breakdown-row"><span class="text-secondary">인원 추가 요금 ({{payment.basePeople}}인 초과 시 인당 ₩{{payment.extraPersonFee}})</span><span class="text-primary fw-bold">+ ₩ {{payment.extraPrice}}</span></div>
-                            <div class="total-price-row">
-                                <span class="h6 fw-bold text-dark m-0">최종 결제 금액</span>
-                                <span class="h3 fw-black text-primary m-0">₩ {{payment.totalPrice}}</span>
-                            </div>
-                        </div>
-
-                        <form id="payment-form" action="/reservations/reserve" method="POST">
-                            <input type="hidden" name="siteId" value="{{payment.siteId}}">
-                            <input type="hidden" name="checkIn" value="{{payment.checkIn}}">
-                            <input type="hidden" name="checkOut" value="{{payment.checkOut}}">
-                            <input type="hidden" name="peopleCount" value="{{payment.peopleCount}}">
-                            <input type="hidden" name="totalPrice" value="{{payment.totalPrice}}">
-                            <input type="hidden" name="visitorName" id="visitorNameHidden">
-                            <input type="hidden" name="visitorPhone" id="visitorPhoneHidden">
-                            
-                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3.5 mt-4 fw-bold shadow-lg border-0 rounded-3">
-                                ₩ {{payment.totalPrice}} 결제하기
-                            </button>
-                        </form>
-                        <p class="text-center text-secondary mt-4 mb-0 text-xxs opacity-60">상기 결제 내역을 확인하였으며 결제에 동의합니다.</p>
-                    </section>
+                <div class="price-breakdown mb-2">
+                    <div class="price-breakdown-row"><span class="text-secondary">객실 금액 ({{payment.nights}}박)</span><span class="fw-bold">₩ {{payment.pricePerNight}}</span></div>
+                    <div class="price-breakdown-row"><span class="text-secondary">인원 추가 요금 ({{payment.basePeople}}인 초과 시 인당 ₩{{payment.extraPersonFee}})</span><span class="text-primary fw-bold">+ ₩ {{payment.extraPrice}}</span></div>
+                    <div class="total-price-row">
+                        <span class="h6 fw-bold text-dark m-0">최종 결제 금액</span>
+                        <span class="h3 fw-black text-primary m-0">₩ {{payment.totalPrice}}</span>
+                    </div>
                 </div>
-            </div>
-        </main>
 
-    <!-- Terms Agreement Logic -->
-    <script>
-        const paymentForm = document.getElementById('payment-form');
-        const visitorNameInput = document.getElementById('visitorNameInput');
-        const visitorPhoneInput = document.getElementById('visitorPhoneInput');
-        const visitorNameHidden = document.getElementById('visitorNameHidden');
-        const visitorPhoneHidden = document.getElementById('visitorPhoneHidden');
+                <form id="payment-form">
+                    <!-- 가예약 ID를 JS에서 사용하기 위해 data 속성으로 보관 -->
+                    <div id="reservation-data" 
+                         data-id="{{payment.reservationId}}"
+                         data-amount="{{payment.totalPrice}}"
+                         data-site-name="{{payment.siteName}}"
+                         data-store-id="{{storeId}}"
+                         data-channel-key="{{channelKey}}"></div>
+                    
+                    <button type="button" id="btn-pay" class="btn btn-primary btn-lg w-100 py-3.5 mt-4 fw-bold shadow-lg border-0 rounded-3">
+                        ₩ {{payment.totalPrice}} 결제하기
+                    </button>
+                </form>
+                <p class="text-center text-secondary mt-4 mb-0 text-xxs opacity-60">상기 결제 내역을 확인하였으며 결제에 동의합니다.</p>
+            </section>
+        </div>
+    </div>
+</main>
+
+<script>
+    // 전역 상수 및 DOM 요소
+    const resData = document.getElementById('reservation-data').dataset;
+    const reservationId = resData.id;
+    const totalAmount = parseInt(resData.amount);
+    const siteName = resData.siteName;
+    const storeId = resData.storeId;
+    const channelKey = resData.channelKey;
+
+    const btnPay = document.getElementById('btn-pay');
+    const visitorNameInput = document.getElementById('visitorNameInput');
+    const visitorPhoneInput = document.getElementById('visitorPhoneInput');
+    const allCheck = document.getElementById('all-check');
+    const termChecks = [
+        document.getElementById('term1'),
+        document.getElementById('term2'),
+        document.getElementById('term3')
+    ];
+
+    // [이탈 감지 로직] 사용자가 페이지를 벗어날 때 선점 해제 API 호출
+    let isProcessingPayment = false; // 결제 진행 중일 때는 해제 방지
+
+    function releaseLock() {
+        if (isProcessingPayment) return;
         
-        const allCheck = document.getElementById('all-check');
-        const termChecks = [
-            document.getElementById('term1'),
-            document.getElementById('term2'),
-            document.getElementById('term3')
-        ];
-
-        // 전체 동의 클릭 시
-        allCheck.addEventListener('change', () => {
-            termChecks.forEach(check => {
-                check.checked = allCheck.checked;
-            });
+        // fetch의 keepalive 옵션을 사용하여 브라우저 종료 시에도 요청이 서버로 전달되도록 함
+        fetch(`/api/reservations/${reservationId}/lock`, {
+            method: 'DELETE',
+            keepalive: true 
         });
+    }
 
-        // 개별 항목 클릭 시
+    // 창 닫기, 새로고침, 뒤로가기 감지
+    window.addEventListener('beforeunload', (event) => {
+        if (!isProcessingPayment) {
+            releaseLock();
+        }
+    });
+
+    // PortOne 결제 요청 함수
+    async function requestPayment() {
+        // 1. 검증
+        if (!termChecks.every(c => c.checked)) {
+            alert('모든 필수 약관에 동의하셔야 결제가 가능합니다.');
+            return;
+        }
+        if (!visitorNameInput.value.trim() || !visitorPhoneInput.value.trim()) {
+            alert('방문객 정보를 모두 입력해 주세요.');
+            visitorNameInput.focus();
+            return;
+        }
+
+        isProcessingPayment = true;
+
+        try {
+            const paymentId = `payment-${crypto.randomUUID()}`;
+            const response = await PortOne.requestPayment({
+                storeId: storeId,
+                channelKey: channelKey,
+                paymentId: paymentId,
+                orderName: `[Forest Haven] ${siteName} 예약`,
+                totalAmount: totalAmount,
+                currency: "CURRENCY_KRW",
+                payMethod: "CARD",
+                customer: {
+                    fullName: visitorNameInput.value.trim(),
+                    phoneNumber: visitorPhoneInput.value.trim(),
+                },
+                redirectUrl: `${window.location.origin}/reservations/complete?id=${reservationId}`
+            });
+
+            if (response.code != null) {
+                // 오류 발생 시
+                alert(response.message);
+                isProcessingPayment = false;
+                return;
+            }
+
+            // 결제 성공 시 (웹훅 처리 또는 수동 검증으로 연결)
+            // 현재는 결제 완료 페이지로 이동
+            location.href = `/reservations/complete?id=${reservationId}&paymentId=${paymentId}`;
+
+        } catch (error) {
+            console.error(error);
+            alert('결제 요청 중 오류가 발생했습니다.');
+            isProcessingPayment = false;
+        }
+    }
+
+    btnPay.addEventListener('click', requestPayment);
+
+    // 전체 동의 클릭 시
+    allCheck.addEventListener('change', () => {
         termChecks.forEach(check => {
-            check.addEventListener('change', () => {
-                const allChecked = termChecks.every(c => c.checked);
-                allCheck.checked = allChecked;
-            });
+            check.checked = allCheck.checked;
         });
+    });
 
-        // 휴대폰 번호 자동 하이픈 로직
-        visitorPhoneInput.addEventListener('input', (e) => {
-            let val = e.target.value.replace(/[^0-9]/g, '');
-            if (val.length > 3 && val.length <= 7) {
-                val = val.substring(0, 3) + '-' + val.substring(3);
-            } else if (val.length > 7) {
-                val = val.substring(0, 3) + '-' + val.substring(3, 7) + '-' + val.substring(7, 11);
-            }
-            e.target.value = val;
-        });
-
-        // 폼 제출 시 검증
-        paymentForm.addEventListener('submit', (e) => {
-            // 1. 약관 동의 검증
+    // 개별 항목 클릭 시
+    termChecks.forEach(check => {
+        check.addEventListener('change', () => {
             const allChecked = termChecks.every(c => c.checked);
-            if (!allChecked) {
-                e.preventDefault();
-                alert('모든 필수 약관에 동의하셔야 결제가 가능합니다.');
-                return;
-            }
-
-            // 2. 방문객 정보 검증 및 동기화
-            if (!visitorNameInput.value.trim() || !visitorPhoneInput.value.trim()) {
-                e.preventDefault();
-                alert('방문객 정보를 모두 입력해 주세요.');
-                visitorNameInput.focus();
-                return;
-            }
-
-            visitorNameHidden.value = visitorNameInput.value.trim();
-            visitorPhoneHidden.value = visitorPhoneInput.value.trim();
+            allCheck.checked = allChecked;
         });
-    </script>
+    });
+
+    // 휴대폰 번호 자동 하이픈 로직
+    visitorPhoneInput.addEventListener('input', (e) => {
+        let val = e.target.value.replace(/[^0-9]/g, '');
+        if (val.length > 3 && val.length <= 7) {
+            val = val.substring(0, 3) + '-' + val.substring(3);
+        } else if (val.length > 7) {
+            val = val.substring(0, 3) + '-' + val.substring(3, 7) + '-' + val.substring(7, 11);
+        }
+        e.target.value = val;
+    });
+</script>
 {{> layout/footer}}
