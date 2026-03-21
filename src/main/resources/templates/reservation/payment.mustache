@@ -129,6 +129,11 @@
                     <!-- 가예약 ID를 JS에서 사용하기 위해 data 속성으로 보관 -->
                     <div id="reservation-data" 
                          data-id="{{payment.reservationId}}"
+                         data-user-id="{{sessionUserId}}"
+                         data-site-id="{{payment.siteId}}"
+                         data-check-in="{{payment.checkIn}}"
+                         data-check-out="{{payment.checkOut}}"
+                         data-people-count="{{payment.peopleCount}}"
                          data-amount="{{payment.totalPrice}}"
                          data-site-name="{{payment.siteName}}"
                          data-store-id="{{storeId}}"
@@ -148,6 +153,11 @@
     // 전역 상수 및 DOM 요소
     const resData = document.getElementById('reservation-data').dataset;
     const reservationId = resData.id;
+    const userId = resData.userId;
+    const siteId = resData.siteId;
+    const checkIn = resData.checkIn;
+    const checkOut = resData.checkOut;
+    const peopleCount = resData.peopleCount;
     const totalAmount = parseInt(resData.amount);
     const siteName = resData.siteName;
     const storeId = resData.storeId;
@@ -199,7 +209,9 @@
         isProcessingPayment = true;
 
         try {
-            const paymentId = `payment-${crypto.randomUUID()}`;
+            // 주문번호 형식을 RSV-ID-UUID 로 설정하여 서버 측 파싱 용이하게 함
+            const paymentId = `RSV-${reservationId}-${crypto.randomUUID()}`;
+            
             const response = await PortOne.requestPayment({
                 storeId: storeId,
                 channelKey: channelKey,
@@ -212,6 +224,14 @@
                     fullName: visitorNameInput.value.trim(),
                     phoneNumber: visitorPhoneInput.value.trim(),
                 },
+                // 조건부 자동 복구에 필요한 데이터를 customData로 전송
+                customData: {
+                    userId: userId,
+                    siteId: siteId,
+                    checkIn: checkIn,
+                    checkOut: checkOut,
+                    peopleCount: peopleCount
+                },
                 redirectUrl: `${window.location.origin}/reservations/complete?id=${reservationId}`
             });
 
@@ -223,7 +243,6 @@
             }
 
             // 결제 성공 시 (웹훅 처리 또는 수동 검증으로 연결)
-            // 현재는 결제 완료 페이지로 이동
             location.href = `/reservations/complete?id=${reservationId}&paymentId=${paymentId}`;
 
         } catch (error) {
@@ -261,4 +280,4 @@
         e.target.value = val;
     });
 </script>
-{{> layout/footer}}
+{{> layout/header}}

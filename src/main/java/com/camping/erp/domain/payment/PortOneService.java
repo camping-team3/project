@@ -1,31 +1,22 @@
 package com.camping.erp.domain.payment;
 
-import com.camping.erp.global.config.PortOneProperties;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
+/**
+ * 포트원 서버와 실제 통신을 담당하는 서비스 인터페이스
+ */
+public interface PortOneService {
+    
+    /**
+     * 포트원 결제 단건 조회
+     * @param impUid 결제 고유 번호
+     * @return 상세 결제 정보 (금액, 상태 등)
+     */
+    PortOneResponse.PaymentDetail getPaymentDetail(String impUid);
 
-import java.util.Map;
-
-@Slf4j
-@Service
-@Profile("prod") // 운영 환경에서만 활성화
-@RequiredArgsConstructor
-public class PortOneService implements PaymentService {
-
-    private final PortOneProperties properties;
-
-    @Override
-    public Map<String, Object> verifyPayment(String paymentId) {
-        log.info("[PortOne] 실제 API 호출 예정: {}", paymentId);
-        // TODO: WebClient 또는 RestTemplate으로 포트원 V2 API 호출 구현 예정
-        return null;
-    }
-
-    @Override
-    public boolean cancelPayment(String paymentId, Long amount, String reason) {
-        log.info("[PortOne] 실제 API 취소 호출 예정: {}", paymentId);
-        return false;
-    }
+    /**
+     * 포트원 결제 취소 요청 (환불)
+     * @param impUid 취소할 결제 고유 번호
+     * @param reason 취소 사유
+     * @return 취소 성공 여부
+     */
+    boolean cancelPayment(String impUid, String reason);
 }

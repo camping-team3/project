@@ -79,9 +79,10 @@ public class ReservationController {
         model.addAttribute("payment", paymentInfo);
         model.addAttribute("dateRange", dateRange);
         
-        // PortOne 설정값 추가
+        // PortOne 및 JS용 설정값 추가
         model.addAttribute("storeId", PORTONE_STORE_ID);
         model.addAttribute("channelKey", PORTONE_CHANNEL_KEY);
+        model.addAttribute("sessionUserId", sessionUser.getId());
 
         return "reservation/payment";
     }
