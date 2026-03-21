@@ -6,6 +6,8 @@ import com.camping.erp.domain.gallery.GalleryService;
 import com.camping.erp.domain.notice.NoticeRequest;
 import com.camping.erp.domain.notice.NoticeResponse;
 import com.camping.erp.domain.notice.NoticeService;
+import com.camping.erp.domain.payment.RefundResponse;
+import com.camping.erp.domain.payment.RefundService;
 import com.camping.erp.domain.qna.QnaResponse;
 import com.camping.erp.domain.qna.QnaService;
 import com.camping.erp.domain.reservation.ReservationService;
@@ -16,6 +18,7 @@ import com.camping.erp.domain.site.SiteService;
 import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.global.dto.PageResponse;
 import com.camping.erp.global.handler.ex.Exception400;
+import com.camping.erp.global.util.Resp;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +28,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -47,6 +47,7 @@ public class AdminController {
     private final GalleryService galleryService;
     private final QnaService qnaService;
     private final ReviewService reviewService;
+    private final RefundService refundService;
     private final HttpSession session;
 
     @GetMapping("/admin")
@@ -147,6 +148,22 @@ public class AdminController {
     @GetMapping("/admin/reservations/{id}")
     public String reservationDetail(@PathVariable("id") Long id) {
         return "admin/reservation/detail";
+    }
+
+    // 환불 정보 조회 API
+    @GetMapping("/api/admin/reservations/{id}/refund-info")
+    @ResponseBody
+    public ResponseEntity<?> getRefundInfo(@PathVariable("id") Long id) {
+        RefundResponse.RefundInfo info = refundService.getRefundInfo(id);
+        return Resp.ok(info);
+    }
+
+    // 환불 승인 처리
+    @PostMapping("/admin/reservations/{id}/refund")
+    @ResponseBody
+    public ResponseEntity<?> approveRefund(@PathVariable("id") Long id, @RequestParam("reason") String reason) {
+        refundService.approveRefund(id, reason);
+        return Resp.ok("환불 승인 및 결제 취소가 완료되었습니다.");
     }
 
     // --- 공지사항 관리 ---

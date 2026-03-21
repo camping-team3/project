@@ -14,9 +14,10 @@ public interface PortOneService {
 
     /**
      * 포트원 결제 취소 요청 (환불)
-     * @param impUid 취소할 결제 고유 번호
+     * @param impUid 결제 고유 번호
+     * @param amount 취소할 금액 (부분 환불 지원)
      * @param reason 취소 사유
      * @return 취소 성공 여부
      */
-    boolean cancelPayment(String impUid, String reason);
+    boolean cancelPayment(String impUid, Long amount, String reason);
 }
