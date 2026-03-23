@@ -124,3 +124,36 @@
   - [x] 이용일 기준 환불 규정(7일 전 100%, 3~6일 전 50%, 0~2일 전 0%) 자동 산출 로직
   - [x] 관리자 승인 시 포트원 취소 API 연동을 통한 자동 환불 실행
   - [x] Refund 이력 저장 및 예약 상태 업데이트 (`CANCEL_COMP`)
+
+---
+
+# Phase 4: AI 기반 리뷰 관리 및 평점 시스템 고도화
+
+## 1단계: 데이터 모델 및 서버 로직 확장 (Back-end)
+
+- [x] **Task 1: Review 엔티티 및 DTO 확장**
+  - 경로: `src/main/java/com/camping/erp/domain/review/Review.java`
+  - 내용: `aiDangerScore` (Integer), `isDeleted` (boolean), `adminReason` (String), `isReviewed` (boolean) 필드 추가
+  - `ReviewResponse.AdminListDTO` 생성: 관리자 전용 데이터 구조 정의
+- [ ] **Task 2: 비속어 필터 및 AI 분석 서비스 구현**
+  - `ProfanityFilter`: 서버 측 비속어 사전 대조 로직 (비속어 발견 시 즉시 5점 부여)
+  - `AiAnalysisService`: `@Async`를 활용한 Gemini API 연동 (비방 수치 1~5점 판별)
+- [ ] **Task 3: 평점 재계산 로직 구현**
+  - `ReviewService.recalculateAverageRating(Long siteId)`: 삭제/복구 시 호출되어 해당 사이트의 평점을 실시간 갱신
+
+## 2단계: 관리자 리뷰 관리 대시보드 UI (Front-end)
+
+- [ ] **Task 4: 관리자 리뷰 목록 페이지 구현**
+  - 경로: `/admin/reviews`
+  - 기능: 위험도(1~5) 필터링, 검색, 검토 대기 항목 최상단 노출
+- [ ] **Task 5: [삭제/유지] 액션 처리 API**
+  - **[유지]**: `isReviewed = true` 처리
+  - **[삭제]**: 사유 입력 후 `isDeleted = true`, `isReviewed = true` 처리 및 평점 재계산
+
+## 3단계: 고객 마이페이지 및 시스템 안정화 (User Side)
+
+- [ ] **Task 6: 마이페이지 내 삭제된 리뷰 표시**
+  - 작성자 본인에게만 "관리자에 의해 삭제되었습니다" 문구와 사유 노출
+- [ ] **Task 7: 전체 시스템 통합 테스트 및 리포트 작성**
+  - 비속어 포함 시 즉시 5점 부여 및 관리자 알림 확인
+  - 삭제 처리 후 캠핑장 전체 평점 변동 확인

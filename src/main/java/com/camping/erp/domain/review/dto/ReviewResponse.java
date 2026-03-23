@@ -12,6 +12,35 @@ import java.util.stream.Collectors;
 public class ReviewResponse {
 
     @Getter
+    public static class AdminListDTO {
+        private Long id;
+        private String username;
+        private String zoneName;
+        private String siteName;
+        private String content;
+        private Integer rating;
+        private Integer aiDangerScore;
+        private boolean isReviewed;
+        private boolean isDeleted;
+        private String adminReason;
+        private String createdAt;
+
+        public AdminListDTO(Review review) {
+            this.id = review.getId();
+            this.username = review.getUser().getUsername();
+            this.zoneName = review.getReservation().getSite().getZone().getName();
+            this.siteName = review.getReservation().getSite().getSiteName();
+            this.content = review.getContent();
+            this.rating = review.getRating();
+            this.aiDangerScore = review.getAiDangerScore();
+            this.isReviewed = review.isReviewed();
+            this.isDeleted = review.isDeleted();
+            this.adminReason = review.getAdminReason();
+            this.createdAt = review.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        }
+    }
+
+    @Getter
     @Builder
     public static class ListWrapperDTO {
         private List<ListDTO> reviews;

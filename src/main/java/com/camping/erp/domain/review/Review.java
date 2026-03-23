@@ -40,17 +40,48 @@ public class Review extends BaseTimeEntity {
     @OneToMany(mappedBy = "review", fetch = FetchType.LAZY)
     private List<Image> images = new ArrayList<>();
 
+    // AI 비방 위험도 (1~5)
+    @Builder.Default
+    private Integer aiDangerScore = 0;
+
+    // 관리자 검토 완료 여부
+    @Builder.Default
+    private boolean isReviewed = false;
+
+    // 논리 삭제 여부
+    @Builder.Default
+    private boolean isDeleted = false;
+
+    // 관리자 삭제 사유
+    private String adminReason;
+
     @Builder
-    public Review(Long id, User user, Reservation reservation, Integer rating, String content) {
+    public Review(Long id, User user, Reservation reservation, Integer rating, String content, Integer aiDangerScore, boolean isReviewed, boolean isDeleted, String adminReason) {
         this.id = id;
         this.user = user;
         this.reservation = reservation;
         this.rating = rating;
         this.content = content;
+        this.aiDangerScore = aiDangerScore != null ? aiDangerScore : 0;
+        this.isReviewed = isReviewed;
+        this.isDeleted = isDeleted;
+        this.adminReason = adminReason;
     }
 
     public void update(Integer rating, String content) {
         this.rating = rating;
         this.content = content;
+    }
+
+    // 관리자 조치 (삭제/유지) 메서드
+    public void processByAdmin(boolean isDeleted, String adminReason) {
+        this.isDeleted = isDeleted;
+        this.adminReason = adminReason;
+        this.isReviewed = true;
+    }
+
+    // AI 점수 업데이트 메서드
+    public void updateAiScore(Integer score) {
+        this.aiDangerScore = score;
     }
 }
