@@ -39,17 +39,20 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // Dev 자동 로그인 (모든 경로에서 세션 주입)
         if (devAutoLogin) {
             registry.addInterceptor(new DevAutoLoginInterceptor(userRepository, devAutoLoginUsername))
-                    .addPathPatterns("/**");
+                    .addPathPatterns("/**")
+                    .excludePathPatterns("/h2-console/**", "/favicon.ico", "/css/**", "/js/**", "/img/**", "/lib/**");
         }
 
         // 모든 인증이 필요한 경로
         registry.addInterceptor(new LoginInterceptor())
                 .addPathPatterns("/mypage/**", "/reservations/**", "/admin/**", "/boards/**", "/replies/**", "/qna/new",
                         "/reviews/new")
-                .excludePathPatterns("/boards/[0-9]+"); // 상세 조회는 비로그인 허용 (필요시)
+                .excludePathPatterns("/boards/[0-9]+", "/h2-console/**"); // 상세 조회 및 H2 콘솔 제외
 
         // 관리자 전용 경로
         registry.addInterceptor(new AdminInterceptor())
-                .addPathPatterns("/admin/**");
+                .addPathPatterns("/admin/**")
+                .excludePathPatterns("/h2-console/**");
     }
+
 }
