@@ -66,16 +66,31 @@ public class AdminController {
 
     // --- 리뷰 관리 ---
     @GetMapping("/admin/reviews")
-    public String reviewList(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+    public String reviewList(@RequestParam(name = "page", defaultValue = "0") int page,
+                             @RequestParam(name = "sort", defaultValue = "latest") String sort,
+                             @RequestParam(name = "filter", defaultValue = "all") String filter,
+                             @RequestParam(name = "keyword", defaultValue = "") String keyword,
+                             Model model) {
+        // TODO: 향후 Service에서 sort/filter/keyword를 처리하도록 확장 필요. 
+        // 현재는 기본 페이징 조회만 유지하되 UI 파라미터 전달
+        Pageable pageable = PageRequest.of(page, 10, sort.equals("danger") ? Sort.by("aiDangerScore").descending() : Sort.by("id").descending());
         AdminResponse.ReviewPageDTO response = reviewService.findAllForAdmin(pageable);
+        
         model.addAttribute("response", response);
+        model.addAttribute("isDangerSort", "danger".equals(sort));
+        model.addAttribute("keyword", keyword);
         return "admin/review/list";
     }
 
+    @PostMapping("/admin/reviews/{id}/keep")
+    public String keepReview(@PathVariable("id") Long id) {
+        reviewService.keepByAdmin(id);
+        return "redirect:/admin/reviews";
+    }
+
     @PostMapping("/admin/reviews/{id}/delete")
-    public String deleteReview(@PathVariable("id") Long id) {
-        reviewService.deleteByAdmin(id);
+    public String deleteReview(@PathVariable("id") Long id, @RequestParam("reason") String reason) {
+        reviewService.deleteByAdmin(id, reason);
         return "redirect:/admin/reviews";
     }
 

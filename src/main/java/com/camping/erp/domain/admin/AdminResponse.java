@@ -32,6 +32,10 @@ public class AdminResponse {
         private boolean isReviewed;
         private boolean isDeleted;
         private String adminReason;
+
+        public boolean isHighDanger() {
+            return aiDangerScore != null && aiDangerScore >= 3;
+        }
     }
 
     @Getter @Setter
