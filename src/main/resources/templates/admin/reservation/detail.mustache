@@ -51,7 +51,7 @@
                     </div>
                     <div class="col-md-3">
                         <p class="small text-muted mb-1">결제 금액 / 인원</p>
-                        <p class="fw-bold text-primary mb-0 fs-5">₩ {{detail.totalPrice}}</p>
+                        <p class="fw-bold text-primary mb-0 fs-5">₩ <span class="format-price">{{detail.totalPrice}}</span></p>
                         <p class="small text-secondary m-0">{{detail.peopleCount}}명 방문</p>
                     </div>
                 </div>
@@ -156,3 +156,10 @@
 </div> <!-- container-fluid END -->
 
 {{> layout/admin-footer}}
+
+<script>
+    document.querySelectorAll('.format-price').forEach(el => {
+        const value = parseInt(el.innerText.replace(/[^0-9]/g, ''));
+        if (!isNaN(value)) el.innerText = value.toLocaleString();
+    });
+</script>

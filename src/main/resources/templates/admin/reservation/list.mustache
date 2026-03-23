@@ -66,7 +66,7 @@
                         <div class="fw-bold">{{checkIn}}</div>
                         <div class="text-secondary stay-duration-text">{{nights}}박 <span class="days-display">{{nights}}</span>일</div>
                     </td>
-                    <td class="px-4 py-4 fw-bold text-dark text-end">₩ {{totalPrice}}</td>
+                    <td class="px-4 py-4 fw-bold text-dark text-end">₩ <span class="format-price">{{totalPrice}}</span></td>
                     <td class="px-4 py-4 text-center">
                         <span class="badge bg-{{statusClass}} bg-opacity-10 text-{{statusClass}} fw-bold px-2 py-1 badge-res-status">{{statusText}}</span>
                     </td>
@@ -154,6 +154,12 @@
     if (currentStatus) {
         document.getElementById('status-filter').value = currentStatus;
     }
+
+    // 금액 포맷팅
+    document.querySelectorAll('.format-price').forEach(el => {
+        const value = parseInt(el.innerText.replace(/[^0-9]/g, ''));
+        if (!isNaN(value)) el.innerText = value.toLocaleString();
+    });
 
     // [Task 4-1] Row Click 이벤트 통합
     document.querySelectorAll('.clickable-row').forEach(row => {
