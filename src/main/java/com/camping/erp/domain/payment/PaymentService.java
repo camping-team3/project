@@ -54,6 +54,38 @@ public class PaymentService {
     }
 
     /**
+     * imp_uid 기반 실시간 상태 동기화 (웹훅 지연 또는 로컬 환경 대응)
+     */
+    @Transactional
+    public void syncPaymentStatus(String impUid) {
+        log.info("[System] 결제 상태 동기화 시작: impUid={}", impUid);
+
+        // 1. 포트원으로부터 결제 상세 정보 조회
+        PortOneResponse.PaymentDetail detail = portOneService.getPaymentDetail(impUid);
+        if (detail == null) {
+            log.error("[Error] 결제 정보를 찾을 수 없습니다: impUid={}", impUid);
+            return;
+        }
+
+        // 2. 우리 DB에서 예약 데이터 찾기
+        Long reservationId = extractReservationId(detail.getMerchantUid());
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+
+        // 3. 예약 상태가 PENDING인 경우에만 확정 로직 수행 (중복 처리 방지)
+        if (reservation != null) {
+            if (reservation.getStatus() == ReservationStatus.PENDING) {
+                log.info("[System] 미확정 예약 발견, 수동 확정 진행: reservationId={}", reservationId);
+                validateAndConfirm(reservation, detail);
+            } else {
+                log.info("[System] 이미 처리된 예약입니다. 현재 상태: {}", reservation.getStatus());
+            }
+        } else {
+            // 예약 데이터가 삭제된 경우(선점 만료 등) 복구 시도
+            handleDeletedReservation(detail);
+        }
+    }
+
+    /**
      * 결제 금액 검증 및 예약 확정
      */
     private void validateAndConfirm(Reservation reservation, PortOneResponse.PaymentDetail detail) {
@@ -67,7 +99,7 @@ public class PaymentService {
 
         // 상태 변경 (PENDING -> CONFIRMED)
         reservation.updateStatus(ReservationStatus.CONFIRMED);
-        
+
         // 결제 이력 저장
         savePayment(reservation, detail);
         log.info("[System] 예약 확정 완료: reservationId={}", reservation.getId());
@@ -81,12 +113,12 @@ public class PaymentService {
 
         // 1. 해당 사이트와 기간이 여전히 예약 가능한지 최종 체크
         List<ReservationStatus> activeStatuses = List.of(
-                ReservationStatus.PENDING, 
-                ReservationStatus.CONFIRMED, 
+                ReservationStatus.PENDING,
+                ReservationStatus.CONFIRMED,
                 ReservationStatus.CHANGE_REQ,
                 ReservationStatus.CANCEL_REQ
         );
-        
+
         boolean isExist = reservationRepository.existsBySiteIdAndDateRange(
                 detail.getSiteId(), detail.getCheckIn(), detail.getCheckOut(), activeStatuses);
 

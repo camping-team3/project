@@ -1,5 +1,6 @@
 package com.camping.erp.domain.reservation;
 
+import com.camping.erp.domain.payment.PaymentService;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
 import com.camping.erp.domain.user.UserResponse;
@@ -21,7 +22,7 @@ import java.util.Locale;
 @Controller
 @RequiredArgsConstructor
 public class ReservationController {
-    
+
     @Value("${portone.store-id}")
     private String portoneStoreId;
 
@@ -30,6 +31,7 @@ public class ReservationController {
 
     private final SiteService siteService;
     private final ReservationService reservationService;
+    private final PaymentService paymentService;
     private final HttpSession session;
 
     // 예약 페이지 (예약 가능 사이트 목록 조회)
@@ -81,7 +83,7 @@ public class ReservationController {
 
         model.addAttribute("payment", paymentInfo);
         model.addAttribute("dateRange", dateRange);
-        
+
         // PortOne 및 JS용 설정값 추가
         model.addAttribute("storeId", portoneStoreId);
         model.addAttribute("channelKey", portoneChannelKey);
@@ -103,7 +105,15 @@ public class ReservationController {
 
     // 예약 완료 페이지 (예약 정보 확인 가능)
     @GetMapping("/reservations/complete")
-    public String complete(@RequestParam("id") Long id, Model model) {
+    public String complete(@RequestParam("id") Long id,
+                           @RequestParam(value = "paymentId", required = false) String paymentId,
+                           Model model) {
+
+        // 브라우저에서 결제 성공 후 paymentId(imp_uid)를 들고 온 경우 즉시 동기화
+        if (paymentId != null && !paymentId.isEmpty()) {
+            paymentService.syncPaymentStatus(paymentId);
+        }
+
         ReservationResponse.CompleteDTO reservation = reservationService.getCompleteDetails(id);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);
@@ -195,11 +205,11 @@ public class ReservationController {
         ReservationResponse.ChangeDoneDTO changeRequest = reservationService.getChangeDoneDetails(id);
         model.addAttribute("changeRequest", changeRequest);
         return "mypage/reservation-change-done";
-        }
+    }
 
-        // 예약 취소 폼 조회
-        @GetMapping("/mypage/reservations/{id}/cancel-form")
-        public String cancelForm(@PathVariable("id") Long id, Model model) {
+    // 예약 취소 폼 조회
+    @GetMapping("/mypage/reservations/{id}/cancel-form")
+    public String cancelForm(@PathVariable("id") Long id, Model model) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         if (sessionUser == null) {
             return "redirect:/login-form";
@@ -209,11 +219,11 @@ public class ReservationController {
         model.addAttribute("reservation", reservation);
         model.addAttribute("userName", sessionUser.getName());
         return "mypage/reservation-cancel";
-        }
+    }
 
-        // 예약 취소 요청 처리
-        @PostMapping("/mypage/reservations/{id}/cancel-request")
-        public String cancelRequest(@PathVariable("id") Long id, ReservationRequest.CancelDTO dto) {
+    // 예약 취소 요청 처리
+    @PostMapping("/mypage/reservations/{id}/cancel-request")
+    public String cancelRequest(@PathVariable("id") Long id, ReservationRequest.CancelDTO dto) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         if (sessionUser == null) {
             return "redirect:/login-form";
@@ -222,11 +232,11 @@ public class ReservationController {
         dto.setReservationId(id);
         reservationService.requestCancel(dto, sessionUser);
         return "redirect:/mypage/reservations/" + id + "/cancel-done";
-        }
+    }
 
-        // 예약 취소 완료 페이지
-        @GetMapping("/mypage/reservations/{id}/cancel-done")
-        public String cancelDone(@PathVariable("id") Long id, Model model) {
+    // 예약 취소 완료 페이지
+    @GetMapping("/mypage/reservations/{id}/cancel-done")
+    public String cancelDone(@PathVariable("id") Long id, Model model) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         if (sessionUser == null) {
             return "redirect:/login-form";
@@ -235,5 +245,5 @@ public class ReservationController {
         ReservationResponse.CancelDoneDTO cancelRequest = reservationService.getCancelDoneDetails(id);
         model.addAttribute("cancelRequest", cancelRequest);
         return "mypage/reservation-cancel-done";
-        }
-        }
+    }
+}
