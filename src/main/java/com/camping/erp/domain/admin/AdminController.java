@@ -262,11 +262,6 @@ public class AdminController {
     }
 
     // --- 기타 ---
-    @GetMapping("/admin/stat")
-    public String stat() {
-        return "admin/stat";
-    }
-
     @GetMapping("/admin/qna")
     public String qnaList(
             @RequestParam(value = "status", defaultValue = "all") String status,

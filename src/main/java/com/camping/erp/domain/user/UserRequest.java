@@ -37,4 +37,14 @@ public class UserRequest {
         private String username;
         private String password;
     }
+
+    @Getter @Setter
+    public static class UpdateDTO {
+        private String currentPassword;  // 기존 비밀번호 확인용
+        private String newPassword;      // 변경할 비밀번호 (선택)
+        private String newPasswordConfirm; // 새 비밀번호 확인 (선택)
+        private String name;
+        private String email;
+        private String phone;
+    }
 }

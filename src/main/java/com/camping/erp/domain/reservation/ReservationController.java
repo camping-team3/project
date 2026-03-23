@@ -4,6 +4,7 @@ import com.camping.erp.domain.payment.PaymentService;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
 import com.camping.erp.domain.user.UserResponse;
+import com.camping.erp.domain.user.UserService;
 import com.camping.erp.global.util.Resp;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,9 @@ public class ReservationController {
     private String portoneChannelKey;
 
     private final SiteService siteService;
-    private final ReservationService reservationService;
     private final PaymentService paymentService;
+    private final ReservationService reservationService;
+    private final UserService userService;
     private final HttpSession session;
 
     // 예약 페이지 (예약 가능 사이트 목록 조회)
@@ -106,8 +108,8 @@ public class ReservationController {
     // 예약 완료 페이지 (예약 정보 확인 가능)
     @GetMapping("/reservations/complete")
     public String complete(@RequestParam("id") Long id,
-                           @RequestParam(value = "paymentId", required = false) String paymentId,
-                           Model model) {
+            @RequestParam(value = "paymentId", required = false) String paymentId,
+            Model model) {
 
         // 브라우저에서 결제 성공 후 paymentId(imp_uid)를 들고 온 경우 즉시 동기화
         if (paymentId != null && !paymentId.isEmpty()) {
@@ -142,7 +144,8 @@ public class ReservationController {
                 .toList();
 
         model.addAttribute("reservations", dtos);
-        model.addAttribute("userName", sessionUser.getName());
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reservations";
     }
 
@@ -156,6 +159,8 @@ public class ReservationController {
 
         ReservationResponse.DetailDTO reservation = reservationService.getReservationDetail(id);
         model.addAttribute("reservation", reservation);
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reservation-detail";
     }
 
@@ -169,7 +174,8 @@ public class ReservationController {
 
         ReservationResponse.ChangeFormDTO reservation = reservationService.getChangeForm(id);
         model.addAttribute("reservation", reservation);
-        model.addAttribute("userName", sessionUser.getName()); // 사용자 이름 추가
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reservation-change";
     }
 
@@ -204,6 +210,8 @@ public class ReservationController {
 
         ReservationResponse.ChangeDoneDTO changeRequest = reservationService.getChangeDoneDetails(id);
         model.addAttribute("changeRequest", changeRequest);
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reservation-change-done";
     }
 
@@ -217,7 +225,8 @@ public class ReservationController {
 
         ReservationResponse.DetailDTO reservation = reservationService.getReservationDetail(id);
         model.addAttribute("reservation", reservation);
-        model.addAttribute("userName", sessionUser.getName());
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reservation-cancel";
     }
 
@@ -244,6 +253,8 @@ public class ReservationController {
 
         ReservationResponse.CancelDoneDTO cancelRequest = reservationService.getCancelDoneDetails(id);
         model.addAttribute("cancelRequest", cancelRequest);
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reservation-cancel-done";
     }
 }
