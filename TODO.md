@@ -138,7 +138,7 @@
 - [x] **Task 2: 비속어 필터 및 AI 분석 서비스 구현**
   - `ProfanityFilter`: 서버 측 비속어 사전 대조 로직 (비속어 발견 시 즉시 5점 부여)
   - `AiAnalysisService`: `@Async`를 활용한 Gemini API 연동 (비방 수치 1~5점 판별)
-- [ ] **Task 3: 평점 재계산 로직 구현**
+- [x] **Task 3: 평점 재계산 로직 구현**
   - `ReviewService.recalculateAverageRating(Long siteId)`: 삭제/복구 시 호출되어 해당 사이트의 평점을 실시간 갱신
 
 ## 2단계: 관리자 리뷰 관리 대시보드 UI (Front-end)

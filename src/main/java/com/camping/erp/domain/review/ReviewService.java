@@ -9,7 +9,9 @@ import com.camping.erp.domain.reservation.enums.ReservationStatus;
 import com.camping.erp.domain.review.dto.ReviewRequest;
 import com.camping.erp.domain.review.dto.ReviewResponse;
 import com.camping.erp.domain.site.Site;
+import com.camping.erp.domain.site.SiteRepository;
 import com.camping.erp.domain.site.Zone;
+import com.camping.erp.domain.site.ZoneRepository;
 import com.camping.erp.domain.user.User;
 import com.camping.erp.global.util.FileUtil;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
     private final ImageRepository imageRepository;
+    private final SiteRepository siteRepository;
+    private final ZoneRepository zoneRepository;
     private final FileUtil fileUtil;
     private final AiAnalysisService aiAnalysisService;
 
@@ -223,11 +227,8 @@ public class ReviewService {
                 .build();
         reviewRepository.save(review);
 
-        // 4. Site & Zone 평점 반영
-        Site site = reservation.getSite();
-        Zone zone = site.getZone();
-        site.addRating(req.getRating());
-        zone.addRating(req.getRating());
+        // 4. Site & Zone 평점 반영 (일괄 재계산 방식 권장)
+        recalculateAverageRating(reservation.getSite().getId(), reservation.getSite().getZone().getId());
 
         // 5. 이미지 저장 (최대 5장)
         if (req.getImages() != null && !req.getImages().isEmpty()) {
@@ -255,15 +256,11 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
 
-        // 1. 평점 역산 (실시간 반영)
-        Reservation reservation = review.getReservation();
-        Site site = reservation.getSite();
-        Zone zone = site.getZone();
-        site.removeRating(review.getRating());
-        zone.removeRating(review.getRating());
-
-        // 2. 논리 삭제 처리 (이미지는 물리적으로 삭제하지 않고 보존)
+        // 1. 논리 삭제 처리
         review.processByAdmin(true, reason);
+
+        // 2. 평점 재계산 (isDeleted=true인 데이터는 제외됨)
+        recalculateAverageRating(review.getReservation().getSite().getId(), review.getReservation().getSite().getZone().getId());
     }
 
     @Transactional
@@ -271,7 +268,27 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
 
-        // 검토 완료 상태로만 변경 (isDeleted = false)
+        // 1. 검토 완료 상태로만 변경 (isDeleted = false)
         review.processByAdmin(false, null);
+
+        // 2. 평점 재계산 (다시 평점에 포함됨)
+        recalculateAverageRating(review.getReservation().getSite().getId(), review.getReservation().getSite().getZone().getId());
+    }
+
+    @Transactional
+    public void recalculateAverageRating(Long siteId, Long zoneId) {
+        // Site 평점 재계산
+        List<Review> siteReviews = reviewRepository.findActiveReviewsBySiteId(siteId);
+        int siteCount = siteReviews.size();
+        double siteAvg = siteReviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+        
+        siteRepository.findById(siteId).ifPresent(site -> site.updateRating(siteCount, siteAvg));
+
+        // Zone 평점 재계산
+        List<Review> zoneReviews = reviewRepository.findActiveReviewsByZoneId(zoneId);
+        int zoneCount = zoneReviews.size();
+        double zoneAvg = zoneReviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+        
+        zoneRepository.findById(zoneId).ifPresent(zone -> zone.updateRating(zoneCount, zoneAvg));
     }
 }

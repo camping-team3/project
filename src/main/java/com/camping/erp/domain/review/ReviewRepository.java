@@ -21,6 +21,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("select avg(r.rating) from Review r")
     Double findAverageRating();
 
+    @Query("SELECT r FROM Review r WHERE r.reservation.site.id = :siteId AND r.isDeleted = false")
+    List<Review> findActiveReviewsBySiteId(Long siteId);
+
+    @Query("SELECT r FROM Review r WHERE r.reservation.site.zone.id = :zoneId AND r.isDeleted = false")
+    List<Review> findActiveReviewsByZoneId(Long zoneId);
+
     boolean existsByReservationId(Long reservationId);
 
     Optional<Review> findByReservationId(Long reservationId);
