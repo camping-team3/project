@@ -28,6 +28,10 @@ public class AdminResponse {
         private String siteName;
         private String createdAt;
         private List<String> images; // 썸네일용
+        private Integer aiDangerScore;
+        private boolean isReviewed;
+        private boolean isDeleted;
+        private String adminReason;
     }
 
     @Getter @Setter

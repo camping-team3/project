@@ -32,6 +32,7 @@ public class ReviewService {
     private final ReservationRepository reservationRepository;
     private final ImageRepository imageRepository;
     private final FileUtil fileUtil;
+    private final AiAnalysisService aiAnalysisService;
 
     // 관리자용 리뷰 목록 조회 (페이징)
     public AdminResponse.ReviewPageDTO findAllForAdmin(Pageable pageable) {
@@ -47,6 +48,10 @@ public class ReviewService {
                         .siteName(r.getReservation().getSite().getSiteName())
                         .createdAt(r.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                         .images(r.getImages().stream().map(Image::getFileName).collect(Collectors.toList()))
+                        .aiDangerScore(r.getAiDangerScore())
+                        .isReviewed(r.isReviewed())
+                        .isDeleted(r.isDeleted())
+                        .adminReason(r.getAdminReason())
                         .build())
                 .toList();
 
@@ -240,27 +245,33 @@ public class ReviewService {
                 imageRepository.save(image);
             }
         }
+
+        // 6. AI 비방 분석 (비동기 호출)
+        aiAnalysisService.analyzeReviewAsync(review.getId(), review.getContent());
     }
 
     @Transactional
-    public void deleteByAdmin(Long reviewId) {
+    public void deleteByAdmin(Long reviewId, String reason) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
 
-        // 1. 평점 역산
+        // 1. 평점 역산 (실시간 반영)
         Reservation reservation = review.getReservation();
         Site site = reservation.getSite();
         Zone zone = site.getZone();
         site.removeRating(review.getRating());
         zone.removeRating(review.getRating());
 
-        // 2. 이미지 물리적 삭제 및 DB 삭제
-        for (Image image : review.getImages()) {
-            fileUtil.deleteFile(image.getFileName());
-            imageRepository.delete(image);
-        }
+        // 2. 논리 삭제 처리 (이미지는 물리적으로 삭제하지 않고 보존)
+        review.processByAdmin(true, reason);
+    }
 
-        // 3. 리뷰 삭제
-        reviewRepository.delete(review);
+    @Transactional
+    public void keepByAdmin(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+
+        // 검토 완료 상태로만 변경 (isDeleted = false)
+        review.processByAdmin(false, null);
     }
 }

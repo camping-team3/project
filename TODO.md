@@ -135,7 +135,7 @@
   - 경로: `src/main/java/com/camping/erp/domain/review/Review.java`
   - 내용: `aiDangerScore` (Integer), `isDeleted` (boolean), `adminReason` (String), `isReviewed` (boolean) 필드 추가
   - `ReviewResponse.AdminListDTO` 생성: 관리자 전용 데이터 구조 정의
-- [ ] **Task 2: 비속어 필터 및 AI 분석 서비스 구현**
+- [x] **Task 2: 비속어 필터 및 AI 분석 서비스 구현**
   - `ProfanityFilter`: 서버 측 비속어 사전 대조 로직 (비속어 발견 시 즉시 5점 부여)
   - `AiAnalysisService`: `@Async`를 활용한 Gemini API 연동 (비방 수치 1~5점 판별)
 - [ ] **Task 3: 평점 재계산 로직 구현**
