@@ -291,4 +291,49 @@ public class ReservationResponse {
         private String reason;
         private String requestDate;
     }
+
+    // [Task 4-2] 관리자용 예약 변경 상세 비교 DTO
+    @Getter @Setter @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class AdminChangeDetailDTO {
+        private Long id; // 예약 ID
+        private String username;
+        private Long totalPrice;
+        
+        // 기존 정보
+        private String oldSiteName;
+        private String oldCheckIn;
+        private String oldCheckOut;
+        private long oldNights;
+        private Integer oldPeopleCount;
+        
+        // 변경 요청 정보
+        private String newSiteName;
+        private String newCheckIn;
+        private String newCheckOut;
+        private long newNights;
+        private Integer newPeopleCount;
+    }
+
+    // [Task 4-2] 관리자용 예약 취소 상세 DTO
+    @Getter @Setter @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class AdminCancelDetailDTO {
+        private Long id; // 예약 ID
+        private String username;
+        private String siteName;
+        private String checkIn;
+        private String checkOut;
+        private long nights;
+        private Integer peopleCount;
+        private Long totalPrice;
+        
+        // 취소 요청 정보
+        private String reason;
+        private String refundBank;
+        private String refundAccount;
+        private String refundAccountHolder;
+    }
 }

@@ -82,9 +82,9 @@
     - `CHANGE_REQ`: 클릭 시 `admin/reservation/change-detail` 이동
     - `CANCEL_REQ`: 클릭 시 `admin/reservation/cancel-detail` 이동
   - [x] 관리열 버튼 제어: `CHANGE_REQ`, `CANCEL_REQ` 상태일 때만 '승인/거절' 버튼 노출
-- [ ] **4-2. 관리자 요청 상세 및 비교 페이지 구현**
-  - [ ] `/admin/reservation/change-detail/{id}` 및 `/admin/reservation/cancel-detail/{id}` 구현
-  - [ ] 기능: 원본 예약 정보와 요청 정보 비교 뷰 제공 및 승인/거절 버튼 배치
+- [x] **4-2. 관리자 요청 상세 및 비교 페이지 구현**
+  - [x] `/admin/reservations/{id}/change-detail` 및 `/admin/reservations/{id}/cancel-detail` 구현
+  - [x] 기능: 원본 예약 정보와 요청 정보 비교 뷰 제공 및 승인/거절 버튼 배치
 - [ ] **4-3. 관리자 예약 상세 페이지 구현 (detail.mustache)**
   - [ ] 경로: `admin/reservation/detail.mustache` 구현
   - [ ] 내용: 예약자/방문자 정보, 예약 정보, 이용 일정 상세 노출 (요금 산출 내역 제외)

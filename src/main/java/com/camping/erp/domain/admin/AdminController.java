@@ -10,6 +10,7 @@ import com.camping.erp.domain.payment.RefundResponse;
 import com.camping.erp.domain.payment.RefundService;
 import com.camping.erp.domain.qna.QnaResponse;
 import com.camping.erp.domain.qna.QnaService;
+import com.camping.erp.domain.reservation.ReservationResponse;
 import com.camping.erp.domain.reservation.ReservationService;
 import com.camping.erp.domain.review.ReviewService;
 import com.camping.erp.domain.site.SiteRequest;
@@ -135,12 +136,16 @@ public class AdminController {
     }
 
     @GetMapping("/admin/reservations/{id}/change-detail")
-    public String reservationChangeDetail(@PathVariable("id") Long id) {
+    public String reservationChangeDetail(@PathVariable("id") Long id, Model model) {
+        ReservationResponse.AdminChangeDetailDTO detail = reservationService.getAdminChangeDetail(id);
+        model.addAttribute("detail", detail);
         return "admin/reservation/change-detail";
     }
 
     @GetMapping("/admin/reservations/{id}/cancel-detail")
-    public String reservationCancelDetail(@PathVariable("id") Long id) {
+    public String reservationCancelDetail(@PathVariable("id") Long id, Model model) {
+        ReservationResponse.AdminCancelDetailDTO detail = reservationService.getAdminCancelDetail(id);
+        model.addAttribute("detail", detail);
         return "admin/reservation/cancel-detail";
     }
 

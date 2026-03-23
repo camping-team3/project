@@ -125,7 +125,18 @@
                     </div>
                 </div>
 
-                <form id="payment-form">
+                <form id="payment-form" action="/reservations/reserve" method="POST">
+                    <!-- 가예약 정보를 서버로 전송하기 위한 hidden 필드들 -->
+                    <input type="hidden" name="siteId" value="{{payment.siteId}}">
+                    <input type="hidden" name="checkIn" value="{{payment.checkIn}}">
+                    <input type="hidden" name="checkOut" value="{{payment.checkOut}}">
+                    <input type="hidden" name="peopleCount" value="{{payment.peopleCount}}">
+                    <input type="hidden" name="totalPrice" value="{{payment.totalPrice}}">
+                    
+                    <!-- 방문자 정보 (JS에서 세팅) -->
+                    <input type="hidden" name="visitorName" id="hiddenVisitorName">
+                    <input type="hidden" name="visitorPhone" id="hiddenVisitorPhone">
+
                     <!-- 가예약 ID를 JS에서 사용하기 위해 data 속성으로 보관 -->
                     <div id="reservation-data" 
                          data-id="{{payment.reservationId}}"
@@ -242,8 +253,10 @@
                 return;
             }
 
-            // 결제 성공 시 (웹훅 처리 또는 수동 검증으로 연결)
-            location.href = `/reservations/complete?id=${reservationId}&paymentId=${paymentId}`;
+            // 결제 성공 시 방문자 정보 세팅 후 폼 제출
+            document.getElementById('hiddenVisitorName').value = visitorNameInput.value.trim();
+            document.getElementById('hiddenVisitorPhone').value = visitorPhoneInput.value.trim();
+            document.getElementById('payment-form').submit();
 
         } catch (error) {
             console.error(error);
