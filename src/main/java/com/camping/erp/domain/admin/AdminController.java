@@ -17,6 +17,7 @@ import com.camping.erp.domain.site.SiteRequest;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
 import com.camping.erp.domain.user.UserResponse;
+import com.camping.erp.domain.user.UserService;
 import com.camping.erp.global.dto.PageResponse;
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.util.Resp;
@@ -35,6 +36,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +51,7 @@ public class AdminController {
     private final GalleryService galleryService;
     private final QnaService qnaService;
     private final ReviewService reviewService;
+    private final UserService userService; // 추가
     private final RefundService refundService;
     private final HttpSession session;
 
@@ -67,16 +71,37 @@ public class AdminController {
 
     // --- 리뷰 관리 ---
     @GetMapping("/admin/reviews")
-    public String reviewList(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+    public String reviewList(@RequestParam(name = "page", defaultValue = "0") int page,
+                             @RequestParam(name = "sort", defaultValue = "latest") String sort,
+                             @RequestParam(name = "filter", defaultValue = "all") String filter,
+                             @RequestParam(name = "keyword", defaultValue = "") String keyword,
+                             Model model) {
+        // TODO: 향후 Service에서 sort/filter/keyword를 처리하도록 확장 필요. 
+        // 현재는 기본 페이징 조회만 유지하되 UI 파라미터 전달
+        Pageable pageable = PageRequest.of(page, 10, sort.equals("danger") ? Sort.by("aiDangerScore").descending() : Sort.by("id").descending());
         AdminResponse.ReviewPageDTO response = reviewService.findAllForAdmin(pageable);
+        
         model.addAttribute("response", response);
+        model.addAttribute("isDangerSort", "danger".equals(sort));
+        model.addAttribute("keyword", keyword);
         return "admin/review/list";
     }
 
+    @PostMapping("/admin/reviews/{id}/keep")
+    public String keepReview(@PathVariable("id") Long id) {
+        reviewService.keepByAdmin(id);
+        return "redirect:/admin/reviews";
+    }
+
     @PostMapping("/admin/reviews/{id}/delete")
-    public String deleteReview(@PathVariable("id") Long id) {
-        reviewService.deleteByAdmin(id);
+    public String deleteReview(@PathVariable("id") Long id, @RequestParam("reason") String reason) {
+        reviewService.deleteByAdmin(id, reason);
+        return "redirect:/admin/reviews";
+    }
+
+    @PostMapping("/admin/users/{userId}/expel")
+    public String expelUser(@PathVariable("userId") Long userId) {
+        userService.expelUser(userId);
         return "redirect:/admin/reviews";
     }
 
@@ -283,11 +308,6 @@ public class AdminController {
     }
 
     // --- 기타 ---
-    @GetMapping("/admin/stat")
-    public String stat() {
-        return "admin/stat";
-    }
-
     @GetMapping("/admin/qna")
     public String qnaList(
             @RequestParam(value = "status", defaultValue = "all") String status,
@@ -346,7 +366,28 @@ public class AdminController {
     }
 
     @GetMapping("/admin/sites/season")
-    public String siteSeason() {
+    public String siteSeason(Model model) {
+        LocalDate now = LocalDate.now();
+        model.addAttribute("currentYear", now.getYear());
+        model.addAttribute("currentMonth", now.getMonthValue());
+
+        // 달력 데이터 생성 (6주 분량)
+        List<AdminResponse.CalendarDayDTO> calendarDays = new ArrayList<>();
+        LocalDate firstOfMonth = now.withDayOfMonth(1);
+        int dayOfWeek = firstOfMonth.getDayOfWeek().getValue() % 7; // 0:일, 1:월, ..., 6:토
+        
+        LocalDate startDate = firstOfMonth.minusDays(dayOfWeek);
+        for (int i = 0; i < 42; i++) {
+            LocalDate date = startDate.plusDays(i);
+            calendarDays.add(AdminResponse.CalendarDayDTO.builder()
+                    .day(date.getDayOfMonth())
+                    .date(date)
+                    .isCurrentMonth(date.getMonthValue() == now.getMonthValue())
+                    .isToday(date.equals(now))
+                    .build());
+        }
+        model.addAttribute("calendarDays", calendarDays);
+
         return "admin/site/season";
     }
 }

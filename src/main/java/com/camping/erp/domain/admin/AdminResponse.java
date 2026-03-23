@@ -33,6 +33,21 @@ public class AdminResponse {
         private String siteName;
         private String createdAt;
         private List<String> images; // 썸네일용
+        private Integer aiDangerScore;
+        private boolean isReviewed;
+        private boolean isDeleted;
+        private String adminReason;
+        private Integer penaltyCount;
+        private Long userId;
+        private boolean isExpelled; // 사용자가 이미 탈퇴했는지 여부
+
+        public boolean isHighDanger() {
+            return aiDangerScore != null && aiDangerScore >= 3;
+        }
+
+        public boolean canExpel() {
+            return !isExpelled && penaltyCount != null && penaltyCount >= 3;
+        }
     }
 
     @Getter
@@ -185,5 +200,15 @@ public class AdminResponse {
         // 요청 이력
         private List<com.camping.erp.domain.reservation.ReservationResponse.ChangeRequestHistoryDTO> changeRequests;
         private List<com.camping.erp.domain.reservation.ReservationResponse.CancelRequestHistoryDTO> cancelRequests;
+    }
+
+    @Getter @Setter
+    @Builder
+    public static class CalendarDayDTO {
+        private int day;
+        private LocalDate date;
+        private boolean isCurrentMonth;
+        private boolean isToday;
+        // 향후 이벤트(시즌) 정보를 담을 리스트 추가 가능
     }
 }

@@ -11,8 +11,8 @@
                             <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuArVyFD1kByWmCBF0Rz4ccl-L4vIMovS-krTT4u-KVYHhX2hMPUkaQzOLuSXFNkjKwDG0hbQZ7gaRgh8ytv6BK6xFB6ClZmg6H-wq586rl1mmMaOrnlkhWvj-w0KNrgyc3qLGo11qHIdPwOfdKeuTDw6OltxRnbG17NoLNHNk1YZI1Li_g3-PSh5baMbRafh3KgP2jo5_izMzuKYzAJm9zDtUrAJHJSePSvnmDcctJdXnbujZtx4x7j3Nub2X0XNELdrx0zZBwepMns" alt="Profile">
                         </div>
                         <div class="profile-info">
-                            <h3>{{userName}} 님</h3> <!-- 동적 이름 바인딩 -->
-                            <p>Forest Member</p>
+                            <h3>{{user.name}} 님</h3>
+                            <p>{{user.role}} Member</p>
                         </div>
                     </div>
                 </div>
@@ -21,7 +21,7 @@
                         <span class="material-symbols-outlined">home</span>
                         <span>홈</span>
                     </a>
-                    <a href="#" class="nav-item">
+                    <a href="/mypage/info" class="nav-item">
                         <span class="material-symbols-outlined">person</span>
                         <span>회원 정보</span>
                     </a>

@@ -53,19 +53,22 @@
 
     const texts = ["별로예요 (1점)", "그저 그래요 (2점)", "보통이에요 (3점)", "좋아요! (4점)", "최고예요! (5점)"];
 
+    function updateStars(value) {
+        stars.forEach(s => {
+            if (parseInt(s.getAttribute('data-value')) <= value) {
+                s.classList.add('active');
+            } else {
+                s.classList.remove('active');
+            }
+        });
+        ratingText.textContent = texts[value - 1];
+    }
+
     stars.forEach(star => {
         star.addEventListener('click', () => {
             const value = parseInt(star.getAttribute('data-value'));
             ratingInput.value = value;
-            ratingText.textContent = texts[value - 1];
-
-            stars.forEach(s => {
-                if (parseInt(s.getAttribute('data-value')) <= value) {
-                    s.classList.add('active');
-                } else {
-                    s.classList.remove('active');
-                }
-            });
+            updateStars(value);
         });
     });
 

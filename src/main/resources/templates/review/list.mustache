@@ -52,10 +52,10 @@
                 <div class="p-4">
                     <!-- Rating & Date -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="d-flex gap-1 text-warning">
-                            {{#ratingStars}}
-                            <span class="material-symbols-outlined small" style="font-variation-settings: 'FILL' 1;">star</span>
-                            {{/ratingStars}}
+                        <div class="d-flex gap-1">
+                            {{#stars}}
+                            <span class="material-symbols-outlined small {{#active}}text-warning{{/active}}{{^active}}text-secondary opacity-25{{/active}}" style="font-variation-settings: 'FILL' 1;">star</span>
+                            {{/stars}}
                         </div>
                         <span class="text-muted small">{{createdAt}}</span>
                     </div>

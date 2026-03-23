@@ -46,13 +46,13 @@
             <div class="menu-group">
                 <p class="text-xs font-bold text-secondary opacity-50 text-uppercase tracking-widest px-3 mb-3">Operational</p>
                 <nav class="fh-sidebar-nav d-flex flex-column gap-1">
+                    <a href="/admin/reviews" class="nav-item">
+                        <span class="material-symbols-outlined">rate_review</span>
+                        <span class="small fw-medium">리뷰 관리</span>
+                    </a>
                     <a href="/admin/users" class="nav-item">
                         <span class="material-symbols-outlined">group</span>
                         <span class="small fw-medium">사용자 관리</span>
-                    </a>
-                    <a href="/admin/stat" class="nav-item">
-                        <span class="material-symbols-outlined">bar_chart</span>
-                        <span class="small fw-medium">통계 리포트</span>
                     </a>
                     <a href="/admin/sites" class="nav-item">
                         <span class="material-symbols-outlined">map</span>
@@ -87,22 +87,10 @@
             <!-- Header -->
             <header class="admin-header">
                 <div class="d-flex align-items-center gap-4 flex-grow-1">
-                    <div class="search-wrapper">
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-0 rounded-start-3">
-                                <span class="material-symbols-outlined fs-5 text-secondary opacity-50">search</span>
-                            </span>
-                            <input type="text" class="form-control bg-light border-0 py-2 shadow-none rounded-end-3" placeholder="통합 검색...">
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center gap-2 me-4">
-                    <button class="btn-icon shadow-none border-0 btn-icon-admin">
-                        <span class="material-symbols-outlined fs-5 text-secondary">notifications</span>
-                    </button>
-                    <button class="btn-icon shadow-none border-0 btn-icon-admin">
-                        <span class="material-symbols-outlined fs-5 text-secondary">settings</span>
-                    </button>
+                    <a href="/" class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2 fw-bold text-decoration-none shadow-sm rounded-3">
+                        <span class="material-symbols-outlined fs-5">home</span>
+                        <span class="small">홈으로 돌아가기</span>
+                    </a>
                 </div>
                 <div class="admin-profile-section">
                     <div class="d-flex align-items-center gap-3">
