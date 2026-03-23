@@ -87,4 +87,62 @@ public class ReservationIntegrationTest {
         Reservation saved = reservationRepository.findById(response.getId()).orElseThrow();
         assertThat(saved.getStatus()).isEqualTo(ReservationStatus.CONFIRMED);
     }
+
+    @Test
+    @DisplayName("시나리오 3: 변경/취소 요청 중인 사이트의 중복 예약 차단 검증")
+    void findAvailableSites_BlockingRequestedSites() {
+        // ... (기존 코드 유지)
+    }
+
+    @Test
+    @DisplayName("시나리오 4: 과거 날짜 예약 변경 요청 차단 검증")
+    void requestChange_PastDate_Fail() {
+        // given: 과거 날짜 예약 생성 (상태: CONFIRMED)
+        Reservation pastReservation = Reservation.builder()
+                .user(userRepository.findById(testUser.getId()).orElseThrow())
+                .site(testSite)
+                .checkIn(LocalDate.now().minusDays(5))
+                .checkOut(LocalDate.now().minusDays(3))
+                .peopleCount(2)
+                .totalPrice(100000L)
+                .status(ReservationStatus.CONFIRMED)
+                .build();
+        Reservation saved = reservationRepository.save(pastReservation);
+
+        ReservationRequest.ChangeDTO changeDTO = new ReservationRequest.ChangeDTO();
+        changeDTO.setReservationId(saved.getId());
+        changeDTO.setNewCheckIn(LocalDate.now().plusDays(10));
+        changeDTO.setNewCheckOut(LocalDate.now().plusDays(12));
+        changeDTO.setNewSiteId(testSite.getId());
+
+        // when & then: Exception400 발생 확인
+        org.junit.jupiter.api.Assertions.assertThrows(com.camping.erp.global.handler.ex.Exception400.class, () -> {
+            reservationService.requestChange(changeDTO, testUser);
+        });
+    }
+
+    @Test
+    @DisplayName("시나리오 5: 이용일 3일 이내 예약 취소 요청 차단 검증")
+    void requestCancel_Within3Days_Fail() {
+        // given: 이용일이 내일인 예약 생성 (상태: CONFIRMED)
+        Reservation nearReservation = Reservation.builder()
+                .user(userRepository.findById(testUser.getId()).orElseThrow())
+                .site(testSite)
+                .checkIn(LocalDate.now().plusDays(1))
+                .checkOut(LocalDate.now().plusDays(3))
+                .peopleCount(2)
+                .totalPrice(100000L)
+                .status(ReservationStatus.CONFIRMED)
+                .build();
+        Reservation saved = reservationRepository.save(nearReservation);
+
+        ReservationRequest.CancelDTO cancelDTO = new ReservationRequest.CancelDTO();
+        cancelDTO.setReservationId(saved.getId());
+        cancelDTO.setReason("개인 사정");
+
+        // when & then: Exception400 발생 확인
+        org.junit.jupiter.api.Assertions.assertThrows(com.camping.erp.global.handler.ex.Exception400.class, () -> {
+            reservationService.requestCancel(cancelDTO, testUser);
+        });
+    }
 }

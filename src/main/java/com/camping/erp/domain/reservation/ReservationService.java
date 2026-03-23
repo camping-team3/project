@@ -269,7 +269,8 @@ public class ReservationService {
                                 site,
                                 request.getPeopleCount(),
                                 request.getVisitorName(),
-                                request.getVisitorPhone());
+                                request.getVisitorPhone(),
+                                calculatedPrice);
                 reservation.updateStatus(ReservationStatus.CONFIRMED);
                 // totalPrice 업데이트 필드가 엔티티에 직접적인 setter가 없으므로 builder 재사용 고려하거나 필드 추가 필요
                 // 여기서는 기존 빌더 로직의 구조를 유지하며 필드 세팅을 확실히 함
@@ -394,11 +395,22 @@ public class ReservationService {
                         throw new Exception403("본인의 예약만 변경 요청할 수 있습니다.");
                 }
 
-                // 2. 새로운 사이트 조회
+                // 2. 비즈니스 규칙 검증
+                // (1) 예약 확정 상태인지 확인
+                if (reservation.getStatus() != ReservationStatus.CONFIRMED) {
+                        throw new Exception400("확정된 예약만 변경 요청이 가능합니다.");
+                }
+
+                // (2) 이용일 당일 및 과거 예약 변경 불가
+                if (!reservation.getCheckIn().isAfter(LocalDate.now())) {
+                        throw new Exception400("이용일 당일 및 과거 예약은 온라인 변경이 불가능합니다.");
+                }
+
+                // 3. 새로운 사이트 조회
                 Site newSite = siteRepository.findById(dto.getNewSiteId())
                                 .orElseThrow(() -> new Exception404("변경하려는 사이트를 찾을 수 없습니다."));
 
-                // 3. 중복 예약 최종 체크 (가예약 Lock 로직 포함됨)
+                // 4. 중복 예약 최종 체크 (가예약 Lock 로직 포함됨)
                 List<ReservationStatus> activeStatuses = List.of(
                                 ReservationStatus.PENDING,
                                 ReservationStatus.CONFIRMED,
@@ -411,10 +423,10 @@ public class ReservationService {
                         throw new Exception400("해당 기간은 이미 예약되었거나 변경 요청 중인 자리입니다.");
                 }
 
-                // 4. 원본 예약 상태 변경 (CONFIRMED -> CHANGE_REQ)
+                // 5. 원본 예약 상태 변경 (CONFIRMED -> CHANGE_REQ)
                 reservation.updateStatus(ReservationStatus.CHANGE_REQ);
 
-                // 5. 변경 요청 기록 생성 및 저장
+                // 6. 변경 요청 기록 생성 및 저장
                 ReservationChangeRequest changeRequest = ReservationChangeRequest.builder()
                                 .reservation(reservation)
                                 .newCheckIn(dto.getNewCheckIn())
@@ -440,7 +452,13 @@ public class ReservationService {
                         throw new Exception403("본인의 예약만 취소 요청할 수 있습니다.");
                 }
 
-                // 2. 비즈니스 규칙 검증 (이용일 3일 전 체크)
+                // 2. 비즈니스 규칙 검증
+                // (1) 예약 확정 상태인지 확인
+                if (reservation.getStatus() != ReservationStatus.CONFIRMED) {
+                        throw new Exception400("확정된 예약만 취소 요청이 가능합니다.");
+                }
+
+                // (2) 이용일 3일 전 체크
                 LocalDate limitDate = reservation.getCheckIn().minusDays(3);
                 if (LocalDate.now().isAfter(limitDate)) {
                         throw new Exception400("이용일 3일 전까지만 온라인 취소가 가능합니다. 고객센터로 문의해주세요.");
@@ -646,7 +664,8 @@ public class ReservationService {
                                         req.getNewSite(),
                                         req.getNewPeopleCount(),
                                         r.getVisitorName(),
-                                        r.getVisitorPhone());
+                                        r.getVisitorPhone(),
+                                        r.getTotalPrice());
                         // 2. 요청 상태 및 예약 상태 확정
                         req.approve();
                         r.updateStatus(ReservationStatus.CONFIRMED);
