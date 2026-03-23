@@ -151,7 +151,9 @@ public class AdminController {
 
     // 예약 상세 보기
     @GetMapping("/admin/reservations/{id}/detail")
-    public String reservationDetail(@PathVariable("id") Long id) {
+    public String reservationDetail(@PathVariable("id") Long id, Model model) {
+        AdminResponse.AdminReservationDetailDTO detail = reservationService.getAdminReservationDetail(id);
+        model.addAttribute("detail", detail);
         return "admin/reservation/detail";
     }
 

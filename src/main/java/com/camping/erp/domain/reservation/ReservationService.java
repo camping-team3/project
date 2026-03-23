@@ -571,4 +571,53 @@ public class ReservationService {
                                 .cancelRequests(cancelHistories)
                                 .build();
         }
+
+        /**
+         * [Task 4-3] 관리자용 예약 상세 정보 조회 (통합 이력 포함)
+         */
+        public AdminResponse.AdminReservationDetailDTO getAdminReservationDetail(Long id) {
+                Reservation r = reservationRepository.findById(id)
+                                .orElseThrow(() -> new Exception404("해당 예약을 찾을 수 없습니다."));
+
+                long nights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
+
+                List<ReservationResponse.ChangeRequestHistoryDTO> changeHistories = r.getChangeRequests() == null ? List.of()
+                                : r.getChangeRequests().stream()
+                                                .map(ReservationResponse.ChangeRequestHistoryDTO::fromEntity)
+                                                .toList();
+
+                List<ReservationResponse.CancelRequestHistoryDTO> cancelHistories = r.getCancelRequests() == null ? List.of()
+                                : r.getCancelRequests().stream()
+                                                .map(ReservationResponse.CancelRequestHistoryDTO::fromEntity)
+                                                .toList();
+
+                return AdminResponse.AdminReservationDetailDTO.builder()
+                                .id(r.getId())
+                                .userId(r.getUser().getId())
+                                .username(r.getUser().getName())
+                                .visitorName(r.getVisitorName())
+                                .visitorPhone(r.getVisitorPhone())
+                                .siteName(r.getSite().getSiteName())
+                                .checkIn(r.getCheckIn().toString().replace("-", "."))
+                                .checkOut(r.getCheckOut().toString().replace("-", "."))
+                                .nights(nights)
+                                .peopleCount(r.getPeopleCount())
+                                .totalPrice(r.getTotalPrice())
+                                .statusText(r.getStatus().getDescription())
+                                .statusClass(getStatusClass(r.getStatus()))
+                                .changeRequests(changeHistories)
+                                .cancelRequests(cancelHistories)
+                                .build();
+        }
+
+        private String getStatusClass(ReservationStatus status) {
+                return switch (status) {
+                        case PENDING -> "warning";
+                        case CONFIRMED -> "primary";
+                        case COMPLETED -> "success";
+                        case CANCEL_REQ, CHANGE_REQ -> "info";
+                        case CANCEL_COMP -> "danger";
+                        default -> "secondary";
+                };
+        }
 }

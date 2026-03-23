@@ -85,12 +85,12 @@
 - [x] **4-2. 관리자 요청 상세 및 비교 페이지 구현**
   - [x] `/admin/reservations/{id}/change-detail` 및 `/admin/reservations/{id}/cancel-detail` 구현
   - [x] 기능: 원본 예약 정보와 요청 정보 비교 뷰 제공 및 승인/거절 버튼 배치
-- [ ] **4-3. 관리자 예약 상세 페이지 구현 (detail.mustache)**
-  - [ ] 경로: `admin/reservation/detail.mustache` 구현
-  - [ ] 내용: 예약자/방문자 정보, 예약 정보, 이용 일정 상세 노출 (요금 산출 내역 제외)
-  - [ ] 기능: '사용자 상세 정보보기' 버튼 클릭 시 `admin/user/detail.mustache` 이동
-  - [ ] 이력: 예약 관련 모든 요청 이력(변경/취소) 섹션 추가
-  - [ ] 버튼: 예약 승인 버튼 숨김 처리
+- [x] **4-3. 관리자 예약 상세 페이지 구현 (detail.mustache)**
+  - [x] 경로: `admin/reservation/detail.mustache` 구현
+  - [x] 내용: 예약자/방문자 정보, 예약 정보, 이용 일정 상세 노출 (요금 산출 내역 제외)
+  - [x] 기능: '사용자 상세 정보보기' 버튼 클릭 시 `admin/user/detail.mustache` 이동
+  - [x] 이력: 예약 관련 모든 요청 이력(변경/취소) 섹션 추가
+  - [x] 버튼: 예약 승인 버튼 숨김 처리
 - [ ] **4-4. 승인/거절 처리 API 및 거절 사유 입력 기능 구현**
   - [ ] `reject-modal.mustache` 구현: 거절 사유 입력 폼, 취소 시 이전 페이지 이동, 확정 시 처리 로직 실행
   - [ ] 승인 로직: `Reservation` 업데이트(상태 `CONFIRMED` 복구), 요청 상태 `APPROVED` 변경 후 목록 리다이렉트
