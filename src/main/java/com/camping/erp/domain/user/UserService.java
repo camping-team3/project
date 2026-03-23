@@ -48,7 +48,12 @@ public class UserService {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new Exception400("아이디 또는 비밀번호가 일치하지 않습니다."));
 
-        // 2. 비밀번호 비교 (평문 비교 OR BCrypt 비교)
+        // 2. 상태 체크 (탈퇴 회원 로그인 차단)
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw new Exception400("탈퇴하거나 이용이 정지된 계정입니다.");
+        }
+
+        // 3. 비밀번호 비교
         boolean isMatch = request.getPassword().equals(user.getPassword())
                 || passwordEncoder.matches(request.getPassword(), user.getPassword());
 
@@ -94,5 +99,12 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
         user.updateStatus(status);
+    }
+
+    @Transactional
+    public void expelUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
+        user.updateStatus(UserStatus.ANONYMOUS);
     }
 }

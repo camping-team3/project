@@ -50,6 +50,12 @@ public class UserController {
         return "auth/login-form";
     }
 
+    // 로그인 페이지 리다이렉트 (GET /login 대응)
+    @GetMapping("/login")
+    public String loginRedirect() {
+        return "redirect:/login-form";
+    }
+
     // 로그인 처리
     @PostMapping("/login")
     public String login(UserRequest.LoginDTO request, HttpSession session) {

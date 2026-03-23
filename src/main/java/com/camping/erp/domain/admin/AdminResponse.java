@@ -32,9 +32,16 @@ public class AdminResponse {
         private boolean isReviewed;
         private boolean isDeleted;
         private String adminReason;
+        private Integer penaltyCount;
+        private Long userId;
+        private boolean isExpelled; // 사용자가 이미 탈퇴했는지 여부
 
         public boolean isHighDanger() {
             return aiDangerScore != null && aiDangerScore >= 3;
+        }
+
+        public boolean canExpel() {
+            return !isExpelled && penaltyCount != null && penaltyCount >= 3;
         }
     }
 

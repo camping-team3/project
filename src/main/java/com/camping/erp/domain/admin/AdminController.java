@@ -16,6 +16,7 @@ import com.camping.erp.domain.site.SiteRequest;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
 import com.camping.erp.domain.user.UserResponse;
+import com.camping.erp.domain.user.UserService;
 import com.camping.erp.global.dto.PageResponse;
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.util.Resp;
@@ -47,6 +48,7 @@ public class AdminController {
     private final GalleryService galleryService;
     private final QnaService qnaService;
     private final ReviewService reviewService;
+    private final UserService userService; // 추가
     private final RefundService refundService;
     private final HttpSession session;
 
@@ -91,6 +93,12 @@ public class AdminController {
     @PostMapping("/admin/reviews/{id}/delete")
     public String deleteReview(@PathVariable("id") Long id, @RequestParam("reason") String reason) {
         reviewService.deleteByAdmin(id, reason);
+        return "redirect:/admin/reviews";
+    }
+
+    @PostMapping("/admin/users/{userId}/expel")
+    public String expelUser(@PathVariable("userId") Long userId) {
+        userService.expelUser(userId);
         return "redirect:/admin/reviews";
     }
 

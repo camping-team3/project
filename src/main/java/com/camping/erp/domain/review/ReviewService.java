@@ -13,6 +13,7 @@ import com.camping.erp.domain.site.SiteRepository;
 import com.camping.erp.domain.site.Zone;
 import com.camping.erp.domain.site.ZoneRepository;
 import com.camping.erp.domain.user.User;
+import com.camping.erp.domain.user.enums.UserStatus;
 import com.camping.erp.global.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -56,6 +57,9 @@ public class ReviewService {
                         .isReviewed(r.isReviewed())
                         .isDeleted(r.isDeleted())
                         .adminReason(r.getAdminReason())
+                        .penaltyCount(r.getUser().getPenaltyCount())
+                        .userId(r.getUser().getId())
+                        .isExpelled(r.getUser().getStatus() == UserStatus.ANONYMOUS)
                         .build())
                 .toList();
 
@@ -256,12 +260,16 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
 
-        // 1. 논리 삭제 처리
+        // 2. 논리 삭제 처리
         review.processByAdmin(true, reason);
 
-        // 2. 평점 재계산 (isDeleted=true인 데이터는 제외됨)
+        // 3. 작성자 페널티 부여
+        review.getUser().increasePenalty();
+
+        // 4. 평점 재계산
         recalculateAverageRating(review.getReservation().getSite().getId(), review.getReservation().getSite().getZone().getId());
-    }
+        }
+
 
     @Transactional
     public void keepByAdmin(Long reviewId) {

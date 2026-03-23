@@ -1,13 +1,22 @@
-{{> layout/header}}
+{{> layout/admin-header}}
 
-<main class="p-4 p-lg-5">
-    <!-- Page Title -->
-    <div class="d-flex justify-content-between align-items-end mb-5">
-        <div>
-            <h2 class="display-6 fw-black text-dark mb-1">리뷰 관리</h2>
-            <p class="text-secondary fw-medium m-0">AI 비방 분석 결과를 확인하고 부적절한 리뷰를 관리합니다.</p>
-        </div>
+<style>
+/* 상단 네비게이션 제거 */
+.admin-header {
+    display: none !important;
+}
+/* 네비게이션 제거로 인한 여백 조정 */
+.admin-content {
+    padding-top: 0 !important;
+}
+</style>
+
+<div class="d-flex justify-content-between align-items-end mb-5">
+    <div>
+        <h2 class="display-6 fw-black text-dark mb-1">리뷰 관리</h2>
+        <p class="text-secondary fw-medium m-0">AI 비방 분석 결과를 확인하고 부적절한 리뷰를 관리합니다.</p>
     </div>
+</div>
 
     <!-- Filter & Search Bar -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -53,9 +62,23 @@
                 </thead>
                 <tbody>
                     {{#response.reviews}}
-                    <tr class="{{#isHighDanger}}bg-danger bg-opacity-10{{/isHighDanger}}">
+                    <tr class="{{#isHighDanger}}bg-danger bg-opacity-10{{/isHighDanger}} {{#isExpelled}}opacity-50 text-muted{{/isExpelled}}">
                         <td class="px-4 text-secondary small">{{id}}</td>
-                        <td class="px-4 fw-bold">{{username}}</td>
+                        <td class="px-4">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold">{{username}}</span>
+                                {{#isExpelled}}
+                                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold rounded-pill text-xxs px-1.5">탈퇴회원</span>
+                                {{/isExpelled}}
+                                {{^isExpelled}}
+                                    {{#penaltyCount}}
+                                    <span class="badge {{#canExpel}}bg-danger{{/canExpel}}{{^canExpel}}bg-warning{{/canExpel}} bg-opacity-10 {{#canExpel}}text-danger{{/canExpel}}{{^canExpel}}text-warning{{/canExpel}} fw-bold rounded-pill text-xxs px-1.5" title="누적 위반 횟수">
+                                        ⚠️{{penaltyCount}}
+                                    </span>
+                                    {{/penaltyCount}}
+                                {{/isExpelled}}
+                            </div>
+                        </td>
                         <td class="px-4 small text-secondary">{{zoneName}} / {{siteName}}</td>
                         <td class="px-4 text-warning">⭐ {{rating}}</td>
                         <td class="px-4">
@@ -95,6 +118,10 @@
                                 {{#isReviewed}}
                                 <span class="small text-muted">-</span>
                                 {{/isReviewed}}
+                                
+                                {{#canExpel}}
+                                <button onclick="expelUser({{userId}}, '{{username}}')" class="btn btn-sm btn-danger fw-bold text-xs py-1 px-2 shadow-sm">강제탈퇴</button>
+                                {{/canExpel}}
                             </div>
                         </td>
                     </tr>
@@ -156,7 +183,7 @@ function processReview(id, action) {
             if (result.isConfirmed) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = `/admin/reviews/${id}/keep`;
+                form.action = '/admin/reviews/' + id + '/keep';
                 document.body.appendChild(form);
                 form.submit();
             }
@@ -183,7 +210,7 @@ function openDeleteModal(id) {
         if (result.isConfirmed) {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `/admin/reviews/${id}/delete`;
+            form.action = '/admin/reviews/' + id + '/delete';
             
             const input = document.createElement('input');
             input.type = 'hidden';
@@ -196,6 +223,26 @@ function openDeleteModal(id) {
         }
     });
 }
+
+function expelUser(userId, username) {
+    Swal.fire({
+        title: '회원 강제 탈퇴',
+        html: '작성자 <b>' + username + '</b>님을 강제 탈퇴시키겠습니까?<br><small class="text-danger">탈퇴 시 해당 계정은 즉시 비활성화됩니다.</small>',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: '탈퇴 처리',
+        cancelButtonText: '취소'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/admin/users/' + userId + '/expel';
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
 </script>
 
-{{> layout/footer}}
+{{> layout/admin-footer}}
