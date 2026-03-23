@@ -485,7 +485,7 @@ public class ReservationService {
         /**
          * [Task 4-2] 관리자용 예약 변경 상세 데이터 조회 (비교용)
          */
-        public ReservationResponse.AdminChangeDetailDTO getAdminChangeDetail(Long reservationId) {
+        public AdminResponse.AdminChangeDetailDTO getAdminChangeDetail(Long reservationId) {
                 Reservation r = reservationRepository.findById(reservationId)
                                 .orElseThrow(() -> new Exception404("예약 내역을 찾을 수 없습니다."));
 
@@ -498,7 +498,7 @@ public class ReservationService {
                 long oldNights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
                 long newNights = ChronoUnit.DAYS.between(req.getNewCheckIn(), req.getNewCheckOut());
 
-                return ReservationResponse.AdminChangeDetailDTO.builder()
+                return AdminResponse.AdminChangeDetailDTO.builder()
                                 .id(r.getId())
                                 .username(r.getUser().getName())
                                 .totalPrice(r.getTotalPrice())
@@ -518,7 +518,7 @@ public class ReservationService {
         /**
          * [Task 4-2] 관리자용 예약 취소 상세 데이터 조회
          */
-        public ReservationResponse.AdminCancelDetailDTO getAdminCancelDetail(Long reservationId) {
+        public AdminResponse.AdminCancelDetailDTO getAdminCancelDetail(Long reservationId) {
                 Reservation r = reservationRepository.findById(reservationId)
                                 .orElseThrow(() -> new Exception404("예약 내역을 찾을 수 없습니다."));
 
@@ -530,7 +530,7 @@ public class ReservationService {
 
                 long nights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
 
-                return ReservationResponse.AdminCancelDetailDTO.builder()
+                return AdminResponse.AdminCancelDetailDTO.builder()
                                 .id(r.getId())
                                 .username(r.getUser().getName())
                                 .siteName(r.getSite().getSiteName())

@@ -137,14 +137,14 @@ public class AdminController {
 
     @GetMapping("/admin/reservations/{id}/change-detail")
     public String reservationChangeDetail(@PathVariable("id") Long id, Model model) {
-        ReservationResponse.AdminChangeDetailDTO detail = reservationService.getAdminChangeDetail(id);
+        AdminResponse.AdminChangeDetailDTO detail = reservationService.getAdminChangeDetail(id);
         model.addAttribute("detail", detail);
         return "admin/reservation/change-detail";
     }
 
     @GetMapping("/admin/reservations/{id}/cancel-detail")
     public String reservationCancelDetail(@PathVariable("id") Long id, Model model) {
-        ReservationResponse.AdminCancelDetailDTO detail = reservationService.getAdminCancelDetail(id);
+        AdminResponse.AdminCancelDetailDTO detail = reservationService.getAdminCancelDetail(id);
         model.addAttribute("detail", detail);
         return "admin/reservation/cancel-detail";
     }

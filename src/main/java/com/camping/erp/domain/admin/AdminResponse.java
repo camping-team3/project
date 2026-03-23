@@ -1,8 +1,11 @@
 package com.camping.erp.domain.admin;
 
 import com.camping.erp.domain.reservation.enums.ReservationStatus;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -10,14 +13,16 @@ import java.util.List;
 
 public class AdminResponse {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @Builder
     public static class ReviewPageDTO {
         private List<ReviewListDTO> reviews;
         private PaginationDTO pagination;
     }
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @Builder
     public static class ReviewListDTO {
         private Long id;
@@ -30,14 +35,16 @@ public class AdminResponse {
         private List<String> images; // 썸네일용
     }
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @Builder
     public static class ReservationPageDTO {
         private List<ReservationListDTO> reservations;
         private PaginationDTO pagination;
     }
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @Builder
     public static class PaginationDTO {
         private int totalPages;
@@ -50,7 +57,8 @@ public class AdminResponse {
         private int nextPage;
     }
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @Builder
     public static class PageNumberDTO {
         private int number;
@@ -58,7 +66,8 @@ public class AdminResponse {
         private boolean isCurrent;
     }
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @Builder
     public static class ReservationListDTO {
         private Long id;
@@ -73,8 +82,65 @@ public class AdminResponse {
         private String statusText;
         private String statusClass;
 
-        public boolean isPending() { return status == ReservationStatus.PENDING; }
-        public boolean isChangeReq() { return status == ReservationStatus.CHANGE_REQ; }
-        public boolean isCancelReq() { return status == ReservationStatus.CANCEL_REQ; }
+        public boolean isPending() {
+            return status == ReservationStatus.PENDING;
+        }
+
+        public boolean isChangeReq() {
+            return status == ReservationStatus.CHANGE_REQ;
+        }
+
+        public boolean isCancelReq() {
+            return status == ReservationStatus.CANCEL_REQ;
+        }
+    }
+
+    // [Task 4-2] 관리자용 예약 변경 상세 비교 DTO
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class AdminChangeDetailDTO {
+        private Long id; // 예약 ID
+        private String username;
+        private Long totalPrice;
+
+        // 기존 정보
+        private String oldSiteName;
+        private String oldCheckIn;
+        private String oldCheckOut;
+        private long oldNights;
+        private Integer oldPeopleCount;
+
+        // 변경 요청 정보
+        private String newSiteName;
+        private String newCheckIn;
+        private String newCheckOut;
+        private long newNights;
+        private Integer newPeopleCount;
+    }
+
+    // [Task 4-2] 관리자용 예약 취소 상세 DTO
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class AdminCancelDetailDTO {
+        private Long id; // 예약 ID
+        private String username;
+        private String siteName;
+        private String checkIn;
+        private String checkOut;
+        private long nights;
+        private Integer peopleCount;
+        private Long totalPrice;
+
+        // 취소 요청 정보
+        private String reason;
+        private String refundBank;
+        private String refundAccount;
+        private String refundAccountHolder;
     }
 }
