@@ -85,6 +85,10 @@ public class ReservationService {
                                                         statusText = "확정됨";
                                                         statusClass = "success";
                                                 }
+                                                case CHANGE_REQ -> {
+                                                        statusText = "변경 요청";
+                                                        statusClass = "info";
+                                                }
                                                 case CANCEL_REQ -> {
                                                         statusText = "취소 요청";
                                                         statusClass = "info";
@@ -92,6 +96,10 @@ public class ReservationService {
                                                 case CANCEL_COMP -> {
                                                         statusText = "취소 완료";
                                                         statusClass = "secondary";
+                                                }
+                                                case COMPLETED -> {
+                                                        statusText = "이용 완료";
+                                                        statusClass = "primary";
                                                 }
                                         }
 

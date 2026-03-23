@@ -74,14 +74,14 @@
 
 ### Task 4: 관리자 통합 승인 및 관리 기능 구현 (UI/UX 고도화)
 
-- [ ] **4-1. 관리자 예약 목록 필터링 확장 및 UI 고도화**
-  - [ ] `CHANGE_REQ` 상태 추가: 필터 옵션 및 목록 내 상태 텍스트('변경 요청')/디자인(취소 요청과 동일한 `info` 클래스) 적용
-  - [ ] UI 정리: '신규 예약 등록' 버튼 제거 및 관리열 아이콘 정리
-  - [ ] 클릭 이벤트 통합 (Row Click):
+- [x] **4-1. 관리자 예약 목록 필터링 확장 및 UI 고도화**
+  - [x] `CHANGE_REQ` 상태 추가: 필터 옵션 및 목록 내 상태 텍스트('변경 요청')/디자인(취소 요청과 동일한 `info` 클래스) 적용
+  - [x] UI 정리: '신규 예약 등록' 버튼 제거 및 관리열 아이콘 정리
+  - [x] 클릭 이벤트 통합 (Row Click):
     - `PENDING`, `CONFIRMED`, `CANCEL_COMP`, `COMPLETED`: 클릭 시 `admin/reservation/detail` 이동
     - `CHANGE_REQ`: 클릭 시 `admin/reservation/change-detail` 이동
     - `CANCEL_REQ`: 클릭 시 `admin/reservation/cancel-detail` 이동
-  - [ ] 관리열 버튼 제어: `CHANGE_REQ`, `CANCEL_REQ` 상태일 때만 '승인/거절' 버튼 노출
+  - [x] 관리열 버튼 제어: `CHANGE_REQ`, `CANCEL_REQ` 상태일 때만 '승인/거절' 버튼 노출
 - [ ] **4-2. 관리자 요청 상세 및 비교 페이지 구현**
   - [ ] `/admin/reservation/change-detail/{id}` 및 `/admin/reservation/cancel-detail/{id}` 구현
   - [ ] 기능: 원본 예약 정보와 요청 정보 비교 뷰 제공 및 승인/거절 버튼 배치

@@ -74,5 +74,7 @@ public class AdminResponse {
         private String statusClass;
 
         public boolean isPending() { return status == ReservationStatus.PENDING; }
+        public boolean isChangeReq() { return status == ReservationStatus.CHANGE_REQ; }
+        public boolean isCancelReq() { return status == ReservationStatus.CANCEL_REQ; }
     }
 }

@@ -134,18 +134,18 @@ public class AdminController {
         return "admin/reservation/list";
     }
 
-    @GetMapping("/admin/reservations/{id}/change")
+    @GetMapping("/admin/reservations/{id}/change-detail")
     public String reservationChangeDetail(@PathVariable("id") Long id) {
         return "admin/reservation/change-detail";
     }
 
-    @GetMapping("/admin/reservations/{id}/cancel")
+    @GetMapping("/admin/reservations/{id}/cancel-detail")
     public String reservationCancelDetail(@PathVariable("id") Long id) {
         return "admin/reservation/cancel-detail";
     }
 
     // 예약 상세 보기
-    @GetMapping("/admin/reservations/{id}")
+    @GetMapping("/admin/reservations/{id}/detail")
     public String reservationDetail(@PathVariable("id") Long id) {
         return "admin/reservation/detail";
     }
