@@ -107,6 +107,7 @@ public class AdminResponse {
         private String username;
         private String visitorName;
         private String visitorPhone;
+        private String userRole;
         private Long totalPrice;
 
         // 기존 정보
@@ -140,6 +141,7 @@ public class AdminResponse {
         private String username;
         private String visitorName;
         private String visitorPhone;
+        private String userRole;
         private String siteName;
         private String checkIn;
         private String checkOut;
@@ -170,6 +172,7 @@ public class AdminResponse {
         private String username;
         private String visitorName;
         private String visitorPhone;
+        private String userRole;
         private String siteName;
         private String checkIn;
         private String checkOut;
