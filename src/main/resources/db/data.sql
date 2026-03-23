@@ -1,30 +1,31 @@
 -- ==========================================================
 -- 1. 회원 정보 (user_tb) - ID 명시
 -- ==========================================================
-INSERT INTO user_tb (id, username, password, name, email, phone, role, status, created_at) VALUES 
-(1, 'admin', '1234', '관리자', 'admin@camping.com', '010-1111-1111', 'ADMIN', 'ACTIVE', NOW()),
-(2, 'ssar', '1234', '박한별', 'ssar@nate.com', '010-2222-2222', 'USER', 'ACTIVE', NOW()),
-(3, 'cos', '1234', '홍길동', 'cos@nate.com', '010-3333-3333', 'USER', 'ACTIVE', NOW()),
-(4, 'love', '1234', '강사랑', 'love@nate.com', '010-4444-4444', 'USER', 'ACTIVE', NOW()),
-(5, 'guest', '1234', '이게스트', 'guest@nate.com', '010-5555-5555', 'USER', 'ACTIVE', NOW()),
-(6, 'olduser', '1234', '탈퇴사용자', 'old@nate.com', '010-6666-6666', 'USER', 'ANONYMOUS', NOW());
+INSERT INTO user_tb (id, username, password, name, email, phone, role, status, penalty_count, created_at) VALUES 
+(1, 'admin', '1234', '관리자', 'admin@camping.com', '010-1111-1111', 'ADMIN', 'ACTIVE', 0, NOW()),
+(2, 'ssar', '1234', '박한별', 'ssar@nate.com', '010-2222-2222', 'USER', 'ACTIVE', 3, NOW()),
+(3, 'cos', '1234', '홍길동', 'cos@nate.com', '010-3333-3333', 'USER', 'ACTIVE', 1, NOW()),
+(4, 'love', '1234', '강사랑', 'love@nate.com', '010-4444-4444', 'USER', 'ACTIVE', 0, NOW()),
+(5, 'guest', '1234', '이게스트', 'guest@nate.com', '010-5555-5555', 'USER', 'ACTIVE', 0, NOW()),
+(6, 'olduser', '1234', '탈퇴사용자', 'old@nate.com', '010-6666-6666', 'USER', 'ANONYMOUS', 0, NOW());
 
-INSERT INTO user_tb (id, username, password, name, email, phone, role, status, created_at) VALUES 
-(7, 'user01', '1234', '김철수', 'user01@nate.com', '010-1001-1001', 'USER', 'ACTIVE', DATEADD(DAY, -20, NOW())),
-(8, 'user02', '1234', '이영희', 'user02@nate.com', '010-1002-1002', 'USER', 'ACTIVE', DATEADD(DAY, -19, NOW())),
-(9, 'user03', '1234', '박지성', 'user03@nate.com', '010-1003-1003', 'USER', 'ACTIVE', DATEADD(DAY, -18, NOW())),
-(10, 'user04', '1234', '손흥민', 'user04@nate.com', '010-1004-1004', 'USER', 'ACTIVE', DATEADD(DAY, -17, NOW())),
-(11, 'user05', '1234', '김연아', 'user05@nate.com', '010-1005-1005', 'USER', 'ACTIVE', DATEADD(DAY, -16, NOW())),
-(12, 'user06', '1234', '이강인', 'user06@nate.com', '010-1006-1006', 'USER', 'ACTIVE', DATEADD(DAY, -15, NOW())),
-(13, 'user07', '1234', '안정환', 'user07@nate.com', '010-1007-1007', 'USER', 'ACTIVE', DATEADD(DAY, -14, NOW())),
-(14, 'user08', '1234', '박찬호', 'user08@nate.com', '010-1008-1008', 'USER', 'ACTIVE', DATEADD(DAY, -13, NOW())),
-(15, 'user09', '1234', '서장훈', 'user09@nate.com', '010-1009-1009', 'USER', 'ACTIVE', DATEADD(DAY, -12, NOW())),
-(16, 'user10', '1234', '유재석', 'user10@nate.com', '010-1010-1010', 'USER', 'ACTIVE', DATEADD(DAY, -11, NOW())),
-(17, 'user11', '1234', '강호동', 'user11@nate.com', '010-1011-1011', 'USER', 'ACTIVE', DATEADD(DAY, -10, NOW())),
-(18, 'user12', '1234', '신동엽', 'user12@nate.com', '010-1012-1012', 'USER', 'ACTIVE', DATEADD(DAY, -9, NOW())),
-(19, 'user13', '1234', '이수근', 'user13@nate.com', '010-1013-1013', 'USER', 'ACTIVE', DATEADD(DAY, -8, NOW())),
-(20, 'user14', '1234', '은지원', 'user14@nate.com', '010-1014-1014', 'USER', 'ACTIVE', DATEADD(DAY, -7, NOW())),
-(21, 'user15', '1234', '김종민', 'user15@nate.com', '010-1015-1015', 'USER', 'ACTIVE', DATEADD(DAY, -6, NOW()));
+
+INSERT INTO user_tb (id, username, password, name, email, phone, role, status, penalty_count, created_at) VALUES 
+(7, 'user01', '1234', '김철수', 'user01@nate.com', '010-1001-1001', 'USER', 'ACTIVE', 0, DATEADD(DAY, -20, NOW())),
+(8, 'user02', '1234', '이영희', 'user02@nate.com', '010-1002-1002', 'USER', 'ACTIVE', 0, DATEADD(DAY, -19, NOW())),
+(9, 'user03', '1234', '박지성', 'user03@nate.com', '010-1003-1003', 'USER', 'ACTIVE', 0, DATEADD(DAY, -18, NOW())),
+(10, 'user04', '1234', '손흥민', 'user04@nate.com', '010-1004-1004', 'USER', 'ACTIVE', 0, DATEADD(DAY, -17, NOW())),
+(11, 'user05', '1234', '김연아', 'user05@nate.com', '010-1005-1005', 'USER', 'ACTIVE', 0, DATEADD(DAY, -16, NOW())),
+(12, 'user06', '1234', '이강인', 'user06@nate.com', '010-1006-1006', 'USER', 'ACTIVE', 0, DATEADD(DAY, -15, NOW())),
+(13, 'user07', '1234', '안정환', 'user07@nate.com', '010-1007-1007', 'USER', 'ACTIVE', 0, DATEADD(DAY, -14, NOW())),
+(14, 'user08', '1234', '박찬호', 'user08@nate.com', '010-1008-1008', 'USER', 'ACTIVE', 0, DATEADD(DAY, -13, NOW())),
+(15, 'user09', '1234', '서장훈', 'user09@nate.com', '010-1009-1009', 'USER', 'ACTIVE', 0, DATEADD(DAY, -12, NOW())),
+(16, 'user10', '1234', '유재석', 'user10@nate.com', '010-1010-1010', 'USER', 'ACTIVE', 0, DATEADD(DAY, -11, NOW())),
+(17, 'user11', '1234', '강호동', 'user11@nate.com', '010-1011-1011', 'USER', 'ACTIVE', 0, DATEADD(DAY, -10, NOW())),
+(18, 'user12', '1234', '신동엽', 'user12@nate.com', '010-1012-1012', 'USER', 'ACTIVE', 0, DATEADD(DAY, -9, NOW())),
+(19, 'user13', '1234', '이수근', 'user13@nate.com', '010-1013-1013', 'USER', 'ACTIVE', 0, DATEADD(DAY, -8, NOW())),
+(20, 'user14', '1234', '은지원', 'user14@nate.com', '010-1014-1014', 'USER', 'ACTIVE', 0, DATEADD(DAY, -7, NOW())),
+(21, 'user15', '1234', '김종민', 'user15@nate.com', '010-1015-1015', 'USER', 'ACTIVE', 0, DATEADD(DAY, -6, NOW()));
 
 -- ==========================================================
 -- 2. 구역 정보 (zone_tb) - ID 명시
@@ -77,7 +78,8 @@ INSERT INTO reservation_tb (id, user_id, site_id, check_in, check_out, total_pri
 (17, 9, 6, '2026-07-25', '2026-07-27', 240000, 2, '신동엽', '010-1012-1012', 'CONFIRMED', NOW()),
 (18, 10, 1, '2026-08-01', '2026-08-03', 160000, 4, '이수근', '010-1013-1013', 'CONFIRMED', NOW()),
 (19, 11, 2, '2026-08-05', '2026-08-07', 100000, 2, '은지원', '010-1014-1014', 'PENDING', NOW()),
-(20, 12, 3, '2026-08-10', '2026-08-12', 100000, 2, '김종민', '010-1015-1015', 'CONFIRMED', NOW());
+(20, 12, 3, '2026-08-10', '2026-08-12', 100000, 2, '김종민', '010-1015-1015', 'CONFIRMED', NOW()),
+(21, 4, 1, '2026-03-15', '2026-03-17', 100000, 2, '강사랑', '010-4444-4444', 'COMPLETED', NOW());
 
 -- ==========================================================
 -- 6. 결제 및 환불 정보
@@ -134,9 +136,10 @@ INSERT INTO comment_tb (id, qna_id, admin_id, content, created_at) VALUES
 -- ==========================================================
 -- 9. 이용 후기 (review_tb) - 1예약 1리뷰 원칙 준수
 -- ==========================================================
-INSERT INTO review_tb (id, user_id, reservation_id, rating, content, created_at) VALUES 
-(1, 2, 1, 5, '정말 좋았습니다. 다음에도 꼭 오고 싶어요!', NOW()),
-(2, 3, 2, 4, '조용하고 공기가 좋아서 힐링되었습니다.', NOW());
+INSERT INTO review_tb (id, user_id, reservation_id, rating, content, ai_danger_score, is_reviewed, is_deleted, admin_reason, created_at) VALUES 
+(1, 2, 1, 5, '정말 좋았습니다. 다음에도 꼭 오고 싶어요!', 0, FALSE, FALSE, NULL, NOW()),
+(2, 3, 2, 4, '조용하고 공기가 좋아서 힐링되었습니다.', 0, FALSE, FALSE, NULL, NOW()),
+(3, 4, 21, 1, '사장님 진짜 불친절하네요. 개새끼들 다시는 안옴ㅡㅡ', 5, FALSE, FALSE, NULL, NOW());
 
 
 -- ==========================================================

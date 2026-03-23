@@ -9,8 +9,11 @@ import com.camping.erp.domain.reservation.enums.ReservationStatus;
 import com.camping.erp.domain.review.dto.ReviewRequest;
 import com.camping.erp.domain.review.dto.ReviewResponse;
 import com.camping.erp.domain.site.Site;
+import com.camping.erp.domain.site.SiteRepository;
 import com.camping.erp.domain.site.Zone;
+import com.camping.erp.domain.site.ZoneRepository;
 import com.camping.erp.domain.user.User;
+import com.camping.erp.domain.user.enums.UserStatus;
 import com.camping.erp.global.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,7 +34,10 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
     private final ImageRepository imageRepository;
+    private final SiteRepository siteRepository;
+    private final ZoneRepository zoneRepository;
     private final FileUtil fileUtil;
+    private final AiAnalysisService aiAnalysisService;
 
     // 관리자용 리뷰 목록 조회 (페이징)
     public AdminResponse.ReviewPageDTO findAllForAdmin(Pageable pageable) {
@@ -47,6 +53,13 @@ public class ReviewService {
                         .siteName(r.getReservation().getSite().getSiteName())
                         .createdAt(r.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                         .images(r.getImages().stream().map(Image::getFileName).collect(Collectors.toList()))
+                        .aiDangerScore(r.getAiDangerScore())
+                        .isReviewed(r.isReviewed())
+                        .isDeleted(r.isDeleted())
+                        .adminReason(r.getAdminReason())
+                        .penaltyCount(r.getUser().getPenaltyCount())
+                        .userId(r.getUser().getId())
+                        .isExpelled(r.getUser().getStatus() == UserStatus.ANONYMOUS)
                         .build())
                 .toList();
 
@@ -110,6 +123,87 @@ public class ReviewService {
         return reviewRepository.findAll();
     }
 
+    // 마이페이지용 내 리뷰 조회
+    public List<ReviewResponse.ListDTO> findByUserId(Long userId) {
+        return reviewRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+                .map(ReviewResponse.ListDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public Review findById(Long id) {
+        return reviewRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+    }
+
+    @Transactional
+    public void update(Long reviewId, User user, ReviewRequest.UpdateDTO req) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+
+        if (!review.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("본인의 리뷰만 수정할 수 있습니다.");
+        }
+
+        // 평점 업데이트 (차이만큼 가감)
+        Site site = review.getReservation().getSite();
+        Zone zone = site.getZone();
+        
+        // 기존 점수 제거 후 새 점수 추가
+        site.removeRating(review.getRating());
+        zone.removeRating(review.getRating());
+        site.addRating(req.getRating());
+        zone.addRating(req.getRating());
+
+        // 내용 수정
+        review.update(req.getRating(), req.getContent());
+
+        // 이미지 업데이트 (이미지가 있는 경우 기존 것 삭제 후 새로 등록)
+        if (req.getImages() != null && !req.getImages().isEmpty() && !req.getImages().get(0).isEmpty()) {
+            // 기존 이미지 물리적 삭제
+            for (Image image : review.getImages()) {
+                fileUtil.deleteFile(image.getFileName());
+                imageRepository.delete(image);
+            }
+            review.getImages().clear();
+
+            // 새 이미지 저장
+            for (MultipartFile file : req.getImages()) {
+                if (file.isEmpty()) continue;
+                String fileName = fileUtil.uploadFile(file);
+                Image image = Image.builder()
+                        .review(review)
+                        .filePath("/upload/" + fileName)
+                        .fileName(fileName)
+                        .build();
+                imageRepository.save(image);
+            }
+        }
+    }
+
+    @Transactional
+    public void deleteByUser(Long reviewId, User user) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+
+        if (!review.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("본인의 리뷰만 삭제할 수 있습니다.");
+        }
+
+        // 평점 차감
+        Site site = review.getReservation().getSite();
+        Zone zone = site.getZone();
+        site.removeRating(review.getRating());
+        zone.removeRating(review.getRating());
+
+        // 이미지 물리적 삭제
+        for (Image image : review.getImages()) {
+            fileUtil.deleteFile(image.getFileName());
+            imageRepository.delete(image);
+        }
+
+        reviewRepository.delete(review);
+    }
+
     @Transactional
     public void save(User user, ReviewRequest.SaveDTO req) {
         // 1. 예약 검증
@@ -137,11 +231,8 @@ public class ReviewService {
                 .build();
         reviewRepository.save(review);
 
-        // 4. Site & Zone 평점 반영
-        Site site = reservation.getSite();
-        Zone zone = site.getZone();
-        site.addRating(req.getRating());
-        zone.addRating(req.getRating());
+        // 4. Site & Zone 평점 반영 (일괄 재계산 방식 권장)
+        recalculateAverageRating(reservation.getSite().getId(), reservation.getSite().getZone().getId());
 
         // 5. 이미지 저장 (최대 5장)
         if (req.getImages() != null && !req.getImages().isEmpty()) {
@@ -159,27 +250,53 @@ public class ReviewService {
                 imageRepository.save(image);
             }
         }
+
+        // 6. AI 비방 분석 (비동기 호출)
+        aiAnalysisService.analyzeReviewAsync(review.getId(), review.getContent());
     }
 
     @Transactional
-    public void deleteByAdmin(Long reviewId) {
+    public void deleteByAdmin(Long reviewId, String reason) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
 
-        // 1. 평점 역산
-        Reservation reservation = review.getReservation();
-        Site site = reservation.getSite();
-        Zone zone = site.getZone();
-        site.removeRating(review.getRating());
-        zone.removeRating(review.getRating());
+        // 2. 논리 삭제 처리
+        review.processByAdmin(true, reason);
 
-        // 2. 이미지 물리적 삭제 및 DB 삭제
-        for (Image image : review.getImages()) {
-            fileUtil.deleteFile(image.getFileName());
-            imageRepository.delete(image);
+        // 3. 작성자 페널티 부여
+        review.getUser().increasePenalty();
+
+        // 4. 평점 재계산
+        recalculateAverageRating(review.getReservation().getSite().getId(), review.getReservation().getSite().getZone().getId());
         }
 
-        // 3. 리뷰 삭제
-        reviewRepository.delete(review);
+
+    @Transactional
+    public void keepByAdmin(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+
+        // 1. 검토 완료 상태로만 변경 (isDeleted = false)
+        review.processByAdmin(false, null);
+
+        // 2. 평점 재계산 (다시 평점에 포함됨)
+        recalculateAverageRating(review.getReservation().getSite().getId(), review.getReservation().getSite().getZone().getId());
+    }
+
+    @Transactional
+    public void recalculateAverageRating(Long siteId, Long zoneId) {
+        // Site 평점 재계산
+        List<Review> siteReviews = reviewRepository.findActiveReviewsBySiteId(siteId);
+        int siteCount = siteReviews.size();
+        double siteAvg = siteReviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+        
+        siteRepository.findById(siteId).ifPresent(site -> site.updateRating(siteCount, siteAvg));
+
+        // Zone 평점 재계산
+        List<Review> zoneReviews = reviewRepository.findActiveReviewsByZoneId(zoneId);
+        int zoneCount = zoneReviews.size();
+        double zoneAvg = zoneReviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+        
+        zoneRepository.findById(zoneId).ifPresent(zone -> zone.updateRating(zoneCount, zoneAvg));
     }
 }
