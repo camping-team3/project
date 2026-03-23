@@ -1,8 +1,7 @@
 package com.camping.erp.domain.user;
 
-import com.camping.erp.domain.reservation.ReservationResponse;
-import com.camping.erp.domain.reservation.ReservationService;
 import com.camping.erp.domain.user.UserResponse;
+import com.camping.erp.domain.user.User;
 import com.camping.erp.global.util.Resp;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class UserController {
 
     private final UserService userService;
-    private final ReservationService reservationService;
 
     @GetMapping("/api/users/check-username")
     public @ResponseBody ResponseEntity<?> checkUsername(@RequestParam("username") String username) {
@@ -79,9 +76,59 @@ public class UserController {
         return "mypage/home";
     }
 
+    // 마이페이지 회원 정보 조회
+    @GetMapping("/mypage/info")
+    public String info(Model model, HttpSession session) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
+        return "mypage/info";
+    }
+
+    // 회원 정보 수정 폼 이동
+    @GetMapping("/mypage/info-update-form")
+    public String infoUpdateForm(Model model, HttpSession session) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
+        return "mypage/info-update-form";
+    }
+
+    // 회원 정보 수정 처리
+    @PostMapping("/mypage/info-update")
+    public String infoUpdate(UserRequest.UpdateDTO request, HttpSession session) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        // DB 정보 업데이트
+        User updatedUser = userService.update(sessionUser.getId(), request);
+
+        // 세션 정보 동기화 (세션 유저 객체를 최신화)
+        UserResponse.LoginDTO newSessionUser = UserResponse.LoginDTO.builder()
+                .user(updatedUser)
+                .build();
+        session.setAttribute("sessionUser", newSessionUser);
+
+        return "redirect:/mypage/info";
+    }
+
     // 내 리뷰
     @GetMapping("/mypage/reviews")
-    public String reviews() {
+    public String reviews(Model model, HttpSession session) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reviews";
     }
 }
