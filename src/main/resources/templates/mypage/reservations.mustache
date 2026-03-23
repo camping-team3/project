@@ -8,11 +8,11 @@
                         <div class="fh-profile-card">
                             <div class="profile-section">
                                 <div class="profile-img">
-                                    <img src="https://ui-avatars.com/api/?name={{sessionUser.username}}&background=2c5926&color=fff" alt="Profile">
+                                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuArVyFD1kByWmCBF0Rz4ccl-L4vIMovS-krTT4u-KVYHhX2hMPUkaQzOLuSXFNkjKwDG0hbQZ7gaRgh8ytv6BK6xFB6ClZmg6H-wq586rl1mmMaOrnlkhWvj-w0KNrgyc3qLGo11qHIdPwOfdKeuTDw6OltxRnbG17NoLNHNk1YZI1Li_g3-PSh5baMbRafh3KgP2jo5_izMzuKYzAJm9zDtUrAJHJSePSvnmDcctJdXnbujZtx4x7j3Nub2X0XNELdrx0zZBwepMns" alt="Profile">
                                 </div>
                                 <div class="profile-info">
-                                    <h3>{{userName}} 님</h3>
-                                    <p>Forest Member</p>
+                                    <h3>{{user.name}} 님</h3>
+                                    <p>{{user.role}} Member</p>
                                 </div>
                             </div>
                         </div>
@@ -39,6 +39,12 @@
 
                 <!-- Main Content Area -->
                 <main class="col-lg-9">
+                    <!-- Title Section -->
+                    <section class="mb-5 px-2">
+                        <h1 class="display-6 fw-bold text-dark">예약 내역</h1>
+                        <p class="text-secondary fw-medium">Forest Haven에서의 소중한 휴식 일정들을 확인하실 수 있습니다.</p>
+                    </section>
+
                     <!-- Reservation List -->
                     <div class="d-flex flex-column gap-4">
 
