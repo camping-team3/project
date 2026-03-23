@@ -1,98 +1,248 @@
-{{> admin/layout/header}}
+{{> layout/admin-header}}
 
-<div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">리뷰 관리</h2>
+<style>
+/* 상단 네비게이션 제거 */
+.admin-header {
+    display: none !important;
+}
+/* 네비게이션 제거로 인한 여백 조정 */
+.admin-content {
+    padding-top: 0 !important;
+}
+</style>
+
+<div class="d-flex justify-content-between align-items-end mb-5">
+    <div>
+        <h2 class="display-6 fw-black text-dark mb-1">리뷰 관리</h2>
+        <p class="text-secondary fw-medium m-0">AI 비방 분석 결과를 확인하고 부적절한 리뷰를 관리합니다.</p>
     </div>
-
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="px-4 py-3 text-secondary small fw-bold" style="width: 80px;">번호</th>
-                            <th class="py-3 text-secondary small fw-bold" style="width: 120px;">작성자</th>
-                            <th class="py-3 text-secondary small fw-bold" style="width: 100px;">별점</th>
-                            <th class="py-3 text-secondary small fw-bold">내용</th>
-                            <th class="py-3 text-secondary small fw-bold" style="width: 150px;">이미지</th>
-                            <th class="py-3 text-secondary small fw-bold" style="width: 150px;">구역/사이트</th>
-                            <th class="py-3 text-secondary small fw-bold" style="width: 150px;">등록일</th>
-                            <th class="px-4 py-3 text-secondary small fw-bold text-end" style="width: 100px;">관리</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#response.reviews}}
-                        <tr>
-                            <td class="px-4 small text-secondary">{{id}}</td>
-                            <td class="fw-bold">{{username}}</td>
-                            <td>
-                                <div class="text-warning d-flex gap-1">
-                                    <span class="material-symbols-outlined fs-6" style="font-variation-settings: 'FILL' 1">star</span>
-                                    <span class="fw-bold">{{rating}}</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-truncate" style="max-width: 300px;" title="{{content}}">
-                                    {{content}}
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex gap-1 overflow-hidden">
-                                    {{#images}}
-                                    <img src="/upload/{{.}}" class="rounded" style="width: 40px; height: 40px; object-fit: cover;">
-                                    {{/images}}
-                                    {{^images}}
-                                    <span class="text-muted small">없음</span>
-                                    {{/images}}
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge bg-light text-dark border">{{zoneName}} - {{siteName}}</span>
-                            </td>
-                            <td class="small text-secondary">{{createdAt}}</td>
-                            <td class="px-4 text-end">
-                                <form action="/admin/reviews/{{id}}/delete" method="POST" onsubmit="return confirm('정말로 이 리뷰를 삭제하시겠습니까? 삭제 시 해당 사이트/구역의 평점도 즉시 조정됩니다.');">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">삭제</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {{/response.reviews}}
-                        {{^response.reviews}}
-                        <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">등록된 리뷰가 없습니다.</td>
-                        </tr>
-                        {{/response.reviews}}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pagination -->
-    {{#response.pagination}}
-    <nav class="d-flex justify-content-center">
-        <ul class="pagination pagination-sm gap-1">
-            <li class="page-item {{^hasPrev}}disabled{{/hasPrev}}">
-                <a class="page-link border-0 rounded-circle" href="?page={{prevPage}}">
-                    <span class="material-symbols-outlined fs-5">chevron_left</span>
-                </a>
-            </li>
-            
-            {{#pageNumbers}}
-            <li class="page-item {{#isCurrent}}active{{/isCurrent}}">
-                <a class="page-link border-0 rounded-circle px-3" href="?page={{number}}">{{displayDigit}}</a>
-            </li>
-            {{/pageNumbers}}
-
-            <li class="page-item {{^hasNext}}disabled{{/hasNext}}">
-                <a class="page-link border-0 rounded-circle" href="?page={{nextPage}}">
-                    <span class="material-symbols-outlined fs-5">chevron_right</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    {{/response.pagination}}
 </div>
 
-{{> admin/layout/footer}}
+    <!-- Filter & Search Bar -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex gap-2">
+            <a href="/admin/reviews?sort=danger" class="btn {{#isDangerSort}}btn-primary{{/isDangerSort}}{{^isDangerSort}}btn-outline-secondary{{/isDangerSort}} fw-bold rounded-pill px-3 py-1.5 text-xs">
+                위험도 높은순
+            </a>
+            <a href="/admin/reviews?sort=latest" class="btn {{^isDangerSort}}btn-primary{{/isDangerSort}}{{#isDangerSort}}btn-outline-secondary{{/isDangerSort}} fw-bold rounded-pill px-3 py-1.5 text-xs">
+                최신순
+            </a>
+            <a href="/admin/reviews?filter=pending" class="btn btn-outline-secondary fw-bold rounded-pill px-3 py-1.5 text-xs d-flex align-items-center gap-1">
+                <span class="material-symbols-outlined fs-6">error</span>
+                검토 대기중
+            </a>
+        </div>
+        
+        <form action="/admin/reviews" method="GET" class="d-flex gap-2" style="max-width: 350px;">
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white border-end-0">
+                    <span class="material-symbols-outlined fs-5 text-secondary">search</span>
+                </span>
+                <input type="text" name="keyword" class="form-control border-start-0 ps-0" placeholder="작성자 또는 내용 검색" value="{{keyword}}">
+                <button class="btn btn-outline-primary fw-bold" type="submit">검색</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Review Table -->
+    <div class="fh-card shadow-sm border-primary border-opacity-10 overflow-hidden mb-4 bg-white">
+        <div class="table-responsive">
+            <table class="fh-table m-0">
+                <thead class="bg-light bg-opacity-50">
+                    <tr>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider px-4" style="width: 60px;">No.</th>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider px-4" style="width: 100px;">작성자</th>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider px-4" style="width: 150px;">사이트</th>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider px-4" style="width: 80px;">평점</th>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider px-4">리뷰 내용</th>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider px-4" style="width: 100px;">AI 위험도</th>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider px-4" style="width: 100px;">상태</th>
+                        <th class="text-xs fw-bold text-secondary text-uppercase tracking-wider text-center px-4" style="width: 140px;">관리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#response.reviews}}
+                    <tr class="{{#isHighDanger}}bg-danger bg-opacity-10{{/isHighDanger}} {{#isExpelled}}opacity-50 text-muted{{/isExpelled}}">
+                        <td class="px-4 text-secondary small">{{id}}</td>
+                        <td class="px-4">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold">{{username}}</span>
+                                {{#isExpelled}}
+                                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold rounded-pill text-xxs px-1.5">탈퇴회원</span>
+                                {{/isExpelled}}
+                                {{^isExpelled}}
+                                    {{#penaltyCount}}
+                                    <span class="badge {{#canExpel}}bg-danger{{/canExpel}}{{^canExpel}}bg-warning{{/canExpel}} bg-opacity-10 {{#canExpel}}text-danger{{/canExpel}}{{^canExpel}}text-warning{{/canExpel}} fw-bold rounded-pill text-xxs px-1.5" title="누적 위반 횟수">
+                                        ⚠️{{penaltyCount}}
+                                    </span>
+                                    {{/penaltyCount}}
+                                {{/isExpelled}}
+                            </div>
+                        </td>
+                        <td class="px-4 small text-secondary">{{zoneName}} / {{siteName}}</td>
+                        <td class="px-4 text-warning">⭐ {{rating}}</td>
+                        <td class="px-4">
+                            <p class="m-0 text-truncate" style="max-width: 300px;" title="{{content}}">{{content}}</p>
+                            {{#images.size}}
+                            <div class="mt-1 d-flex gap-1">
+                                {{#images}}
+                                <img src="/upload/{{.}}" class="rounded-1 border" style="width: 24px; height: 24px; object-fit: cover;">
+                                {{/images}}
+                            </div>
+                            {{/images.size}}
+                        </td>
+                        <td class="px-4">
+                            <span class="badge {{#isHighDanger}}bg-danger{{/isHighDanger}}{{^isHighDanger}}bg-secondary{{/isHighDanger}} bg-opacity-10 {{#isHighDanger}}text-danger{{/isHighDanger}}{{^isHighDanger}}text-secondary{{/isHighDanger}} fw-bold px-2.5 py-1 rounded-pill text-xs">
+                                {{aiDangerScore}}점
+                            </span>
+                        </td>
+                        <td class="px-4">
+                            {{#isDeleted}}
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary fw-bold px-2.5 py-1 rounded-pill text-xs" title="사유: {{adminReason}}">삭제됨</span>
+                            {{/isDeleted}}
+                            {{^isDeleted}}
+                                {{#isReviewed}}
+                                <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2.5 py-1 rounded-pill text-xs">유지됨</span>
+                                {{/isReviewed}}
+                                {{^isReviewed}}
+                                <span class="badge bg-warning bg-opacity-10 text-warning fw-bold px-2.5 py-1 rounded-pill text-xs">검토대기</span>
+                                {{/isReviewed}}
+                            {{/isDeleted}}
+                        </td>
+                        <td class="px-4 text-center">
+                            <div class="d-flex justify-content-center gap-1">
+                                {{^isReviewed}}
+                                <button onclick="processReview({{id}}, 'keep')" class="btn btn-sm btn-outline-success fw-bold text-xs py-1 px-2">유지</button>
+                                <button onclick="openDeleteModal({{id}})" class="btn btn-sm btn-outline-danger fw-bold text-xs py-1 px-2">삭제</button>
+                                {{/isReviewed}}
+                                {{#isReviewed}}
+                                <span class="small text-muted">-</span>
+                                {{/isReviewed}}
+                                
+                                {{#canExpel}}
+                                <button onclick="expelUser({{userId}}, '{{username}}')" class="btn btn-sm btn-danger fw-bold text-xs py-1 px-2 shadow-sm">강제탈퇴</button>
+                                {{/canExpel}}
+                            </div>
+                        </td>
+                    </tr>
+                    {{/response.reviews}}
+                    {{^response.reviews}}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-secondary">등록된 리뷰가 없습니다.</td>
+                    </tr>
+                    {{/response.reviews}}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-4 py-3 bg-light bg-opacity-50 d-flex justify-content-between align-items-center border-top">
+            <div class="text-secondary small">총 {{response.pagination.totalElements}}개 항목</div>
+            <nav>
+                <ul class="pagination pagination-sm m-0 gap-1">
+                    {{#response.pagination.hasPrev}}
+                    <li class="page-item">
+                        <a class="page-link border-0 rounded-2 text-secondary bg-white d-flex align-items-center justify-content-center" href="?page={{response.pagination.prevPage}}" style="width: 32px; height: 32px;">
+                            <span class="material-symbols-outlined fs-6">chevron_left</span>
+                        </a>
+                    </li>
+                    {{/response.pagination.hasPrev}}
+                    
+                    {{#response.pagination.pageNumbers}}
+                    <li class="page-item {{#isCurrent}}active{{/isCurrent}}">
+                        <a class="page-link border-0 rounded-2 {{#isCurrent}}bg-primary text-white{{/isCurrent}}{{^isCurrent}}text-secondary bg-white{{/isCurrent}} fw-bold shadow-sm d-flex align-items-center justify-content-center" href="?page={{number}}" style="width: 32px; height: 32px;">{{displayDigit}}</a>
+                    </li>
+                    {{/response.pagination.pageNumbers}}
+                    
+                    {{#response.pagination.hasNext}}
+                    <li class="page-item">
+                        <a class="page-link border-0 rounded-2 text-secondary bg-white d-flex align-items-center justify-content-center" href="?page={{response.pagination.nextPage}}" style="width: 32px; height: 32px;">
+                            <span class="material-symbols-outlined fs-6">chevron_right</span>
+                        </a>
+                    </li>
+                    {{/response.pagination.hasNext}}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function processReview(id, action) {
+    if (action === 'keep') {
+        Swal.fire({
+            title: '리뷰를 유지하시겠습니까?',
+            text: "검토 완료 상태로 변경됩니다.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#2c5926',
+            confirmButtonText: '유지 확정',
+            cancelButtonText: '취소'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/admin/reviews/' + id + '/keep';
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+}
+
+function openDeleteModal(id) {
+    Swal.fire({
+        title: '리뷰 삭제 사유 입력',
+        input: 'textarea',
+        inputPlaceholder: '사용자에게 보여질 삭제 사유를 입력하세요...',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        confirmButtonText: '삭제 실행',
+        cancelButtonText: '취소',
+        preConfirm: (reason) => {
+            if (!reason) {
+                Swal.showValidationMessage('삭제 사유를 반드시 입력해야 합니다.');
+            }
+            return reason;
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/admin/reviews/' + id + '/delete';
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'reason';
+            input.value = result.value;
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
+
+function expelUser(userId, username) {
+    Swal.fire({
+        title: '회원 강제 탈퇴',
+        html: '작성자 <b>' + username + '</b>님을 강제 탈퇴시키겠습니까?<br><small class="text-danger">탈퇴 시 해당 계정은 즉시 비활성화됩니다.</small>',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: '탈퇴 처리',
+        cancelButtonText: '취소'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/admin/users/' + userId + '/expel';
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
+</script>
+
+{{> layout/admin-footer}}

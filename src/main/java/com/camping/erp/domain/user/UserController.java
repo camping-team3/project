@@ -47,6 +47,12 @@ public class UserController {
         return "auth/login-form";
     }
 
+    // 로그인 페이지 리다이렉트 (GET /login 대응)
+    @GetMapping("/login")
+    public String loginRedirect() {
+        return "redirect:/login-form";
+    }
+
     // 로그인 처리
     @PostMapping("/login")
     public String login(UserRequest.LoginDTO request, HttpSession session) {
@@ -76,7 +82,7 @@ public class UserController {
         return "mypage/home";
     }
 
-    // 마이페이지 회원 정보 조회
+// 마이페이지 회원 정보 조회
     @GetMapping("/mypage/info")
     public String info(Model model, HttpSession session) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");

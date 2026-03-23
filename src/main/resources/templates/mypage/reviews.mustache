@@ -181,6 +181,76 @@
                     </nav>
                 </main>
             </div>
-        </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold m-0">내가 적은 리뷰</h2>
+                <span class="badge bg-primary rounded-pill px-3">{{reviews.size}}개의 리뷰</span>
+            </div>
+
+            <div class="d-flex flex-column gap-4">
+                {{#reviews}}
+                <div class="fh-card p-4 shadow-sm border-0 {{#isDeleted}}bg-light opacity-75{{/isDeleted}}{{^isDeleted}}bg-white{{/isDeleted}} rounded-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h4 class="fw-bold text-dark mb-1">{{siteName}} ({{zoneName}})</h4>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rating-stars d-flex">
+                                    {{#stars}}
+                                    <span class="material-symbols-outlined icon-fill-1 fs-6 {{#active}}text-warning{{/active}}{{^active}}text-secondary opacity-25{{/active}}">star</span>
+                                    {{/stars}}
+                                </div>
+                                <span class="text-secondary small fw-bold">{{createdAt}}</span>
+                                {{#isDeleted}}
+                                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold rounded-pill text-xs ms-2">삭제됨</span>
+                                {{/isDeleted}}
+                            </div>
+                        </div>
+                        {{^isDeleted}}
+                        <div class="d-flex gap-2">
+                            <a href="/reviews/{{id}}/edit" class="btn btn-outline-fh btn-sm">수정</a>
+                            <form action="/reviews/{{id}}/delete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');" style="display:inline;">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">삭제</button>
+                            </form>
+                        </div>
+                        {{/isDeleted}}
+                    </div>
+                    
+                    {{#isDeleted}}
+                    <div class="alert alert-danger border-0 bg-danger bg-opacity-10 rounded-3 mb-3 p-3">
+                        <div class="d-flex align-items-center gap-2 text-danger fw-bold mb-1">
+                            <span class="material-symbols-outlined fs-5">warning</span>
+                            <span>관리자에 의해 삭제되었습니다.</span>
+                        </div>
+                        <p class="small m-0 text-danger opacity-75">사유: {{adminReason}}</p>
+                    </div>
+                    {{/isDeleted}}
+
+                    <p class="text-secondary mb-3 {{#isDeleted}}text-decoration-line-through opacity-50{{/isDeleted}}" style="white-space: pre-wrap;">{{content}}</p>
+                    
+                    {{#images.size}}
+                    <div class="d-flex gap-2 mt-2 overflow-auto pb-2">
+                        {{#images}}
+                        <img src="/upload/{{fileName}}" class="rounded-3 shadow-sm" style="width: 100px; height: 100px; object-fit: cover;">
+                        {{/images}}
+                    </div>
+                    {{/images.size}}
+                </div>
+                {{/reviews}}
+
+                {{^reviews}}
+                <div class="fh-card p-5 text-center shadow-sm rounded-4">
+                    <span class="material-symbols-outlined fs-1 text-secondary mb-3 opacity-25">rate_review</span>
+                    <h4 class="fw-bold text-secondary">작성한 리뷰가 없습니다.</h4>
+                    <p class="text-muted">캠핑을 마친 후 소중한 후기를 남겨주세요!</p>
+                    <a href="/mypage/reservations" class="btn btn-primary mt-3">예약 내역 보러가기</a>
+                </div>
+                {{/reviews}}
+            </div>
+        </main>
+    </div>
+</div>
 
 {{> layout/footer}}
