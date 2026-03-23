@@ -48,6 +48,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception401.class)
     public @ResponseBody Object ex401(Exception401 e, HttpServletRequest request) {
+        System.out.println("[DEBUG] GlobalExceptionHandler - Exception401 caught: " + e.getMessage() + " for URI: " + request.getRequestURI());
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
@@ -80,6 +81,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public Object exUnknown(Exception e, HttpServletRequest request) {
+        System.out.println("[DEBUG] GlobalExceptionHandler - Unknown Exception caught: " + e.getClass().getName() + " - " + e.getMessage() + " for URI: " + request.getRequestURI());
+        
+        // 404 에러(페이지 없음)인 경우 로그인 폼으로 리다이렉트하지 않고 404 메시지 출력
+        if (e.getClass().getName().contains("NoResourceFoundException")) {
+            return scriptAlert("요청하신 페이지를 찾을 수 없습니다: " + request.getRequestURI(), "history.back();");
+        }
+
         e.printStackTrace();
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 문의하세요: " + e.getMessage());

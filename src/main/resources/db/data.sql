@@ -82,11 +82,11 @@ INSERT INTO reservation_tb (id, user_id, site_id, check_in, check_out, total_pri
 -- ==========================================================
 -- 6. 결제 및 환불 정보
 -- ==========================================================
-INSERT INTO payment_tb (id, reservation_id, imp_uid, amount, status, pay_date, created_at) VALUES 
-(1, 1, 'imp_111111', 100000, 'PAID', '2026-02-20', NOW()),
-(2, 2, 'imp_222222', 300000, 'PAID', '2026-03-05', NOW()),
-(3, 3, 'imp_333333', 120000, 'PAID', '2026-03-10', NOW()),
-(4, 4, 'imp_444444', 150000, 'PAID', '2026-03-11', NOW());
+INSERT INTO payment_tb (id, reservation_id, imp_uid, merchant_uid, amount, status, pay_date, created_at) VALUES 
+(1, 1, 'imp_111111', 'ORD-20260220-001', 100000, 'PAID', '2026-02-20', NOW()),
+(2, 2, 'imp_222222', 'ORD-20260305-001', 300000, 'PAID', '2026-03-05', NOW()),
+(3, 3, 'imp_333333', 'ORD-20260310-001', 120000, 'PAID', '2026-03-10', NOW()),
+(4, 4, 'imp_444444', 'ORD-20260311-001', 150000, 'PAID', '2026-03-11', NOW());
 
 INSERT INTO refund_tb (id, reservation_id, reason, refund_amount, cancelled_at, created_at) VALUES
 (1, 5, '개인 사정으로 인한 일정 변경 불가', 240000, NOW(), NOW());
