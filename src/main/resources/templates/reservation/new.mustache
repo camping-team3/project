@@ -107,7 +107,7 @@
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <span class="badge bg-primary bg-opacity-10 text-primary fw-bold text-uppercase badge-area-type">{{zoneName}}</span>
                                         <div class="text-end">
-                                            <span class="h5 fw-bold text-primary m-0">₩{{pricePerNight}} / 1박</span>
+                                            <span class="h5 fw-bold text-primary m-0">₩<span class="format-price">{{pricePerNight}}</span> / 1박</span>
                                         </div>
                                     </div>
                                     <h4 class="h5 fw-bold text-dark mb-1">{{siteName}}</h4>
@@ -292,6 +292,12 @@
                 input.value = selectedSite.id;
                 form.appendChild(input);
             }
+
+            // 페이지 로드 시 기존 금액들 포맷팅
+            document.querySelectorAll('.format-price').forEach(el => {
+                const value = parseInt(el.innerText.replace(/[^0-9]/g, ''));
+                if (!isNaN(value)) el.innerText = value.toLocaleString();
+            });
         </script>
 
         <style>

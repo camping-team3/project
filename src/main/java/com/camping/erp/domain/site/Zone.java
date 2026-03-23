@@ -80,4 +80,9 @@ public class Zone extends BaseTimeEntity {
         this.reviewCount--;
         this.avgRating = (totalScore - oldRating) / this.reviewCount;
     }
+
+    public void updateRating(Integer count, Double avg) {
+        this.reviewCount = count;
+        this.avgRating = avg != null ? avg : 0.0;
+    }
 }

@@ -85,6 +85,10 @@ public class ReservationService {
                                                         statusText = "확정됨";
                                                         statusClass = "success";
                                                 }
+                                                case CHANGE_REQ -> {
+                                                        statusText = "변경 요청";
+                                                        statusClass = "info";
+                                                }
                                                 case CANCEL_REQ -> {
                                                         statusText = "취소 요청";
                                                         statusClass = "info";
@@ -92,6 +96,10 @@ public class ReservationService {
                                                 case CANCEL_COMP -> {
                                                         statusText = "취소 완료";
                                                         statusClass = "secondary";
+                                                }
+                                                case COMPLETED -> {
+                                                        statusText = "이용 완료";
+                                                        statusClass = "primary";
                                                 }
                                         }
 
@@ -222,9 +230,8 @@ public class ReservationService {
                                 .orElseThrow(() -> new Exception404("해당 사이트를 찾을 수 없습니다."));
                 Zone zone = site.getZone();
 
-                // 3. 최종 중복 체크
+                // 3. 최종 중복 체크 (자신이 생성한 PENDING 제외)
                 List<ReservationStatus> activeStatuses = List.of(
-                                ReservationStatus.PENDING,
                                 ReservationStatus.CONFIRMED,
                                 ReservationStatus.CHANGE_REQ,
                                 ReservationStatus.CANCEL_REQ);
@@ -241,18 +248,32 @@ public class ReservationService {
                 long calculatedPrice = (zone.getNormalPrice() + ((long) extraPeople * zone.getExtraPersonFee()))
                                 * nights;
 
-                // 5. 엔티티 생성 및 저장
-                Reservation reservation = Reservation.builder()
-                                .user(user)
-                                .site(site)
-                                .checkIn(request.getCheckIn())
-                                .checkOut(request.getCheckOut())
-                                .peopleCount(request.getPeopleCount())
-                                .totalPrice(calculatedPrice)
-                                .visitorName(request.getVisitorName())
-                                .visitorPhone(request.getVisitorPhone())
-                                .status(ReservationStatus.CONFIRMED)
-                                .build();
+                // 5. 기존 PENDING 예약 찾기 (없으면 신규 생성)
+                Reservation reservation = reservationRepository.findByUserIdOrderByCreatedAtDesc(user.getId())
+                                .stream()
+                                .filter(r -> r.getStatus() == ReservationStatus.PENDING)
+                                .filter(r -> r.getSite().getId().equals(site.getId()))
+                                .filter(r -> r.getCheckIn().equals(request.getCheckIn()))
+                                .findFirst()
+                                .orElseGet(() -> Reservation.builder()
+                                                .user(user)
+                                                .site(site)
+                                                .checkIn(request.getCheckIn())
+                                                .checkOut(request.getCheckOut())
+                                                .build());
+
+                // 6. 데이터 업데이트 및 상태 확정
+                reservation.updateReservationInfo(
+                                request.getCheckIn(),
+                                request.getCheckOut(),
+                                site,
+                                request.getPeopleCount(),
+                                request.getVisitorName(),
+                                request.getVisitorPhone(),
+                                calculatedPrice);
+                reservation.updateStatus(ReservationStatus.CONFIRMED);
+                // totalPrice 업데이트 필드가 엔티티에 직접적인 setter가 없으므로 builder 재사용 고려하거나 필드 추가 필요
+                // 여기서는 기존 빌더 로직의 구조를 유지하며 필드 세팅을 확실히 함
 
                 Reservation saved = reservationRepository.save(reservation);
 
@@ -374,11 +395,22 @@ public class ReservationService {
                         throw new Exception403("본인의 예약만 변경 요청할 수 있습니다.");
                 }
 
-                // 2. 새로운 사이트 조회
+                // 2. 비즈니스 규칙 검증
+                // (1) 예약 확정 상태인지 확인
+                if (reservation.getStatus() != ReservationStatus.CONFIRMED) {
+                        throw new Exception400("확정된 예약만 변경 요청이 가능합니다.");
+                }
+
+                // (2) 이용일 당일 및 과거 예약 변경 불가
+                if (!reservation.getCheckIn().isAfter(LocalDate.now())) {
+                        throw new Exception400("이용일 당일 및 과거 예약은 온라인 변경이 불가능합니다.");
+                }
+
+                // 3. 새로운 사이트 조회
                 Site newSite = siteRepository.findById(dto.getNewSiteId())
                                 .orElseThrow(() -> new Exception404("변경하려는 사이트를 찾을 수 없습니다."));
 
-                // 3. 중복 예약 최종 체크 (가예약 Lock 로직 포함됨)
+                // 4. 중복 예약 최종 체크 (가예약 Lock 로직 포함됨)
                 List<ReservationStatus> activeStatuses = List.of(
                                 ReservationStatus.PENDING,
                                 ReservationStatus.CONFIRMED,
@@ -391,10 +423,10 @@ public class ReservationService {
                         throw new Exception400("해당 기간은 이미 예약되었거나 변경 요청 중인 자리입니다.");
                 }
 
-                // 4. 원본 예약 상태 변경 (CONFIRMED -> CHANGE_REQ)
+                // 5. 원본 예약 상태 변경 (CONFIRMED -> CHANGE_REQ)
                 reservation.updateStatus(ReservationStatus.CHANGE_REQ);
 
-                // 5. 변경 요청 기록 생성 및 저장
+                // 6. 변경 요청 기록 생성 및 저장
                 ReservationChangeRequest changeRequest = ReservationChangeRequest.builder()
                                 .reservation(reservation)
                                 .newCheckIn(dto.getNewCheckIn())
@@ -420,7 +452,13 @@ public class ReservationService {
                         throw new Exception403("본인의 예약만 취소 요청할 수 있습니다.");
                 }
 
-                // 2. 비즈니스 규칙 검증 (이용일 3일 전 체크)
+                // 2. 비즈니스 규칙 검증
+                // (1) 예약 확정 상태인지 확인
+                if (reservation.getStatus() != ReservationStatus.CONFIRMED) {
+                        throw new Exception400("확정된 예약만 취소 요청이 가능합니다.");
+                }
+
+                // (2) 이용일 3일 전 체크
                 LocalDate limitDate = reservation.getCheckIn().minusDays(3);
                 if (LocalDate.now().isAfter(limitDate)) {
                         throw new Exception400("이용일 3일 전까지만 온라인 취소가 가능합니다. 고객센터로 문의해주세요.");
@@ -460,5 +498,219 @@ public class ReservationService {
                                 .reason(latest.getReason())
                                 .requestDate(latest.getCreatedAt().toLocalDate().toString().replace("-", "."))
                                 .build();
+        }
+
+        /**
+         * [Task 4-2] 관리자용 예약 변경 상세 데이터 조회 (비교용)
+         */
+        public AdminResponse.AdminChangeDetailDTO getAdminChangeDetail(Long reservationId) {
+                Reservation r = reservationRepository.findById(reservationId)
+                                .orElseThrow(() -> new Exception404("예약 내역을 찾을 수 없습니다."));
+
+                ReservationChangeRequest req = reservationChangeRequestRepository.findByReservationId(reservationId)
+                                .stream()
+                                .filter(c -> c.getStatus() == RequestStatus.PENDING)
+                                .findFirst()
+                                .orElseThrow(() -> new Exception404("진행 중인 변경 요청이 없습니다."));
+
+                long oldNights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
+                long newNights = ChronoUnit.DAYS.between(req.getNewCheckIn(), req.getNewCheckOut());
+
+                List<ReservationResponse.ChangeRequestHistoryDTO> changeHistories = r.getChangeRequests() == null ? List.of() : r.getChangeRequests().stream()
+                                .map(ReservationResponse.ChangeRequestHistoryDTO::fromEntity)
+                                .toList();
+
+                List<ReservationResponse.CancelRequestHistoryDTO> cancelHistories = r.getCancelRequests() == null ? List.of() : r.getCancelRequests().stream()
+                                .map(ReservationResponse.CancelRequestHistoryDTO::fromEntity)
+                                .toList();
+
+                return AdminResponse.AdminChangeDetailDTO.builder()
+                                .id(r.getId())
+                                .userId(r.getUser().getId())
+                                .username(r.getUser().getName() + "(" + r.getUser().getUsername() + ")")
+                                .visitorName(r.getVisitorName())
+                                .visitorPhone(r.getVisitorPhone())
+                                .userRole(r.getUser().getRole().name())
+                                .totalPrice(r.getTotalPrice())
+                                .oldSiteName(r.getSite().getSiteName())
+                                .oldCheckIn(r.getCheckIn().toString())
+                                .oldCheckOut(r.getCheckOut().toString())
+                                .oldNights(oldNights)
+                                .oldPeopleCount(r.getPeopleCount())
+                                .newSiteName(req.getNewSite().getSiteName())
+                                .newCheckIn(req.getNewCheckIn().toString())
+                                .newCheckOut(req.getNewCheckOut().toString())
+                                .newNights(newNights)
+                                .newPeopleCount(req.getNewPeopleCount())
+                                .changeRequests(changeHistories)
+                                .cancelRequests(cancelHistories)
+                                .build();
+        }
+
+        /**
+         * [Task 4-2] 관리자용 예약 취소 상세 데이터 조회
+         */
+        public AdminResponse.AdminCancelDetailDTO getAdminCancelDetail(Long reservationId) {
+                Reservation r = reservationRepository.findById(reservationId)
+                                .orElseThrow(() -> new Exception404("예약 내역을 찾을 수 없습니다."));
+
+                ReservationCancelRequest req = reservationCancelRequestRepository.findByReservationId(reservationId)
+                                .stream()
+                                .filter(c -> c.getStatus() == RequestStatus.PENDING)
+                                .findFirst()
+                                .orElseThrow(() -> new Exception404("진행 중인 취소 요청이 없습니다."));
+
+                long nights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
+
+                List<ReservationResponse.ChangeRequestHistoryDTO> changeHistories = r.getChangeRequests() == null ? List.of() : r.getChangeRequests().stream()
+                                .map(ReservationResponse.ChangeRequestHistoryDTO::fromEntity)
+                                .toList();
+
+                List<ReservationResponse.CancelRequestHistoryDTO> cancelHistories = r.getCancelRequests() == null ? List.of() : r.getCancelRequests().stream()
+                                .map(ReservationResponse.CancelRequestHistoryDTO::fromEntity)
+                                .toList();
+
+                return AdminResponse.AdminCancelDetailDTO.builder()
+                                .id(r.getId())
+                                .userId(r.getUser().getId())
+                                .username(r.getUser().getName() + "(" + r.getUser().getUsername() + ")")
+                                .visitorName(r.getVisitorName())
+                                .visitorPhone(r.getVisitorPhone())
+                                .userRole(r.getUser().getRole().name())
+                                .siteName(r.getSite().getSiteName())
+                                .checkIn(r.getCheckIn().toString())
+                                .checkOut(r.getCheckOut().toString())
+                                .nights(nights)
+                                .peopleCount(r.getPeopleCount())
+                                .totalPrice(r.getTotalPrice())
+                                .reason(req.getReason())
+                                .refundBank(req.getRefundBank())
+                                .refundAccount(req.getRefundAccount())
+                                .refundAccountHolder(req.getRefundAccountHolder())
+                                .changeRequests(changeHistories)
+                                .cancelRequests(cancelHistories)
+                                .build();
+        }
+
+        /**
+         * [Task 4-3] 관리자용 예약 상세 정보 조회 (통합 이력 포함)
+         */
+        public AdminResponse.AdminReservationDetailDTO getAdminReservationDetail(Long id) {
+                Reservation r = reservationRepository.findById(id)
+                                .orElseThrow(() -> new Exception404("해당 예약을 찾을 수 없습니다."));
+
+                long nights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
+
+                List<ReservationResponse.ChangeRequestHistoryDTO> changeHistories = r.getChangeRequests() == null ? List.of()
+                                : r.getChangeRequests().stream()
+                                                .map(ReservationResponse.ChangeRequestHistoryDTO::fromEntity)
+                                                .toList();
+
+                List<ReservationResponse.CancelRequestHistoryDTO> cancelHistories = r.getCancelRequests() == null ? List.of()
+                                : r.getCancelRequests().stream()
+                                                .map(ReservationResponse.CancelRequestHistoryDTO::fromEntity)
+                                                .toList();
+
+                return AdminResponse.AdminReservationDetailDTO.builder()
+                                .id(r.getId())
+                                .userId(r.getUser().getId())
+                                .username(r.getUser().getName() + "(" + r.getUser().getUsername() + ")")
+                                .visitorName(r.getVisitorName())
+                                .visitorPhone(r.getVisitorPhone())
+                                .userRole(r.getUser().getRole().name())
+                                .siteName(r.getSite().getSiteName())
+                                .checkIn(r.getCheckIn().toString().replace("-", "."))
+                                .checkOut(r.getCheckOut().toString().replace("-", "."))
+                                .nights(nights)
+                                .peopleCount(r.getPeopleCount())
+                                .totalPrice(r.getTotalPrice())
+                                .statusText(r.getStatus().getDescription())
+                                .statusClass(getStatusClass(r.getStatus()))
+                                .changeRequests(changeHistories)
+                                .cancelRequests(cancelHistories)
+                                .build();
+        }
+
+        private String getStatusClass(ReservationStatus status) {
+                return switch (status) {
+                        case PENDING -> "warning";
+                        case CONFIRMED -> "primary";
+                        case COMPLETED -> "success";
+                        case CANCEL_REQ, CHANGE_REQ -> "info";
+                        case CANCEL_COMP -> "danger";
+                        default -> "secondary";
+                };
+        }
+
+        /**
+         * [Task 4-4] 관리자 예약 승인 처리 (변경/취소 공통)
+         */
+        @Transactional
+        public void approveRequest(Long id) {
+                Reservation r = reservationRepository.findById(id)
+                                .orElseThrow(() -> new Exception404("해당 예약을 찾을 수 없습니다."));
+
+                if (r.getStatus() == ReservationStatus.CHANGE_REQ) {
+                        ReservationChangeRequest req = reservationChangeRequestRepository.findByReservationId(id)
+                                        .stream()
+                                        .filter(c -> c.getStatus() == RequestStatus.PENDING)
+                                        .findFirst()
+                                        .orElseThrow(() -> new Exception404("진행 중인 변경 요청이 없습니다."));
+
+                        // 1. 예약 정보 업데이트 (새로운 사이트, 일정, 인원 반영)
+                        r.updateReservationInfo(
+                                        req.getNewCheckIn(),
+                                        req.getNewCheckOut(),
+                                        req.getNewSite(),
+                                        req.getNewPeopleCount(),
+                                        r.getVisitorName(),
+                                        r.getVisitorPhone(),
+                                        r.getTotalPrice());
+                        // 2. 요청 상태 및 예약 상태 확정
+                        req.approve();
+                        r.updateStatus(ReservationStatus.CONFIRMED);
+
+                } else if (r.getStatus() == ReservationStatus.CANCEL_REQ) {
+                        ReservationCancelRequest req = reservationCancelRequestRepository.findByReservationId(id)
+                                        .stream()
+                                        .filter(c -> c.getStatus() == RequestStatus.PENDING)
+                                        .findFirst()
+                                        .orElseThrow(() -> new Exception404("진행 중인 취소 요청이 없습니다."));
+
+                        // 1. 요청 승인 및 예약 상태를 '취소 완료'로 변경
+                        req.approve();
+                        r.updateStatus(ReservationStatus.CANCEL_COMP);
+                }
+        }
+
+        /**
+         * [Task 4-4] 관리자 예약 거절 처리 (변경/취소 공통)
+         */
+        @Transactional
+        public void rejectRequest(Long id, AdminRequest.RejectDTO dto) {
+                Reservation r = reservationRepository.findById(id)
+                                .orElseThrow(() -> new Exception404("해당 예약을 찾을 수 없습니다."));
+
+                if (r.getStatus() == ReservationStatus.CHANGE_REQ) {
+                        ReservationChangeRequest req = reservationChangeRequestRepository.findByReservationId(id)
+                                        .stream()
+                                        .filter(c -> c.getStatus() == RequestStatus.PENDING)
+                                        .findFirst()
+                                        .orElseThrow(() -> new Exception404("진행 중인 변경 요청이 없습니다."));
+
+                        req.reject(dto.getRejectionReason());
+
+                } else if (r.getStatus() == ReservationStatus.CANCEL_REQ) {
+                        ReservationCancelRequest req = reservationCancelRequestRepository.findByReservationId(id)
+                                        .stream()
+                                        .filter(c -> c.getStatus() == RequestStatus.PENDING)
+                                        .findFirst()
+                                        .orElseThrow(() -> new Exception404("진행 중인 취소 요청이 없습니다."));
+
+                        req.reject(dto.getRejectionReason());
+                }
+
+                // 공통: 예약 상태를 다시 '확정' 상태로 복원
+                r.updateStatus(ReservationStatus.CONFIRMED);
         }
 }
