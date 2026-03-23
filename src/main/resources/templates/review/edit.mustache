@@ -12,43 +12,38 @@
         <div class="card-body p-4 p-lg-5">
             <form action="/reviews/{{review.id}}/update" method="post" enctype="multipart/form-data">
                 <!-- Rating Selection -->
-                <div class="mb-4">
-                    <label class="form-label fw-bold text-dark d-block">별점을 선택해주세요</label>
-                    <div class="rating-input d-flex gap-2">
-                        <input type="radio" name="rating" value="1" id="star1" class="btn-check">
-                        <label for="star1" class="star-btn"><span class="material-symbols-outlined fs-2">star</span></label>
-                        
-                        <input type="radio" name="rating" value="2" id="star2" class="btn-check">
-                        <label for="star2" class="star-btn"><span class="material-symbols-outlined fs-2">star</span></label>
-                        
-                        <input type="radio" name="rating" value="3" id="star3" class="btn-check">
-                        <label for="star3" class="star-btn"><span class="material-symbols-outlined fs-2">star</span></label>
-                        
-                        <input type="radio" name="rating" value="4" id="star4" class="btn-check">
-                        <label for="star4" class="star-btn"><span class="material-symbols-outlined fs-2">star</span></label>
-                        
-                        <input type="radio" name="rating" value="5" id="star5" class="btn-check">
-                        <label for="star5" class="star-btn"><span class="material-symbols-outlined fs-2">star</span></label>
+                <div class="mb-5 text-center bg-light p-4 rounded-4">
+                    <label class="form-label fw-bold text-dark d-block mb-3">별점을 선택해주세요</label>
+                    <div class="review-star-rating mb-2" id="starContainer" style="cursor: pointer;">
+                        <span class="material-symbols-outlined" data-value="1">star</span>
+                        <span class="material-symbols-outlined" data-value="2">star</span>
+                        <span class="material-symbols-outlined" data-value="3">star</span>
+                        <span class="material-symbols-outlined" data-value="4">star</span>
+                        <span class="material-symbols-outlined" data-value="5">star</span>
                     </div>
+                    <input type="hidden" name="rating" id="ratingInput" value="{{review.rating}}">
+                    <p class="text-primary fw-bold m-0" id="ratingText"></p>
                 </div>
 
                 <!-- Content Area -->
                 <div class="mb-4">
-                    <label for="content" class="form-label fw-bold text-dark">방문 경험을 들려주세요</label>
-                    <textarea name="content" id="content" class="form-control rounded-3 p-3" rows="8" placeholder="최소 10자 이상 작성해주세요.">{{review.content}}</textarea>
+                    <label for="content" class="form-label fw-bold text-dark mb-2">방문 경험을 들려주세요</label>
+                    <textarea name="content" id="content" class="form-control rounded-3 p-3 border-0 shadow-sm" rows="8" placeholder="최소 10자 이상 작성해주세요.">{{review.content}}</textarea>
                 </div>
 
                 <!-- Image Upload -->
                 <div class="mb-5">
-                    <label for="images" class="form-label fw-bold text-dark">사진 수정 (최대 5장)</label>
-                    <p class="small text-muted mb-2">* 새로운 사진을 업로드하면 기존 사진은 모두 교체됩니다.</p>
-                    <input type="file" name="images" id="images" class="form-control rounded-3" multiple accept="image/*">
+                    <label for="images" class="form-label fw-bold text-dark mb-2">사진 수정 (최대 5장)</label>
+                    <div class="bg-light p-3 rounded-3 border-start border-primary border-4 mb-3">
+                        <p class="small text-muted mb-0">💡 새로운 사진을 업로드하면 기존 사진은 모두 교체됩니다.</p>
+                    </div>
+                    <input type="file" name="images" id="images" class="form-control rounded-3 border-0 shadow-sm" multiple accept="image/*">
                 </div>
 
                 <!-- Submit Buttons -->
                 <div class="d-flex gap-3">
-                    <button type="submit" class="btn btn-primary btn-lg flex-grow-1 py-3 fw-bold rounded-3">수정 완료</button>
-                    <button type="button" onclick="history.back();" class="btn btn-light btn-lg px-4 py-3 fw-bold rounded-3 text-secondary">취소</button>
+                    <button type="submit" class="btn btn-primary btn-lg flex-grow-1 py-3.5 fw-bold rounded-3 shadow-sm border-0">수정 완료</button>
+                    <button type="button" onclick="history.back();" class="btn btn-light btn-lg px-4 py-3.5 fw-bold rounded-3 text-secondary border-0 shadow-sm">취소</button>
                 </div>
             </form>
         </div>
@@ -56,10 +51,39 @@
 </div>
 
 <style>
-    .star-btn { cursor: pointer; color: #dee2e6; transition: color 0.2s; }
-    .btn-check:checked + .star-btn { color: #ffc107; }
-    .rating-input:has(.btn-check:checked) label:hover,
-    .rating-input:has(.btn-check:checked) label:hover ~ label { color: #ffca2c; }
+    .review-star-rating { display: flex; gap: 0.5rem; justify-content: center; }
+    .review-star-rating .material-symbols-outlined { font-size: 3rem; color: #e2e8f0; transition: all 0.2s; }
+    .review-star-rating .material-symbols-outlined.active { color: #fbbf24; font-variation-settings: 'FILL' 1; transform: scale(1.1); }
 </style>
+
+<script>
+    const stars = document.querySelectorAll('#starContainer span');
+    const ratingInput = document.getElementById('ratingInput');
+    const ratingText = document.getElementById('ratingText');
+    const texts = ["별로예요 (1점)", "그저 그래요 (2점)", "보통이에요 (3점)", "좋아요! (4점)", "최고예요! (5점)"];
+
+    function updateStars(value) {
+        stars.forEach(s => {
+            if (parseInt(s.getAttribute('data-value')) <= value) {
+                s.classList.add('active');
+            } else {
+                s.classList.remove('active');
+            }
+        });
+        ratingText.textContent = texts[value - 1];
+    }
+
+    // 초기 별점 설정
+    updateStars(parseInt(ratingInput.value));
+
+    // 클릭 이벤트
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const value = parseInt(star.getAttribute('data-value'));
+            ratingInput.value = value;
+            updateStars(value);
+        });
+    });
+</script>
 
 {{> layout/footer}}

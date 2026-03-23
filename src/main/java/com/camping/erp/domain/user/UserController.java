@@ -78,10 +78,4 @@ public class UserController {
         model.addAttribute("user", user);
         return "mypage/home";
     }
-
-    // 내 리뷰
-    @GetMapping("/mypage/reviews")
-    public String reviews() {
-        return "mypage/reviews";
-    }
 }

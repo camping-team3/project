@@ -38,12 +38,20 @@ public class ReviewResponse {
     }
 
     @Getter
+    public static class StarDTO {
+        private boolean active;
+        public StarDTO(boolean active) {
+            this.active = active;
+        }
+    }
+
+    @Getter
     public static class ListDTO {
         private Long id;
         private String username;
         private String content;
         private Integer rating;
-        private List<Integer> ratingStars;
+        private List<StarDTO> stars;
         private String createdAt;
         private String zoneName;
         private String siteName;
@@ -58,9 +66,9 @@ public class ReviewResponse {
             this.content = review.getContent();
             this.rating = review.getRating();
             
-            this.ratingStars = new ArrayList<>();
-            for (int i = 0; i < review.getRating(); i++) {
-                this.ratingStars.add(1);
+            this.stars = new ArrayList<>();
+            for (int i = 1; i <= 5; i++) {
+                this.stars.add(new StarDTO(i <= review.getRating()));
             }
             
             this.createdAt = review.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));

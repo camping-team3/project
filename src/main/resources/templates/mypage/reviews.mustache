@@ -47,10 +47,10 @@
                         <div>
                             <h4 class="fw-bold text-dark mb-1">{{siteName}} ({{zoneName}})</h4>
                             <div class="d-flex align-items-center gap-2">
-                                <div class="rating-stars text-warning d-flex">
-                                    {{#ratingStars}}
-                                    <span class="material-symbols-outlined icon-fill-1 fs-6">star</span>
-                                    {{/ratingStars}}
+                                <div class="rating-stars d-flex">
+                                    {{#stars}}
+                                    <span class="material-symbols-outlined icon-fill-1 fs-6 {{#active}}text-warning{{/active}}{{^active}}text-secondary opacity-25{{/active}}">star</span>
+                                    {{/stars}}
                                 </div>
                                 <span class="text-secondary small fw-bold">{{createdAt}}</span>
                             </div>
