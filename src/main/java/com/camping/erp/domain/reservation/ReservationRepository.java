@@ -69,4 +69,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * 특정 상태이면서 체크아웃 날짜가 기준 날짜 이전인 예약 목록 조회
      */
     List<Reservation> findByStatusAndCheckOutBefore(ReservationStatus status, LocalDate date);
+
+    /**
+     * 특정 시각 이전에 생성된 특정 상태의 예약 목록 조회 (선점 만료 체크용)
+     */
+    java.util.List<Reservation> findByStatusAndCreatedAtBefore(ReservationStatus status, java.time.LocalDateTime threshold);
 }
