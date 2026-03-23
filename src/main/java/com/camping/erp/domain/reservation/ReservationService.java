@@ -498,11 +498,11 @@ public class ReservationService {
                 long oldNights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
                 long newNights = ChronoUnit.DAYS.between(req.getNewCheckIn(), req.getNewCheckOut());
 
-                List<ReservationResponse.ChangeRequestHistoryDTO> changeHistories = r.getChangeRequests().stream()
+                List<ReservationResponse.ChangeRequestHistoryDTO> changeHistories = r.getChangeRequests() == null ? List.of() : r.getChangeRequests().stream()
                                 .map(ReservationResponse.ChangeRequestHistoryDTO::fromEntity)
                                 .toList();
 
-                List<ReservationResponse.CancelRequestHistoryDTO> cancelHistories = r.getCancelRequests().stream()
+                List<ReservationResponse.CancelRequestHistoryDTO> cancelHistories = r.getCancelRequests() == null ? List.of() : r.getCancelRequests().stream()
                                 .map(ReservationResponse.CancelRequestHistoryDTO::fromEntity)
                                 .toList();
 
@@ -543,11 +543,11 @@ public class ReservationService {
 
                 long nights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
 
-                List<ReservationResponse.ChangeRequestHistoryDTO> changeHistories = r.getChangeRequests().stream()
+                List<ReservationResponse.ChangeRequestHistoryDTO> changeHistories = r.getChangeRequests() == null ? List.of() : r.getChangeRequests().stream()
                                 .map(ReservationResponse.ChangeRequestHistoryDTO::fromEntity)
                                 .toList();
 
-                List<ReservationResponse.CancelRequestHistoryDTO> cancelHistories = r.getCancelRequests().stream()
+                List<ReservationResponse.CancelRequestHistoryDTO> cancelHistories = r.getCancelRequests() == null ? List.of() : r.getCancelRequests().stream()
                                 .map(ReservationResponse.CancelRequestHistoryDTO::fromEntity)
                                 .toList();
 
