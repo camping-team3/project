@@ -181,3 +181,29 @@ INSERT INTO image_tb (id, gallery_id, review_id, notice_id, zone_id, site_id, fi
 (15, 10, null, null, null, null, '/upload/', '13d7c6a8-6b3f-4d44-ba8a-69c3f470c202_stills_by_suki-autumn-8356402_1280.jpg', NOW()),
 (16, 11, null, null, null, null, '/upload/', '16d44a91-4b62-4083-bdc3-f84154ed2352_stills_by_suki-autumn-8356402_1280.jpg', NOW()),
 (17, 12, null, null, null, null, '/upload/', '28edcc83-74d8-4fb8-868c-8d005c70717a_stills_by_suki-autumn-8356402_1280.jpg', NOW());
+
+-- ==========================================================
+-- 12. 예약 변경 및 취소 요청 테스트 데이터 (Task 4-2 검증용)
+-- ==========================================================
+
+-- [12-1] 예약 변경 요청 건 추가 (ID: 21)
+-- 기존: 홍길동(ID: 3), A-1 사이트(ID: 1), 2026-09-01 ~ 09-03
+INSERT INTO reservation_tb (id, user_id, site_id, check_in, check_out, total_price, people_count, visitor_name, visitor_phone, status, created_at) VALUES 
+(21, 3, 1, '2026-09-01', '2026-09-03', 100000, 2, '홍길동', '010-3333-3333', 'CHANGE_REQ', NOW());
+
+-- 변경 요청 상세 (ID: 1)
+-- 새 정보: A-3 사이트(ID: 3), 2026-09-05 ~ 09-07, 4명
+INSERT INTO reservation_change_request (id, reservation_id, new_check_in, new_check_out, new_site_id, new_people_count, status, created_at) VALUES 
+(1, 21, '2026-09-05', '2026-09-07', 3, 4, 'PENDING', NOW());
+
+
+-- [12-2] 예약 취소 요청 건 추가 (ID: 22)
+-- 기존: 강사랑(ID: 4), B-1 사이트(ID: 4), 2026-09-10 ~ 09-12
+INSERT INTO reservation_tb (id, user_id, site_id, check_in, check_out, total_price, people_count, visitor_name, visitor_phone, status, created_at) VALUES 
+(22, 4, 4, '2026-09-10', '2026-09-12', 300000, 2, '강사랑', '010-4444-4444', 'CANCEL_REQ', NOW());
+
+-- 취소 요청 상세 (ID: 1)
+-- 사유: 갑작스러운 출장 일정으로 취소 요청합니다.
+INSERT INTO reservation_cancel_request (id, reservation_id, reason, refund_bank, refund_account, refund_account_holder, status, created_at) VALUES 
+(1, 22, '갑작스러운 출장 일정으로 취소 요청합니다.', '신한은행', '110-123-456789', '강사랑', 'PENDING', NOW());
+

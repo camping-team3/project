@@ -89,15 +89,16 @@ public class Reservation extends BaseTimeEntity {
     }
 
     /**
-     * 예약 정보 업데이트 (변경 승인 시 사용)
+     * 예약 정보 업데이트 (변경 승인 및 최종 예약 시 사용)
      */
     public void updateReservationInfo(LocalDate checkIn, LocalDate checkOut, Site site, Integer peopleCount,
-            String visitorName, String visitorPhone) {
+            String visitorName, String visitorPhone, Long totalPrice) {
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         this.site = site;
         this.peopleCount = peopleCount;
         this.visitorName = visitorName;
         this.visitorPhone = visitorPhone;
+        this.totalPrice = totalPrice;
     }
 }
