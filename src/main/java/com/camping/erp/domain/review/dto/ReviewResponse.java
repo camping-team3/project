@@ -88,6 +88,8 @@ public class ReviewResponse {
         private List<ImageDTO> images;
         private boolean hasMoreImages;
         private int imageCount;
+        private boolean isDeleted;
+        private String adminReason;
 
         public ListDTO(Review review) {
             this.id = review.getId();
@@ -110,6 +112,8 @@ public class ReviewResponse {
                     .collect(Collectors.toList());
             this.hasMoreImages = this.images.size() > 1;
             this.imageCount = this.images.size() - 1;
+            this.isDeleted = review.isDeleted();
+            this.adminReason = review.getAdminReason();
         }
     }
 

@@ -15,10 +15,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
            "join fetch r.reservation res " +
            "join fetch res.site s " +
            "join fetch s.zone z " +
+           "where r.isDeleted = false " +
            "order by r.createdAt desc")
     Page<Review> findAllWithDetails(Pageable pageable);
 
-    @Query("select avg(r.rating) from Review r")
+    @Query("select avg(r.rating) from Review r where r.isDeleted = false")
     Double findAverageRating();
 
     @Query("SELECT r FROM Review r WHERE r.reservation.site.id = :siteId AND r.isDeleted = false")
