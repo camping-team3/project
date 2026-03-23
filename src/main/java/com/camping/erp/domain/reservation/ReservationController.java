@@ -175,5 +175,45 @@ public class ReservationController {
         ReservationResponse.ChangeDoneDTO changeRequest = reservationService.getChangeDoneDetails(id);
         model.addAttribute("changeRequest", changeRequest);
         return "mypage/reservation-change-done";
-    }
-    }
+        }
+
+        // 예약 취소 폼 조회
+        @GetMapping("/mypage/reservations/{id}/cancel-form")
+        public String cancelForm(@PathVariable("id") Long id, Model model) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        ReservationResponse.DetailDTO reservation = reservationService.getReservationDetail(id);
+        model.addAttribute("reservation", reservation);
+        model.addAttribute("userName", sessionUser.getName());
+        return "mypage/reservation-cancel";
+        }
+
+        // 예약 취소 요청 처리
+        @PostMapping("/mypage/reservations/{id}/cancel-request")
+        public String cancelRequest(@PathVariable("id") Long id, ReservationRequest.CancelDTO dto) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        dto.setReservationId(id);
+        reservationService.requestCancel(dto, sessionUser);
+        return "redirect:/mypage/reservations/" + id + "/cancel-done";
+        }
+
+        // 예약 취소 완료 페이지
+        @GetMapping("/mypage/reservations/{id}/cancel-done")
+        public String cancelDone(@PathVariable("id") Long id, Model model) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        ReservationResponse.CancelDoneDTO cancelRequest = reservationService.getCancelDoneDetails(id);
+        model.addAttribute("cancelRequest", cancelRequest);
+        return "mypage/reservation-cancel-done";
+        }
+        }
