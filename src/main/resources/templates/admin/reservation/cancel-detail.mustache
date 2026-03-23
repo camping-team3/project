@@ -18,14 +18,16 @@
             </div>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-light bg-danger bg-opacity-10 text-danger fw-bold shadow-sm d-flex align-items-center gap-2 border-0 rounded-3 px-3 py-2">
+            <button type="button" onclick="openRejectModal({{detail.id}})" class="btn btn-light bg-danger bg-opacity-10 text-danger fw-bold shadow-sm d-flex align-items-center gap-2 border-0 rounded-3 px-3 py-2">
                 <span class="material-symbols-outlined fs-5">cancel</span>
                 요청 거절
             </button>
-            <button class="btn btn-primary fw-bold shadow-sm d-flex align-items-center gap-2 border-0 rounded-3 px-3 py-2">
-                <span class="material-symbols-outlined fs-5">check_circle</span>
-                취소 승인
-            </button>
+            <form action="/admin/reservations/{{detail.id}}/approve" method="POST" onsubmit="return confirm('취소를 승인하시겠습니까?')">
+                <button type="submit" class="btn btn-primary fw-bold shadow-sm d-flex align-items-center gap-2 border-0 rounded-3 px-3 py-2">
+                    <span class="material-symbols-outlined fs-5">check_circle</span>
+                    취소 승인
+                </button>
+            </form>
         </div>
     </div>
 
@@ -184,5 +186,7 @@
 
     </div> <!-- Main Content Row END -->
 </div> <!-- container-fluid END -->
+
+{{> admin/reservation/reject-modal}}
 
 {{> layout/admin-footer}}

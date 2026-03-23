@@ -623,4 +623,75 @@ public class ReservationService {
                         default -> "secondary";
                 };
         }
+
+        /**
+         * [Task 4-4] 관리자 예약 승인 처리 (변경/취소 공통)
+         */
+        @Transactional
+        public void approveRequest(Long id) {
+                Reservation r = reservationRepository.findById(id)
+                                .orElseThrow(() -> new Exception404("해당 예약을 찾을 수 없습니다."));
+
+                if (r.getStatus() == ReservationStatus.CHANGE_REQ) {
+                        ReservationChangeRequest req = reservationChangeRequestRepository.findByReservationId(id)
+                                        .stream()
+                                        .filter(c -> c.getStatus() == RequestStatus.PENDING)
+                                        .findFirst()
+                                        .orElseThrow(() -> new Exception404("진행 중인 변경 요청이 없습니다."));
+
+                        // 1. 예약 정보 업데이트 (새로운 사이트, 일정, 인원 반영)
+                        r.updateReservationInfo(
+                                        req.getNewCheckIn(),
+                                        req.getNewCheckOut(),
+                                        req.getNewSite(),
+                                        req.getNewPeopleCount(),
+                                        r.getVisitorName(),
+                                        r.getVisitorPhone());
+                        // 2. 요청 상태 및 예약 상태 확정
+                        req.approve();
+                        r.updateStatus(ReservationStatus.CONFIRMED);
+
+                } else if (r.getStatus() == ReservationStatus.CANCEL_REQ) {
+                        ReservationCancelRequest req = reservationCancelRequestRepository.findByReservationId(id)
+                                        .stream()
+                                        .filter(c -> c.getStatus() == RequestStatus.PENDING)
+                                        .findFirst()
+                                        .orElseThrow(() -> new Exception404("진행 중인 취소 요청이 없습니다."));
+
+                        // 1. 요청 승인 및 예약 상태를 '취소 완료'로 변경
+                        req.approve();
+                        r.updateStatus(ReservationStatus.CANCEL_COMP);
+                }
+        }
+
+        /**
+         * [Task 4-4] 관리자 예약 거절 처리 (변경/취소 공통)
+         */
+        @Transactional
+        public void rejectRequest(Long id, AdminRequest.RejectDTO dto) {
+                Reservation r = reservationRepository.findById(id)
+                                .orElseThrow(() -> new Exception404("해당 예약을 찾을 수 없습니다."));
+
+                if (r.getStatus() == ReservationStatus.CHANGE_REQ) {
+                        ReservationChangeRequest req = reservationChangeRequestRepository.findByReservationId(id)
+                                        .stream()
+                                        .filter(c -> c.getStatus() == RequestStatus.PENDING)
+                                        .findFirst()
+                                        .orElseThrow(() -> new Exception404("진행 중인 변경 요청이 없습니다."));
+
+                        req.reject(dto.getRejectionReason());
+
+                } else if (r.getStatus() == ReservationStatus.CANCEL_REQ) {
+                        ReservationCancelRequest req = reservationCancelRequestRepository.findByReservationId(id)
+                                        .stream()
+                                        .filter(c -> c.getStatus() == RequestStatus.PENDING)
+                                        .findFirst()
+                                        .orElseThrow(() -> new Exception404("진행 중인 취소 요청이 없습니다."));
+
+                        req.reject(dto.getRejectionReason());
+                }
+
+                // 공통: 예약 상태를 다시 '확정' 상태로 복원
+                r.updateStatus(ReservationStatus.CONFIRMED);
+        }
 }

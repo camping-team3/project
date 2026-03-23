@@ -73,12 +73,18 @@
                     <td class="px-4 py-4 text-end">
                         <div class="d-flex justify-content-end gap-2">
                             {{#isChangeReq}}
-                            <button class="btn btn-primary btn-sm px-3 fw-bold border-0" onclick="event.stopPropagation(); location.href='/admin/reservations/{{id}}/change-detail'">승인</button>
-                            <button class="btn btn-light bg-danger bg-opacity-10 text-danger btn-sm px-3 fw-bold border-0" onclick="event.stopPropagation(); location.href='/admin/reservations/{{id}}/change-detail'">거절</button>
+                            <form action="/admin/reservations/{{id}}/approve" method="POST" onsubmit="return confirm('변경을 승인하시겠습니까?')">
+                                <button type="submit" class="btn btn-primary btn-sm px-3 fw-bold border-0" onclick="event.stopPropagation()">승인</button>
+                            </form>
+                            <button type="button" class="btn btn-light bg-danger bg-opacity-10 text-danger btn-sm px-3 fw-bold border-0" 
+                                    onclick="event.stopPropagation(); openRejectModal({{id}})">거절</button>
                             {{/isChangeReq}}
                             {{#isCancelReq}}
-                            <button class="btn btn-primary btn-sm px-3 fw-bold border-0" onclick="event.stopPropagation(); location.href='/admin/reservations/{{id}}/cancel-detail'">승인</button>
-                            <button class="btn btn-light bg-danger bg-opacity-10 text-danger btn-sm px-3 fw-bold border-0" onclick="event.stopPropagation(); location.href='/admin/reservations/{{id}}/cancel-detail'">거절</button>
+                            <form action="/admin/reservations/{{id}}/approve" method="POST" onsubmit="return confirm('취소를 승인하시겠습니까?')">
+                                <button type="submit" class="btn btn-primary btn-sm px-3 fw-bold border-0" onclick="event.stopPropagation()">승인</button>
+                            </form>
+                            <button type="button" class="btn btn-light bg-danger bg-opacity-10 text-danger btn-sm px-3 fw-bold border-0" 
+                                    onclick="event.stopPropagation(); openRejectModal({{id}})">거절</button>
                             {{/isCancelReq}}
                             <!-- [Task 4-1] 그 외 상태는 관리 버튼 미노출 -->
                         </div>
@@ -133,6 +139,8 @@
         </div>
     </div>
 </div>
+
+{{> admin/reservation/reject-modal}}
 
 <script>
     // 일수 계산

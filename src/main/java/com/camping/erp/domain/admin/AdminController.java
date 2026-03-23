@@ -173,6 +173,20 @@ public class AdminController {
         return Resp.ok("환불 승인 및 결제 취소가 완료되었습니다.");
     }
 
+    // 예약 승인 처리 (변경/취소 공통)
+    @PostMapping("/admin/reservations/{id}/approve")
+    public String approveReservation(@PathVariable("id") Long id) {
+        reservationService.approveRequest(id);
+        return "redirect:/admin/reservations";
+    }
+
+    // 예약 거절 처리 (변경/취소 공통)
+    @PostMapping("/admin/reservations/{id}/reject")
+    public String rejectReservation(@PathVariable("id") Long id, AdminRequest.RejectDTO rejectDTO) {
+        reservationService.rejectRequest(id, rejectDTO);
+        return "redirect:/admin/reservations";
+    }
+
     // --- 공지사항 관리 ---
     @GetMapping("/admin/notices")
     public String noticeList(@RequestParam(name = "keyword", defaultValue = "") String keyword,

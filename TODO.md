@@ -91,10 +91,10 @@
   - [x] 기능: '사용자 상세 정보보기' 버튼 클릭 시 `admin/user/detail.mustache` 이동
   - [x] 이력: 예약 관련 모든 요청 이력(변경/취소) 섹션 추가
   - [x] 버튼: 예약 승인 버튼 숨김 처리
-- [ ] **4-4. 승인/거절 처리 API 및 거절 사유 입력 기능 구현**
-  - [ ] `reject-modal.mustache` 구현: 거절 사유 입력 폼, 취소 시 이전 페이지 이동, 확정 시 처리 로직 실행
-  - [ ] 승인 로직: `Reservation` 업데이트(상태 `CONFIRMED` 복구), 요청 상태 `APPROVED` 변경 후 목록 리다이렉트
-  - [ ] 거절 로직: `Reservation` 상태 `CONFIRMED` 복구, 요청 상태 `REJECTED` 및 사유 저장 후 목록 리다이렉트
+- [x] **4-4. 승인/거절 처리 API 및 거절 사유 입력 기능 구현**
+  - [x] `reject-modal.mustache` 구현: 거절 사유 입력 폼, 취소 시 이전 페이지 이동, 확정 시 처리 로직 실행
+  - [x] 승인 로직: `Reservation` 업데이트(상태 `CONFIRMED` 복구), 요청 상태 `APPROVED` 변경 후 목록 리다이렉트
+  - [x] 거절 로직: `Reservation` 상태 `CONFIRMED` 복구, 요청 상태 `REJECTED` 및 사유 저장 후 목록 리다이렉트
 
 ## 4단계: 통합 테스트 및 검증
 
