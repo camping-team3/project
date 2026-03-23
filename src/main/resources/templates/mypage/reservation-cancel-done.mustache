@@ -1,106 +1,43 @@
 {{> layout/header}}
 
-        <div class="container py-5">
-            <div class="row g-4">
-                <!-- Sidebar Navigation -->
-                <aside class="col-lg-3">
-                    <div class="fh-card p-4 mb-4">
-                        <div class="fh-profile-card">
-                            <div class="profile-section">
-                                <div class="profile-img">
-                                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuArVyFD1kByWmCBF0Rz4ccl-L4vIMovS-krTT4u-KVYHhX2hMPUkaQzOLuSXFNkjKwDG0hbQZ7gaRgh8ytv6BK6xFB6ClZmg6H-wq586rl1mmMaOrnlkhWvj-w0KNrgyc3qLGo11qHIdPwOfdKeuTDw6OltxRnbG17NoLNHNk1YZI1Li_g3-PSh5baMbRafh3KgP2jo5_izMzuKYzAJm9zDtUrAJHJSePSvnmDcctJdXnbujZtx4x7j3Nub2X0XNELdrx0zZBwepMns" alt="Profile">
-                                </div>
-                                <div class="profile-info">
-                                    <h3>김철수 님</h3>
-                                    <p>Forest Member</p>
-                                </div>
-                            </div>
-                        </div>
-                        <nav class="fh-sidebar-nav">
-                            <a href="/mypage" class="nav-item">
-                                <span class="material-symbols-outlined">home</span>
-                                <span>홈</span>
-                            </a>
-                            <a href="#" class="nav-item">
-                                <span class="material-symbols-outlined">person</span>
-                                <span>회원 정보</span>
-                            </a>
-                            <a href="/mypage/reservations" class="nav-item active">
-                                <span class="material-symbols-outlined">calendar_today</span>
-                                <span>예약 내역</span>
-                            </a>
-                            <a href="/mypage/reviews" class="nav-item">
-                                <span class="material-symbols-outlined">rate_review</span>
-                                <span>내가 적은 리뷰</span>
-                            </a>
-                        </nav>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="fh-card p-5 text-center shadow-sm">
+                <div class="mb-4">
+                    <div class="bg-danger-subtle d-inline-flex p-4 rounded-circle mb-3">
+                        <span class="material-symbols-outlined text-danger fs-1">cancel</span>
                     </div>
-                </aside>
+                    <h2 class="fw-bold mb-2">취소 요청이 접수되었습니다</h2>
+                    <p class="text-secondary fs-5">관리자 확인 후 최종 취소 승인 및 환불 절차가 진행됩니다.</p>
+                </div>
 
-                <!-- Main Content Area -->
-                <main class="col-lg-9">
-                    <div class="row justify-content-center text-center">
-                        <div class="col-lg-8">
-                            <!-- Success Hero Image -->
-                            <div class="success-hero mb-5 shadow-sm">
-                                <div class="success-icon-badge">
-                                    <span class="material-symbols-outlined text-primary fs-1">check_circle</span>
-                                </div>
-                            </div>
-
-                            <!-- Status Message -->
-                            <div class="mb-5 px-3">
-                                <h1 class="display-6 fw-bold text-dark mb-3">예약 취소 신청이 접수되었습니다!</h1>
-                                <p class="text-secondary fw-medium fs-5 leading-relaxed">
-                                    고객님의 예약 취소 요청이 정상적으로 접수되었습니다.<br>
-                                    관리자 확인 후 취소 및 환불 절차가 진행됩니다.
-                                </p>
-                            </div>
-
-                            <!-- Cancellation Summary Card -->
-                            <div class="fh-card text-start shadow-sm mb-4 bg-white">
-                                <div class="d-flex align-items-center gap-2 mb-4 pb-3 border-bottom border-secondary border-opacity-10">
-                                    <span class="material-symbols-outlined text-primary fs-5">receipt_long</span>
-                                    <h3 class="h5 fw-bold text-dark m-0">취소 상세 정보</h3>
-                                </div>
-                                <div class="summary-list">
-                                    <div class="summary-item d-flex justify-content-between align-items-center">
-                                        <span class="text-secondary fw-medium">예약 번호</span>
-                                        <span class="text-dark fw-bold">R20231224-001</span>
-                                    </div>
-                                    <div class="summary-item d-flex justify-content-between align-items-center">
-                                        <span class="text-secondary fw-medium">환불 예정 금액</span>
-                                        <span class="text-primary fw-bold fs-5">350,000원</span>
-                                    </div>
-                                    <div class="summary-item d-flex justify-content-between align-items-center">
-                                        <span class="text-secondary fw-medium">환불 수단</span>
-                                        <span class="text-dark fw-bold">카드 결제 취소</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Info Alert -->
-                            <div class="alert alert-info border-0 bg-info bg-opacity-10 d-flex gap-3 p-4 mb-5 text-start">
-                                <span class="material-symbols-outlined text-info fs-5">info</span>
-                                <p class="small text-info-emphasis mb-0 leading-relaxed">
-                                    관리자 확인 후 최종 취소 처리가 완료되면 알림 문자를 발송해 드립니다.
-                                    환불은 결제 수단에 따라 영업일 기준 3~5일 정도 소요될 수 있습니다.
-                                </p>
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="row g-3">
-                                <div class="col-sm-6">
-                                    <button onclick="location.href='/'" class="btn btn-primary w-100 py-3 shadow-sm border-0">예약 내역 확인</button>
-                                </div>
-                                <div class="col-sm-6">
-                                    <button onclick="location.href='/'" class="btn btn-light bg-secondary bg-opacity-10 text-secondary w-100 py-3 fw-bold border-0 shadow-sm">메인으로 가기</button>
-                                </div>
-                            </div>
-                        </div>
+                <div class="bg-light rounded-4 p-4 mb-4 text-start border">
+                    <h5 class="fw-bold mb-3 pb-2 border-bottom">요청 정보 확인</h5>
+                    <div class="row gy-3">
+                        <div class="col-4 text-secondary">예약 번호</div>
+                        <div class="col-8 fw-bold">RESERV-{{cancelRequest.reservationId}}</div>
+                        
+                        <div class="col-4 text-secondary">신청 일자</div>
+                        <div class="col-8">{{cancelRequest.requestDate}}</div>
+                        
+                        <div class="col-4 text-secondary">취소 사유</div>
+                        <div class="col-8 text-break">{{cancelRequest.reason}}</div>
                     </div>
-                </main>
+                </div>
+
+                <div class="alert alert-secondary border-0 mb-4 py-3 small d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined fs-5">info</span>
+                    <span>승인 처리 결과는 마이페이지 예약 내역 상세에서 확인하실 수 있습니다.</span>
+                </div>
+
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="/mypage/reservations" class="btn btn-primary btn-lg px-5">목록으로 돌아가기</a>
+                    <a href="/mypage" class="btn btn-outline-secondary btn-lg px-4">홈으로 이동</a>
+                </div>
             </div>
         </div>
+    </div>
+</div>
 
 {{> layout/footer}}

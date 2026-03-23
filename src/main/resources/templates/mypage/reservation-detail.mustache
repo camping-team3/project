@@ -2,17 +2,17 @@
 
 <div class="container py-5">
     <div class="row g-4">
-        <!-- Sidebar Navigation (공통 스타일 적용) -->
+        <!-- Sidebar Navigation -->
         <aside class="col-lg-3">
             <div class="fh-card p-4 mb-4">
                 <div class="fh-profile-card">
                     <div class="profile-section">
                         <div class="profile-img">
-                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuArVyFD1kByWmCBF0Rz4ccl-L4vIMovS-krTT4u-KVYHhX2hMPUkaQzOLuSXFNkjKwDG0hbQZ7gaRgh8ytv6BK6xFB6ClZmg6H-wq586rl1mmMaOrnlkhWvj-w0KNrgyc3qLGo11qHIdPwOfdKeuTDw6OltxRnbG17NoLNHNk1YZI1Li_g3-PSh5baMbRafh3KgP2jo5_izMzuKYzAJm9zDtUrAJHJSePSvnmDcctJdXnbujZtx4x7j3Nub2X0XNELdrx0zZBwepMns" alt="Profile">
+                            <img src="https://ui-avatars.com/api/?name={{sessionUser.username}}&background=2c5926&color=fff" alt="Profile">
                         </div>
                         <div class="profile-info">
-                            <h3>{{user.name}} 님</h3>
-                            <p>{{user.role}} Member</p>
+                            <h3>{{sessionUser.name}} 님</h3>
+                            <p>Forest Member</p>
                         </div>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
 
         <!-- Main Content Area -->
         <main class="col-lg-9">
-            <!-- Back Link (제목 위로 이동) -->
+            <!-- Back Link -->
             <nav class="mb-3 px-1">
                 <a href="/mypage/reservations" class="text-decoration-none text-primary fw-bold small d-inline-flex align-items-center gap-1">
                     <span class="material-symbols-outlined fs-6">arrow_back</span>
@@ -47,10 +47,11 @@
                 </a>
             </nav>
 
+            {{#reservation}}
             <section class="mb-5">
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 fw-bold mb-0">예약 상세 내역</h1>
-                    <span class="badge bg-primary px-3 py-2 fs-6">예약 완료</span>
+                    <span class="badge bg-primary px-3 py-2 fs-6">{{statusDescription}}</span>
                 </div>
 
                 <!-- Summary Card -->
@@ -58,22 +59,22 @@
                     <div class="row align-items-center">
                         <div class="col-md-8">
                             <span class="small text-muted text-uppercase fw-bold">Reservation ID</span>
-                            <h2 class="h4 fw-bold text-primary mb-3">RSV-20231024-001</h2>
+                            <h2 class="h4 fw-bold text-primary mb-3">RESERV-{{id}}</h2>
                             <div class="d-flex align-items-center gap-3">
                                 <div class="d-flex align-items-center gap-1 text-dark fw-bold">
                                     <span class="material-symbols-outlined fs-5">forest</span>
-                                    오크우드 03
+                                    {{siteName}} ({{zoneName}})
                                 </div>
                                 <div class="text-muted">|</div>
                                 <div class="d-flex align-items-center gap-1 text-secondary small">
                                     <span class="material-symbols-outlined fs-5">payments</span>
-                                    총 250,000원
+                                    총 {{totalPrice}}
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 text-md-end mt-3 mt-md-0">
                             <p class="small text-muted mb-1">예약 일시</p>
-                            <p class="fw-bold mb-0">2023.10.24 14:30</p>
+                            <p class="fw-bold mb-0">{{reservationDate}}</p>
                         </div>
                     </div>
                 </div>
@@ -90,15 +91,15 @@
                             <div class="d-flex flex-column gap-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="text-muted small">체크인</span>
-                                    <span class="fw-bold">2023.11.10 (금) 14:00</span>
+                                    <span class="fw-bold">{{checkIn}} 14:00</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="text-muted small">체크아웃</span>
-                                    <span class="fw-bold">2023.11.12 (일) 11:00</span>
+                                    <span class="fw-bold">{{checkOut}} 11:00</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center pt-2 border-top">
                                     <span class="text-muted small">숙박 기간</span>
-                                    <span class="badge bg-light text-dark border fw-bold px-3">2박 3일</span>
+                                    <span class="badge bg-light text-dark border fw-bold px-3">{{nights}}</span>
                                 </div>
                             </div>
                         </div>
@@ -113,61 +114,116 @@
                             <div class="d-flex flex-column gap-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="text-muted small">방문자 성함</span>
-                                    <span class="fw-bold">홍길동</span>
+                                    <span class="fw-bold">{{visitorName}}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="text-muted small">연락처</span>
-                                    <span class="fw-bold">010-1234-5678</span>
+                                    <span class="fw-bold">{{visitorPhone}}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center pt-2 border-top">
                                     <span class="text-muted small">이용 인원</span>
-                                    <span class="fw-bold">성인 2, 아동 1 (총 3명)</span>
+                                    <span class="fw-bold">총 {{peopleCount}}명</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Payment Details -->
-                <div class="fh-card p-4 mb-5 shadow-sm">
+                <!-- 요청 처리 이력 -->
+                {{#changeRequests.0}}
+                <div class="fh-card p-4 mb-4 shadow-sm">
                     <h3 class="h6 fw-bold mb-4 d-flex align-items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">receipt_long</span>
-                        결제 정보 상세
+                        <span class="material-symbols-outlined text-primary">history</span>
+                        변경 요청 이력
                     </h3>
-                    <div class="d-flex flex-column gap-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted">기본 숙박 요금 (오크우드 03)</span>
-                            <span>180,000원</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted">추가 인원 요금 (1명)</span>
-                            <span>20,000원</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted">성수기 할증</span>
-                            <span>50,000원</span>
-                        </div>
-                        <hr class="my-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 fw-bold mb-0">총 결제 금액</span>
-                            <span class="h4 fw-bold text-primary mb-0">250,000원</span>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>요청일</th>
+                                    <th>변경 내용</th>
+                                    <th>상태</th>
+                                    <th>비고</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#changeRequests}}
+                                <tr>
+                                    <td>{{requestDate}}</td>
+                                    <td>{{newSiteName}} ({{newCheckIn}}~{{newCheckOut}})</td>
+                                    <td>
+                                        <span class="badge {{#rejectionReason}}bg-danger{{/rejectionReason}}{{^rejectionReason}}bg-secondary{{/rejectionReason}}">
+                                            {{statusDescription}}
+                                        </span>
+                                    </td>
+                                    <td class="text-danger small">{{#rejectionReason}}{{rejectionReason}}{{/rejectionReason}}</td>
+                                </tr>
+                                {{/changeRequests}}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+                {{/changeRequests.0}}
+
+                {{#cancelRequests.0}}
+                <div class="fh-card p-4 mb-4 shadow-sm">
+                    <h3 class="h6 fw-bold mb-4 d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">history</span>
+                        취소 요청 이력
+                    </h3>
+                    <div class="table-responsive">
+                        <table class="table table-hover small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>요청일</th>
+                                    <th>취소 사유</th>
+                                    <th>상태</th>
+                                    <th>비고</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#cancelRequests}}
+                                <tr>
+                                    <td>{{requestDate}}</td>
+                                    <td>{{reason}}</td>
+                                    <td>
+                                        <span class="badge {{#rejectionReason}}bg-danger{{/rejectionReason}}{{^rejectionReason}}bg-secondary{{/rejectionReason}}">
+                                            {{statusDescription}}
+                                        </span>
+                                    </td>
+                                    <td class="text-danger small">{{#rejectionReason}}{{rejectionReason}}{{/rejectionReason}}</td>
+                                </tr>
+                                {{/cancelRequests}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {{/cancelRequests.0}}
 
                 <!-- Action Buttons -->
                 <div class="d-flex flex-wrap gap-3">
-                    <a href="/mypage/reservations/1/change" class="btn btn-primary px-4 py-2.5 fw-bold d-flex align-items-center gap-2 shadow-sm">
-                        <span class="material-symbols-outlined fs-5">edit_calendar</span>
-                        예약 일정 변경
+                    {{#canModify}}
+                    <a href="/mypage/reservations/{{id}}/change-form" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3 py-2">
+                        <span class="material-symbols-outlined fs-6">edit_calendar</span>
+                        예약 변경
                     </a>
-                    <a href="/mypage/reservations/1/cancel" class="btn btn-outline-danger px-4 py-2.5 fw-bold d-flex align-items-center gap-2 shadow-sm">
-                        <span class="material-symbols-outlined fs-5">cancel</span>
-                        예약 취소 신청
+                    <a href="/mypage/reservations/{{id}}/cancel-form" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 px-3 py-2">
+                        <span class="material-symbols-outlined fs-6">cancel</span>
+                        예약 취소
                     </a>
-                    <a href="/mypage/reservations" class="btn btn-outline-secondary px-4 py-2.5 fw-bold ms-auto">목록으로</a>
+                    {{/canModify}}
+
+                    {{#isWait}}
+                    <div class="d-flex align-items-center gap-1 text-warning fw-bold">
+                        <span class="material-symbols-outlined fs-5">pending</span>
+                        {{statusDescription}} 중
+                    </div>
+                    {{/isWait}}
+
+                    <a href="/mypage/reservations" class="btn btn-outline-secondary btn-sm px-4 py-2 ms-auto">목록으로</a>
                 </div>
             </section>
+            {{/reservation}}
         </main>
     </div>
 </div>
