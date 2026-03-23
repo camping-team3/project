@@ -14,6 +14,7 @@ import com.camping.erp.global.handler.ex.Exception500;
 import com.camping.erp.global.util.Resp;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -48,7 +49,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception401.class)
     public @ResponseBody Object ex401(Exception401 e, HttpServletRequest request) {
-        System.out.println("[DEBUG] GlobalExceptionHandler - Exception401 caught: " + e.getMessage() + " for URI: " + request.getRequestURI());
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
@@ -79,20 +79,24 @@ public class GlobalExceptionHandler {
         return scriptAlert(e.getMessage(), "history.back();");
     }
 
+    // 정적 리소스 미발견(404) 에러를 로그 없이 조용히 처리
+    @ExceptionHandler(NoResourceFoundException.class)
+    public @ResponseBody Object handleNoResourceFoundException(NoResourceFoundException e, HttpServletRequest request) {
+        return Resp.fail(HttpStatus.NOT_FOUND, "Not Found");
+    }
+
     @ExceptionHandler(Exception.class)
     public Object exUnknown(Exception e, HttpServletRequest request) {
-        System.out.println("[DEBUG] GlobalExceptionHandler - Unknown Exception caught: " + e.getClass().getName() + " - " + e.getMessage() + " for URI: " + request.getRequestURI());
+        String msg = e.getMessage() != null ? e.getMessage() : "";
+        String uri = request.getRequestURI() != null ? request.getRequestURI() : "";
         
-        // 404 에러(페이지 없음)인 경우 로그인 폼으로 리다이렉트하지 않고 404 메시지 출력
-        if (e.getClass().getName().contains("NoResourceFoundException")) {
-            return scriptAlert("요청하신 페이지를 찾을 수 없습니다: " + request.getRequestURI(), "history.back();");
+        if (msg.contains("No static resource") || uri.contains(".well-known") || msg.contains("rejected")) {
+            return Resp.fail(HttpStatus.NOT_FOUND, "Not Found");
         }
 
-        e.printStackTrace();
         if (isAjaxRequest(request)) {
-            return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 문의하세요: " + e.getMessage());
+            return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, "Server Error");
         }
-        // 리다이렉트이므로 @ResponseBody를 붙이지 않음
         return "redirect:/login-form";
     }
 

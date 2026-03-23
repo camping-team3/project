@@ -10,11 +10,21 @@ package com.camping.erp.domain.reservation.enums;
  * COMPLETED: 이용 완료 (체크아웃 이후)
  */
 public enum ReservationStatus {
-    PENDING, 
-    CONFIRMED, 
-    CHANGE_REQ, 
-    CANCEL_REQ, 
-    CANCEL_COMP, 
-    COMPLETED
+    PENDING("결제 대기"), 
+    CONFIRMED("예약 확정"), 
+    CHANGE_REQ("변경 요청"), 
+    CANCEL_REQ("취소 요청"), 
+    CANCEL_COMP("취소 완료"), 
+    COMPLETED("이용 완료");
+
+    private final String description;
+
+    ReservationStatus(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }
 

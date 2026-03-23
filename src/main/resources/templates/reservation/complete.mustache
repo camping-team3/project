@@ -35,8 +35,7 @@
                     </div>
                     <div class="info-grid-row">
                         <span class="text-secondary fw-medium">결제 금액</span>
-                        <span class="text-primary fw-black fs-5">₩ {{reservation.totalPrice}}</span>
-                    </div>
+                        <span class="text-primary fw-black fs-5">₩ <span class="format-price">{{reservation.totalPrice}}</span></span>                    </div>
                     <div class="info-grid-row">
                         <span class="text-secondary fw-medium">결제 수단</span>
                         <span class="text-dark fw-bold">신용카드 (결제 완료)</span>
@@ -61,3 +60,10 @@
             </p>
         </main>
 {{> layout/footer}}
+
+<script>
+    document.querySelectorAll('.format-price').forEach(el => {
+        const value = parseInt(el.innerText.replace(/[^0-9]/g, ''));
+        if (!isNaN(value)) el.innerText = value.toLocaleString();
+    });
+</script>

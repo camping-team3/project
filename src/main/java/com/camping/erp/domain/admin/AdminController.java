@@ -10,12 +10,14 @@ import com.camping.erp.domain.payment.RefundResponse;
 import com.camping.erp.domain.payment.RefundService;
 import com.camping.erp.domain.qna.QnaResponse;
 import com.camping.erp.domain.qna.QnaService;
+import com.camping.erp.domain.reservation.ReservationResponse;
 import com.camping.erp.domain.reservation.ReservationService;
 import com.camping.erp.domain.review.ReviewService;
 import com.camping.erp.domain.site.SiteRequest;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
 import com.camping.erp.domain.user.UserResponse;
+import com.camping.erp.domain.user.UserService;
 import com.camping.erp.global.dto.PageResponse;
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.util.Resp;
@@ -49,6 +51,7 @@ public class AdminController {
     private final GalleryService galleryService;
     private final QnaService qnaService;
     private final ReviewService reviewService;
+    private final UserService userService; // 추가
     private final RefundService refundService;
     private final HttpSession session;
 
@@ -68,16 +71,37 @@ public class AdminController {
 
     // --- 리뷰 관리 ---
     @GetMapping("/admin/reviews")
-    public String reviewList(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+    public String reviewList(@RequestParam(name = "page", defaultValue = "0") int page,
+                             @RequestParam(name = "sort", defaultValue = "latest") String sort,
+                             @RequestParam(name = "filter", defaultValue = "all") String filter,
+                             @RequestParam(name = "keyword", defaultValue = "") String keyword,
+                             Model model) {
+        // TODO: 향후 Service에서 sort/filter/keyword를 처리하도록 확장 필요. 
+        // 현재는 기본 페이징 조회만 유지하되 UI 파라미터 전달
+        Pageable pageable = PageRequest.of(page, 10, sort.equals("danger") ? Sort.by("aiDangerScore").descending() : Sort.by("id").descending());
         AdminResponse.ReviewPageDTO response = reviewService.findAllForAdmin(pageable);
+        
         model.addAttribute("response", response);
+        model.addAttribute("isDangerSort", "danger".equals(sort));
+        model.addAttribute("keyword", keyword);
         return "admin/review/list";
     }
 
+    @PostMapping("/admin/reviews/{id}/keep")
+    public String keepReview(@PathVariable("id") Long id) {
+        reviewService.keepByAdmin(id);
+        return "redirect:/admin/reviews";
+    }
+
     @PostMapping("/admin/reviews/{id}/delete")
-    public String deleteReview(@PathVariable("id") Long id) {
-        reviewService.deleteByAdmin(id);
+    public String deleteReview(@PathVariable("id") Long id, @RequestParam("reason") String reason) {
+        reviewService.deleteByAdmin(id, reason);
+        return "redirect:/admin/reviews";
+    }
+
+    @PostMapping("/admin/users/{userId}/expel")
+    public String expelUser(@PathVariable("userId") Long userId) {
+        userService.expelUser(userId);
         return "redirect:/admin/reviews";
     }
 
@@ -136,19 +160,25 @@ public class AdminController {
         return "admin/reservation/list";
     }
 
-    @GetMapping("/admin/reservations/{id}/change")
-    public String reservationChangeDetail(@PathVariable("id") Long id) {
+    @GetMapping("/admin/reservations/{id}/change-detail")
+    public String reservationChangeDetail(@PathVariable("id") Long id, Model model) {
+        AdminResponse.AdminChangeDetailDTO detail = reservationService.getAdminChangeDetail(id);
+        model.addAttribute("detail", detail);
         return "admin/reservation/change-detail";
     }
 
-    @GetMapping("/admin/reservations/{id}/cancel")
-    public String reservationCancelDetail(@PathVariable("id") Long id) {
+    @GetMapping("/admin/reservations/{id}/cancel-detail")
+    public String reservationCancelDetail(@PathVariable("id") Long id, Model model) {
+        AdminResponse.AdminCancelDetailDTO detail = reservationService.getAdminCancelDetail(id);
+        model.addAttribute("detail", detail);
         return "admin/reservation/cancel-detail";
     }
 
     // 예약 상세 보기
-    @GetMapping("/admin/reservations/{id}")
-    public String reservationDetail(@PathVariable("id") Long id) {
+    @GetMapping("/admin/reservations/{id}/detail")
+    public String reservationDetail(@PathVariable("id") Long id, Model model) {
+        AdminResponse.AdminReservationDetailDTO detail = reservationService.getAdminReservationDetail(id);
+        model.addAttribute("detail", detail);
         return "admin/reservation/detail";
     }
 
@@ -166,6 +196,20 @@ public class AdminController {
     public ResponseEntity<?> approveRefund(@PathVariable("id") Long id, @RequestParam("reason") String reason) {
         refundService.approveRefund(id, reason);
         return Resp.ok("환불 승인 및 결제 취소가 완료되었습니다.");
+    }
+
+    // 예약 승인 처리 (변경/취소 공통)
+    @PostMapping("/admin/reservations/{id}/approve")
+    public String approveReservation(@PathVariable("id") Long id) {
+        reservationService.approveRequest(id);
+        return "redirect:/admin/reservations";
+    }
+
+    // 예약 거절 처리 (변경/취소 공통)
+    @PostMapping("/admin/reservations/{id}/reject")
+    public String rejectReservation(@PathVariable("id") Long id, AdminRequest.RejectDTO rejectDTO) {
+        reservationService.rejectRequest(id, rejectDTO);
+        return "redirect:/admin/reservations";
     }
 
     // --- 공지사항 관리 ---
