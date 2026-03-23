@@ -35,6 +35,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -285,11 +287,6 @@ public class AdminController {
     }
 
     // --- 기타 ---
-    @GetMapping("/admin/stat")
-    public String stat() {
-        return "admin/stat";
-    }
-
     @GetMapping("/admin/qna")
     public String qnaList(
             @RequestParam(value = "status", defaultValue = "all") String status,
@@ -348,7 +345,28 @@ public class AdminController {
     }
 
     @GetMapping("/admin/sites/season")
-    public String siteSeason() {
+    public String siteSeason(Model model) {
+        LocalDate now = LocalDate.now();
+        model.addAttribute("currentYear", now.getYear());
+        model.addAttribute("currentMonth", now.getMonthValue());
+
+        // 달력 데이터 생성 (6주 분량)
+        List<AdminResponse.CalendarDayDTO> calendarDays = new ArrayList<>();
+        LocalDate firstOfMonth = now.withDayOfMonth(1);
+        int dayOfWeek = firstOfMonth.getDayOfWeek().getValue() % 7; // 0:일, 1:월, ..., 6:토
+        
+        LocalDate startDate = firstOfMonth.minusDays(dayOfWeek);
+        for (int i = 0; i < 42; i++) {
+            LocalDate date = startDate.plusDays(i);
+            calendarDays.add(AdminResponse.CalendarDayDTO.builder()
+                    .day(date.getDayOfMonth())
+                    .date(date)
+                    .isCurrentMonth(date.getMonthValue() == now.getMonthValue())
+                    .isToday(date.equals(now))
+                    .build());
+        }
+        model.addAttribute("calendarDays", calendarDays);
+
         return "admin/site/season";
     }
 }

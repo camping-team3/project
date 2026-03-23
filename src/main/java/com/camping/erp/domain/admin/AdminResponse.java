@@ -90,4 +90,14 @@ public class AdminResponse {
 
         public boolean isPending() { return status == ReservationStatus.PENDING; }
     }
+
+    @Getter @Setter
+    @Builder
+    public static class CalendarDayDTO {
+        private int day;
+        private LocalDate date;
+        private boolean isCurrentMonth;
+        private boolean isToday;
+        // 향후 이벤트(시즌) 정보를 담을 리스트 추가 가능
+    }
 }

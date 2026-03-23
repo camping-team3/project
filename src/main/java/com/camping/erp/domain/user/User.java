@@ -57,5 +57,15 @@ public class User extends BaseTimeEntity {
     // 페널티 카운트 증가
     public void increasePenalty() {
         this.penaltyCount++;
+    // 회원 정보 수정 (이름, 이메일, 전화번호)
+    public void updateInfo(String name, String email, String phone) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+    }
+    
+    // 비밀번호 수정
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
     }
 }

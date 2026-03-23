@@ -3,6 +3,7 @@ package com.camping.erp.domain.reservation;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
 import com.camping.erp.domain.user.UserResponse;
+import com.camping.erp.domain.user.UserService;
 import com.camping.erp.global.util.Resp;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class ReservationController {
 
     private final SiteService siteService;
     private final ReservationService reservationService;
+    private final UserService userService;
     private final HttpSession session;
 
     // 예약 페이지 (예약 가능 사이트 목록 조회)
@@ -132,7 +134,8 @@ public class ReservationController {
                 .toList();
 
         model.addAttribute("reservations", dtos);
-        model.addAttribute("userName", sessionUser.getName());
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reservations";
     }
 
@@ -146,6 +149,8 @@ public class ReservationController {
 
         ReservationResponse.DetailDTO reservation = reservationService.getReservationDetail(id);
         model.addAttribute("reservation", reservation);
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reservation-detail";
     }
 
@@ -159,7 +164,8 @@ public class ReservationController {
 
         ReservationResponse.ChangeFormDTO reservation = reservationService.getChangeForm(id);
         model.addAttribute("reservation", reservation);
-        model.addAttribute("userName", sessionUser.getName()); // 사용자 이름 추가
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reservation-change";
     }
 
@@ -194,12 +200,14 @@ public class ReservationController {
 
         ReservationResponse.ChangeDoneDTO changeRequest = reservationService.getChangeDoneDetails(id);
         model.addAttribute("changeRequest", changeRequest);
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reservation-change-done";
-        }
+    }
 
-        // 예약 취소 폼 조회
-        @GetMapping("/mypage/reservations/{id}/cancel-form")
-        public String cancelForm(@PathVariable("id") Long id, Model model) {
+    // 예약 취소 폼 조회
+    @GetMapping("/mypage/reservations/{id}/cancel-form")
+    public String cancelForm(@PathVariable("id") Long id, Model model) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         if (sessionUser == null) {
             return "redirect:/login-form";
@@ -207,13 +215,14 @@ public class ReservationController {
 
         ReservationResponse.DetailDTO reservation = reservationService.getReservationDetail(id);
         model.addAttribute("reservation", reservation);
-        model.addAttribute("userName", sessionUser.getName());
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reservation-cancel";
-        }
+    }
 
-        // 예약 취소 요청 처리
-        @PostMapping("/mypage/reservations/{id}/cancel-request")
-        public String cancelRequest(@PathVariable("id") Long id, ReservationRequest.CancelDTO dto) {
+    // 예약 취소 요청 처리
+    @PostMapping("/mypage/reservations/{id}/cancel-request")
+    public String cancelRequest(@PathVariable("id") Long id, ReservationRequest.CancelDTO dto) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         if (sessionUser == null) {
             return "redirect:/login-form";
@@ -222,11 +231,11 @@ public class ReservationController {
         dto.setReservationId(id);
         reservationService.requestCancel(dto, sessionUser);
         return "redirect:/mypage/reservations/" + id + "/cancel-done";
-        }
+    }
 
-        // 예약 취소 완료 페이지
-        @GetMapping("/mypage/reservations/{id}/cancel-done")
-        public String cancelDone(@PathVariable("id") Long id, Model model) {
+    // 예약 취소 완료 페이지
+    @GetMapping("/mypage/reservations/{id}/cancel-done")
+    public String cancelDone(@PathVariable("id") Long id, Model model) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         if (sessionUser == null) {
             return "redirect:/login-form";
@@ -234,6 +243,8 @@ public class ReservationController {
 
         ReservationResponse.CancelDoneDTO cancelRequest = reservationService.getCancelDoneDetails(id);
         model.addAttribute("cancelRequest", cancelRequest);
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
         return "mypage/reservation-cancel-done";
-        }
+    }
         }
