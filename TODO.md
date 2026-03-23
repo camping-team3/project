@@ -72,17 +72,29 @@
 
 ## 3단계: 관리자 예약 관리 (Admin Side)
 
-### Task 4: 관리자 통합 승인 및 관리 기능 구현
+### Task 4: 관리자 통합 승인 및 관리 기능 구현 (UI/UX 고도화)
 
-- [ ] **4-1. 관리자 예약 목록 필터링 확장**
-  - 경로: `src/main/java/com/camping/erp/domain/reservation/ReservationController.java` (관리자 매핑)
-  - 기능: `CHANGE_REQ`, `CANCEL_REQ` 상태별 필터링 기능 추가
+- [ ] **4-1. 관리자 예약 목록 필터링 확장 및 UI 고도화**
+  - [ ] `CHANGE_REQ` 상태 추가: 필터 옵션 및 목록 내 상태 텍스트('변경 요청')/디자인(취소 요청과 동일한 `info` 클래스) 적용
+  - [ ] UI 정리: '신규 예약 등록' 버튼 제거 및 관리열 아이콘 정리
+  - [ ] 클릭 이벤트 통합 (Row Click):
+    - `PENDING`, `CONFIRMED`, `CANCEL_COMP`, `COMPLETED`: 클릭 시 `admin/reservation/detail` 이동
+    - `CHANGE_REQ`: 클릭 시 `admin/reservation/change-detail` 이동
+    - `CANCEL_REQ`: 클릭 시 `admin/reservation/cancel-detail` 이동
+  - [ ] 관리열 버튼 제어: `CHANGE_REQ`, `CANCEL_REQ` 상태일 때만 '승인/거절' 버튼 노출
 - [ ] **4-2. 관리자 요청 상세 및 비교 페이지 구현**
-  - 경로: `/admin/reservation/change-detail/{requestId}` 및 `/admin/reservation/cancel-detail/{requestId}`
-  - 기능: 원본 예약 정보와 요청 정보 비교 뷰
-- [ ] **4-3. 승인/거절 처리 API 및 비즈니스 로직 구현**
-  - 승인 시: `Reservation` 엔티티 정보 업데이트 및 상태를 `CONFIRMED`로 복구, 요청 상태는 `APPROVED`로 변경
-  - 거절 시: `Reservation` 상태를 `CONFIRMED`로 복구, 요청 상태는 `REJECTED`로 변경 및 사유 저장
+  - [ ] `/admin/reservation/change-detail/{id}` 및 `/admin/reservation/cancel-detail/{id}` 구현
+  - [ ] 기능: 원본 예약 정보와 요청 정보 비교 뷰 제공 및 승인/거절 버튼 배치
+- [ ] **4-3. 관리자 예약 상세 페이지 구현 (detail.mustache)**
+  - [ ] 경로: `admin/reservation/detail.mustache` 구현
+  - [ ] 내용: 예약자/방문자 정보, 예약 정보, 이용 일정 상세 노출 (요금 산출 내역 제외)
+  - [ ] 기능: '사용자 상세 정보보기' 버튼 클릭 시 `admin/user/detail.mustache` 이동
+  - [ ] 이력: 예약 관련 모든 요청 이력(변경/취소) 섹션 추가
+  - [ ] 버튼: 예약 승인 버튼 숨김 처리
+- [ ] **4-4. 승인/거절 처리 API 및 거절 사유 입력 기능 구현**
+  - [ ] `reject-modal.mustache` 구현: 거절 사유 입력 폼, 취소 시 이전 페이지 이동, 확정 시 처리 로직 실행
+  - [ ] 승인 로직: `Reservation` 업데이트(상태 `CONFIRMED` 복구), 요청 상태 `APPROVED` 변경 후 목록 리다이렉트
+  - [ ] 거절 로직: `Reservation` 상태 `CONFIRMED` 복구, 요청 상태 `REJECTED` 및 사유 저장 후 목록 리다이렉트
 
 ## 4단계: 통합 테스트 및 검증
 
