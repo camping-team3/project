@@ -35,7 +35,7 @@
                         </div>
                         <div class="mt-4 pt-3 border-top border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
                             <span class="text-secondary small fw-bold">총 결제 금액</span>
-                            <span class="h5 fw-black text-primary m-0">₩ {{payment.totalPrice}}</span>
+                            <span class="h5 fw-black text-primary m-0">₩ <span class="format-price">{{payment.totalPrice}}</span></span>
                         </div>
                     </div>
                 </div>
@@ -117,15 +117,26 @@
                 </div>
 
                 <div class="price-breakdown mb-2">
-                    <div class="price-breakdown-row"><span class="text-secondary">객실 금액 ({{payment.nights}}박)</span><span class="fw-bold">₩ {{payment.pricePerNight}}</span></div>
-                    <div class="price-breakdown-row"><span class="text-secondary">인원 추가 요금 ({{payment.basePeople}}인 초과 시 인당 ₩{{payment.extraPersonFee}})</span><span class="text-primary fw-bold">+ ₩ {{payment.extraPrice}}</span></div>
+                    <div class="price-breakdown-row"><span class="text-secondary">객실 금액 ({{payment.nights}}박)</span><span class="fw-bold">₩ <span class="format-price">{{payment.pricePerNight}}</span></span></div>
+                    <div class="price-breakdown-row"><span class="text-secondary">인원 추가 요금 ({{payment.basePeople}}인 초과 시 인당 ₩<span class="format-price">{{payment.extraPersonFee}}</span>)</span><span class="text-primary fw-bold">+ ₩ <span class="format-price">{{payment.extraPrice}}</span></span></div>
                     <div class="total-price-row">
                         <span class="h6 fw-bold text-dark m-0">최종 결제 금액</span>
-                        <span class="h3 fw-black text-primary m-0">₩ {{payment.totalPrice}}</span>
+                        <span class="h3 fw-black text-primary m-0">₩ <span class="format-price">{{payment.totalPrice}}</span></span>
                     </div>
                 </div>
 
-                <form id="payment-form">
+                <form id="payment-form" action="/reservations/reserve" method="POST">
+                    <!-- 가예약 정보를 서버로 전송하기 위한 hidden 필드들 -->
+                    <input type="hidden" name="siteId" value="{{payment.siteId}}">
+                    <input type="hidden" name="checkIn" value="{{payment.checkIn}}">
+                    <input type="hidden" name="checkOut" value="{{payment.checkOut}}">
+                    <input type="hidden" name="peopleCount" value="{{payment.peopleCount}}">
+                    <input type="hidden" name="totalPrice" value="{{payment.totalPrice}}">
+                    
+                    <!-- 방문자 정보 (JS에서 세팅) -->
+                    <input type="hidden" name="visitorName" id="hiddenVisitorName">
+                    <input type="hidden" name="visitorPhone" id="hiddenVisitorPhone">
+
                     <!-- 가예약 ID를 JS에서 사용하기 위해 data 속성으로 보관 -->
                     <div id="reservation-data" 
                          data-id="{{payment.reservationId}}"
@@ -140,7 +151,7 @@
                          data-channel-key="{{channelKey}}"></div>
                     
                     <button type="button" id="btn-pay" class="btn btn-primary btn-lg w-100 py-3.5 mt-4 fw-bold shadow-lg border-0 rounded-3">
-                        ₩ {{payment.totalPrice}} 결제하기
+                        ₩ <span class="format-price">{{payment.totalPrice}}</span> 결제하기
                     </button>
                 </form>
                 <p class="text-center text-secondary mt-4 mb-0 text-xxs opacity-60">상기 결제 내역을 확인하였으며 결제에 동의합니다.</p>
@@ -242,8 +253,10 @@
                 return;
             }
 
-            // 결제 성공 시 (웹훅 처리 또는 수동 검증으로 연결)
-            location.href = `/reservations/complete?id=${reservationId}&paymentId=${paymentId}`;
+            // 결제 성공 시 방문자 정보 세팅 후 폼 제출
+            document.getElementById('hiddenVisitorName').value = visitorNameInput.value.trim();
+            document.getElementById('hiddenVisitorPhone').value = visitorPhoneInput.value.trim();
+            document.getElementById('payment-form').submit();
 
         } catch (error) {
             console.error(error);
@@ -278,6 +291,12 @@
             val = val.substring(0, 3) + '-' + val.substring(3, 7) + '-' + val.substring(7, 11);
         }
         e.target.value = val;
+    });
+
+    // 금액 포맷팅 로직
+    document.querySelectorAll('.format-price').forEach(el => {
+        const value = parseInt(el.innerText.replace(/[^0-9]/g, ''));
+        if (!isNaN(value)) el.innerText = value.toLocaleString();
     });
 </script>
 {{> layout/header}}
