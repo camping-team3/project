@@ -1,34 +1,32 @@
 # 📋 Forest Haven ERP Project TODO
 
-## 🎯 결제 도메인 목표 (Payment Domain Goal)
+## 🎯 회원 정보 수정 기능 (Mypage Info Update)
 
-- 포트원(PortOne) V2를 활용한 실시간 예약 결제 및 자동 환불 시스템 구축
-- 10분간의 사이트 선점(Lock) 및 사용자 이탈 시 즉시 해제 로직 구현
-- 웹훅(Webhook)을 통한 서버 간 결제 검증 및 데이터 정합성 확보
+- 마이페이지 내에서 사용자의 이름, 이메일, 전화번호를 수정할 수 있는 기능 구축
+- 비밀번호 변경 기능을 포함하여 보안 강화를 위한 기존 비밀번호 확인 절차 구현
+- 정보 수정 후 세션 정보를 동기화하여 즉각적인 사용자 경험 제공
 
 ---
 
 ## 🛠️ 개발 단계 및 태스크 (Implementation Plan)
 
-### 1단계: 환경 구축 및 데이터 모델 설계 (Phase 3-2.1)
+### 1단계: DTO 및 엔티티 수정
+- [x] **Task 1: UserRequest.UpdateDTO 추가 및 User 엔티티 업데이트 메서드 추가**
+  - [x] `UserRequest` 내부에 `UpdateDTO` 정적 클래스 추가
+  - [x] `User` 엔티티에 `updateInfo(name, email, phone)` 및 `updatePassword(newPassword)` 메서드 추가
 
-- [x] **Task 1: 결제 환경 설정 및 Mock 구조 설계**
-- [x] **Task 2: Payment(결제 이력) 엔티티 및 Repository 구현**
-- [x] **Task 3: 예약 선점(Lock) 스케줄러 구현**
+### 2단계: 서비스 로직 구현
+- [ ] **Task 2: UserService.update(id, request) 구현**
+  - [ ] 기존 비밀번호 검증 (BCryptPasswordEncoder 활용)
+  - [ ] 새 비밀번호 입력 시 일치 여부 확인 및 암호화 적용
+  - [ ] 변경 감지(Dirty Checking)를 통한 정보 업데이트
 
-### 2단계: 결제 프로세스 및 선점 해제 구현 (Phase 3-2.2)
+### 3단계: 컨트롤러 구현
+- [ ] **Task 3: UserController에 정보 수정 폼 이동 및 수정 처리 매핑 추가**
+  - [ ] `GET /mypage/info-update-form`: 수정 폼으로 이동 (기존 정보 전달)
+  - [ ] `POST /mypage/info-update`: 정보 수정 처리 및 세션 동기화
 
-- [x] **Task 4: 가예약(Lock) 생성 및 즉시 해제 API 구현**
-- [x] **Task 5: 결제 페이지(payment.mustache) 고도화**
-
-### 3단계: 결제 검증 및 웹훅 처리 (Phase 3-2.3)
-
-- [x] **Task 6: 결제 검증 및 웹훅 컨트롤러 구현**
-- [x] **Task 7: 결제 성공 방어 로직 강화**
-
-### 4단계: 자동 환불 시스템 및 위약금 로직 (Phase 3-2.4)
-
-- [x] **Task 8: 위약금 계산기 및 자동 환불 서비스**
-  - [x] 이용일 기준 환불 규정(7일 전 100%, 3~6일 전 50%, 0~2일 전 0%) 자동 산출 로직
-  - [x] 관리자 승인 시 포트원 취소 API 연동을 통한 자동 환불 실행
-  - [x] Refund 이력 저장 및 예약 상태 업데이트 (`CANCEL_COMP`)
+### 4단계: 템플릿 구현 및 연결
+- [ ] **Task 4: info-update-form.mustache 생성 및 info.mustache 버튼 연결**
+  - [ ] `src/main/resources/templates/mypage/info-update-form.mustache` 파일 생성
+  - [ ] `src/main/resources/templates/mypage/info.mustache`의 수정 버튼 링크 연결
