@@ -195,15 +195,16 @@ public class ReservationResponse {
         private String rejectionReason;
 
         public static ChangeRequestHistoryDTO fromEntity(ReservationChangeRequest request) {
+            if (request == null) return null;
             return ChangeRequestHistoryDTO.builder()
                     .id(request.getId())
-                    .requestDate(request.getCreatedAt().toLocalDate().toString().replace("-", "."))
-                    .newCheckIn(request.getNewCheckIn().toString().replace("-", "."))
-                    .newCheckOut(request.getNewCheckOut().toString().replace("-", "."))
-                    .newSiteName(request.getNewSite().getSiteName())
-                    .status(request.getStatus().name())
-                    .statusDescription(request.getStatus().getDescription())
-                    .rejectionReason(request.getRejectionReason())
+                    .requestDate(request.getCreatedAt() != null ? request.getCreatedAt().toLocalDate().toString().replace("-", ".") : "-")
+                    .newCheckIn(request.getNewCheckIn() != null ? request.getNewCheckIn().toString().replace("-", ".") : "-")
+                    .newCheckOut(request.getNewCheckOut() != null ? request.getNewCheckOut().toString().replace("-", ".") : "-")
+                    .newSiteName(request.getNewSite() != null ? request.getNewSite().getSiteName() : "삭제된 사이트")
+                    .status(request.getStatus() != null ? request.getStatus().name() : "UNKNOWN")
+                    .statusDescription(request.getStatus() != null ? request.getStatus().getDescription() : "알 수 없음")
+                    .rejectionReason(request.getRejectionReason() != null ? request.getRejectionReason() : "")
                     .build();
         }
     }
@@ -222,13 +223,14 @@ public class ReservationResponse {
         private String rejectionReason;
 
         public static CancelRequestHistoryDTO fromEntity(ReservationCancelRequest request) {
+            if (request == null) return null;
             return CancelRequestHistoryDTO.builder()
                     .id(request.getId())
-                    .requestDate(request.getCreatedAt().toLocalDate().toString().replace("-", "."))
-                    .reason(request.getReason())
-                    .status(request.getStatus().name())
-                    .statusDescription(request.getStatus().getDescription())
-                    .rejectionReason(request.getRejectionReason())
+                    .requestDate(request.getCreatedAt() != null ? request.getCreatedAt().toLocalDate().toString().replace("-", ".") : "-")
+                    .reason(request.getReason() != null ? request.getReason() : "-")
+                    .status(request.getStatus() != null ? request.getStatus().name() : "UNKNOWN")
+                    .statusDescription(request.getStatus() != null ? request.getStatus().getDescription() : "알 수 없음")
+                    .rejectionReason(request.getRejectionReason() != null ? request.getRejectionReason() : "")
                     .build();
         }
     }
