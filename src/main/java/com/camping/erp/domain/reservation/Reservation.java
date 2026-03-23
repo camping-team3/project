@@ -61,6 +61,9 @@ public class Reservation extends BaseTimeEntity {
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReservationCancelRequest> cancelRequests = new ArrayList<>();
 
+    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
+    private com.camping.erp.domain.payment.Payment payment; // 결제 정보 참조
+
     @Builder
     public Reservation(Long id, User user, Site site, LocalDate checkIn, LocalDate checkOut, Long totalPrice,
             Integer peopleCount, String visitorName, String visitorPhone, ReservationStatus status) {
@@ -69,7 +72,6 @@ public class Reservation extends BaseTimeEntity {
         this.site = site;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
-        this.peopleCount = peopleCount;
         this.totalPrice = totalPrice;
         this.peopleCount = peopleCount;
         this.visitorName = visitorName;
