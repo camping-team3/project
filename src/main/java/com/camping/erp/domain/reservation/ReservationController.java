@@ -6,6 +6,7 @@ import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.global.util.Resp;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,9 +22,11 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class ReservationController {
     
-    // PortOne 식별값 상수 (하드코딩 요청 반영)
-    private static final String PORTONE_STORE_ID = "store-4340798e-4f7f-4318-8686-3532f418d184";
-    private static final String PORTONE_CHANNEL_KEY = "channel-key-8e93010b-8d00-4740-975a-94d0c9f170e5";
+    @Value("${portone.store-id}")
+    private String portoneStoreId;
+
+    @Value("${portone.channel-key}")
+    private String portoneChannelKey;
 
     private final SiteService siteService;
     private final ReservationService reservationService;
@@ -80,8 +83,8 @@ public class ReservationController {
         model.addAttribute("dateRange", dateRange);
         
         // PortOne 및 JS용 설정값 추가
-        model.addAttribute("storeId", PORTONE_STORE_ID);
-        model.addAttribute("channelKey", PORTONE_CHANNEL_KEY);
+        model.addAttribute("storeId", portoneStoreId);
+        model.addAttribute("channelKey", portoneChannelKey);
         model.addAttribute("sessionUserId", sessionUser.getId());
 
         return "reservation/payment";

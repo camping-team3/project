@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@Profile("!prod") // 운영 환경이 아닐 때 활성화
+@Profile("mock") // mock 프로필이 활성화될 때만 동작하도록 변경
 public class MockPortOneService implements PortOneService {
 
     @Override
