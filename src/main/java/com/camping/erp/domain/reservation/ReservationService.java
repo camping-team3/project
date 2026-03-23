@@ -498,9 +498,20 @@ public class ReservationService {
                 long oldNights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
                 long newNights = ChronoUnit.DAYS.between(req.getNewCheckIn(), req.getNewCheckOut());
 
+                List<ReservationResponse.ChangeRequestHistoryDTO> changeHistories = r.getChangeRequests().stream()
+                                .map(ReservationResponse.ChangeRequestHistoryDTO::fromEntity)
+                                .toList();
+
+                List<ReservationResponse.CancelRequestHistoryDTO> cancelHistories = r.getCancelRequests().stream()
+                                .map(ReservationResponse.CancelRequestHistoryDTO::fromEntity)
+                                .toList();
+
                 return AdminResponse.AdminChangeDetailDTO.builder()
                                 .id(r.getId())
-                                .username(r.getUser().getName())
+                                .userId(r.getUser().getId())
+                                .username(r.getUser().getUsername())
+                                .visitorName(r.getVisitorName())
+                                .visitorPhone(r.getVisitorPhone())
                                 .totalPrice(r.getTotalPrice())
                                 .oldSiteName(r.getSite().getSiteName())
                                 .oldCheckIn(r.getCheckIn().toString())
@@ -512,6 +523,8 @@ public class ReservationService {
                                 .newCheckOut(req.getNewCheckOut().toString())
                                 .newNights(newNights)
                                 .newPeopleCount(req.getNewPeopleCount())
+                                .changeRequests(changeHistories)
+                                .cancelRequests(cancelHistories)
                                 .build();
         }
 
@@ -530,9 +543,20 @@ public class ReservationService {
 
                 long nights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
 
+                List<ReservationResponse.ChangeRequestHistoryDTO> changeHistories = r.getChangeRequests().stream()
+                                .map(ReservationResponse.ChangeRequestHistoryDTO::fromEntity)
+                                .toList();
+
+                List<ReservationResponse.CancelRequestHistoryDTO> cancelHistories = r.getCancelRequests().stream()
+                                .map(ReservationResponse.CancelRequestHistoryDTO::fromEntity)
+                                .toList();
+
                 return AdminResponse.AdminCancelDetailDTO.builder()
                                 .id(r.getId())
-                                .username(r.getUser().getName())
+                                .userId(r.getUser().getId())
+                                .username(r.getUser().getUsername())
+                                .visitorName(r.getVisitorName())
+                                .visitorPhone(r.getVisitorPhone())
                                 .siteName(r.getSite().getSiteName())
                                 .checkIn(r.getCheckIn().toString())
                                 .checkOut(r.getCheckOut().toString())
@@ -543,6 +567,8 @@ public class ReservationService {
                                 .refundBank(req.getRefundBank())
                                 .refundAccount(req.getRefundAccount())
                                 .refundAccountHolder(req.getRefundAccountHolder())
+                                .changeRequests(changeHistories)
+                                .cancelRequests(cancelHistories)
                                 .build();
         }
 }

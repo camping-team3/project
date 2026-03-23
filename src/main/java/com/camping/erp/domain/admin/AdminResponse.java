@@ -103,7 +103,10 @@ public class AdminResponse {
     @NoArgsConstructor
     public static class AdminChangeDetailDTO {
         private Long id; // 예약 ID
+        private Long userId;
         private String username;
+        private String visitorName;
+        private String visitorPhone;
         private Long totalPrice;
 
         // 기존 정보
@@ -119,6 +122,10 @@ public class AdminResponse {
         private String newCheckOut;
         private long newNights;
         private Integer newPeopleCount;
+
+        // 요청 이력
+        private List<com.camping.erp.domain.reservation.ReservationResponse.ChangeRequestHistoryDTO> changeRequests;
+        private List<com.camping.erp.domain.reservation.ReservationResponse.CancelRequestHistoryDTO> cancelRequests;
     }
 
     // [Task 4-2] 관리자용 예약 취소 상세 DTO
@@ -129,7 +136,10 @@ public class AdminResponse {
     @NoArgsConstructor
     public static class AdminCancelDetailDTO {
         private Long id; // 예약 ID
+        private Long userId;
         private String username;
+        private String visitorName;
+        private String visitorPhone;
         private String siteName;
         private String checkIn;
         private String checkOut;
@@ -142,5 +152,9 @@ public class AdminResponse {
         private String refundBank;
         private String refundAccount;
         private String refundAccountHolder;
+
+        // 요청 이력
+        private List<com.camping.erp.domain.reservation.ReservationResponse.ChangeRequestHistoryDTO> changeRequests;
+        private List<com.camping.erp.domain.reservation.ReservationResponse.CancelRequestHistoryDTO> cancelRequests;
     }
 }

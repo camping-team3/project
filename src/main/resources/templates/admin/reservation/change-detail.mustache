@@ -1,81 +1,186 @@
 {{> layout/admin-header}}
-<div class="p-4 p-lg-5">
-    <!-- Header with Title and Buttons -->
-    <div class="d-flex justify-content-between align-items-center mb-5">
-        <div>
-            <h2 class="display-6 fw-bold text-dark mb-2">예약 변경 요청 상세</h2>
-            <p class="text-secondary fw-medium mb-0">고객이 요청한 변경 사항을 기존 예약과 비교하여 승인 또는 거절합니다.</p>
+
+<div class="container-fluid py-4">
+    <!-- Header Actions -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <button onclick="location.href='/admin/reservations'" class="btn btn-icon-square bg-white shadow-sm rounded-3">
+                <span class="material-symbols-outlined fs-5">arrow_back</span>
+            </button>
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="/admin/reservations" class="text-decoration-none text-muted small fw-bold">예약 관리</a></li>
+                        <li class="breadcrumb-item active small fw-bold" aria-current="page">변경 요청 상세</li>
+                    </ol>
+                </nav>
+                <h2 class="h4 fw-bold text-dark m-0">예약 변경 요청 상세 <span class="text-muted fs-6 fw-normal ms-2">RSV-{{detail.id}}</span></h2>
+            </div>
         </div>
         <div class="d-flex gap-2">
-            <!-- 목록에서 사용한 디자인과 동일한 승인/거절 버튼 -->
-            <button class="btn btn-primary px-4 py-2 fw-bold border-0 shadow-sm">승인</button>
-            <button class="btn btn-light bg-danger bg-opacity-10 text-danger px-4 py-2 fw-bold border-0">거절</button>
+            <button class="btn btn-light bg-danger bg-opacity-10 text-danger fw-bold shadow-sm d-flex align-items-center gap-2 border-0 rounded-3 px-3 py-2">
+                <span class="material-symbols-outlined fs-5">cancel</span>
+                요청 거절
+            </button>
+            <button class="btn btn-primary fw-bold shadow-sm d-flex align-items-center gap-2 border-0 rounded-3 px-3 py-2">
+                <span class="material-symbols-outlined fs-5">check_circle</span>
+                변경 승인
+            </button>
         </div>
     </div>
 
-    <!-- [Top Section] 기존 예약 정보 -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white border-bottom-0 py-3">
-            <h5 class="card-title m-0 fw-bold text-dark d-flex align-items-center gap-2">
-                <span class="material-symbols-outlined text-secondary">event_available</span>
-                기존 예약 정보
-            </h5>
-        </div>
-        <div class="card-body">
-            <div class="row g-4">
-                <div class="col-md-3">
-                    <label class="small text-secondary fw-bold">예약자명</label>
-                    <p class="fs-5 fw-bold mb-0">{{detail.username}}</p>
+    <div class="row g-4">
+        <!-- Left Column: Main Info -->
+        <div class="col-lg-8">
+            <!-- 1. 기존 예약 정보 -->
+            <div class="fh-card p-4 mb-4 shadow-sm border-start border-4 border-secondary border-opacity-25">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h3 class="h6 fw-bold m-0 d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary">event_available</span>
+                        기존 예약 정보
+                    </h3>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary fw-bold px-3 py-1 rounded-pill small">ORIGINAL</span>
                 </div>
-                <div class="col-md-3">
-                    <label class="small text-secondary fw-bold">기존 사이트</label>
-                    <p class="fs-5 fw-bold mb-0">{{detail.oldSiteName}}</p>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <p class="small text-muted mb-1">기존 사이트</p>
+                        <p class="fw-bold text-dark mb-0 fs-5">{{detail.oldSiteName}}</p>
+                    </div>
+                    <div class="col-md-5 border-start border-end px-md-4">
+                        <p class="small text-muted mb-1">기존 이용 일정</p>
+                        <p class="fw-bold text-dark mb-0 fs-5">{{detail.oldCheckIn}} ~ {{detail.oldCheckOut}}</p>
+                        <p class="small text-secondary m-0">{{detail.oldNights}}박 이용</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="small text-muted mb-1">인원</p>
+                        <p class="fw-bold text-dark mb-0 fs-5">{{detail.oldPeopleCount}}명</p>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <label class="small text-secondary fw-bold">기존 일정</label>
-                    <p class="fs-5 fw-bold mb-0 text-dark">{{detail.oldCheckIn}} ~ {{detail.oldCheckOut}} ({{detail.oldNights}}박)</p>
+            </div>
+
+            <!-- Arrow Indicator -->
+            <div class="text-center mb-4">
+                <span class="material-symbols-outlined fs-4 text-primary bg-primary bg-opacity-10 rounded-circle p-2">south</span>
+            </div>
+
+            <!-- 2. 변경 요청 정보 -->
+            <div class="fh-card p-4 mb-4 shadow-sm border-start border-4 border-primary">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h3 class="h6 fw-bold m-0 d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">edit_notifications</span>
+                        변경 요청 정보 (신규)
+                    </h3>
+                    <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1 rounded-pill small">REQUESTED</span>
                 </div>
-                <div class="col-md-2">
-                    <label class="small text-secondary fw-bold">인원</label>
-                    <p class="fs-5 fw-bold mb-0">{{detail.oldPeopleCount}}명</p>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <p class="small text-muted mb-1">변경 요청 사이트</p>
+                        <p class="fw-bold text-primary mb-0 fs-5">{{detail.newSiteName}}</p>
+                    </div>
+                    <div class="col-md-5 border-start border-end px-md-4">
+                        <p class="small text-muted mb-1">변경 요청 일정</p>
+                        <p class="fw-bold text-primary mb-0 fs-5">{{detail.newCheckIn}} ~ {{detail.newCheckOut}}</p>
+                        <p class="small text-primary m-0">{{detail.newNights}}박 이용 예정</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="small text-muted mb-1">요청 인원</p>
+                        <p class="fw-bold text-primary mb-0 fs-5">{{detail.newPeopleCount}}명</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. 요청 이력 -->
+            <div class="fh-card p-0 overflow-hidden shadow-sm">
+                <div class="p-4 border-bottom">
+                    <h3 class="h6 fw-bold m-0 d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">history</span>
+                        변경 및 취소 요청 이력
+                    </h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover m-0 small">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="px-4 py-3 fw-bold text-secondary">요청일자</th>
+                                <th class="px-4 py-3 fw-bold text-secondary">유형</th>
+                                <th class="px-4 py-3 fw-bold text-secondary">상태</th>
+                                <th class="px-4 py-3 fw-bold text-secondary">상세 내용 (변경시)</th>
+                                <th class="px-4 py-3 fw-bold text-secondary">거절 사유</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#detail.changeRequests}}
+                            <tr>
+                                <td class="px-4 py-3 text-muted">{{requestDate}}</td>
+                                <td class="px-4 py-3"><span class="badge bg-info bg-opacity-10 text-info fw-bold">변경</span></td>
+                                <td class="px-4 py-3 fw-bold text-dark">{{statusDescription}}</td>
+                                <td class="px-4 py-3 text-muted">{{newSiteName}} ({{newCheckIn}}~{{newCheckOut}})</td>
+                                <td class="px-4 py-3 text-danger fw-bold">{{rejectionReason}}</td>
+                            </tr>
+                            {{/detail.changeRequests}}
+                            {{#detail.cancelRequests}}
+                            <tr>
+                                <td class="px-4 py-3 text-muted">{{requestDate}}</td>
+                                <td class="px-4 py-3"><span class="badge bg-danger bg-opacity-10 text-danger fw-bold">취소</span></td>
+                                <td class="px-4 py-3 fw-bold text-dark">{{statusDescription}}</td>
+                                <td class="px-4 py-3 text-muted">사유: {{reason}}</td>
+                                <td class="px-4 py-3 text-danger fw-bold">{{rejectionReason}}</td>
+                            </tr>
+                            {{/detail.cancelRequests}}
+                            {{^detail.changeRequests}}
+                            {{^detail.cancelRequests}}
+                            <tr>
+                                <td colspan="5" class="px-4 py-5 text-center text-muted">과거 요청 이력이 없습니다.</td>
+                            </tr>
+                            {{/detail.cancelRequests}}
+                            {{/detail.changeRequests}}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Arrow Indicator -->
-    <div class="text-center mb-4">
-        <span class="material-symbols-outlined fs-1 text-primary bg-primary bg-opacity-10 rounded-circle p-2">south</span>
-    </div>
+        <!-- Right Column: Sidebar -->
+        <div class="col-lg-4">
+            <!-- Customer Card -->
+            <div class="fh-card p-4 mb-4 shadow-sm">
+                <h3 class="h6 fw-bold mb-4 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">person</span>
+                    예약자 및 방문자 정보
+                </h3>
+                <div class="d-flex align-items-center gap-3 mb-4 p-3 bg-light rounded-3">
+                    <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <span class="material-symbols-outlined text-primary fs-3">account_circle</span>
+                    </div>
+                    <div>
+                        <p class="fw-bold text-dark m-0">{{detail.username}}</p>
+                        <p class="small text-secondary m-0">최근 예약 3회 (단골 고객)</p>
+                    </div>
+                </div>
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex justify-content-between">
+                        <span class="small text-muted">방문자 성함</span>
+                        <span class="small fw-bold">{{detail.visitorName}}</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-top pt-2">
+                        <span class="small text-muted">비상 연락처</span>
+                        <span class="small fw-bold">{{detail.visitorPhone}}</span>
+                    </div>
+                </div>
+                <button onclick="location.href='/admin/users/{{detail.userId}}'" class="btn btn-outline-primary btn-sm w-100 mt-4 fw-bold rounded-2">사용자 상세 정보 보기</button>
+            </div>
 
-    <!-- [Bottom Section] 변경 요청 정보 -->
-    <div class="card border-0 shadow-sm border-2 border-primary border-opacity-25">
-        <div class="card-header bg-white border-bottom-0 py-3">
-            <h5 class="card-title m-0 fw-bold text-primary d-flex align-items-center gap-2">
-                <span class="material-symbols-outlined">edit_notifications</span>
-                변경 요청 사항 (승인 대기 중)
-            </h5>
-        </div>
-        <div class="card-body">
-            <div class="row g-4">
-                <div class="col-md-3">
-                    <label class="small text-secondary fw-bold">예약 번호</label>
-                    <p class="fs-5 fw-bold mb-0 text-secondary">RSV-{{detail.id}}</p>
-                </div>
-                <div class="col-md-3">
-                    <label class="small text-secondary fw-bold">요청 사이트</label>
-                    <p class="fs-5 fw-bold mb-0 text-primary">{{detail.newSiteName}}</p>
-                </div>
-                <div class="col-md-4">
-                    <label class="small text-secondary fw-bold">요청 일정</label>
-                    <p class="fs-5 fw-bold mb-0 text-primary">{{detail.newCheckIn}} ~ {{detail.newCheckOut}} ({{detail.newNights}}박)</p>
-                </div>
-                <div class="col-md-2">
-                    <label class="small text-secondary fw-bold">요청 인원</label>
-                    <p class="fs-5 fw-bold mb-0 text-primary">{{detail.newPeopleCount}}명</p>
-                </div>
+            <!-- Admin Note Card -->
+            <div class="fh-card p-4 shadow-sm">
+                <h3 class="h6 fw-bold mb-3 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">edit_note</span>
+                    관리자 메모
+                </h3>
+                <textarea class="form-control bg-light border-0 small mb-3" rows="4" placeholder="특이사항을 기록하세요..."></textarea>
+                <button class="btn btn-primary btn-sm w-100 fw-bold rounded-2 py-2">메모 저장하기</button>
             </div>
         </div>
     </div>
 </div>
+
 {{> layout/admin-footer}}
