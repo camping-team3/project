@@ -1,60 +1,3 @@
-<<<<<<< HEAD
-# 🌲 Forest Haven ERP 개발 체크리스트
-
-## ✅ Phase 2: MVP 핵심 도메인 로직 완료
-- [x] 사용자/관리자 상세보기 및 포토 갤러리 조회수 구현 완료
-
-## 🚀 Phase 3: 확장 도메인 - 예약 상세 보기 (MyPage & Admin) [완료]
-
-### 1. MyPage 예약 상세 보기 [✅ 완료]
-- [x] **UI 구현**: `reservation-detail.mustache` 생성 및 `reservation-detail.css` 작성
-- [x] **링크 연결**: `home.mustache`, `reservations.mustache` 버튼에 상세 보기 링크 연결
-- [x] **매핑 추가**: `UserController`에 상세 보기 엔드포인트 추가
-
-### 2. Admin 예약 상세 보기 [✅ 완료]
-- [x] **UI 구현**: `admin/reservation/detail.mustache` 생성 및 `detail.css` 작성
-- [x] **링크 연결**: `admin/reservation/list.mustache`에 상세 보기(눈 아이콘) 버튼 추가
-- [x] **매핑 추가**: `AdminController`에 상세 보기 엔드포인트 추가
-
----
-*(이후 작업은 Payment 및 예약 선점 로직으로 이어집니다.)*
-=======
-<<<<<<< HEAD
-# 📋 Forest Haven ERP Project TODO
-
-## Phase 2: MVP 핵심 도메인 (완료)
-- [x] User 도메인 (가입/로그인/관리자)
-- [x] Site & Zone 도메인 (목록/상세/관리자)
-- [x] Reservation 도메인 (검색/가용조회/신청/관리자)
-- [x] Notice & Gallery 도메인 (목록/상세/다중이미지/관리자)
-
-## Phase 3: 확장 도메인 (진행 중)
-
-### 1. Review 도메인 (완료)
-- [x] Review 엔티티 및 Repository 구현
-- [x] ReviewService (저장/삭제/평점 동기화) 구현
-- [x] ReviewController (등록/삭제/목록 API) 구현
-- [x] review/new.mustache (리뷰 작성 폼) 연동
-- [x] review/list.mustache (전체 리뷰 목록) 구현 및 연동
-- [x] 마이페이지 예약 내역(`reservation/list.mustache`)에서 '리뷰 쓰기' 버튼 활성화 (Task 9)
-- [x] 관리자 리뷰 관리 페이지(`admin/review/list.mustache`) 구현 및 연동 (Task 10)
-
-### 2. Payment 도메인 (대기)
-- [ ] 포트원(PortOne) V2 연동 (JavaScript SDK)
-- [ ] 결제 검증 로직 구현 (Backend)
-- [ ] 결제 완료 시 예약 상태 자동 변경 (`PENDING` -> `CONFIRMED`)
-
-### 3. Qna & Comment 도메인 (대기)
-- [ ] Q&A 목록 및 상세 조회 로직
-- [ ] Q&A 작성 및 수정 (답변 완료 전까지만)
-- [ ] 관리자 답변(Comment) 등록 및 상태 전이 로직
-
-## 사후 처리 및 문서화
-- [x] 2026-03-19 Review 도메인 구현 리포트 작성
-- [x] 2026-03-19 Review 전체 목록 페이지 구현 완료
-- [x] 2026-03-19 마이페이지 & 관리자 리뷰 연동 완료
-- [x] TODO.md 및 phases.md 상태 동기화
-=======
 # Phase 3: Reservation 도메인 (확장) 구현
 
 ## 🎨 디자인 보존 원칙 (Mandatory)
@@ -105,21 +48,26 @@
     - `CONFIRMED`: 예약변경/예약취소 버튼 노출
     - `COMPLETED`: [리뷰 작성하기] (Placeholder 확보)
     - `CHANGE_REQ`/`CANCEL_REQ`: "승인 대기 중" 상태 표시
-- [ ] **3-2. 예약 상세 페이지 구현**
-  - 컨트롤러: `/mypage/reservation/{id}/detail`
-  - 머스타치: `templates/mypage/reservation-detail.mustache` (신규 생성/구현 예정)
-  - 기능: 기본 예약 정보 + 요청 이력(상태, 거절 사유 포함) 리스트 출력
+- [x] **3-2. 예약 상세 페이지 구현 (고객용)**
+  - 컨트롤러: `/mypage/reservations/{id}/detail` (기존 매핑 활용)
+  - 머스타치: `templates/mypage/reservation-detail.mustache` (더미 데이터 교체 및 기능 구현)
+  - 세부 구현 내용:
+    - `ReservationResponse.DetailDTO` 확장: 요청 이력(변경/취소) 리스트 및 상태 플래그(`canModify`, `isWait` 등) 추가
+    - `ReservationService.getReservationDetail` 보완: 연관된 요청 이력 데이터를 포함하여 DTO 변환
+    - UI 구현: `reservations.mustache`와 동일한 버튼 스타일(색상, 아이콘, 크기) 적용 및 기능 연결
+    - 이력 섹션 추가: 과거 변경/취소 요청들의 처리 상태 및 거절 사유 출력
+    - 디자인 원칙: 기존 상세 페이지의 레이아웃과 CSS를 100% 보존하며 데이터만 연동
 - [x] **3-3. 예약 변경 요청 기능 및 가예약(Lock) 로직 구현**
   - 컨트롤러: `/mypage/reservation/{id}/change-form` (GET, POST)
   - 머스타치: `templates/mypage/reservation-change.mustache`, `templates/mypage/reservation-change-done.mustache`
   - 서비스 로직:
     - 변경 요청 시 `Reservation`의 상태를 `CHANGE_REQ`로 변경
     - 중복 예약 체크 시 `Reservation.status = CHANGE_REQ`인 원본 자리 보호 및 `ReservationChangeRequest.status = PENDING`인 새로운 자리 가예약 처리
-- [ ] **3-4. 예약 취소 요청 기능 구현**
+- [x] **3-4. 예약 취소 요청 기능 구현**
   - 컨트롤러: `/mypage/reservation/{id}/cancel-form` (GET, POST)
   - 머스타치: `templates/mypage/reservation-cancel.mustache`, `templates/mypage/reservation-cancel-done.mustache`
   - 서비스 로직: 취소 요청 시 `Reservation`의 상태를 `CANCEL_REQ`로 변경
-- [ ] **3-5. 상태 기반 UI 제어 로직 적용**
+- [x] **3-5. 상태 기반 UI 제어 로직 적용**
   - 로직: `checkInDate`가 현재 날짜 이후인 경우에만 변경/취소 버튼 노출 (Mustache 내에서 처리)
 
 ## 3단계: 관리자 예약 관리 (Admin Side)
@@ -144,5 +92,3 @@
 - [ ] **5-2. 비즈니스 규칙 및 예외 처리 검증**: 이용일(체크인)이 이미 지난 예약에 대해 변경/취소 요청 시도 시 예외 처리 확인
 - [ ] **5-3. 최종 리포트 작성 및 TODO.md 완료 체크**
   - 경로: `.person/reports/{YYYY-MM-DD}/reservation-extension-report.md` 작성
->>>>>>> dev
->>>>>>> dev
