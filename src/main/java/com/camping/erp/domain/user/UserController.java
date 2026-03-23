@@ -79,15 +79,9 @@ public class UserController {
         return "mypage/home";
     }
 
-    // 예약 상세 보기
-    @GetMapping("/mypage/reservations/{id}")
-    public String reservationDetail(@PathVariable("id") Long id, Model model, HttpSession session) {
-        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
-        if (sessionUser == null) {
-            return "redirect:/login-form";
-        }
-        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
-        model.addAttribute("user", user);
-        return "mypage/reservation-detail";
+    // 내 리뷰
+    @GetMapping("/mypage/reviews")
+    public String reviews() {
+        return "mypage/reviews";
     }
 }
