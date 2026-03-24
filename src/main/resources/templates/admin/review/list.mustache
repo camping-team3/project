@@ -183,7 +183,7 @@ function processReview(id, action) {
             if (result.isConfirmed) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '/admin/reviews/' + id + '/keep';
+                form.action = ('/admin/reviews/' + id + '/keep').trim();
                 document.body.appendChild(form);
                 form.submit();
             }
@@ -210,12 +210,12 @@ function openDeleteModal(id) {
         if (result.isConfirmed) {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/admin/reviews/' + id + '/delete';
+            form.action = ('/admin/reviews/' + id + '/delete').trim();
             
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'reason';
-            input.value = result.value;
+            input.value = result.value.trim();
             
             form.appendChild(input);
             document.body.appendChild(form);
@@ -237,7 +237,7 @@ function expelUser(userId, username) {
         if (result.isConfirmed) {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/admin/users/' + userId + '/expel';
+            form.action = ('/admin/users/' + userId + '/expel').trim();
             document.body.appendChild(form);
             form.submit();
         }
