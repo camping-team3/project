@@ -743,6 +743,7 @@ public class ReservationService {
 
                                         return AdminResponse.ReservationListDTO.builder()
                                                         .id(r.getId())
+                                                        .reservationIdDisplay("RESERV-" + r.getId())
                                                         .username(r.getUser().getName())
                                                         .siteName(r.getSite().getSiteName())
                                                         .checkIn(r.getCheckIn())
@@ -826,6 +827,7 @@ public class ReservationService {
 
                                         return AdminResponse.ReservationListDTO.builder()
                                                         .id(r.getId())
+                                                        .reservationIdDisplay("RESERV-" + r.getId())
                                                         .username(r.getUser().getName())
                                                         .siteName(r.getSite().getSiteName())
                                                         .checkIn(r.getCheckIn())
