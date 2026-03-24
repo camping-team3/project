@@ -62,7 +62,7 @@
                     <tbody class="divide-y border-light">
                         {{#pendingRequests.reservations}}
                         <tr class="reservation-table-row cursor-pointer hover-bg-light transition-all" 
-                            onclick="if(!event.target.closest('.btn')) location.href='/admin/reservations/{{id}}/{{#isChangeReq}}change-detail{{/isChangeReq}}{{#isCancelReq}}cancel-detail{{/isCancelReq}}{{^isChangeReq}}{{^isCancelReq}}detail{{/isCancelReq}}{{/isCancelReq}}';">
+                            onclick="if(!event.target.closest('.btn')) location.href='/admin/reservations/{{id}}/{{#isChangeReq}}change-detail{{/isChangeReq}}{{#isCancelReq}}cancel-detail{{/isCancelReq}}{{#isDetailView}}detail{{/isDetailView}}';">
                             <td class="px-4 py-4">
                                 <span class="badge bg-{{statusClass}} bg-opacity-10 text-{{statusClass}} fw-bold px-2.5 py-1 rounded">{{statusText}}</span>
                             </td>

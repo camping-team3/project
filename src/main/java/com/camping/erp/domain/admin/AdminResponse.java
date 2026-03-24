@@ -108,6 +108,14 @@ public class AdminResponse {
         public boolean isCancelReq() {
             return status == ReservationStatus.CANCEL_REQ;
         }
+
+        public boolean isConfirmed() {
+            return status == ReservationStatus.CONFIRMED;
+        }
+
+        public boolean isDetailView() {
+            return status != ReservationStatus.CHANGE_REQ && status != ReservationStatus.CANCEL_REQ;
+        }
     }
 
     // [Task 4-2] 관리자용 예약 변경 상세 비교 DTO
