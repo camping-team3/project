@@ -4,6 +4,7 @@ import com.camping.erp.domain.admin.AdminRequest;
 import com.camping.erp.domain.admin.AdminResponse;
 import com.camping.erp.domain.reservation.enums.RequestStatus;
 import com.camping.erp.domain.reservation.enums.ReservationStatus;
+import com.camping.erp.domain.reservation.enums.SettlementType;
 import com.camping.erp.domain.review.Review;
 import com.camping.erp.domain.review.ReviewRepository;
 import com.camping.erp.domain.site.Site;
@@ -712,5 +713,94 @@ public class ReservationService {
 
                 // 공통: 예약 상태를 다시 '확정' 상태로 복원
                 r.updateStatus(ReservationStatus.CONFIRMED);
+        }
+
+        /**
+         * 예약 변경 요청 건에 대한 차액 계산 및 정산 타입 결정
+         */
+        @Transactional
+        public void calculateChangeDifference(Long requestId) {
+                ReservationChangeRequest request = reservationChangeRequestRepository.findById(requestId)
+                                .orElseThrow(() -> new Exception404("변경 요청 정보를 찾을 수 없습니다."));
+
+                Reservation reservation = request.getReservation();
+                Site newSite = request.getNewSite();
+                Zone zone = newSite.getZone();
+
+                // 1. 새로운 조건에 따른 총액 계산
+                long nights = ChronoUnit.DAYS.between(request.getNewCheckIn(), request.getNewCheckOut());
+                long dailyPrice = zone.getNormalPrice(); // 우선 일반 요금 적용
+
+                // 인원수 추가 요금 계산
+                int extraPeople = Math.max(0, request.getNewPeopleCount() - zone.getBasePeople());
+                long totalExtraFee = (long) extraPeople * zone.getExtraPersonFee() * nights;
+
+                long newTotalPrice = (nights * dailyPrice) + totalExtraFee;
+
+                // 2. 기존 금액과 비교하여 정산 타입 결정
+                long originalPrice = reservation.getTotalPrice();
+                SettlementType settlementType;
+
+                if (newTotalPrice > originalPrice) {
+                        settlementType = SettlementType.ADDITIONAL_PAY;
+                } else if (newTotalPrice < originalPrice) {
+                        settlementType = SettlementType.PARTIAL_REFUND;
+                } else {
+                        settlementType = SettlementType.NONE;
+                }
+
+                // 3. 변경 요청 엔티티 업데이트
+                request.updateSettlement(newTotalPrice, settlementType);
+        }
+
+        /**
+         * 예약 변경 결제를 위한 데이터 조회
+         */
+        public ReservationResponse.ChangePaymentDTO getChangePaymentData(Long requestId) {
+                ReservationChangeRequest request = reservationChangeRequestRepository.findById(requestId)
+                                .orElseThrow(() -> new Exception404("변경 요청 정보를 찾을 수 없습니다."));
+
+                Reservation reservation = request.getReservation();
+                long amount = request.getNewTotalPrice() - reservation.getTotalPrice();
+
+                if (amount <= 0) {
+                        throw new Exception400("추가 결제가 필요한 예약 변경 건이 아닙니다.");
+                }
+
+                return ReservationResponse.ChangePaymentDTO.builder()
+                                .requestId(requestId)
+                                .merchantUid("change_" + requestId + "_" + System.currentTimeMillis())
+                                .amount(amount)
+                                .siteName(request.getNewSite().getSiteName())
+                                .visitorName(reservation.getVisitorName())
+                                .visitorPhone(reservation.getVisitorPhone())
+                                .build();
+        }
+
+        /**
+         * 예약 변경 추가 결제 성공 후 최종 확정 처리
+         */
+        @Transactional
+        public void confirmChange(Long requestId, String impUid) {
+                ReservationChangeRequest request = reservationChangeRequestRepository.findById(requestId)
+                                .orElseThrow(() -> new Exception404("변경 요청 정보를 찾을 수 없습니다."));
+
+                Reservation reservation = request.getReservation();
+
+                // 1. 예약 정보 최종 업데이트
+                reservation.updateReservationInfo(
+                                request.getNewCheckIn(),
+                                request.getNewCheckOut(),
+                                request.getNewSite(),
+                                request.getNewPeopleCount(),
+                                reservation.getVisitorName(),
+                                reservation.getVisitorPhone(),
+                                request.getNewTotalPrice());
+
+                // 2. 요청 상태 변경 (APPROVED) 및 예약 상태 복구 (CONFIRMED)
+                request.approve();
+                reservation.updateStatus(ReservationStatus.CONFIRMED);
+
+                // TODO: 결제 이력(Payment) 연동 로직 추가 (추가 결제건 기록)
         }
 }

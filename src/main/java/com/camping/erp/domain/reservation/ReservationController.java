@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -256,5 +257,28 @@ public class ReservationController {
         UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
         model.addAttribute("user", user);
         return "mypage/reservation-cancel-done";
+    }
+
+    /**
+     * 예약 변경 추가 결제 데이터 조회
+     */
+    @GetMapping("/api/reservation/change/{requestId}/payment-data")
+    @ResponseBody
+    public ResponseEntity<?> getChangePaymentData(@PathVariable("requestId") Long requestId) {
+        ReservationResponse.ChangePaymentDTO data = reservationService.getChangePaymentData(requestId);
+        return ResponseEntity.ok(new Resp<>(1, "결제 데이터 조회 성공", data));
+    }
+
+    /**
+     * 예약 변경 추가 결제 성공 처리
+     */
+    @PostMapping("/api/reservation/change/payment/success")
+    @ResponseBody
+    public ResponseEntity<?> confirmChange(@RequestBody Map<String, Object> requestData) {
+        Long requestId = Long.parseLong(requestData.get("requestId").toString());
+        String impUid = requestData.get("impUid").toString();
+
+        reservationService.confirmChange(requestId, impUid);
+        return ResponseEntity.ok(new Resp<>(1, "예약 변경이 최종 확정되었습니다.", null));
     }
 }

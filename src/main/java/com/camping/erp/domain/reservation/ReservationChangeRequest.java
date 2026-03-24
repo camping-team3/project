@@ -1,6 +1,7 @@
 package com.camping.erp.domain.reservation;
 
 import com.camping.erp.domain.reservation.enums.RequestStatus;
+import com.camping.erp.domain.reservation.enums.SettlementType;
 import com.camping.erp.domain.site.Site;
 import com.camping.erp.global.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -48,6 +49,14 @@ public class ReservationChangeRequest extends BaseTimeEntity {
 
     private String newVisitorPhone;
 
+    // 정산 관련 필드 추가
+    @Column(nullable = false)
+    private Long newTotalPrice; // 변경 후 예상 총액
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SettlementType settlementType; // ADDITIONAL_PAY, PARTIAL_REFUND, NONE
+
     // 요청 처리 상태
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -57,6 +66,14 @@ public class ReservationChangeRequest extends BaseTimeEntity {
     private String rejectionReason;
 
     // --- 비즈니스 로직 (캡슐화) ---
+
+    /**
+     * 정산 정보 업데이트
+     */
+    public void updateSettlement(Long newTotalPrice, SettlementType settlementType) {
+        this.newTotalPrice = newTotalPrice;
+        this.settlementType = settlementType;
+    }
 
     /**
      * 관리자 승인 처리

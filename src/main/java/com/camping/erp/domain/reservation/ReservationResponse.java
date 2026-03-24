@@ -293,4 +293,18 @@ public class ReservationResponse {
         private String reason;
         private String requestDate;
     }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ChangePaymentDTO {
+        private Long requestId;
+        private String merchantUid;
+        private Long amount; // 결제해야 할 차액
+        private String siteName;
+        private String visitorName;
+        private String visitorPhone;
+    }
 }
