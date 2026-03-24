@@ -152,6 +152,7 @@ public class AdminResponse {
     @NoArgsConstructor
     public static class AdminCancelDetailDTO {
         private Long id; // 예약 ID
+        private Long requestId; // [추가] 취소 요청(ReservationCancelRequest)의 ID
         private Long userId;
         private String username;
         private String visitorName;
@@ -169,6 +170,11 @@ public class AdminResponse {
         private String refundBank;
         private String refundAccount;
         private String refundAccountHolder;
+
+        // 실시간 환불 정보 (PenaltyCalculator 적용 결과)
+        private Long expectedRefundAmount;
+        private int refundPercent;
+        private boolean canRefund;
 
         // 요청 이력
         private List<com.camping.erp.domain.reservation.ReservationResponse.ChangeRequestHistoryDTO> changeRequests;

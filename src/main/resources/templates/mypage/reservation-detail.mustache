@@ -206,16 +206,19 @@
                                                 {{statusDescription}}
                                             </span>
                                             {{#isRefunded}}
-                                            <span class="badge bg-success opacity-75">환불완료</span>
+                                            <span class="badge bg-success opacity-75 d-flex align-items-center justify-content-center gap-1">
+                                                <span class="material-symbols-outlined fs-6">check</span>
+                                                환불 처리됨
+                                            </span>
                                             {{/isRefunded}}
                                         </div>
                                     </td>
                                     <td>
-                                        {{^isRefunded}}
-                                            {{#isApproved}}
-                                            <button onclick="executeRefund('cancel', {{id}})" class="btn btn-warning btn-sm fw-bold">환불받기</button>
-                                            {{/isApproved}}
-                                        {{/isRefunded}}
+                                        {{#isApproved}}
+                                            {{^isRefunded}}
+                                            <span class="text-primary small fw-bold">자동 환불 대기 중</span>
+                                            {{/isRefunded}}
+                                        {{/isApproved}}
                                         <span class="text-danger small">{{#rejectionReason}}{{rejectionReason}}{{/rejectionReason}}</span>
                                     </td>
                                 </tr>

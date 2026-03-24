@@ -18,6 +18,7 @@ import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.handler.ex.Exception401;
 import com.camping.erp.global.handler.ex.Exception403;
 import com.camping.erp.global.handler.ex.Exception404;
+import com.camping.erp.global.util.PenaltyCalculator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -610,8 +611,13 @@ public class ReservationService {
                                 .map(ReservationResponse.CancelRequestHistoryDTO::fromEntity)
                                 .toList();
 
+                // 실시간 환불 정보 계산 (PenaltyCalculator 적용)
+                double refundRate = PenaltyCalculator.calculateRefundRate(r.getCheckIn(), LocalDate.now());
+                long refundAmount = (long) (r.getTotalPrice() * refundRate);
+
                 return AdminResponse.AdminCancelDetailDTO.builder()
                                 .id(r.getId())
+                                .requestId(req.getId()) // [추가] 취소 요청 ID 매핑
                                 .userId(r.getUser().getId())
                                 .username(r.getUser().getName() + "(" + r.getUser().getUsername() + ")")
                                 .visitorName(r.getVisitorName())
@@ -627,6 +633,9 @@ public class ReservationService {
                                 .refundBank(req.getRefundBank())
                                 .refundAccount(req.getRefundAccount())
                                 .refundAccountHolder(req.getRefundAccountHolder())
+                                .expectedRefundAmount(refundAmount)
+                                .refundPercent((int) (refundRate * 100))
+                                .canRefund(refundRate > 0)
                                 .changeRequests(changeHistories)
                                 .cancelRequests(cancelHistories)
                                 .build();

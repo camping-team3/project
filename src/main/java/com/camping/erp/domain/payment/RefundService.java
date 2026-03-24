@@ -1,25 +1,21 @@
 package com.camping.erp.domain.payment;
 
-import com.camping.erp.domain.reservation.Reservation;
-import com.camping.erp.domain.reservation.ReservationChangeRequest;
-import com.camping.erp.domain.reservation.ReservationChangeRequestRepository;
-import com.camping.erp.domain.reservation.ReservationCancelRequest;
-import com.camping.erp.domain.reservation.ReservationCancelRequestRepository;
-import com.camping.erp.domain.reservation.ReservationRepository;
-import com.camping.erp.domain.reservation.enums.RequestStatus;
+import com.camping.erp.domain.reservation.*;
 import com.camping.erp.domain.reservation.enums.ReservationStatus;
 import com.camping.erp.global.handler.ex.Exception400;
 import com.camping.erp.global.handler.ex.Exception404;
+import com.camping.erp.global.util.PenaltyCalculator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
- * 위약금 계산 및 자동 환불 처리를 담당하는 서비스
+ * 위약금 계산 및 포트원 연동 자동 환불 처리를 담당하는 서비스
  */
 @Slf4j
 @Service
@@ -31,6 +27,7 @@ public class RefundService {
     private final ReservationCancelRequestRepository reservationCancelRequestRepository;
     private final RefundRepository refundRepository;
     private final PortOneService portOneService;
+
     /**
      * 예약 변경 시 발생하는 차액에 대한 부분 환불 처리 (위약금 규정 적용)
      */
@@ -56,17 +53,13 @@ public class RefundService {
             throw new Exception400("부분 환불 대상이 아닙니다.");
         }
 
-        // 2. 위약금 규정 적용 (체크인 일수 기준)
-        long daysUntilCheckIn = ChronoUnit.DAYS.between(LocalDate.now(), reservation.getCheckIn());
-        long finalRefundAmount = 0;
+        // 2. 위약금 규정 적용 (PenaltyCalculator 사용)
+        double refundRate = PenaltyCalculator.calculateRefundRate(reservation.getCheckIn(), LocalDate.now());
+        long finalRefundAmount = (long) (diffAmount * refundRate);
 
-        if (daysUntilCheckIn >= 7) {
-            finalRefundAmount = diffAmount; // 100% 환불
-        } else if (daysUntilCheckIn >= 3) {
-            finalRefundAmount = diffAmount / 2; // 50% 환불
-        } else {
-            finalRefundAmount = 0; // 0~2일 전: 환불 불가 (차액 소멸)
-            log.info("[Refund Info] 이용일 2일 이내 변경으로 차액 환불 불가: requestId={}", requestId);
+        if (refundRate < 1.0) {
+            log.info("[Partial Refund Info] 위약금 적용으로 차액 일부/전체 소멸: rate={}, diff={}, final={}", 
+                     refundRate, diffAmount, finalRefundAmount);
         }
 
         // 3. 포트원 부분 취소 API 호출 (환불액이 있는 경우에만)
@@ -83,7 +76,7 @@ public class RefundService {
                     .reservation(reservation)
                     .refundAmount(finalRefundAmount)
                     .reason("예약 변경 차액 환불 (위약금 적용)")
-                    .cancelledAt(java.time.LocalDateTime.now())
+                    .cancelledAt(LocalDateTime.now())
                     .build();
             refundRepository.save(refund);
         }
@@ -96,55 +89,65 @@ public class RefundService {
     }
 
     /**
-     * 예약 취소에 따른 환불 실행 (고객 직접 트리거)
+     * [관리자용] 취소 요청 승인 및 실제 환불 실행
+     * @param requestId ReservationCancelRequest의 ID
      */
     @Transactional
-    public void processCancelRefund(Long requestId) {
-        ReservationCancelRequest request = reservationCancelRequestRepository.findById(requestId)
+    public void approveCancelRequest(Long requestId) {
+        // 1. 요청 정보 및 예약 정보 조회
+        ReservationCancelRequest cancelRequest = reservationCancelRequestRepository.findById(requestId)
                 .orElseThrow(() -> new Exception404("취소 요청 정보를 찾을 수 없습니다."));
-
-        Reservation reservation = request.getReservation();
+        
+        Reservation reservation = cancelRequest.getReservation();
         Payment payment = reservation.getPayment();
 
         if (payment == null) {
             throw new Exception404("연결된 결제 내역이 없어 환불을 진행할 수 없습니다.");
         }
 
-        if (request.isRefunded()) {
+        if (cancelRequest.isRefunded()) {
             throw new Exception400("이미 환불 처리가 완료된 요청입니다.");
         }
 
-        // 1. 환불 금액 계산 (위약금 규정 적용)
-        RefundResponse.RefundInfo info = getRefundInfo(reservation.getId());
-        long finalRefundAmount = info.getRefundAmount();
-
-        // 2. 포트원 결제 취소 API 호출 (환불액이 있는 경우에만)
-        if (finalRefundAmount > 0) {
-            boolean success = portOneService.cancelPayment(payment.getImpUid(), finalRefundAmount, "예약 취소에 따른 환불");
-
-            if (!success) {
-                throw new Exception400("포트원 결제 취소 요청이 실패했습니다.");
-            }
-
-            // 환불 이력 저장
-            Refund refund = Refund.builder()
-                    .reservation(reservation)
-                    .refundAmount(finalRefundAmount)
-                    .reason("예약 취소 환불 (위약금 적용)")
-                    .cancelledAt(java.time.LocalDateTime.now())
-                    .build();
-            refundRepository.save(refund);
+        // 1-1. 이용일 방어 로직: 이미 이용 시작일이거나 지난 경우 취소 불가
+        if (!reservation.getCheckIn().isAfter(LocalDate.now())) {
+            throw new Exception400("이용 시작일 이후에는 온라인 환불 처리가 불가능합니다. 관리자에게 별도 문의하세요.");
         }
 
-        // 3. 상태 확정
-        request.markAsRefunded();
+        // 2. 위약금 규정에 따른 최종 환불 금액 계산 (PenaltyCalculator 사용)
+        long refundAmount = PenaltyCalculator.calculateRefundAmount(reservation.getTotalPrice(), reservation.getCheckIn());
+        log.info("[Refund Process] 예상 환불액: {}, 예약 총액: {}, 체크인: {}", 
+                 refundAmount, reservation.getTotalPrice(), reservation.getCheckIn());
 
-        log.info("[Cancel Refund Success] 취소 환불 처리 완료: requestId={}, refundAmount={}",
-                requestId, finalRefundAmount);
+        // 3. 포트원 API 연동 환불 실행 (환불 금액이 0보다 큰 경우만)
+        if (refundAmount > 0) {
+            boolean success = portOneService.cancelPayment(payment.getImpUid(), refundAmount, cancelRequest.getReason());
+            if (!success) {
+                throw new Exception400("포트원 API를 통한 결제 취소에 실패했습니다.");
+            }
+        } else {
+            log.info("[Refund Process] 위약금 100%로 인해 실제 환불액 0원 처리 (결제 취소 미호출)");
+        }
+
+        // 4. 상태 변경 및 이력 저장
+        reservation.updateStatus(ReservationStatus.CANCEL_COMP);
+        cancelRequest.approve();
+        cancelRequest.markAsRefunded();
+
+        Refund refund = Refund.builder()
+                .reservation(reservation)
+                .refundAmount(refundAmount)
+                .reason(cancelRequest.getReason())
+                .cancelledAt(LocalDateTime.now())
+                .build();
+        refundRepository.save(refund);
+
+        log.info("[Refund Success] 최종 환불 완료: reservationId={}, refundAmount={}", 
+                 reservation.getId(), refundAmount);
     }
 
     /**
-     * 현재 날짜 기준 예상 환불 정보 계산 (관리자 확인용)
+     * 현재 날짜 기준 예상 환불 정보 계산 (사용자/관리자 확인용)
      */
     public RefundResponse.RefundInfo getRefundInfo(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
@@ -152,75 +155,18 @@ public class RefundService {
 
         // 체크인 날짜와 오늘 날짜 사이의 일수 계산
         long daysUntilCheckIn = ChronoUnit.DAYS.between(LocalDate.now(), reservation.getCheckIn());
-        long totalPrice = reservation.getTotalPrice();
-        long refundAmount = 0;
-        int refundPercent = 0;
-        boolean canRefund = true;
-
-        // 환불 규정 적용
-        if (daysUntilCheckIn >= 7) {
-            refundPercent = 100;
-            refundAmount = totalPrice;
-        } else if (daysUntilCheckIn >= 3) {
-            refundPercent = 50;
-            refundAmount = totalPrice / 2;
-        } else {
-            // 0~2일 전: 자동 환불 불가 (위약금 100%)
-            refundPercent = 0;
-            refundAmount = 0;
-            canRefund = false;
-        }
-
+        
+        // 위약금 규정 적용 (PenaltyCalculator 사용)
+        double refundRate = PenaltyCalculator.calculateRefundRate(reservation.getCheckIn(), LocalDate.now());
+        long refundAmount = (long) (reservation.getTotalPrice() * refundRate);
+        
         return RefundResponse.RefundInfo.builder()
                 .reservationId(reservationId)
-                .totalPrice(totalPrice)
+                .totalPrice(reservation.getTotalPrice())
                 .refundAmount(refundAmount)
-                .refundPercent(refundPercent)
+                .refundPercent((int) (refundRate * 100))
                 .daysUntilCheckIn((int) daysUntilCheckIn)
-                .canRefund(canRefund)
+                .canRefund(refundRate > 0)
                 .build();
-    }
-
-    /**
-     * 실제 환불 승인 처리 및 결제 취소 연동
-     */
-    @Transactional
-    public void approveRefund(Long reservationId, String reason) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new Exception404("예약을 찾을 수 없습니다."));
-
-        // 1. 환불 금액 재계산 (날짜 기준 최종 검증)
-        RefundResponse.RefundInfo info = getRefundInfo(reservationId);
-
-        if (!info.isCanRefund() && info.getRefundAmount() == 0) {
-            throw new Exception400("이용일 2일 이내의 예약은 시스템 자동 환불 대상이 아닙니다. 고객센터에 문의하세요.");
-        }
-
-        // 2. 포트원 결제 취소 API 호출
-        Payment payment = reservation.getPayment();
-        if (payment == null) {
-            throw new Exception404("연결된 결제 내역이 없어 환불을 진행할 수 없습니다.");
-        }
-
-        boolean success = portOneService.cancelPayment(payment.getImpUid(), info.getRefundAmount(), reason);
-
-        if (!success) {
-            throw new Exception400("포트원 결제 취소 요청이 실패했습니다. (외부 API 오류)");
-        }
-
-        // 3. 예약 상태 변경 (CANCEL_REQ -> CANCEL_COMP)
-        reservation.updateStatus(ReservationStatus.CANCEL_COMP);
-
-        // 4. 환불 이력 저장
-        Refund refund = Refund.builder()
-                .reservation(reservation)
-                .refundAmount(info.getRefundAmount())
-                .reason(reason)
-                .cancelledAt(java.time.LocalDateTime.now())
-                .build();
-        refundRepository.save(refund);
-
-        log.info("[Refund Success] 환불 처리 완료: reservationId={}, amount={}, reason={}",
-                reservationId, info.getRefundAmount(), reason);
     }
 }

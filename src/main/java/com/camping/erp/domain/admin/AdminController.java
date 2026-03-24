@@ -186,10 +186,13 @@ public class AdminController {
         return Resp.ok(info);
     }
 
-    @PostMapping("/admin/reservations/{id}/refund")
+    /**
+     * 관리자의 취소 요청 승인 및 환불 실행 API
+     */
+    @PostMapping("/api/admin/refund/approve/{requestId}")
     @ResponseBody
-    public ResponseEntity<?> approveRefund(@PathVariable("id") Long id, @RequestParam("reason") String reason) {
-        refundService.approveRefund(id, reason);
+    public ResponseEntity<?> approveCancelRequest(@PathVariable("requestId") Long requestId) {
+        refundService.approveCancelRequest(requestId);
         return Resp.ok("환불 승인 및 결제 취소가 완료되었습니다.");
     }
 

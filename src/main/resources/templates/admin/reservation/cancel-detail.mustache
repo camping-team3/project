@@ -22,12 +22,10 @@
                 <span class="material-symbols-outlined fs-5">cancel</span>
                 요청 거절
             </button>
-            <form action="/admin/reservations/{{detail.id}}/approve" method="POST" onsubmit="return confirm('취소를 승인하시겠습니까?')">
-                <button type="submit" class="btn btn-primary fw-bold shadow-sm d-flex align-items-center gap-2 border-0 rounded-3 px-3 py-2">
-                    <span class="material-symbols-outlined fs-5">check_circle</span>
-                    취소 승인
-                </button>
-            </form>
+            <button type="button" onclick="approveRefund({{detail.requestId}})" class="btn btn-primary fw-bold shadow-sm d-flex align-items-center gap-2 border-0 rounded-3 px-3 py-2">
+                <span class="material-symbols-outlined fs-5">check_circle</span>
+                환불 승인 및 취소 확정
+            </button>
         </div>
     </div>
 
@@ -70,13 +68,29 @@
                         <span class="material-symbols-outlined text-danger">cancel</span>
                         취소 사유 및 환불 정보
                     </h3>
-                    <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-3 py-1 rounded-pill small">CANCEL_REQ</span>
+                    <div class="text-end">
+                        <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-3 py-1 rounded-pill small">CANCEL_REQ</span>
+                        <div class="small text-danger fw-bold mt-1">예상 환불율: {{detail.refundPercent}}%</div>
+                    </div>
                 </div>
                 
                 <div class="mb-4">
                     <label class="small text-muted mb-2 d-block fw-bold text-uppercase">취소 사유</label>
-                    <div class="p-3 bg-light rounded-3 text-dark fw-medium border-start border-4 border-danger border-opacity-25">
+                    <div class="p-3 bg-light rounded-3 text-dark fw-medium border-start border-4 border-danger border-opacity-25 mb-3">
                         {{detail.reason}}
+                    </div>
+                    
+                    <div class="p-3 bg-danger bg-opacity-10 rounded-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="small text-danger fw-bold">시스템 자동 환불 예정 금액</span>
+                            <h4 class="h5 fw-bold text-danger mb-0">₩ <span class="format-price">{{detail.expectedRefundAmount}}</span></h4>
+                        </div>
+                        {{^detail.canRefund}}
+                        <div class="text-danger small d-flex align-items-center gap-1">
+                            <span class="material-symbols-outlined fs-6">warning</span>
+                            당일~2일전 취소는 자동 환불 불가 (위약금 100%)
+                        </div>
+                        {{/detail.canRefund}}
                     </div>
                 </div>
 
@@ -196,4 +210,32 @@
         const value = parseInt(el.innerText.replace(/[^0-9]/g, ''));
         if (!isNaN(value)) el.innerText = value.toLocaleString();
     });
+
+    /**
+     * 환불 승인 API 호출
+     */
+    async function approveRefund(requestId) {
+        if(!confirm('정말로 환불을 승인하고 예약을 취소하시겠습니까?\n이 작업은 되돌릴 수 없으며 실제 결제가 취소됩니다.')) return;
+
+        try {
+            const response = await fetch(`/api/admin/refund/approve/${requestId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.msg || '환불 승인 처리가 완료되었습니다.');
+                location.href = '/admin/reservations';
+            } else {
+                alert('오류 발생: ' + (result.msg || '서버 응답 오류'));
+            }
+        } catch (e) {
+            console.error('Refund Error:', e);
+            alert('환불 요청 중 통신 오류가 발생했습니다.');
+        }
+    }
 </script>

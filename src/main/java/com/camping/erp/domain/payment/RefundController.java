@@ -26,11 +26,7 @@ public class RefundController {
     }
 
     /**
-     * 예약 취소 승인 건에 대한 환불 실행
+     * [참고] 예약 취소에 대한 전체 환불은 관리자가 AdminController에서 
+     * approveCancelRequest를 호출할 때 자동으로 실행됨.
      */
-    @PostMapping(value = "/execute/cancel/{requestId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> executeCancelRefund(@PathVariable("requestId") Long requestId) {
-        refundService.processCancelRefund(requestId);
-        return Resp.ok("취소 환불 처리가 완료되었습니다.");
-    }
 }

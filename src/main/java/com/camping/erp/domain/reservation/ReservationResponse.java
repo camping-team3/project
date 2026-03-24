@@ -167,7 +167,8 @@ public class ReservationResponse {
                             : reservation.getStatus() == ReservationStatus.CHANGE_REQ ? "변경 승인 대기"
                                     : reservation.getStatus() == ReservationStatus.CANCEL_REQ ? "취소 승인 대기"
                                             : reservation.getStatus() == ReservationStatus.COMPLETED ? "이용 완료"
-                                                    : "취소 완료")
+                                                    : reservation.getStatus() == ReservationStatus.CANCEL_COMP ? "취소 및 환불 완료"
+                                                            : "취소 완료")
                     .canModify(reservation.getStatus() == ReservationStatus.CONFIRMED
                             && reservation.getCheckIn().isAfter(today))
                     .isWait(reservation.getStatus() == ReservationStatus.CHANGE_REQ
