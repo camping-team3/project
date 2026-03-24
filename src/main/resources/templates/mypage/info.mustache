@@ -1,0 +1,109 @@
+{{> layout/header}}
+
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Sidebar Navigation -->
+        <aside class="col-lg-3">
+            <div class="fh-card p-4 mb-4">
+                <div class="fh-profile-card">
+                    <div class="profile-section">
+                        <div class="profile-img">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuArVyFD1kByWmCBF0Rz4ccl-L4vIMovS-krTT4u-KVYHhX2hMPUkaQzOLuSXFNkjKwDG0hbQZ7gaRgh8ytv6BK6xFB6ClZmg6H-wq586rl1mmMaOrnlkhWvj-w0KNrgyc3qLGo11qHIdPwOfdKeuTDw6OltxRnbG17NoLNHNk1YZI1Li_g3-PSh5baMbRafh3KgP2jo5_izMzuKYzAJm9zDtUrAJHJSePSvnmDcctJdXnbujZtx4x7j3Nub2X0XNELdrx0zZBwepMns" alt="Profile">
+                        </div>
+                        <div class="profile-info">
+                            <h3>{{user.name}} 님</h3>
+                            <p>{{user.role}} Member</p>
+                        </div>
+                    </div>
+                </div>
+                <nav class="fh-sidebar-nav">
+                    <a href="/mypage" class="nav-item">
+                        <span class="material-symbols-outlined">home</span>
+                        <span>홈</span>
+                    </a>
+                    <a href="/mypage/info" class="nav-item active">
+                        <span class="material-symbols-outlined">person</span>
+                        <span>회원 정보</span>
+                    </a>
+                    <a href="/mypage/reservations" class="nav-item">
+                        <span class="material-symbols-outlined">calendar_today</span>
+                        <span>예약 내역</span>
+                    </a>
+                    <a href="/mypage/reviews" class="nav-item">
+                        <span class="material-symbols-outlined">rate_review</span>
+                        <span>내가 적은 리뷰</span>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="col-lg-9">
+            <!-- Title Section -->
+            <section class="mb-5 px-2">
+                <h1 class="display-6 fw-bold text-dark">회원 정보</h1>
+                <p class="text-secondary fw-medium">Forest Haven의 회원 정보를 확인하고 관리할 수 있습니다.</p>
+            </section>
+
+            <!-- Info Card -->
+            <div class="fh-card p-4 p-md-5 shadow-sm">
+                <div class="row g-4">
+                    <!-- Username -->
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 bg-light bg-opacity-50">
+                            <label class="form-label small fw-bold text-muted text-uppercase mb-1">아이디</label>
+                            <div class="fs-5 fw-bold text-dark">{{user.username}}</div>
+                        </div>
+                    </div>
+                    <!-- Name -->
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 bg-light bg-opacity-50">
+                            <label class="form-label small fw-bold text-muted text-uppercase mb-1">이름</label>
+                            <div class="fs-5 fw-bold text-dark">{{user.name}}</div>
+                        </div>
+                    </div>
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 bg-light bg-opacity-50">
+                            <label class="form-label small fw-bold text-muted text-uppercase mb-1">이메일</label>
+                            <div class="fs-5 fw-bold text-dark">{{user.email}}</div>
+                        </div>
+                    </div>
+                    <!-- Phone -->
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 bg-light bg-opacity-50">
+                            <label class="form-label small fw-bold text-muted text-uppercase mb-1">전화번호</label>
+                            <div class="fs-5 fw-bold text-dark">{{user.phone}}</div>
+                        </div>
+                    </div>
+                    <!-- Role -->
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 bg-light bg-opacity-50">
+                            <label class="form-label small fw-bold text-muted text-uppercase mb-1">회원 등급</label>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fw-bold">
+                                    {{user.role}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-5 border-dashed opacity-25">
+
+                <!-- Actions -->
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    <button class="btn btn-primary px-5 py-3 shadow-sm fw-bold flex-grow-1 flex-sm-grow-0"
+                            onclick="location.href='/mypage/info-update-form'">
+                        정보 수정하기
+                    </button>
+                    <button class="btn btn-outline-fh px-4 py-3 fw-bold" onclick="location.href='/mypage'">
+                        돌아가기
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+{{> layout/footer}}

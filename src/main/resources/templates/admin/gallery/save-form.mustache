@@ -1,0 +1,178 @@
+{{> layout/admin-header}}
+<div class="p-4 p-lg-5">
+    <form id="gallerySaveForm" action="/admin/galleries/save" method="POST" enctype="multipart/form-data">
+        <div class="max-w-4xl mx-auto">
+            <div class="d-flex justify-content-between align-items-end mb-5">
+                <div>
+                    <h2 class="display-6 fw-bold text-dark mb-2">새 갤러리 게시글 작성</h2>
+                    <p class="text-secondary fw-medium mb-0">캠핑장의 생생한 현장 소식을 사진과 함께 공유하세요.</p>
+                </div>
+            </div>
+
+            <div class="fh-card shadow-sm border-0 p-4 p-md-5 bg-white rounded-4">
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-dark">제목</label>
+                    <input type="text" name="title" class="form-control py-3 shadow-none border-secondary border-opacity-25 bg-light bg-opacity-50 rounded-3" placeholder="포스트의 제목을 입력하세요 (예: 2024년 봄맞이 불멍 축제)" required>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-dark">이벤트/카테고리</label>
+                        <select name="category" id="categorySelect" class="form-select py-3 shadow-none border-secondary border-opacity-25 bg-light bg-opacity-50 rounded-3" required>
+                            <option value="">카테고리 선택 필수</option>
+                            <option value="특별 이벤트">특별 이벤트</option>
+                            <option value="캠핑장 전경">캠핑장 전경</option>
+                            <option value="기타">기타</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-dark">촬영 날짜</label>
+                        <input type="date" name="shootingDate" class="form-control py-3 shadow-none border-secondary border-opacity-25 bg-light bg-opacity-50 rounded-3" required>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <label class="form-label small fw-bold text-dark mb-3">이미지 업로드</label>
+                    
+                    <input type="file" id="imageInput" name="images" multiple accept="image/*" style="display:none">
+                    
+                    <div id="dropZone" class="gallery-upload-zone shadow-sm mb-4 rounded-4" style="cursor: pointer; transition: all 0.3s ease; border: 2px dashed #dee2e6; padding: 40px; text-align: center;">
+                        <div class="mx-auto bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; margin: 0 auto;">
+                            <span class="material-symbols-outlined text-primary fs-2">cloud_upload</span>
+                        </div>
+                        <h3 class="h6 fw-bold text-dark mb-1">클릭하거나 사진을 드래그하세요</h3>
+                        <p class="text-secondary small">최대 10MB 이하의 이미지를 등록할 수 있습니다.</p>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="material-symbols-outlined text-primary fs-5">visibility</span>
+                        <h4 class="small fw-bold text-dark m-0">실시간 프리뷰</h4>
+                    </div>
+                    
+                    <div id="previewGrid" class="d-flex flex-wrap gap-3 p-3 bg-light rounded-4 min-vh-10" style="min-height: 150px; border: 1px inset rgba(0,0,0,0.05);">
+                        <div class="d-flex align-items-center justify-content-center w-100 text-secondary opacity-50 flex-column gap-2" id="emptyPreviewMsg">
+                            <span class="material-symbols-outlined fs-1">add_photo_alternate</span>
+                            <p class="small m-0">선택된 이미지가 없습니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-dark mb-2">상세 설명</label>
+                    <textarea name="content" class="form-control bg-light bg-opacity-50 rounded-3 p-3 border-secondary border-opacity-25 shadow-none" rows="6" placeholder="사진에 대한 이야기나 설명을 자유롭게 작성해주세요..." required></textarea>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <button type="button" onclick="history.back()" class="btn btn-light px-4 py-2.5 fw-bold text-secondary border border-secondary border-opacity-10 bg-white rounded-3">취소</button>
+                    <button type="button" id="btnGallerySave" class="btn btn-primary px-4 py-2.5 fw-bold shadow-md border-0 rounded-3">게시하기</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- jQuery 추가 확인 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        const dropZone = document.getElementById('dropZone');
+        const imageInput = document.getElementById('imageInput');
+        const previewGrid = document.getElementById('previewGrid');
+        const emptyMsg = document.getElementById('emptyPreviewMsg');
+        let selectedFiles = [];
+
+        // 게시하기 버튼 클릭 시 최종 검증
+        $('#btnGallerySave').on('click', function() {
+            // 카테고리 검증
+            if ($('#categorySelect').val() === "") {
+                alert('카테고리를 반드시 선택해주세요!');
+                $('#categorySelect').focus();
+                return;
+            }
+
+            // 이미지 검증
+            if (selectedFiles.length === 0) {
+                alert('최소 하나 이상의 이미지를 업로드해야 합니다.');
+                return;
+            }
+
+            // 폼 제출
+            $('#gallerySaveForm').submit();
+        });
+
+        if (dropZone) {
+            dropZone.addEventListener('click', () => imageInput.click());
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.style.backgroundColor = 'rgba(13, 110, 253, 0.05)';
+                dropZone.style.borderColor = '#0d6efd';
+            });
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.style.backgroundColor = '';
+                dropZone.style.borderColor = '#dee2e6';
+            });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.style.backgroundColor = '';
+                dropZone.style.borderColor = '#dee2e6';
+                const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+                handleFiles(files);
+            });
+        }
+
+        if (imageInput) {
+            imageInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                handleFiles(files);
+            });
+        }
+
+        // 프리뷰 메시지 토글 함수
+        function toggleEmptyMsg() {
+            if (selectedFiles.length > 0) {
+                $(emptyMsg).addClass('d-none').removeClass('d-flex');
+            } else {
+                $(emptyMsg).removeClass('d-none').addClass('d-flex');
+            }
+        }
+
+        function handleFiles(files) {
+            files.forEach(file => {
+                selectedFiles.push(file);
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'position-relative animate__animated animate__fadeIn';
+                    previewItem.style.width = '120px';
+                    previewItem.style.height = '120px';
+                    previewItem.innerHTML = `
+                        <img src="${e.target.result}" class="w-100 h-100 object-fit-cover rounded-3 border shadow-sm">
+                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-0 d-flex align-items-center justify-content-center" 
+                                style="width: 24px; height: 24px; border-radius: 50%; font-size: 16px; transform: translate(30%, -30%); border: 2px solid white;" 
+                                onclick="removeFile(this, '${file.name}')">×</button>
+                    `;
+                    previewGrid.appendChild(previewItem);
+                };
+                reader.readAsDataURL(file);
+            });
+            updateInputFiles();
+            toggleEmptyMsg();
+        }
+
+        window.removeFile = function(btn, fileName) {
+            btn.parentElement.remove();
+            selectedFiles = selectedFiles.filter(f => f.name !== fileName);
+            updateInputFiles();
+            toggleEmptyMsg();
+        };
+
+        function updateInputFiles() {
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            imageInput.files = dataTransfer.files;
+        }
+    });
+</script>
+
+{{> layout/admin-footer}}

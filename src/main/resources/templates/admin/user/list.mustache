@@ -27,83 +27,41 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- USR-001 -->
-                <tr onclick="location.href='/admin/users/{id}'" class="cursor-pointer">
-                    <td class="px-4 py-4 text-secondary small fw-bold">USR-001</td>
-                    <td class="px-4 py-4 fw-bold text-dark">김철수</td>
-                    <td class="px-4 py-4 small">chulsoo@email.com</td>
-                    <td class="px-4 py-4 small">010-1234-5678</td>
-                    <td class="px-4 py-4 text-center fw-bold">12</td>
-                    <td class="px-4 py-4"><span class="tier-badge tier-silver">Silver</span></td>
-                    <td class="px-4 py-4"><span class="text-success small fw-bold d-flex align-items-center"><span class="status-dot status-active"></span>Active</span></td>
+                {{#userPage.content}}
+                <tr onclick="location.href='/admin/users/{{id}}'" class="cursor-pointer">
+                    <td class="px-4 py-4 text-secondary small fw-bold">USR-{{id}}</td>
+                    <td class="px-4 py-4 fw-bold text-dark">{{name}} ({{username}})</td>
+                    <td class="px-4 py-4 small">{{email}}</td>
+                    <td class="px-4 py-4 small">{{phone}}</td>
+                    <td class="px-4 py-4 text-center fw-bold">-</td>
+                    <td class="px-4 py-4"><span class="tier-badge tier-silver">{{role}}</span></td>
+                    <td class="px-4 py-4"><span class="text-success small fw-bold d-flex align-items-center"><span class="status-dot status-active"></span>{{status}}</span></td>
                     <td class="px-4 py-4 text-end">
                         <div class="d-flex justify-content-end gap-2">
                             <button class="btn btn-sm btn-light p-1.5 border-0"><span class="material-symbols-outlined fs-5">edit</span></button>
-                            <button class="btn btn-sm btn-light p-1.5 border-0"><span class="material-symbols-outlined fs-5 text-danger opacity-75">block</span></button>
                         </div>
                     </td>
                 </tr>
-                <!-- USR-002 -->
-                <tr onclick="location.href='/admin/users/{id}'" class="cursor-pointer">
-                    <td class="px-4 py-4 text-secondary small fw-bold">USR-002</td>
-                    <td class="px-4 py-4 fw-bold text-dark">이영희</td>
-                    <td class="px-4 py-4 small">younghee@email.com</td>
-                    <td class="px-4 py-4 small">010-2345-6789</td>
-                    <td class="px-4 py-4 text-center fw-bold">5</td>
-                    <td class="px-4 py-4"><span class="tier-badge tier-bronze">Bronze</span></td>
-                    <td class="px-4 py-4"><span class="text-success small fw-bold d-flex align-items-center"><span class="status-dot status-active"></span>Active</span></td>
-                    <td class="px-4 py-4 text-end">
-                        <div class="d-flex justify-content-end gap-2">
-                            <button class="btn btn-sm btn-light p-1.5 border-0"><span class="material-symbols-outlined fs-5">edit</span></button>
-                            <button class="btn btn-sm btn-light p-1.5 border-0"><span class="material-symbols-outlined fs-5 text-danger opacity-75">block</span></button>
-                        </div>
-                    </td>
-                </tr>
-                <!-- USR-003 -->
-                <tr onclick="location.href='/admin/users/{id}'" class="cursor-pointer">
-                    <td class="px-4 py-4 text-secondary small fw-bold">USR-003</td>
-                    <td class="px-4 py-4 fw-bold text-dark">박민수</td>
-                    <td class="px-4 py-4 small">minsoo@email.com</td>
-                    <td class="px-4 py-4 small">010-3456-7890</td>
-                    <td class="px-4 py-4 text-center fw-bold">0</td>
-                    <td class="px-4 py-4"><span class="tier-badge tier-bronze">Bronze</span></td>
-                    <td class="px-4 py-4"><span class="text-danger small fw-bold d-flex align-items-center"><span class="status-dot status-banned"></span>Banned</span></td>
-                    <td class="px-4 py-4 text-end">
-                        <div class="d-flex justify-content-end gap-2">
-                            <button class="btn btn-sm btn-light p-1.5 border-0"><span class="material-symbols-outlined fs-5">edit</span></button>
-                            <button class="btn btn-sm btn-success p-1 border-0"><span class="material-symbols-outlined fs-5 text-white">check_circle</span></button>
-                        </div>
-                    </td>
-                </tr>
-                <!-- USR-005 -->
-                <tr onclick="location.href='/admin/users/{id}'" class="cursor-pointer">
-                    <td class="px-4 py-4 text-secondary small fw-bold">USR-005</td>
-                    <td class="px-4 py-4 fw-bold text-dark">정다은</td>
-                    <td class="px-4 py-4 small">daeun@email.com</td>
-                    <td class="px-4 py-4 small">010-5678-9012</td>
-                    <td class="px-4 py-4 text-center fw-bold">21</td>
-                    <td class="px-4 py-4"><span class="tier-badge tier-gold">Gold</span></td>
-                    <td class="px-4 py-4"><span class="text-success small fw-bold d-flex align-items-center"><span class="status-dot status-active"></span>Active</span></td>
-                    <td class="px-4 py-4 text-end">
-                        <div class="d-flex justify-content-end gap-2">
-                            <button class="btn btn-sm btn-light p-1.5 border-0"><span class="material-symbols-outlined fs-5">edit</span></button>
-                            <button class="btn btn-sm btn-light p-1.5 border-0"><span class="material-symbols-outlined fs-5 text-danger opacity-75">block</span></button>
-                        </div>
-                    </td>
-                </tr>
+                {{/userPage.content}}
             </tbody>
         </table>
 
         <!-- Pagination -->
         <div class="p-4 bg-light bg-opacity-50 d-flex justify-content-between align-items-center border-top">
-            <p class="text-secondary small m-0 fw-medium">총 54명 중 1-5 표시</p>
+            <p class="text-secondary small m-0 fw-medium">전체 회원 수: {{userPage.totalElements}}명</p>
             <nav>
                 <ul class="pagination pagination-sm m-0 gap-1">
-                    <li class="page-item disabled"><a class="page-link border-0 rounded-2 text-secondary bg-transparent" href="#"><span class="material-symbols-outlined fs-6">chevron_left</span></a></li>
-                    <li class="page-item active"><a class="page-link border-0 rounded-2 bg-primary text-white fw-bold" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link border-0 rounded-2 text-dark fw-bold" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link border-0 rounded-2 text-dark fw-bold" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link border-0 rounded-2 text-secondary bg-transparent" href="#"><span class="material-symbols-outlined fs-6">chevron_right</span></a></li>
+                    <li class="page-item {{#userPage.first}}disabled{{/userPage.first}}">
+                        <a class="page-link border-0 rounded-2 text-secondary bg-transparent" href="?page={{userPage.number}}&page={{#userPage.number}}-1{{/userPage.number}}">
+                            <span class="material-symbols-outlined fs-6">chevron_left</span>
+                        </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link border-0 rounded-2 bg-primary text-white fw-bold" href="#">{{userPage.number}}</a></li>
+                    <li class="page-item {{#userPage.last}}disabled{{/userPage.last}}">
+                        <a class="page-link border-0 rounded-2 text-secondary bg-transparent" href="?page={{userPage.number}}&page={{#userPage.number}}+1{{/userPage.number}}">
+                            <span class="material-symbols-outlined fs-6">chevron_right</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>

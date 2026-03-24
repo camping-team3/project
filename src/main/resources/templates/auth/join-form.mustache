@@ -1,69 +1,154 @@
 {{> layout/header}}
-    <div class="signup-wrapper">
-        <!-- Brand Side (Hidden on Mobile) -->
-        <div class="signup-brand-side d-none d-lg-flex">
-            <h1 class="display-3 fw-black mb-3">Forest Haven</h1>
-            <p class="fs-4 fw-medium opacity-90 max-w-md leading-relaxed">자연 속에서 누리는 완벽한 휴식, 포레스트 헤이븐과 함께 당신만의 캠핑 여정을 계획하세요.</p>
-        </div>
-
-        <!-- Form Side -->
-        <div class="signup-form-side">
-            <div class="signup-form-container">
-                <div class="text-center text-lg-start mb-5">
-                    <div class="navbar-brand d-lg-none justify-content-center mb-4">
-                        <div class="brand-icon shadow-sm"><span class="material-symbols-outlined">forest</span></div>
-                        <h2 class="brand-name">Forest Haven</h2>
+    <div class="login-wrapper p-4">
+        <div class="login-container shadow-2xl border-0 overflow-hidden">
+            <div class="row g-0 min-h-600">
+                <!-- Brand Side (비율 6:6으로 확대) -->
+                <div class="col-md-6 d-none d-md-flex login-brand-side p-5 flex-column justify-content-between">
+                    <div class="navbar-brand mb-5">
+                        <div class="brand-icon bg-white text-primary shadow-sm">
+                            <span class="material-symbols-outlined fs-4">forest</span>
+                        </div>
+                        <h2 class="brand-name text-white">Forest Haven</h2>
                     </div>
-                    <h2 class="display-6 fw-black text-dark mb-2">회원가입</h2>
-                    <p class="text-secondary fw-medium">새로운 캠핑 여정을 시작하세요</p>
+                    <div class="mt-auto">
+                        <h1 class="display-5 fw-black text-white mb-4">새로운 캠핑<br>여정의 시작</h1>
+                        <p class="text-white opacity-75 fs-5">포레스트 헤이븐의 멤버가 되어 특별한 혜택을 누려보세요.</p>
+                    </div>
                 </div>
 
-                <form>
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold text-secondary">이름</label>
-                        <input type="text" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="성함을 입력하세요">
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold text-secondary">이메일 주소</label>
-                        <input type="email" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="email@example.com">
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold text-secondary">휴대폰 번호</label>
-                        <input type="tel" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="010-0000-0000">
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold text-secondary">비밀번호</label>
-                        <div class="position-relative">
-                            <input type="password" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="비밀번호를 입력하세요">
-                            <span class="material-symbols-outlined password-toggle">visibility</span>
+                <!-- Form Side (비율 6:6, 내부 스크롤 제거) -->
+                <div class="col-md-6 p-4 p-lg-5 bg-white">
+                    <!-- Mobile Logo -->
+                    <div class="d-md-none mb-4 text-primary">
+                        <div class="navbar-brand">
+                            <div class="brand-icon shadow-sm"><span class="material-symbols-outlined">forest</span></div>
+                            <h2 class="brand-name">Forest Haven</h2>
                         </div>
                     </div>
+
                     <div class="mb-5">
-                        <label class="form-label small fw-bold text-secondary">비밀번호 확인</label>
-                        <div class="position-relative">
-                            <input type="password" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="비밀번호를 다시 입력하세요">
-                            <span class="material-symbols-outlined password-toggle">visibility</span>
-                        </div>
+                        <h2 class="h3 fw-bold text-dark mb-2">회원가입</h2>
+                        <p class="text-secondary small fw-medium">포레스트 헤이븐 계정을 생성하세요.</p>
                     </div>
 
-                    <div class="d-flex flex-column gap-3 mb-5">
-                        <div class="form-check">
-                            <input class="form-check-input shadow-none" type="checkbox" id="terms1">
-                            <label class="form-check-label small text-secondary fw-medium" for="terms1">서비스 이용약관 동의 (필수)</label>
+                    <form action="/join" method="post" id="joinForm" onsubmit="return validateForm()">
+                        <!-- 이름 & 휴대폰 -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-6">
+                                <label class="form-label small fw-bold text-secondary">이름</label>
+                                <input type="text" name="name" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="성함 입력" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label small fw-bold text-secondary">휴대폰 번호</label>
+                                <input type="tel" name="phone" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="010-0000-0000" required>
+                            </div>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input shadow-none" type="checkbox" id="terms2">
-                            <label class="form-check-label small text-secondary fw-medium" for="terms2">개인정보 수집 및 이용 동의 (필수)</label>
+
+                        <!-- 아이디 -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-secondary">아이디</label>
+                            <div class="d-flex gap-2">
+                                <input type="text" id="username" name="username" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="아이디 입력" required oninput="resetUsernameCheck()">
+                                <button type="button" id="btn-check-username" class="btn btn-light border border-secondary border-opacity-25 px-4 fw-medium text-secondary text-nowrap rounded-3" onclick="checkUsername()">중복 확인</button>
+                            </div>
+                            <div id="username-message" class="small mt-2 d-none"></div>
+                            <input type="hidden" id="isUsernameChecked" value="false">
                         </div>
+
+                        <!-- 이메일 -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-secondary">이메일 주소</label>
+                            <input type="email" name="email" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="email@example.com" required>
+                        </div>
+
+                        <!-- 비밀번호 & 확인 -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-6">
+                                <label class="form-label small fw-bold text-secondary">비밀번호</label>
+                                <input type="password" id="password" name="password" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="비밀번호" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label small fw-bold text-secondary">비밀번호 확인</label>
+                                <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control py-3 shadow-none border-secondary border-opacity-25" placeholder="재입력" required>
+                            </div>
+                        </div>
+
+                        <!-- 약관 동의 영역 -->
+                        <div class="bg-light p-4 rounded-3 mb-5 border border-secondary border-opacity-10">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input shadow-none" type="checkbox" id="terms1" required>
+                                <label class="form-check-label small text-secondary fw-medium" for="terms1">서비스 이용약관 동의 (필수)</label>
+                            </div>
+                            <div class="form-check mb-0">
+                                <input class="form-check-input shadow-none" type="checkbox" id="terms2" required>
+                                <label class="form-check-label small text-secondary fw-medium" for="terms2">개인정보 수집 및 이용 동의 (필수)</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-md border-0 mb-4 rounded-3">회원가입 완료</button>
+                    </form>
+
+                    <div class="text-center">
+                        <p class="small text-secondary mb-0">이미 계정이 있으신가요? <a href="/login-form" class="text-primary fw-bold text-decoration-none hover-underline ms-1">로그인하기</a></p>
                     </div>
-
-                    <button type="submit" class="btn btn-primary w-100 py-3.5 fw-bold shadow-md border-0 mb-4 rounded-3">회원가입 완료</button>
-                </form>
-
-                <div class="text-center">
-                    <p class="small text-secondary">이미 계정이 있으신가요? <a href="/login-form" class="text-primary fw-bold text-decoration-none hover-underline ms-1">로그인하기</a></p>
                 </div>
             </div>
         </div>
     </div>
+
+<script>
+    function resetUsernameCheck() {
+        document.getElementById('isUsernameChecked').value = 'false';
+        const msgDiv = document.getElementById('username-message');
+        msgDiv.className = 'small mt-2 d-none';
+    }
+
+    async function checkUsername() {
+        const username = document.getElementById('username').value.trim();
+        const msgDiv = document.getElementById('username-message');
+        const checkInput = document.getElementById('isUsernameChecked');
+
+        if (!username) {
+            msgDiv.textContent = '아이디를 입력해주세요.';
+            msgDiv.className = 'small mt-2 text-danger fw-bold';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/users/check-username?username=' + encodeURIComponent(username));
+            const result = await response.json();
+
+            if (response.ok) {
+                msgDiv.textContent = result.msg || result.body || '사용 가능한 아이디입니다.';
+                msgDiv.className = 'small mt-2 text-success fw-bold';
+                checkInput.value = 'true';
+            } else {
+                msgDiv.textContent = result.msg || '이미 존재하는 아이디입니다.';
+                msgDiv.className = 'small mt-2 text-danger fw-bold';
+                checkInput.value = 'false';
+            }
+        } catch (error) {
+            alert('서버와 통신 중 오류가 발생했습니다.');
+        }
+    }
+
+    function validateForm() {
+        const isChecked = document.getElementById('isUsernameChecked').value;
+        if (isChecked === 'false') {
+            alert('아이디 중복 확인을 진행해주세요.');
+            document.getElementById('username').focus();
+            return false;
+        }
+
+        const pwd = document.getElementById('password').value;
+        const pwdConfirm = document.getElementById('passwordConfirm').value;
+        if (pwd !== pwdConfirm) {
+            alert('비밀번호가 일치하지 않습니다.');
+            document.getElementById('passwordConfirm').focus();
+            return false;
+        }
+
+        return true;
+    }
+</script>
 {{> layout/footer}}

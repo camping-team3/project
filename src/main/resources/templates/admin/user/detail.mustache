@@ -16,8 +16,8 @@
 
             <div class="flex-grow-1 text-center text-lg-start">
                 <div class="mb-4">
-                    <h2 class="display-6 fw-black text-dark mb-1">김철수</h2>
-                    <p class="text-secondary fw-medium m-0">chulsoo.kim@example.com</p>
+                    <h2 class="display-6 fw-black text-dark mb-1">{{user.name}}</h2>
+                    <p class="text-secondary fw-medium m-0">{{user.email}} ({{user.username}})</p>
                 </div>
 
                 <div class="row g-4 justify-content-center justify-content-lg-start">
@@ -25,26 +25,17 @@
                         <div class="d-flex align-items-center gap-2">
                             <span class="material-symbols-outlined text-primary fs-5">calendar_today</span>
                             <div class="text-start">
-                                <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider m-0">가입일</p>
-                                <p class="small fw-bold text-dark m-0">2023.10.15</p>
+                                <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider m-0">아이디</p>
+                                <p class="small fw-bold text-dark m-0">{{user.username}}</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-auto px-lg-4 border-lg-start border-lg-end">
                         <div class="d-flex align-items-center gap-2">
-                            <span class="material-symbols-outlined text-primary fs-5">database</span>
+                            <span class="material-symbols-outlined text-primary fs-5">badge</span>
                             <div class="text-start">
-                                <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider m-0">누적 포인트</p>
-                                <p class="small fw-bold text-dark m-0">12,450 P</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="material-symbols-outlined text-primary fs-5">shopping_bag</span>
-                            <div class="text-start">
-                                <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider m-0">총 예약 횟수</p>
-                                <p class="small fw-bold text-dark m-0">8회</p>
+                                <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider m-0">현재 권한</p>
+                                <p class="small fw-bold text-dark m-0">{{user.role}}</p>
                             </div>
                         </div>
                     </div>
@@ -52,8 +43,13 @@
             </div>
 
             <div class="d-flex flex-column gap-2 w-100 w-lg-auto">
-                <button class="btn btn-primary px-4 py-2.5 fw-bold rounded-3 shadow-sm border-0">사용자 수정</button>
-                <button class="btn btn-light px-4 py-2.5 fw-bold rounded-3 border bg-white">비밀번호 초기화</button>
+                <form action="/admin/users/{{user.id}}/update-role" method="post" class="d-flex flex-column gap-2">
+                    <select name="role" class="form-select fw-bold shadow-sm">
+                        <option value="USER">일반 사용자(USER)</option>
+                        <option value="ADMIN">관리자(ADMIN)</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary px-4 py-2.5 fw-bold rounded-3 shadow-sm border-0">권한 변경 적용</button>
+                </form>
             </div>
         </div>
     </div>
@@ -64,38 +60,11 @@
             <!-- Tabs -->
             <div class="detail-tab-nav mb-5 px-2">
                 <div class="detail-tab-item active">최근 예약 내역</div>
-                <div class="detail-tab-item">작성한 리뷰</div>
-                <div class="detail-tab-item">Q&A 문의</div>
             </div>
 
             <!-- Reservation Table -->
-            <div class="fh-card border-0 shadow-sm bg-white overflow-hidden mb-5">
-                <div class="table-responsive">
-                    <table class="fh-table m-0">
-                        <thead class="bg-light bg-opacity-50">
-                            <tr>
-                                <th class="px-4 py-3 text-xxs fw-bold text-secondary uppercase">예약번호</th>
-                                <th class="px-4 py-3 text-xxs fw-bold text-secondary uppercase">상품 정보</th>
-                                <th class="px-4 py-3 text-xxs fw-bold text-secondary uppercase">이용 날짜</th>
-                                <th class="px-4 py-3 text-xxs fw-bold text-secondary uppercase">상태</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="px-4 py-4 small fw-bold">#ORD-99821</td>
-                                <td class="px-4 py-4 small">A-1 데크 (1박)</td>
-                                <td class="px-4 py-4 small text-secondary">2023.12.25</td>
-                                <td class="px-4 py-4"><span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1 rounded">예약 완료</span></td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-4 small fw-bold">#ORD-99750</td>
-                                <td class="px-4 py-4 small">B-2 글램핑 (2박)</td>
-                                <td class="px-4 py-4 small text-secondary">2023.11.10</td>
-                                <td class="px-4 py-4"><span class="badge bg-secondary bg-opacity-10 text-secondary fw-bold px-2 py-1 rounded">이용 완료</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="fh-card border-0 shadow-sm bg-white overflow-hidden mb-5 p-5 text-center text-secondary">
+                준비 중인 기능입니다 (예약 연동 예정)
             </div>
         </div>
 
@@ -104,15 +73,11 @@
             <div class="d-flex flex-column gap-3">
                 <div class="sub-info-card">
                     <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider mb-2">연락처</p>
-                    <p class="small fw-bold text-dark m-0">010-1234-5678</p>
+                    <p class="small fw-bold text-dark m-0">{{user.phone}}</p>
                 </div>
                 <div class="sub-info-card">
-                    <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider mb-2">마지막 로그인</p>
-                    <p class="small fw-bold text-dark m-0">2023.10.27 14:30</p>
-                </div>
-                <div class="sub-info-card bg-danger bg-opacity-5 border-danger border-opacity-10">
-                    <p class="text-xxs fw-bold text-danger text-uppercase tracking-wider mb-2">관리자 메모</p>
-                    <p class="small fw-medium text-dark m-0 leading-relaxed">블랙리스트 주의 대상 (취소 빈번)</p>
+                    <p class="text-xxs fw-bold text-secondary text-uppercase tracking-wider mb-2">이메일</p>
+                    <p class="small fw-bold text-dark m-0">{{user.email}}</p>
                 </div>
             </div>
         </div>

@@ -1,10 +1,10 @@
 package com.camping.erp.global.auth;
 
-import org.jspecify.annotations.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.camping.erp.domain.user.User;
+import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.global.handler.ex.Exception401;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,10 +18,14 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
 
+        String uri = request.getRequestURI();
         HttpSession session = request.getSession();
-        User sessionUser = (User) session.getAttribute("sessionUser");
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+
+        System.out.println("[DEBUG] LoginInterceptor - URI: " + uri);
 
         if (sessionUser == null) {
+            System.out.println("[DEBUG] LoginInterceptor - Session NULL, Blocking URI: " + uri);
             throw new Exception401("인증되지 않았습니다");
         }
 

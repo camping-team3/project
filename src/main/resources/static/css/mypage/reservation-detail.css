@@ -1,0 +1,40 @@
+/* 마이페이지 예약 상세 스타일 */
+.fh-card {
+    background: white;
+    border-radius: var(--fh-radius);
+    border: 1px solid var(--fh-border);
+    transition: all 0.3s ease;
+}
+
+.badge {
+    border-radius: 0.5rem;
+    font-weight: 600;
+}
+
+.btn {
+    border-radius: 0.75rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background-color: var(--fh-primary);
+    border-color: var(--fh-primary);
+}
+
+.btn-primary:hover {
+    background-color: #23471e;
+    border-color: #23471e;
+    box-shadow: 0 4px 12px rgba(44, 89, 38, 0.2);
+}
+
+.border-primary {
+    border-color: var(--fh-primary) !important;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}

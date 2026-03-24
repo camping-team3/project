@@ -2,6 +2,7 @@ package com.camping.erp.global.auth;
 
 import com.camping.erp.domain.user.User;
 import com.camping.erp.domain.user.UserRepository;
+import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.global.handler.ex.Exception500;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +27,12 @@ public class DevAutoLoginInterceptor implements HandlerInterceptor {
         if (session.getAttribute("sessionUser") == null) {
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new Exception500("Dev auto-login 실패: '" + username + "' 유저가 없습니다. data.sql을 확인하세요."));
-            session.setAttribute("sessionUser", user);
+            
+            UserResponse.LoginDTO sessionUser = UserResponse.LoginDTO.builder()
+                    .user(user)
+                    .build();
+            
+            session.setAttribute("sessionUser", sessionUser);
         }
 
         return true;

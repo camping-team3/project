@@ -11,8 +11,8 @@
                                     <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuArVyFD1kByWmCBF0Rz4ccl-L4vIMovS-krTT4u-KVYHhX2hMPUkaQzOLuSXFNkjKwDG0hbQZ7gaRgh8ytv6BK6xFB6ClZmg6H-wq586rl1mmMaOrnlkhWvj-w0KNrgyc3qLGo11qHIdPwOfdKeuTDw6OltxRnbG17NoLNHNk1YZI1Li_g3-PSh5baMbRafh3KgP2jo5_izMzuKYzAJm9zDtUrAJHJSePSvnmDcctJdXnbujZtx4x7j3Nub2X0XNELdrx0zZBwepMns" alt="Profile">
                                 </div>
                                 <div class="profile-info">
-                                    <h3>김철수 님</h3>
-                                    <p>Forest Member</p>
+                                    <h3>{{user.name}} 님</h3>
+                                    <p>{{user.role}} Member</p>
                                 </div>
                             </div>
                         </div>
@@ -21,7 +21,7 @@
                                 <span class="material-symbols-outlined">home</span>
                                 <span>홈</span>
                             </a>
-                            <a href="#" class="nav-item">
+                            <a href="/mypage/info" class="nav-item">
                                 <span class="material-symbols-outlined">person</span>
                                 <span>회원 정보</span>
                             </a>
@@ -42,12 +42,12 @@
                     <!-- Welcome Section -->
                     <section class="mb-5">
                         <h1 class="display-6 fw-bold text-dark">마이 페이지</h1>
-                        <p class="text-secondary fw-medium">포레스트 헤이븐에 오신 것을 환영합니다. 김철수 님의 휴식 일정을 관리해보세요.</p>
+                        <p class="text-secondary fw-medium">포레스트 헤이븐에 오신 것을 환영합니다. {{user.name}} 님의 휴식 일정을 관리해보세요.</p>
                     </section>
 
                     <!-- Summary Cards -->
                     <section class="row g-3 mb-5">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="fh-card p-4 shadow-sm">
                                 <span class="text-primary small fw-semibold text-uppercase">진행 중인 예약</span>
                                 <div class="d-flex align-items-baseline justify-content-between mt-2">
@@ -58,7 +58,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="fh-card p-4 shadow-sm">
                                 <span class="text-primary small fw-semibold text-uppercase">작성 가능한 리뷰</span>
                                 <div class="d-flex align-items-baseline justify-content-between mt-2">
@@ -69,21 +69,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="fh-card p-4 shadow-sm">
-                                <span class="text-primary small fw-semibold text-uppercase">나의 포인트</span>
-                                <div class="d-flex align-items-baseline justify-content-between mt-2">
-                                    <span class="fs-2 fw-bold">4,500<span class="fs-6 fw-normal text-secondary ms-1">P</span></span>
-                                    <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary">
-                                        <span class="material-symbols-outlined">payments</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </section>
 
                     <!-- Recent Reservation -->
-                    <section class="mb-5">
+                    <section class="mb-0">
                         <div class="d-flex align-items-center justify-content-between mb-3 px-2">
                             <h2 class="h5 fw-bold mb-0">최근 예약 내역</h2>
                             <a class="small fw-bold text-primary text-decoration-none" href="/mypage/reservations">전체 보기</a>
@@ -114,25 +103,10 @@
                                         </div>
                                     </div>
                                     <div class="d-flex gap-2">
-                                        <button class="btn btn-primary flex-grow-1">예약 상세 보기</button>
-                                        <button class="btn btn-outline-primary flex-grow-1">길찾기</button>
+                                        <a href="/mypage/reservations" class="btn btn-primary flex-grow-1 text-center">예약 상세 보기</a>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </section>
-
-                    <!-- Quick Actions -->
-                    <section class="border border-2 border-dashed border-primary border-opacity-25 rounded-3 p-4 bg-primary bg-opacity-10">
-                        <div class="d-flex flex-column flex-md-row align-items-center gap-4 text-center text-md-start">
-                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white flex-shrink-0" style="width: 4rem; height: 4rem;">
-                                <span class="material-symbols-outlined fs-2">loyalty</span>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h3 class="h6 fw-bold text-primary">특별한 캠핑 경험을 만들어보세요</h3>
-                                <p class="text-secondary small mb-0">포레스트 헤이븐 회원님만을 위한 로열티 프로그램을 확인해보세요. 방문 횟수에 따라 특별한 혜택이 제공됩니다.</p>
-                            </div>
-                            <button class="btn btn-primary px-4 py-2 shadow-sm text-nowrap">프로그램 알아보기</button>
                         </div>
                     </section>
                 </main>
