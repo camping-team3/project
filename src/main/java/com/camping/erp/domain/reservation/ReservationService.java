@@ -768,4 +768,79 @@ public class ReservationService {
                                                 .build())
                                 .build();
         }
+
+        /**
+         * [추가] 마이페이지 홈 화면을 위한 데이터 조회
+         */
+        public com.camping.erp.domain.user.UserResponse.MypageHomeDTO getMypageHomeData(Long userId) {
+                // 1. 진행 중인 예약 건수 조회
+                List<ReservationStatus> activeStatuses = List.of(
+                                ReservationStatus.PENDING,
+                                ReservationStatus.CONFIRMED,
+                                ReservationStatus.CHANGE_REQ,
+                                ReservationStatus.CANCEL_REQ);
+                long activeCount = reservationRepository.countByUserIdAndStatusIn(userId, activeStatuses);
+
+                // 2. 최근 예약 목록 조회 (진행중 전체 + 1개월 내 이용완료/취소완료)
+                List<ReservationStatus> pastStatuses = List.of(
+                                ReservationStatus.COMPLETED,
+                                ReservationStatus.CANCEL_COMP);
+                java.time.LocalDateTime since = java.time.LocalDateTime.now().minusMonths(1);
+
+                List<Reservation> recentEntities = reservationRepository.findRecentMypageReservations(
+                                userId, activeStatuses, pastStatuses, since);
+
+                // 3. AdminResponse.ReservationListDTO로 변환 (UI 재사용을 위함)
+                List<AdminResponse.ReservationListDTO> dtoList = recentEntities.stream()
+                                .map(r -> {
+                                        long nights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
+                                        String statusText = "";
+                                        String statusClass = "";
+
+                                        switch (r.getStatus()) {
+                                                case PENDING -> {
+                                                        statusText = "대기 중";
+                                                        statusClass = "warning";
+                                                }
+                                                case CONFIRMED -> {
+                                                        statusText = "확정됨";
+                                                        statusClass = "success";
+                                                }
+                                                case CHANGE_REQ -> {
+                                                        statusText = "변경 요청";
+                                                        statusClass = "info";
+                                                }
+                                                case CANCEL_REQ -> {
+                                                        statusText = "취소 요청";
+                                                        statusClass = "info";
+                                                }
+                                                case COMPLETED -> {
+                                                        statusText = "이용 완료";
+                                                        statusClass = "primary";
+                                                }
+                                                case CANCEL_COMP -> {
+                                                        statusText = "취소 완료";
+                                                        statusClass = "secondary";
+                                                }
+                                        }
+
+                                        return AdminResponse.ReservationListDTO.builder()
+                                                        .id(r.getId())
+                                                        .username(r.getUser().getName())
+                                                        .siteName(r.getSite().getSiteName())
+                                                        .checkIn(r.getCheckIn())
+                                                        .checkOut(r.getCheckOut())
+                                                        .nights(nights)
+                                                        .totalPrice(r.getTotalPrice())
+                                                        .status(r.getStatus())
+                                                        .statusText(statusText)
+                                                        .statusClass(statusClass)
+                                                        .build();
+                                }).toList();
+
+                return com.camping.erp.domain.user.UserResponse.MypageHomeDTO.builder()
+                                .activeReservationCount(activeCount)
+                                .recentReservations(dtoList)
+                                .build();
+        }
 }
