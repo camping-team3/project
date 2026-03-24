@@ -125,10 +125,11 @@ INSERT INTO comment_tb (id, qna_id, admin_id, content, created_at) VALUES
 -- ==========================================================
 -- 8. 리뷰 (review_tb)
 -- ==========================================================
-INSERT INTO review_tb (id, reservation_id, user_id, rating, content, view_count, is_best, is_active, parent_id, created_at) VALUES 
-(1, 1, 2, 5, '너무 깨끗하고 좋았습니다. 다음에 또 오고 싶어요!', 0, FALSE, FALSE, NULL, NOW()),
-(2, 3, 2, 4, '공기가 맑아서 힐링되었습니다.', 0, FALSE, FALSE, NULL, NOW()),
-(3, 4, 3, 1, '시설이 조금 아쉽네요.', 5, FALSE, FALSE, NULL, NOW());
+-- 필드: id, reservation_id, user_id, rating, content, ai_danger_score, is_reviewed, is_deleted, admin_reason, created_at
+INSERT INTO review_tb (id, reservation_id, user_id, rating, content, ai_danger_score, is_reviewed, is_deleted, admin_reason, created_at) VALUES 
+(1, 1, 2, 5, '너무 깨끗하고 좋았습니다. 다음에 또 오고 싶어요!', 0, false, false, NULL, NOW()),
+(2, 3, 2, 4, '공기가 맑아서 힐링되었습니다.', 0, false, false, NULL, NOW()),
+(3, 4, 3, 1, '시설이 조금 아쉽네요.', 5, false, false, NULL, NOW());
 
 -- ==========================================================
 -- 9. 갤러리 및 이미지 (gallery_tb, image_tb)
