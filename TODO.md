@@ -12,3 +12,8 @@
   - [x] `reservation-change-done.mustache` 디자인을 `reservation-cancel-done.mustache` 스타일로 변경
   - [x] 정보 그리드(4:8 비율) 및 카드 레이아웃 적용
   - [x] 안내 배너 및 버튼 그룹 스타일 일관성 확보
+
+- [x] **Task 2: 예약 목록 상세 보기 버튼 제거**
+  - [x] `reservations.mustache` 내 중복 기능을 수행하는 '상세 보기' 버튼 삭제
+  - [x] 카드 클릭(`onclick`) 기능으로의 일원화 확인
+  - [x] 디자인 보존 원칙 준수 (기존 레이아웃 유지)
