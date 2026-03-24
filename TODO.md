@@ -23,3 +23,8 @@
   - [x] 변경 요청 폼(`form`) 내부에 패딩(`p-4`) 추가
   - [x] 체크인/체크아웃/인원 선택 필드를 한 줄(`col-md-4` x 3)로 배치
 
+- [x] **Task 4: 예약 취소 페이지 UI 레이아웃 통일**
+  - [x] `reservation-cancel.mustache` 디자인을 `reservation-change.mustache` 스타일로 개편
+  - [x] 상단 기존 정보 섹션 (이미지 포함 가로형) 적용
+  - [x] 하단 폼 섹션 및 안내 배너 스타일 통일
+
