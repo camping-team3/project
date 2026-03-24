@@ -12,10 +12,10 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
     Page<Qna> findAllWithUser(Pageable pageable);
 
     @Query("select q from Qna q join fetch q.user where q.isAnswered = :isAnswered")
-    Page<Qna> findByIsAnsweredWithUser(Boolean isAnswered, Pageable pageable);
+    Page<Qna> findByIsAnsweredWithUser(@org.springframework.data.repository.query.Param("isAnswered") Boolean isAnswered, Pageable pageable);
 
     @Query("select q from Qna q join fetch q.user left join fetch q.comments c left join fetch c.admin where q.id = :id")
-    Optional<Qna> findByIdWithUserAndComments(Long id);
+    Optional<Qna> findByIdWithUserAndComments(@org.springframework.data.repository.query.Param("id") Long id);
 
     @Query("select count(q) from Qna q where q.isAnswered = false")
     Long countUnanswered();

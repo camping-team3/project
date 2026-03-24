@@ -45,13 +45,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         // 모든 인증이 필요한 경로
         registry.addInterceptor(new LoginInterceptor())
-                .addPathPatterns("/mypage/**", "/reservations/**", "/admin/**", "/boards/**", "/replies/**", "/qna/new",
+                .addPathPatterns("/mypage/**", "/reservations/**", "/admin", "/admin/**", "/boards/**", "/replies/**", "/qna/new",
                         "/reviews/new")
                 .excludePathPatterns("/boards/[0-9]+", "/h2-console/**"); // 상세 조회 및 H2 콘솔 제외
 
         // 관리자 전용 경로
         registry.addInterceptor(new AdminInterceptor())
-                .addPathPatterns("/admin/**")
+                .addPathPatterns("/admin", "/admin/**")
                 .excludePathPatterns("/h2-console/**");
     }
 
