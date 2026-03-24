@@ -14,6 +14,7 @@ public class ReservationRequest {
         private LocalDate checkOut;
         private Integer peopleCount;
         private Long zoneId;
+        private Long currentReservationId; // 예약 변경 시 본인 점유 제외용
     }
 
     @Getter

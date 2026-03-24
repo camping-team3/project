@@ -4,6 +4,7 @@ import com.camping.erp.domain.admin.AdminRequest;
 import com.camping.erp.domain.admin.AdminResponse;
 import com.camping.erp.domain.reservation.enums.RequestStatus;
 import com.camping.erp.domain.reservation.enums.ReservationStatus;
+import com.camping.erp.domain.reservation.enums.SettlementType;
 import com.camping.erp.domain.review.Review;
 import com.camping.erp.domain.review.ReviewRepository;
 import com.camping.erp.domain.site.Site;
@@ -18,6 +19,8 @@ import com.camping.erp.global.handler.ex.Exception401;
 import com.camping.erp.global.handler.ex.Exception403;
 import com.camping.erp.global.handler.ex.Exception404;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -54,7 +58,8 @@ public class ReservationService {
                                 ReservationStatus.CANCEL_REQ);
 
                 List<Site> availableSites = reservationRepository.findAvailableSites(
-                                checkIn, checkOut, activeStatuses, searchDTO.getZoneId(), searchDTO.getPeopleCount());
+                                checkIn, checkOut, activeStatuses, searchDTO.getZoneId(), searchDTO.getPeopleCount(),
+                                searchDTO.getCurrentReservationId());
 
                 return availableSites.stream()
                                 .map(site -> new SiteResponse.ResevationAvailableListDTO(site))
@@ -370,8 +375,11 @@ public class ReservationService {
                                 .orElseThrow(() -> new Exception404("변경 요청 내역을 찾을 수 없습니다."));
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+                long amount = Math.abs(latest.getNewTotalPrice() - latest.getReservation().getTotalPrice());
+                SettlementType type = latest.getSettlementType();
 
                 return ReservationResponse.ChangeDoneDTO.builder()
+                                .requestId(latest.getId())
                                 .reservationId(reservationId)
                                 .newSiteName(latest.getNewSite().getSiteName())
                                 .newZoneName(latest.getNewSite().getZone().getName())
@@ -379,6 +387,12 @@ public class ReservationService {
                                 .newCheckOut(latest.getNewCheckOut().format(formatter))
                                 .newPeopleCount(latest.getNewPeopleCount())
                                 .requestDate(latest.getCreatedAt().format(formatter))
+                                .settlementType(type.name())
+                                .amount(amount)
+                                .newTotalPrice(latest.getNewTotalPrice())
+                                .isAdditionalPay(type == SettlementType.ADDITIONAL_PAY)
+                                .isPartialRefund(type == SettlementType.PARTIAL_REFUND)
+                                .isNone(type == SettlementType.NONE)
                                 .build();
         }
 
@@ -410,29 +424,55 @@ public class ReservationService {
                 Site newSite = siteRepository.findById(dto.getNewSiteId())
                                 .orElseThrow(() -> new Exception404("변경하려는 사이트를 찾을 수 없습니다."));
 
-                // 4. 중복 예약 최종 체크 (가예약 Lock 로직 포함됨)
+                // 4. 중복 예약 최종 체크 (자신의 예약 ID 제외)
                 List<ReservationStatus> activeStatuses = List.of(
                                 ReservationStatus.PENDING,
                                 ReservationStatus.CONFIRMED,
                                 ReservationStatus.CHANGE_REQ,
                                 ReservationStatus.CANCEL_REQ);
-                boolean isExist = reservationRepository.existsBySiteIdAndDateRange(
-                                newSite.getId(), dto.getNewCheckIn(), dto.getNewCheckOut(), activeStatuses);
+                boolean isExist = reservationRepository.existsBySiteIdAndDateRangeExcludingSelf(
+                                newSite.getId(), reservation.getId(), dto.getNewCheckIn(), dto.getNewCheckOut(), activeStatuses);
 
                 if (isExist) {
                         throw new Exception400("해당 기간은 이미 예약되었거나 변경 요청 중인 자리입니다.");
                 }
 
-                // 5. 원본 예약 상태 변경 (CONFIRMED -> CHANGE_REQ)
+                // 5. 정산 정보 계산 (엔티티 필수값 누락 방지)
+                long nights = ChronoUnit.DAYS.between(dto.getNewCheckIn(), dto.getNewCheckOut());
+                long dailyPrice = newSite.getZone().getNormalPrice();
+                int extraPeople = Math.max(0, dto.getNewPeopleCount() - newSite.getZone().getBasePeople());
+                long totalExtraFee = (long) extraPeople * newSite.getZone().getExtraPersonFee() * nights;
+                long newTotalPrice = (nights * dailyPrice) + totalExtraFee;
+
+                long originalPrice = reservation.getTotalPrice();
+                SettlementType settlementType = (newTotalPrice > originalPrice) ? SettlementType.ADDITIONAL_PAY
+                                : (newTotalPrice < originalPrice) ? SettlementType.PARTIAL_REFUND
+                                                : SettlementType.NONE;
+
+                // 디버깅을 위한 상세 로그 출력
+                System.out.println("========== [Reservation Change Calculation] ==========");
+                System.out.println("Reservation ID: " + reservation.getId());
+                System.out.println("New Period: " + dto.getNewCheckIn() + " ~ " + dto.getNewCheckOut() + " (" + nights + " nights)");
+                System.out.println("New Site: " + newSite.getSiteName() + " (Daily: " + dailyPrice + ")");
+                System.out.println("Extra People: " + extraPeople + " (Fee: " + totalExtraFee + ")");
+                System.out.println("Old Total Price: " + originalPrice);
+                System.out.println("New Total Price: " + newTotalPrice);
+                System.out.println("Calculated SettlementType: " + settlementType);
+                System.out.println("======================================================");
+
+                // 6. 원본 예약 상태 변경 (CONFIRMED -> CHANGE_REQ)
                 reservation.updateStatus(ReservationStatus.CHANGE_REQ);
 
-                // 6. 변경 요청 기록 생성 및 저장
+                // 7. 변경 요청 기록 생성 및 저장
                 ReservationChangeRequest changeRequest = ReservationChangeRequest.builder()
                                 .reservation(reservation)
                                 .newCheckIn(dto.getNewCheckIn())
                                 .newCheckOut(dto.getNewCheckOut())
                                 .newSite(newSite)
                                 .newPeopleCount(dto.getNewPeopleCount())
+                                .oldTotalPrice(reservation.getTotalPrice()) // 기준금액 보존
+                                .newTotalPrice(newTotalPrice)
+                                .settlementType(settlementType)
                                 .status(com.camping.erp.domain.reservation.enums.RequestStatus.PENDING)
                                 .build();
 
@@ -657,7 +697,15 @@ public class ReservationService {
                                         .findFirst()
                                         .orElseThrow(() -> new Exception404("진행 중인 변경 요청이 없습니다."));
 
-                        // 1. 예약 정보 업데이트 (새로운 사이트, 일정, 인원 반영)
+                        // 1. 차액이 발생하는 경우(부분 환불) 환불 예정 금액 계산 및 저장
+                        if (req.getSettlementType() == SettlementType.PARTIAL_REFUND) {
+                                long diffAmount = r.getTotalPrice() - req.getNewTotalPrice();
+                                long daysUntilCheckIn = ChronoUnit.DAYS.between(LocalDate.now(), r.getCheckIn());
+                                long refundAmount = (daysUntilCheckIn >= 7) ? diffAmount : (daysUntilCheckIn >= 3) ? diffAmount / 2 : 0;
+                                // TODO: 필요 시 req 엔티티에 refundAmount 필드 추가 고려 (현재는 로직상 처리)
+                        }
+
+                        // 2. 예약 정보 업데이트 (새로운 사이트, 일정, 인원 반영)
                         r.updateReservationInfo(
                                         req.getNewCheckIn(),
                                         req.getNewCheckOut(),
@@ -665,8 +713,9 @@ public class ReservationService {
                                         req.getNewPeopleCount(),
                                         r.getVisitorName(),
                                         r.getVisitorPhone(),
-                                        r.getTotalPrice());
-                        // 2. 요청 상태 및 예약 상태 확정
+                                        req.getNewTotalPrice());
+                        
+                        // 3. 요청 상태 및 예약 상태 확정
                         req.approve();
                         r.updateStatus(ReservationStatus.CONFIRMED);
 
@@ -677,7 +726,14 @@ public class ReservationService {
                                         .findFirst()
                                         .orElseThrow(() -> new Exception404("진행 중인 취소 요청이 없습니다."));
 
-                        // 1. 요청 승인 및 예약 상태를 '취소 완료'로 변경
+                        // 1. 최종 환불 금액 계산 및 기록 (위약금 규정 적용)
+                        long daysUntilCheckIn = ChronoUnit.DAYS.between(LocalDate.now(), r.getCheckIn());
+                        long refundAmount = (daysUntilCheckIn >= 7) ? r.getTotalPrice() : (daysUntilCheckIn >= 3) ? r.getTotalPrice() / 2 : 0;
+                        
+                        // req 엔티티 수정 로직 (필요 시 필드 업데이트 메서드 추가)
+                        // 여기서는 간단히 approve만 우선 처리하고 실제 환불 시 재계산하도록 설계됨
+
+                        // 2. 요청 승인 및 예약 상태를 '취소 완료'로 변경
                         req.approve();
                         r.updateStatus(ReservationStatus.CANCEL_COMP);
                 }
@@ -712,5 +768,94 @@ public class ReservationService {
 
                 // 공통: 예약 상태를 다시 '확정' 상태로 복원
                 r.updateStatus(ReservationStatus.CONFIRMED);
+        }
+
+        /**
+         * 예약 변경 요청 건에 대한 차액 계산 및 정산 타입 결정
+         */
+        @Transactional
+        public void calculateChangeDifference(Long requestId) {
+                ReservationChangeRequest request = reservationChangeRequestRepository.findById(requestId)
+                                .orElseThrow(() -> new Exception404("변경 요청 정보를 찾을 수 없습니다."));
+
+                Reservation reservation = request.getReservation();
+                Site newSite = request.getNewSite();
+                Zone zone = newSite.getZone();
+
+                // 1. 새로운 조건에 따른 총액 계산
+                long nights = ChronoUnit.DAYS.between(request.getNewCheckIn(), request.getNewCheckOut());
+                long dailyPrice = zone.getNormalPrice(); // 우선 일반 요금 적용
+
+                // 인원수 추가 요금 계산
+                int extraPeople = Math.max(0, request.getNewPeopleCount() - zone.getBasePeople());
+                long totalExtraFee = (long) extraPeople * zone.getExtraPersonFee() * nights;
+
+                long newTotalPrice = (nights * dailyPrice) + totalExtraFee;
+
+                // 2. 기존 금액과 비교하여 정산 타입 결정
+                long originalPrice = reservation.getTotalPrice();
+                SettlementType settlementType;
+
+                if (newTotalPrice > originalPrice) {
+                        settlementType = SettlementType.ADDITIONAL_PAY;
+                } else if (newTotalPrice < originalPrice) {
+                        settlementType = SettlementType.PARTIAL_REFUND;
+                } else {
+                        settlementType = SettlementType.NONE;
+                }
+
+                // 3. 변경 요청 엔티티 업데이트
+                request.updateSettlement(newTotalPrice, settlementType);
+        }
+
+        /**
+         * 예약 변경 결제를 위한 데이터 조회
+         */
+        public ReservationResponse.ChangePaymentDTO getChangePaymentData(Long requestId) {
+                ReservationChangeRequest request = reservationChangeRequestRepository.findById(requestId)
+                                .orElseThrow(() -> new Exception404("변경 요청 정보를 찾을 수 없습니다."));
+
+                Reservation reservation = request.getReservation();
+                long amount = request.getNewTotalPrice() - reservation.getTotalPrice();
+
+                if (amount <= 0) {
+                        throw new Exception400("추가 결제가 필요한 예약 변경 건이 아닙니다.");
+                }
+
+                return ReservationResponse.ChangePaymentDTO.builder()
+                                .requestId(requestId)
+                                .merchantUid("change_" + requestId + "_" + System.currentTimeMillis())
+                                .amount(amount)
+                                .siteName(request.getNewSite().getSiteName())
+                                .visitorName(reservation.getVisitorName())
+                                .visitorPhone(reservation.getVisitorPhone())
+                                .build();
+        }
+
+        /**
+         * 예약 변경 추가 결제 성공 후 최종 확정 처리
+         */
+        @Transactional
+        public void confirmChange(Long requestId, String impUid) {
+                ReservationChangeRequest request = reservationChangeRequestRepository.findById(requestId)
+                                .orElseThrow(() -> new Exception404("변경 요청 정보를 찾을 수 없습니다."));
+
+                Reservation reservation = request.getReservation();
+
+                // 1. 예약 정보 최종 업데이트
+                reservation.updateReservationInfo(
+                                request.getNewCheckIn(),
+                                request.getNewCheckOut(),
+                                request.getNewSite(),
+                                request.getNewPeopleCount(),
+                                reservation.getVisitorName(),
+                                reservation.getVisitorPhone(),
+                                request.getNewTotalPrice());
+
+                // 2. 요청 상태 변경 (APPROVED) 및 예약 상태 복구 (CONFIRMED)
+                request.approve();
+                reservation.updateStatus(ReservationStatus.CONFIRMED);
+
+                // TODO: 결제 이력(Payment) 연동 로직 추가 (추가 결제건 기록)
         }
 }

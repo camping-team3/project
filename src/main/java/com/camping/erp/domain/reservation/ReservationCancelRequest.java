@@ -45,10 +45,21 @@ public class ReservationCancelRequest extends BaseTimeEntity {
     @Column(nullable = false)
     private RequestStatus status;
 
+    // 환불 완료 여부 추가
+    @Column(nullable = false)
+    private boolean isRefunded = false;
+
     // 관리자 거절 사유
     private String rejectionReason;
 
     // --- 비즈니스 로직 (캡슐화) ---
+
+    /**
+     * 환불 완료 처리
+     */
+    public void markAsRefunded() {
+        this.isRefunded = true;
+    }
 
     /**
      * 관리자 승인 처리
