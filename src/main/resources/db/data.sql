@@ -78,8 +78,7 @@ INSERT INTO reservation_tb (id, user_id, site_id, check_in, check_out, total_pri
 (17, 9, 6, '2026-07-25', '2026-07-27', 240000, 2, '신동엽', '010-1012-1012', 'CONFIRMED', NOW()),
 (18, 10, 1, '2026-08-01', '2026-08-03', 160000, 4, '이수근', '010-1013-1013', 'CONFIRMED', NOW()),
 (19, 11, 2, '2026-08-05', '2026-08-07', 100000, 2, '은지원', '010-1014-1014', 'PENDING', NOW()),
-(20, 12, 3, '2026-08-10', '2026-08-12', 100000, 2, '김종민', '010-1015-1015', 'CONFIRMED', NOW()),
-(21, 4, 1, '2026-03-15', '2026-03-17', 100000, 2, '강사랑', '010-4444-4444', 'COMPLETED', NOW());
+(20, 12, 3, '2026-08-10', '2026-08-12', 100000, 2, '김종민', '010-1015-1015', 'CONFIRMED', NOW());
 
 -- ==========================================================
 -- 6. 결제 및 환불 정보
@@ -139,8 +138,7 @@ INSERT INTO comment_tb (id, qna_id, admin_id, content, created_at) VALUES
 INSERT INTO review_tb (id, user_id, reservation_id, rating, content, ai_danger_score, is_reviewed, is_deleted, admin_reason, created_at) VALUES 
 (1, 2, 1, 5, '정말 좋았습니다. 다음에도 꼭 오고 싶어요!', 0, FALSE, FALSE, NULL, NOW()),
 (2, 3, 2, 4, '조용하고 공기가 좋아서 힐링되었습니다.', 0, FALSE, FALSE, NULL, NOW()),
-(3, 4, 21, 1, '사장님 진짜 불친절하네요. 개새끼들 다시는 안옴ㅡㅡ', 5, FALSE, FALSE, NULL, NOW());
-
+(3, 4, 3, 1, '사장님 진짜 불친절하네요. 개새끼들 다시는 안옴ㅡㅡ', 5, FALSE, FALSE, NULL, NOW());
 
 -- ==========================================================
 -- 10. 갤러리 (gallery_tb) - 데이터 확장 (총 12개)
@@ -186,31 +184,24 @@ INSERT INTO image_tb (id, gallery_id, review_id, notice_id, zone_id, site_id, fi
 -- 12. 예약 변경 및 취소 요청 테스트 데이터 (Task 4-2 검증용)
 -- ==========================================================
 
--- [12-1] 예약 변경 요청 건 추가 (ID를 21에서 23으로 변경하여 중복 해결)
+-- [12-1] 예약 변경 요청 건 추가 (ID: 21)
+-- 기존: 홍길동(ID: 3), A-1 사이트(ID: 1), 2026-09-01 ~ 09-03
 INSERT INTO reservation_tb (id, user_id, site_id, check_in, check_out, total_price, people_count, visitor_name, visitor_phone, status, created_at) VALUES 
-(23, 3, 1, '2026-09-01', '2026-09-03', 100000, 2, '홍길동', '010-3333-3333', 'CHANGE_REQ', NOW());
+(21, 3, 1, '2026-09-01', '2026-09-03', 100000, 2, '홍길동', '010-3333-3333', 'CHANGE_REQ', NOW());
 
--- 변경 요청 상세 (ID: 1) - 신규 컬럼(old_total_price, new_total_price, settlement_type, status, is_refunded) 반영
-INSERT INTO reservation_change_request (id, reservation_id, new_check_in, new_check_out, new_site_id, new_people_count, old_total_price, new_total_price, settlement_type, status, is_refunded, created_at) VALUES 
-(1, 23, '2026-09-05', '2026-09-07', 3, 4, 100000, 120000, 'ADDITIONAL_PAY', 'PENDING', FALSE, NOW());
-
+-- 변경 요청 상세 (ID: 1)
+-- 새 정보: A-3 사이트(ID: 3), 2026-09-05 ~ 09-07, 4명
+INSERT INTO reservation_change_request (id, reservation_id, new_check_in, new_check_out, new_site_id, new_people_count, status, created_at) VALUES 
+(1, 21, '2026-09-05', '2026-09-07', 3, 4, 'PENDING', NOW());
 
 
 -- [12-2] 예약 취소 요청 건 추가 (ID: 22)
+-- 기존: 강사랑(ID: 4), B-1 사이트(ID: 4), 2026-09-10 ~ 09-12
 INSERT INTO reservation_tb (id, user_id, site_id, check_in, check_out, total_price, people_count, visitor_name, visitor_phone, status, created_at) VALUES 
 (22, 4, 4, '2026-09-10', '2026-09-12', 300000, 2, '강사랑', '010-4444-4444', 'CANCEL_REQ', NOW());
 
--- 취소 요청 상세 (ID: 1) - 신규 컬럼(is_refunded) 반영
-INSERT INTO reservation_cancel_request (id, reservation_id, reason, refund_amount, refund_bank, refund_account, refund_account_holder, status, is_refunded, created_at) VALUES 
-(1, 22, '갑작스러운 출장 일정으로 취소 요청합니다.', 150000, '신한은행', '110-123-456789', '강사랑', 'PENDING', FALSE, NOW());
-
-
--- [12-3] 환불 테스트용 미래 예약 추가 (ID: 24)
--- 유저: ssar(ID: 2), 사이트: A-1(ID: 1), 일정: 2026-03-29 ~ 03-31
-INSERT INTO reservation_tb (id, user_id, site_id, check_in, check_out, total_price, people_count, visitor_name, visitor_phone, status, created_at) VALUES 
-(24, 2, 1, '2026-03-29', '2026-03-31', 100000, 2, '박한별', '010-2222-2222', 'CONFIRMED', NOW());
-
--- 결제 내역 (환불을 위해 필수)
-INSERT INTO payment_tb (id, reservation_id, imp_uid, merchant_uid, amount, status, pay_date, created_at) VALUES 
-(5, 24, 'imp_555555', 'ORD-20260324-024', 100000, 'PAID', '2026-03-24', NOW());
+-- 취소 요청 상세 (ID: 1)
+-- 사유: 갑작스러운 출장 일정으로 취소 요청합니다.
+INSERT INTO reservation_cancel_request (id, reservation_id, reason, refund_bank, refund_account, refund_account_holder, status, created_at) VALUES 
+(1, 22, '갑작스러운 출장 일정으로 취소 요청합니다.', '신한은행', '110-123-456789', '강사랑', 'PENDING', NOW());
 

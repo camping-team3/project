@@ -82,7 +82,7 @@ public class UserController {
         return "mypage/home";
     }
 
-// 마이페이지 회원 정보 조회
+    // 마이페이지 회원 정보 조회
     @GetMapping("/mypage/info")
     public String info(Model model, HttpSession session) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");

@@ -10,8 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Controller
 @RequiredArgsConstructor
 public class QnaController {
@@ -56,15 +54,18 @@ public class QnaController {
     }
 
     @GetMapping("/qna/{id}")
-    public String detail(@PathVariable Long id, Model model) {
+    public String detail(@PathVariable("id") Long id, Model model) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         QnaResponse.DetailDTO qna = qnaService.findById(id, sessionUser);
+        
         model.addAttribute("qna", qna);
+        // sessionUser는 세션에서 자동으로 모델에 노출되므로 명시적 추가 제외 (충돌 방지)
+        
         return "qna/detail";
     }
 
     @GetMapping("/qna/{id}/edit-form")
-    public String editForm(@PathVariable Long id, Model model) {
+    public String editForm(@PathVariable("id") Long id, Model model) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         QnaResponse.DetailDTO qna = qnaService.findById(id, sessionUser);
         
@@ -78,7 +79,7 @@ public class QnaController {
     }
 
     @PostMapping("/qna/{id}/update")
-    public String update(@PathVariable Long id, QnaRequest.UpdateDTO requestDTO) {
+    public String update(@PathVariable("id") Long id, QnaRequest.UpdateDTO requestDTO) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         qnaService.update(id, requestDTO, sessionUser);
         return "redirect:/qna";
@@ -86,7 +87,7 @@ public class QnaController {
 
     @PostMapping("/qna/{id}/delete")
     @ResponseBody
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable("id") Long id) {
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         qnaService.delete(id, sessionUser);
         
