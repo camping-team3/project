@@ -53,7 +53,7 @@
                     <div class="p-4 d-flex flex-column flex-sm-row gap-4 align-items-center align-items-sm-start">
                         <img src="{{reservation.siteImage}}" alt="Reservation Preview" class="reservation-preview-img shadow-sm">
                         <div class="flex-grow-1">
-                            <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-2 mb-2">예약 완료</span>
+                            <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-2 mb-2">RESERV-{{reservation.id}}</span>
                             <h4 class="h4 fw-bold mb-3">{{reservation.siteName}} ({{reservation.zoneName}})</h4>
                             <div class="d-flex flex-column gap-2 text-secondary small">
                                 <div class="d-flex align-items-center gap-2">
@@ -72,29 +72,26 @@
 
             <!-- Change Request Form -->
             <section>
-                <form action="/mypage/reservations/{{reservation.id}}/change-request" method="POST" id="changeRequestForm" class="fh-card shadow-sm">
+                <form action="/mypage/reservations/{{reservation.id}}/change-request" method="POST" id="changeRequestForm" class="fh-card shadow-sm p-4">
                     <input type="hidden" name="reservationId" value="{{reservation.id}}">
                     <input type="hidden" name="newSiteId" id="newSiteId" value=""> <!-- AJAX로 선택 시 값 주입 -->
 
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-6">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
                             <label class="form-label fw-bold text-dark small mb-2">변경 희망 체크인</label>
                             <div class="form-icon-wrapper">
                                 <span class="material-symbols-outlined">calendar_month</span>
                                 <input type="date" name="newCheckIn" id="newCheckIn" class="form-control py-2.5 shadow-none border-secondary border-opacity-25" value="{{reservation.checkIn}}">
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label fw-bold text-dark small mb-2">변경 희망 체크아웃</label>
                             <div class="form-icon-wrapper">
                                 <span class="material-symbols-outlined">calendar_month</span>
                                 <input type="date" name="newCheckOut" id="newCheckOut" class="form-control py-2.5 shadow-none border-secondary border-opacity-25" value="{{reservation.checkOut}}">
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-12">
+                        <div class="col-md-4">
                             <label class="form-label fw-bold text-dark small mb-2">변경 희망 인원</label>
                             <div class="form-icon-wrapper">
                                 <span class="material-symbols-outlined">groups</span>
