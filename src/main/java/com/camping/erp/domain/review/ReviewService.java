@@ -38,7 +38,6 @@ public class ReviewService {
     private final SiteRepository siteRepository;
     private final ZoneRepository zoneRepository;
     private final FileUtil fileUtil;
-    private final AiAnalysisService aiAnalysisService;
 
     // 관리자용 리뷰 목록 조회 (페이징)
     public AdminResponse.ReviewPageDTO findAllForAdmin(Pageable pageable) {
@@ -124,7 +123,6 @@ public class ReviewService {
         return reviewRepository.findAll();
     }
 
-    // 마이페이지용 내 리뷰 조회
     public List<ReviewResponse.ListDTO> findByUserId(Long userId) {
         return reviewRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
                 .map(ReviewResponse.ListDTO::new)
@@ -137,7 +135,11 @@ public class ReviewService {
     }
 
     @Transactional
-    public void update(Long reviewId, User user, ReviewRequest.UpdateDTO req) {
+    public Review update(Long reviewId, User user, ReviewRequest.UpdateDTO req) {
+        if (com.camping.erp.global.util.ProfanityFilter.containsProfanity(req.getContent())) {
+            throw new Exception400("비속어가 포함된 내용은 수정할 수 없습니다.");
+        }
+
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));
 
@@ -145,40 +147,28 @@ public class ReviewService {
             throw new Exception400("본인의 리뷰만 수정할 수 있습니다.");
         }
 
-        // 평점 업데이트 (차이만큼 가감)
         Site site = review.getReservation().getSite();
         Zone zone = site.getZone();
-        
-        // 기존 점수 제거 후 새 점수 추가
         site.removeRating(review.getRating());
         zone.removeRating(review.getRating());
         site.addRating(req.getRating());
         zone.addRating(req.getRating());
-
-        // 내용 수정
         review.update(req.getRating(), req.getContent());
 
-        // 이미지 업데이트 (이미지가 있는 경우 기존 것 삭제 후 새로 등록)
         if (req.getImages() != null && !req.getImages().isEmpty() && !req.getImages().get(0).isEmpty()) {
-            // 기존 이미지 물리적 삭제
             for (Image image : review.getImages()) {
                 fileUtil.deleteFile(image.getFileName());
                 imageRepository.delete(image);
             }
             review.getImages().clear();
-
-            // 새 이미지 저장
             for (MultipartFile file : req.getImages()) {
                 if (file.isEmpty()) continue;
                 String fileName = fileUtil.uploadFile(file);
-                Image image = Image.builder()
-                        .review(review)
-                        .filePath("/upload/" + fileName)
-                        .fileName(fileName)
-                        .build();
+                Image image = Image.builder().review(review).filePath("/upload/" + fileName).fileName(fileName).build();
                 imageRepository.save(image);
             }
         }
+        return review;
     }
 
     @Transactional
@@ -190,24 +180,24 @@ public class ReviewService {
             throw new Exception400("본인의 리뷰만 삭제할 수 있습니다.");
         }
 
-        // 평점 차감
         Site site = review.getReservation().getSite();
         Zone zone = site.getZone();
         site.removeRating(review.getRating());
         zone.removeRating(review.getRating());
 
-        // 이미지 물리적 삭제
         for (Image image : review.getImages()) {
             fileUtil.deleteFile(image.getFileName());
             imageRepository.delete(image);
         }
-
         reviewRepository.delete(review);
     }
 
     @Transactional
-    public void save(User user, ReviewRequest.SaveDTO req) {
-        // 1. 예약 검증
+    public Review save(User user, ReviewRequest.SaveDTO req) {
+        if (com.camping.erp.global.util.ProfanityFilter.containsProfanity(req.getContent())) {
+            throw new Exception400("비속어가 포함된 내용은 등록할 수 없습니다.");
+        }
+
         Reservation reservation = reservationRepository.findById(req.getReservationId())
                 .orElseThrow(() -> new Exception400("존재하지 않는 예약입니다."));
 
@@ -217,13 +207,10 @@ public class ReviewService {
         if (reservation.getStatus() != ReservationStatus.COMPLETED) {
             throw new Exception400("이용 완료된 예약만 리뷰를 작성할 수 있습니다.");
         }
-
-        // 2. 중복 검증
         if (reviewRepository.existsByReservationId(reservation.getId())) {
             throw new Exception400("이미 리뷰를 작성한 예약입니다.");
         }
 
-        // 3. 엔티티 생성 및 저장
         Review review = Review.builder()
                 .user(user)
                 .reservation(reservation)
@@ -232,72 +219,44 @@ public class ReviewService {
                 .build();
         reviewRepository.save(review);
 
-        // 4. Site & Zone 평점 반영 (일괄 재계산 방식 권장)
         recalculateAverageRating(reservation.getSite().getId(), reservation.getSite().getZone().getId());
 
-        // 5. 이미지 저장 (최대 5장)
         if (req.getImages() != null && !req.getImages().isEmpty()) {
-            if (req.getImages().size() > 5) {
-                throw new Exception400("이미지는 최대 5장까지 업로드 가능합니다.");
-            }
             for (MultipartFile file : req.getImages()) {
                 if (file.isEmpty()) continue;
                 String fileName = fileUtil.uploadFile(file);
-                Image image = Image.builder()
-                        .review(review)
-                        .filePath("/upload/" + fileName)
-                        .fileName(fileName)
-                        .build();
+                Image image = Image.builder().review(review).filePath("/upload/" + fileName).fileName(fileName).build();
                 imageRepository.save(image);
             }
         }
-
-        // 6. AI 비방 분석 (비동기 호출)
-        aiAnalysisService.analyzeReviewAsync(review.getId(), review.getContent());
+        return review;
     }
 
     @Transactional
     public void deleteByAdmin(Long reviewId, String reason) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));
-
-        // 2. 논리 삭제 처리
         review.processByAdmin(true, reason);
-
-        // 3. 작성자 페널티 부여
         review.getUser().increasePenalty();
-
-        // 4. 평점 재계산
         recalculateAverageRating(review.getReservation().getSite().getId(), review.getReservation().getSite().getZone().getId());
-        }
-
+    }
 
     @Transactional
     public void keepByAdmin(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));
-
-        // 1. 검토 완료 상태로만 변경 (isDeleted = false)
         review.processByAdmin(false, null);
-
-        // 2. 평점 재계산 (다시 평점에 포함됨)
         recalculateAverageRating(review.getReservation().getSite().getId(), review.getReservation().getSite().getZone().getId());
     }
 
     @Transactional
     public void recalculateAverageRating(Long siteId, Long zoneId) {
-        // Site 평점 재계산
         List<Review> siteReviews = reviewRepository.findActiveReviewsBySiteId(siteId);
-        int siteCount = siteReviews.size();
         double siteAvg = siteReviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
-        
-        siteRepository.findById(siteId).ifPresent(site -> site.updateRating(siteCount, siteAvg));
+        siteRepository.findById(siteId).ifPresent(site -> site.updateRating(siteReviews.size(), siteAvg));
 
-        // Zone 평점 재계산
         List<Review> zoneReviews = reviewRepository.findActiveReviewsByZoneId(zoneId);
-        int zoneCount = zoneReviews.size();
         double zoneAvg = zoneReviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
-        
-        zoneRepository.findById(zoneId).ifPresent(zone -> zone.updateRating(zoneCount, zoneAvg));
+        zoneRepository.findById(zoneId).ifPresent(zone -> zone.updateRating(zoneReviews.size(), zoneAvg));
     }
 }

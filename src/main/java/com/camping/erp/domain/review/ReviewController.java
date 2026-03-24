@@ -31,6 +31,7 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final ReservationRepository reservationRepository;
     private final UserService userService;
+    private final AiAnalysisService aiAnalysisService;
     private final HttpSession session;
 
     @GetMapping("/reviews")
@@ -86,7 +87,12 @@ public class ReviewController {
         }
 
         User user = userService.findById(sessionUser.getId());
-        reviewService.update(id, user, req);
+        Review updatedReview = reviewService.update(id, user, req);
+        
+        // [확인 사살] DB에서 방금 저장된 최신 데이터를 다시 한번 명시적으로 조회하여 AI 전달
+        Review latestReview = reviewService.findById(updatedReview.getId());
+        aiAnalysisService.analyzeReviewAsync(latestReview.getId(), latestReview.getContent());
+        
         return "redirect:/mypage/reviews";
     }
 
@@ -133,7 +139,12 @@ public class ReviewController {
         }
 
         User user = userService.findById(sessionUser.getId());
-        reviewService.save(user, req);
+        Review savedReview = reviewService.save(user, req);
+        
+        // [확인 사살] DB에서 방금 저장된 최신 데이터를 다시 한번 명시적으로 조회하여 AI 전달
+        Review latestReview = reviewService.findById(savedReview.getId());
+        aiAnalysisService.analyzeReviewAsync(latestReview.getId(), latestReview.getContent());
+        
         return "redirect:/mypage/reservations"; // 리뷰 등록 후 마이페이지 예약 내역으로
     }
 }

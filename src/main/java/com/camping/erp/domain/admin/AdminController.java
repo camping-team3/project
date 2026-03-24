@@ -100,8 +100,8 @@ public class AdminController {
     }
 
     @PostMapping("/admin/users/{userId}/expel")
-    public String expelUser(@PathVariable("userId") Long userId) {
-        userService.expelUser(userId);
+    public String expelUser(@PathVariable("userId") Long userId, @RequestParam(name = "reason", required = false) String reason) {
+        userService.expelUser(userId, reason);
         return "redirect:/admin/reviews";
     }
 

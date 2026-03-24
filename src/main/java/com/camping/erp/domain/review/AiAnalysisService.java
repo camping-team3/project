@@ -62,9 +62,15 @@ public class AiAnalysisService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        String prompt = "다음 리뷰 텍스트의 비방/욕설/공격성 수치를 1(매우 낮음)에서 5(매우 높음) 사이의 숫자로만 응답해줘. " +
-                "비속어가 조금이라도 섞여 있다면 반드시 5점이야. " +
-                "응답은 숫자 하나만 보내야 해. 텍스트: " + content;
+        // 프롬프트를 훨씬 엄격하고 구체적으로 수정
+        String prompt = "너는 캠핑장 커뮤니티의 악성 리뷰 감별사야. 다음 리뷰 내용을 분석해서 위험 점수를 1~5 사이의 숫자로만 답해.\\n" +
+                "점수 기준:\\n" +
+                "- 5점: 비속어, 욕설, 사장님에 대한 공격, '돈 아깝다', '다시는 안 온다', '망해라' 등의 명백한 서비스 비방 및 부정적 감정\\n" +
+                "- 4점: 반어법(비꼬기), 불친절에 대한 구체적 불만, 타인에게 방문하지 말라고 권고하는 내용\\n" +
+                "- 3점: 시설 결함에 대한 반복적 불만, 불쾌한 경험 토로\\n" +
+                "- 1점: 순수한 칭찬, 건전한 피드백, 감사 인사\\n\\n" +
+                "내용에 부정적인 감정(실망, 분노, 비난)이 조금이라도 담겨 있다면 절대 1점을 주지 마. 무조건 숫자 하나만 응답해.\\n" +
+                "리뷰 내용: " + content;
 
         Map<String, Object> body = Map.of(
             "contents", List.of(Map.of(
@@ -73,32 +79,36 @@ public class AiAnalysisService {
         );
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
-
-        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-            try {
+        
+        try {
+            ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 List candidates = (List) response.getBody().get("candidates");
                 Map candidate = (Map) candidates.get(0);
                 Map contentMap = (Map) candidate.get("content");
                 List parts = (List) contentMap.get("parts");
                 String textResponse = ((Map) parts.get(0)).get("text").toString().trim();
                 
-                // 숫자만 추출 (1-5 사이)
+                // [디버깅 로그] AI의 실제 답변을 서버 콘솔에 출력
+                log.info("[AI Raw Response] Review Content: '{}' -> AI Decision: '{}'", content, textResponse);
+                
                 String scoreStr = textResponse.replaceAll("[^1-5]", "");
-                return scoreStr.isEmpty() ? 1 : Integer.parseInt(scoreStr.substring(0, 1));
-            } catch (Exception e) {
-                log.error("[AI Analysis] Parsing error: {}", e.getMessage());
-                return 1;
+                return scoreStr.isEmpty() ? 3 : Integer.parseInt(scoreStr.substring(0, 1));
             }
+        } catch (Exception e) {
+            log.error("[AI Analysis] API Call Error: {}", e.getMessage());
+            return 3; // 에러 발생 시 '경계(3점)'로 표시하여 관리자가 보게 함
         }
         return 1;
     }
 
     private void updateReviewScore(Long reviewId, Integer score) {
+        log.info("[AI Analysis] Updating score for review ID: {} to {}", reviewId, score);
         reviewRepository.findById(reviewId).ifPresent(review -> {
             review.updateAiScore(score);
-            // JPA 변경 감지에 의해 자동 저장되지만 명시적으로 호출 가능
-            reviewRepository.save(review);
+            // 비동기 스레드이므로 즉시 DB에 반영되도록 flush 호출
+            reviewRepository.saveAndFlush(review);
+            log.info("[AI Analysis] Successfully updated DB for review ID: {}", reviewId);
         });
     }
 }

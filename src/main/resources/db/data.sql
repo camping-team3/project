@@ -136,9 +136,16 @@ INSERT INTO comment_tb (id, qna_id, admin_id, content, created_at) VALUES
 -- 9. 이용 후기 (review_tb) - 1예약 1리뷰 원칙 준수
 -- ==========================================================
 INSERT INTO review_tb (id, user_id, reservation_id, rating, content, ai_danger_score, is_reviewed, is_deleted, admin_reason, created_at) VALUES 
-(1, 2, 1, 5, '정말 좋았습니다. 다음에도 꼭 오고 싶어요!', 0, FALSE, FALSE, NULL, NOW()),
-(2, 3, 2, 4, '조용하고 공기가 좋아서 힐링되었습니다.', 0, FALSE, FALSE, NULL, NOW()),
-(3, 4, 3, 1, '사장님 진짜 불친절하네요. 개새끼들 다시는 안옴ㅡㅡ', 5, FALSE, FALSE, NULL, NOW());
+(2, 3, 2, 4, '조용하고 공기가 좋아서 힐링되었습니다.', 1, FALSE, FALSE, NULL, NOW()),
+(3, 4, 3, 1, '사장님 진짜 불친절하네요. 개새끼들 다시는 안옴ㅡㅡ', 5, FALSE, FALSE, NULL, NOW()),
+(4, 2, 18, 1, '사장님 참 대단하시네요. 텐트에서 물이 새는데 웃으면서 원래 그런 거라고 하시니 정말 존경스럽습니다. 장사 참 쉽게 하시네요?', 4, FALSE, FALSE, NULL, NOW()),
+(5, 3, 19, 1, '시설이 거의 쓰레기장 수준이네요. 이런 곳에서 돈 받고 사람을 재우다니 양심이 있으신 건지 모르겠습니다. 절대 가지 마세요.', 4, FALSE, FALSE, NULL, NOW()),
+(6, 4, 20, 1, '블로그 광고에 속았네요. 실제로는 엉망진창입니다. 여기 좋다고 하는 사람들은 다 알바인가 봐요? 기분만 잡치고 갑니다.', 3, FALSE, FALSE, NULL, NOW()),
+(7, 7, 6, 5, '가족들과 좋은 추억 만들고 갑니다. 시설이 아주 깨끗하고 관리가 잘 되어 있네요. 강력 추천합니다!', 1, FALSE, FALSE, NULL, NOW()),
+(8, 8, 7, 2, '풍경은 좋은데 화장실 청소 상태가 조금 아쉽네요. 다음에는 좀 더 신경 써주시면 좋겠습니다.', 2, FALSE, FALSE, NULL, NOW()),
+(9, 9, 17, 1, '와 진짜 여기 사람 대접 못 받는 곳이네요. 예약 취소하고 싶은데 돈 아까워서 억지로 참았습니다. 다신 안 와요.', 4, FALSE, FALSE, NULL, NOW()),
+(10, 10, 9, 3, '그냥 그래요. 딱히 나쁘지도 않지만 좋지도 않은? 근데 사장님이 손님을 좀 가려 받으시는 느낌이 드네요.', 3, FALSE, FALSE, NULL, NOW()),
+(11, 11, 11, 1, '최악 중의 최악. 별점 1점도 아깝네요. 망해버렸으면 좋겠습니다 진짜로.', 5, FALSE, FALSE, NULL, NOW());
 
 
 -- ==========================================================
@@ -164,11 +171,9 @@ INSERT INTO gallery_tb (id, title, category, shooting_date, content, view_count,
 -- ==========================================================
 INSERT INTO image_tb (id, gallery_id, review_id, notice_id, zone_id, site_id, file_path, file_name, created_at) VALUES 
 (1, null, null, null, 1, null, '/upload/', 'zone_a_main.jpg', NOW()),
-(2, null, 1, null, null, null, '/upload/', 'my_pic.jpg', NOW()),
 (3, 1, null, null, null, null, '/upload/', '4adc36ff-bbfc-4c3c-86d8-d5f6c60a63da_wesley-shen-2l2EslhTaOM-unsplash.jpg', NOW()),
 (4, 1, null, null, null, null, '/upload/', 'f52dd56a-3b53-473d-b4ea-63c8c085be2f_chris-lynch-jKj_ujtUe6Q-unsplash.jpg', NOW()),
 (5, 2, null, null, null, null, '/upload/', '1df7d7fc-2f49-4f29-a27b-71f68cbfb104_wesley-shen-2l2EslhTaOM-unsplash.jpg', NOW()),
-(6, null, 1, null, null, null, '/upload/', 'my_camping_pic.jpg', NOW()),
 (7, 3, null, null, null, null, '/upload/', '22918b6d-6245-41ac-b492-589b1623f6ef_wesley-shen-2l2EslhTaOM-unsplash.jpg', NOW()),
 (8, 3, null, null, null, null, '/upload/', '300d603c-5a5c-4ce1-96b5-2d3e3692b513_wesley-shen-2l2EslhTaOM-unsplash.jpg', NOW()),
 (9, 4, null, null, null, null, '/upload/', '33c9f42d-9b09-45d9-b6fb-220f3070148a_stills_by_suki-autumn-8356402_1280.jpg', NOW()),
