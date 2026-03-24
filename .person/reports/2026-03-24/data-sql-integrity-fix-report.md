@@ -1,41 +1,27 @@
-# 📋 데이터 정합성 오류 해결 보고서 (data.sql)
+# Report: 예약 데이터 정합성 수정 및 data.sql 구조 개선
 
-- **Date**: 2026-03-24
-- **Reporter**: Gemini CLI (G)
-- **Task**: `db/data.sql` 실행 중 발생한 NULL 제약 조건 위반 오류 해결
+**Date:** 2026-03-24
+**Reporter:** KimNaKim
+**Phase:** Phase 3.3 관리자 예약 관리 (Admin Side) - 준비 단계
 
----
+## 1. 작업 요약
+- 관리자 페이지에서 예약 변경/취소 요청이 조회되지 않는 문제를 해결하기 위해 `data.sql`의 데이터를 보충함.
+- `reservation_tb`의 상태값과 실제 상세 요청 테이블 간의 불일치를 해소함.
+- `data.sql` 내의 `INSERT` 구문들을 테이블별로 그룹화하여 가독성 및 유지보수성을 높임.
 
-## 🔍 문제 현황 및 원인 분석
+## 2. 상세 변경 사항
+### 데이터 보충 (Data Integrity)
+- **예약 취소 요청 추가**: `reservation_tb`에서 `CANCEL_REQ` 상태였으나 상세 내역이 없던 예약 ID 4번(이게스트)과 10번(김연아)의 데이터를 `reservation_cancel_request` 테이블에 추가함.
+- **연동 확인**: 이제 관리자 예약 목록 및 상세 페이지에서 해당 취소 요청 건들을 정상적으로 조회하고 승인/거절 처리를 테스트할 수 있음.
 
-### 1. 현상 (Issue)
-애플리케이션 기동 시 `db/data.sql` 스크립트 실행 단계에서 `BeanCreationException` 및 `JdbcSQLIntegrityConstraintViolationException`이 발생하며 실행이 중단되었습니다.
+### SQL 구조 정리 (Grouping)
+- **섹션화**: 흩어져 있던 `INSERT` 구문들을 10개의 주요 섹션으로 분리함.
+- **의존성 순서**: 외래 키(FK) 참조 오류를 방지하기 위해 부모 테이블(User, Zone, Site)을 먼저 배치하고 자식 테이블(Reservation, Payment, Request 등)을 나중에 배치함.
+- **한글 복구**: 인코딩 문제로 깨져 보이던 한글 주석과 데이터를 깨끗하게 복구함.
 
-### 2. 원인 (Root Cause)
-최근 예약 변경 및 취소 요청(`ReservationChangeRequest`, `ReservationCancelRequest`) 엔티티에 정산 및 환불 완료 여부를 위한 필수 컬럼들이 추가되었습니다.
-그러나 `src/main/resources/db/data.sql` 내의 테스트 데이터(Seed Data) INSERT 문에는 해당 컬럼값들이 누락되어 있어, H2 DB의 `NOT NULL` 제약 조건을 위반하게 되었습니다.
+## 3. 검증 결과
+- **정적 검증**: `reservation_tb`의 `status`가 `CHANGE_REQ`, `CANCEL_REQ`인 모든 레코드(ID 4, 10, 21, 22)에 대해 대응하는 요청 테이블의 데이터가 존재함을 확인함.
+- **가독성 확인**: 테이블별로 모아진 쿼리 덕분에 데이터 흐름을 한눈에 파악할 수 있게 됨.
 
----
-
-## 🛠️ 해결 조치 (Changes)
-
-### 1. `reservation_change_request` 테이블 데이터 수정
-- **누락 필드 추가**: `old_total_price`, `new_total_price`, `settlement_type`, `is_refunded`
-- **데이터 보정**: 원본 예약 정보를 기반으로 금액(100,000원)과 정산 타입(`NONE`)을 정확히 기입하였습니다.
-
-### 2. `reservation_cancel_request` 테이블 데이터 수정
-- **누락 필드 추가**: `refund_amount`, `is_refunded`
-- **데이터 보정**: 취소 요청 건에 대해 예상 환불 금액(300,000원)과 환불 상태(`FALSE`)를 기입하였습니다.
-
----
-
-## ✅ 검증 결과 (Validation)
-
-- [x] **엔티티 명세 일치**: `ReservationChangeRequest`, `ReservationCancelRequest` 엔티티의 `@Column(nullable = false)` 설정과 INSERT 문 컬럼 구조가 일치함을 확인했습니다.
-- [x] **Enum 값 검증**: `SettlementType`(`ADDITIONAL_PAY`, `PARTIAL_REFUND`, `NONE`) 및 `RequestStatus`(`PENDING`, `APPROVED`, `REJECTED`)의 문자열 값이 올바르게 입력되었습니다.
-- [x] **머지 충돌 확인**: 프로젝트 전체에 대해 Git 충돌 마커(`<<<<<<<`, `=======`, `>>>>>>>`)가 없음을 `grep_search`로 최종 확인했습니다.
-
----
-
-## 💡 한 줄 요약 및 비유
-**"새로운 신분증 양식에 '거주지' 항목이 추가되었는데, 기존 명부에는 그 칸이 비어 있어 수리가 거부되던 상황이었습니다. 비어 있던 칸들을 정확한 정보로 채워 넣어 다시 정상적으로 접수되도록 조치했습니다."**
+## 4. 비유로 설명하는 작업 내용
+이번 작업은 마치 **"장부에는 환불 요청이 왔다고 적혀 있는데, 실제 환불 신청서 양식이 서류함에 없던 상황"**을 해결한 것과 같습니다. 신청서가 없으니 관리자가 결재를 하고 싶어도 할 수가 없었죠. 누락된 신청서(상세 요청 데이터)를 채워 넣고, 서류함(data.sql)도 종류별로 깔끔하게 라벨링해서 정리해 두었습니다. 이제 관리자님은 서류를 한눈에 파악하고 승인 도장을 찍으실 수 있습니다!
