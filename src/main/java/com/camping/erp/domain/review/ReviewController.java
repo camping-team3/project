@@ -7,6 +7,7 @@ import com.camping.erp.domain.review.dto.ReviewResponse;
 import com.camping.erp.domain.user.User;
 import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.domain.user.UserService;
+import com.camping.erp.global.handler.ex.Exception400;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +51,10 @@ public class ReviewController {
 
         List<ReviewResponse.ListDTO> reviews = reviewService.findByUserId(sessionUser.getId());
         model.addAttribute("reviews", reviews);
+
+        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
+        model.addAttribute("user", user);
+
         return "mypage/reviews";
     }
 
@@ -62,7 +67,7 @@ public class ReviewController {
 
         Review review = reviewService.findById(id);
         if (!review.getUser().getId().equals(sessionUser.getId())) {
-            throw new IllegalArgumentException("본인의 리뷰만 수정할 수 있습니다.");
+            throw new Exception400("본인의 리뷰만 수정할 수 있습니다.");
         }
 
         model.addAttribute("review", review);
@@ -77,7 +82,7 @@ public class ReviewController {
         }
 
         if (errors.hasErrors()) {
-            throw new IllegalArgumentException(errors.getAllErrors().get(0).getDefaultMessage());
+            throw new Exception400(errors.getAllErrors().get(0).getDefaultMessage());
         }
 
         User user = userService.findById(sessionUser.getId());
@@ -106,10 +111,10 @@ public class ReviewController {
         }
 
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
+                .orElseThrow(() -> new Exception400("존재하지 않는 예약입니다."));
 
         if (!reservation.getUser().getId().equals(sessionUser.getId())) {
-            throw new IllegalArgumentException("본인의 예약만 리뷰를 작성할 수 있습니다.");
+            throw new Exception400("본인의 예약만 리뷰를 작성할 수 있습니다.");
         }
 
         model.addAttribute("reservation", reservation);
@@ -124,7 +129,7 @@ public class ReviewController {
         }
 
         if (errors.hasErrors()) {
-            throw new IllegalArgumentException(errors.getAllErrors().get(0).getDefaultMessage());
+            throw new Exception400(errors.getAllErrors().get(0).getDefaultMessage());
         }
 
         User user = userService.findById(sessionUser.getId());

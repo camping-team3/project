@@ -1,6 +1,8 @@
 package com.camping.erp.global.handler;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,7 +28,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public Object handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e, HttpServletRequest request) {
+    public @ResponseBody Object handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e, HttpServletRequest request) {
         String message = "업로드 가능한 파일 크기를 초과했습니다.";
         if (isAjaxRequest(request)) {
             return Resp.fail(HttpStatus.PAYLOAD_TOO_LARGE, message);
@@ -40,64 +42,68 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception400.class)
-    public @ResponseBody Object ex400(Exception400 e, HttpServletRequest request) {
+    public @ResponseBody ResponseEntity<String> ex400(Exception400 e, HttpServletRequest request) {
         if (isAjaxRequest(request)) {
-            return Resp.fail(HttpStatus.BAD_REQUEST, e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return scriptAlert(e.getMessage(), "history.back();");
+        return new ResponseEntity<>(scriptAlert(e.getMessage(), "history.back();"), getHtmlHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception401.class)
-    public @ResponseBody Object ex401(Exception401 e, HttpServletRequest request) {
+    public @ResponseBody ResponseEntity<String> ex401(Exception401 e, HttpServletRequest request) {
         if (isAjaxRequest(request)) {
-            return Resp.fail(HttpStatus.UNAUTHORIZED, e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
-        return scriptAlert(e.getMessage(), "location.href = '/login-form';");
+        return new ResponseEntity<>(scriptAlert(e.getMessage(), "location.href = '/login-form';"), getHtmlHeaders(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception403.class)
-    public @ResponseBody Object ex403(Exception403 e, HttpServletRequest request) {
+    public @ResponseBody ResponseEntity<String> ex403(Exception403 e, HttpServletRequest request) {
         if (isAjaxRequest(request)) {
-            return Resp.fail(HttpStatus.FORBIDDEN, e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
-        return scriptAlert(e.getMessage(), "history.back();");
+        return new ResponseEntity<>(scriptAlert(e.getMessage(), "history.back();"), getHtmlHeaders(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception404.class)
-    public @ResponseBody Object ex404(Exception404 e, HttpServletRequest request) {
+    public @ResponseBody ResponseEntity<String> ex404(Exception404 e, HttpServletRequest request) {
         if (isAjaxRequest(request)) {
-            return Resp.fail(HttpStatus.NOT_FOUND, e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-        return scriptAlert(e.getMessage(), "history.back();");
+        return new ResponseEntity<>(scriptAlert(e.getMessage(), "history.back();"), getHtmlHeaders(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception500.class)
-    public @ResponseBody Object ex500(Exception500 e, HttpServletRequest request) {
+    public @ResponseBody ResponseEntity<String> ex500(Exception500 e, HttpServletRequest request) {
         if (isAjaxRequest(request)) {
-            return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return scriptAlert(e.getMessage(), "history.back();");
+        return new ResponseEntity<>(scriptAlert(e.getMessage(), "history.back();"), getHtmlHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // 정적 리소스 미발견(404) 에러를 로그 없이 조용히 처리
     @ExceptionHandler(NoResourceFoundException.class)
-    public @ResponseBody Object handleNoResourceFoundException(NoResourceFoundException e, HttpServletRequest request) {
-        return Resp.fail(HttpStatus.NOT_FOUND, "Not Found");
+    public @ResponseBody ResponseEntity<?> handleNoResourceFoundException(NoResourceFoundException e, HttpServletRequest request) {
+        return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)
-    public Object exUnknown(Exception e, HttpServletRequest request) {
-        String msg = e.getMessage() != null ? e.getMessage() : "";
-        String uri = request.getRequestURI() != null ? request.getRequestURI() : "";
-        
-        if (msg.contains("No static resource") || uri.contains(".well-known") || msg.contains("rejected")) {
-            return Resp.fail(HttpStatus.NOT_FOUND, "Not Found");
-        }
+    public @ResponseBody ResponseEntity<String> exUnknown(Exception e, HttpServletRequest request) {
+        e.printStackTrace();
 
+        String msg = e.getMessage() != null ? e.getMessage() : "알 수 없는 에러가 발생했습니다.";
+        
         if (isAjaxRequest(request)) {
-            return Resp.fail(HttpStatus.INTERNAL_SERVER_ERROR, "Server Error");
+            return new ResponseEntity<>("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return "redirect:/login-form";
+        
+        return new ResponseEntity<>(scriptAlert(msg, "history.back();"), getHtmlHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private HttpHeaders getHtmlHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "text/html; charset=utf-8");
+        return headers;
     }
 
     private String scriptAlert(String msg, String action) {
