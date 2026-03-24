@@ -125,16 +125,4 @@ public class UserController {
 
         return "redirect:/mypage/info";
     }
-
-    // 내 리뷰
-    @GetMapping("/mypage/reviews")
-    public String reviews(Model model, HttpSession session) {
-        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
-        if (sessionUser == null) {
-            return "redirect:/login-form";
-        }
-        UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
-        model.addAttribute("user", user);
-        return "mypage/reviews";
-    }
 }

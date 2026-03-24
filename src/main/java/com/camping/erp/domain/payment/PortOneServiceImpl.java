@@ -18,7 +18,6 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-@Primary
 @RequiredArgsConstructor
 public class PortOneServiceImpl implements PortOneService {
 

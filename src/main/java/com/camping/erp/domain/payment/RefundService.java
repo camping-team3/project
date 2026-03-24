@@ -3,6 +3,8 @@ package com.camping.erp.domain.payment;
 import com.camping.erp.domain.reservation.Reservation;
 import com.camping.erp.domain.reservation.ReservationChangeRequest;
 import com.camping.erp.domain.reservation.ReservationChangeRequestRepository;
+import com.camping.erp.domain.reservation.ReservationCancelRequest;
+import com.camping.erp.domain.reservation.ReservationCancelRequestRepository;
 import com.camping.erp.domain.reservation.ReservationRepository;
 import com.camping.erp.domain.reservation.enums.RequestStatus;
 import com.camping.erp.domain.reservation.enums.ReservationStatus;
@@ -26,10 +28,9 @@ public class RefundService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationChangeRequestRepository reservationChangeRequestRepository;
+    private final ReservationCancelRequestRepository reservationCancelRequestRepository;
     private final RefundRepository refundRepository;
     private final PortOneService portOneService;
-
-    // ... (기존 메서드 생략)
     /**
      * 예약 변경 시 발생하는 차액에 대한 부분 환불 처리 (위약금 규정 적용)
      */
@@ -45,8 +46,12 @@ public class RefundService {
             throw new Exception404("연결된 결제 내역이 없어 환불을 진행할 수 없습니다.");
         }
 
-        // 1. 순수 차액 계산 (기존 금액 - 변경 후 금액)
-        long diffAmount = reservation.getTotalPrice() - request.getNewTotalPrice();
+        if (request.isRefunded()) {
+            throw new Exception400("이미 환불 처리가 완료된 요청입니다.");
+        }
+
+        // 1. 순수 차액 계산 (변경 전 금액 - 변경 후 금액)
+        long diffAmount = request.getOldTotalPrice() - request.getNewTotalPrice();
         if (diffAmount <= 0) {
             throw new Exception400("부분 환불 대상이 아닙니다.");
         }
@@ -83,21 +88,58 @@ public class RefundService {
             refundRepository.save(refund);
         }
 
-        // 4. 예약 정보 실제 업데이트 및 상태 확정
-        // 실제 환불된 금액과 무관하게, 예약의 기준 총액은 새로운 조건(newTotalPrice)으로 업데이트함
-        reservation.updateReservationInfo(
-                request.getNewCheckIn(),
-                request.getNewCheckOut(),
-                request.getNewSite(),
-                request.getNewPeopleCount(),
-                reservation.getVisitorName(),
-                reservation.getVisitorPhone(),
-                request.getNewTotalPrice());
+        // 4. 상태 확정
+        request.markAsRefunded();
 
-        request.approve();
-        reservation.updateStatus(ReservationStatus.CONFIRMED);
+        log.info("[Partial Refund Success] 부분 환불 처리 완료: requestId={}, refundAmount={}",
+                requestId, finalRefundAmount);
+    }
 
-        log.info("[Partial Refund Success] 부분 환불 처리 및 예약 변경 완료: requestId={}, refundAmount={}",
+    /**
+     * 예약 취소에 따른 환불 실행 (고객 직접 트리거)
+     */
+    @Transactional
+    public void processCancelRefund(Long requestId) {
+        ReservationCancelRequest request = reservationCancelRequestRepository.findById(requestId)
+                .orElseThrow(() -> new Exception404("취소 요청 정보를 찾을 수 없습니다."));
+
+        Reservation reservation = request.getReservation();
+        Payment payment = reservation.getPayment();
+
+        if (payment == null) {
+            throw new Exception404("연결된 결제 내역이 없어 환불을 진행할 수 없습니다.");
+        }
+
+        if (request.isRefunded()) {
+            throw new Exception400("이미 환불 처리가 완료된 요청입니다.");
+        }
+
+        // 1. 환불 금액 계산 (위약금 규정 적용)
+        RefundResponse.RefundInfo info = getRefundInfo(reservation.getId());
+        long finalRefundAmount = info.getRefundAmount();
+
+        // 2. 포트원 결제 취소 API 호출 (환불액이 있는 경우에만)
+        if (finalRefundAmount > 0) {
+            boolean success = portOneService.cancelPayment(payment.getImpUid(), finalRefundAmount, "예약 취소에 따른 환불");
+
+            if (!success) {
+                throw new Exception400("포트원 결제 취소 요청이 실패했습니다.");
+            }
+
+            // 환불 이력 저장
+            Refund refund = Refund.builder()
+                    .reservation(reservation)
+                    .refundAmount(finalRefundAmount)
+                    .reason("예약 취소 환불 (위약금 적용)")
+                    .cancelledAt(java.time.LocalDateTime.now())
+                    .build();
+            refundRepository.save(refund);
+        }
+
+        // 3. 상태 확정
+        request.markAsRefunded();
+
+        log.info("[Cancel Refund Success] 취소 환불 처리 완료: requestId={}, refundAmount={}",
                 requestId, finalRefundAmount);
     }
 

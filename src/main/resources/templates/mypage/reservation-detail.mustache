@@ -152,11 +152,25 @@
                                     <td>{{requestDate}}</td>
                                     <td>{{newSiteName}} ({{newCheckIn}}~{{newCheckOut}})</td>
                                     <td>
-                                        <span class="badge {{#rejectionReason}}bg-danger{{/rejectionReason}}{{^rejectionReason}}bg-secondary{{/rejectionReason}}">
-                                            {{statusDescription}}
-                                        </span>
+                                        <div class="d-flex flex-column gap-1">
+                                            <span class="badge {{#rejectionReason}}bg-danger{{/rejectionReason}}{{^rejectionReason}}bg-secondary{{/rejectionReason}}">
+                                                {{statusDescription}}
+                                            </span>
+                                            {{#isRefunded}}
+                                            <span class="badge bg-success opacity-75">환불완료</span>
+                                            {{/isRefunded}}
+                                        </div>
                                     </td>
-                                    <td class="text-danger small">{{#rejectionReason}}{{rejectionReason}}{{/rejectionReason}}</td>
+                                    <td>
+                                        {{^isRefunded}}
+                                            {{#isApproved}}
+                                                {{#isPartialRefund}}
+                                                <button onclick="executeRefund('change', {{id}})" class="btn btn-warning btn-sm fw-bold">환불받기</button>
+                                                {{/isPartialRefund}}
+                                            {{/isApproved}}
+                                        {{/isRefunded}}
+                                        <span class="text-danger small">{{#rejectionReason}}{{rejectionReason}}{{/rejectionReason}}</span>
+                                    </td>
                                 </tr>
                                 {{/changeRequests}}
                             </tbody>
@@ -187,11 +201,23 @@
                                     <td>{{requestDate}}</td>
                                     <td>{{reason}}</td>
                                     <td>
-                                        <span class="badge {{#rejectionReason}}bg-danger{{/rejectionReason}}{{^rejectionReason}}bg-secondary{{/rejectionReason}}">
-                                            {{statusDescription}}
-                                        </span>
+                                        <div class="d-flex flex-column gap-1">
+                                            <span class="badge {{#rejectionReason}}bg-danger{{/rejectionReason}}{{^rejectionReason}}bg-secondary{{/rejectionReason}}">
+                                                {{statusDescription}}
+                                            </span>
+                                            {{#isRefunded}}
+                                            <span class="badge bg-success opacity-75">환불완료</span>
+                                            {{/isRefunded}}
+                                        </div>
                                     </td>
-                                    <td class="text-danger small">{{#rejectionReason}}{{rejectionReason}}{{/rejectionReason}}</td>
+                                    <td>
+                                        {{^isRefunded}}
+                                            {{#isApproved}}
+                                            <button onclick="executeRefund('cancel', {{id}})" class="btn btn-warning btn-sm fw-bold">환불받기</button>
+                                            {{/isApproved}}
+                                        {{/isRefunded}}
+                                        <span class="text-danger small">{{#rejectionReason}}{{rejectionReason}}{{/rejectionReason}}</span>
+                                    </td>
                                 </tr>
                                 {{/cancelRequests}}
                             </tbody>
@@ -227,5 +253,36 @@
         </main>
     </div>
 </div>
+
+<script>
+    async function executeRefund(type, requestId) {
+        if (!confirm('정말로 환불을 신청하시겠습니까? 즉시 결제 취소 요청이 진행됩니다.')) return;
+
+        try {
+            const url = `/api/refund/execute/${type}/${requestId}`;
+            const response = await fetch(url, { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const text = await response.text();
+            console.log(">>> [Refund] Status:", response.status);
+
+            if (response.status === 200) {
+                const result = JSON.parse(text);
+                alert(result.msg);
+                location.reload();
+                return;
+            }
+
+            alert("오류 발생 (Status: " + response.status + ")");
+        } catch (e) {
+            console.error(">>> [Refund] Error:", e);
+            alert("환불 요청 중 오류가 발생했습니다. 브라우저 콘솔을 확인해 주세요.");
+        }
+    }
+</script>
 
 {{> layout/footer}}

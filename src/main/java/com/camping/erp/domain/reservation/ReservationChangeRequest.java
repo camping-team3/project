@@ -51,6 +51,9 @@ public class ReservationChangeRequest extends BaseTimeEntity {
 
     // 정산 관련 필드 추가
     @Column(nullable = false)
+    private Long oldTotalPrice; // 변경 전 금액 (기준점)
+
+    @Column(nullable = false)
     private Long newTotalPrice; // 변경 후 예상 총액
 
     @Enumerated(EnumType.STRING)
@@ -62,10 +65,21 @@ public class ReservationChangeRequest extends BaseTimeEntity {
     @Column(nullable = false)
     private RequestStatus status;
 
+    // 환불 완료 여부 추가
+    @Column(nullable = false)
+    private boolean isRefunded = false;
+
     // 관리자 거절 사유
     private String rejectionReason;
 
     // --- 비즈니스 로직 (캡슐화) ---
+
+    /**
+     * 환불 완료 처리
+     */
+    public void markAsRefunded() {
+        this.isRefunded = true;
+    }
 
     /**
      * 정산 정보 업데이트

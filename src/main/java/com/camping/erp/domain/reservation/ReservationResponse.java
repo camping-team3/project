@@ -193,6 +193,9 @@ public class ReservationResponse {
         private String status;
         private String statusDescription;
         private String rejectionReason;
+        private boolean isRefunded; 
+        private boolean isApproved;
+        private boolean isPartialRefund; // 환불 대상 여부 추가
 
         public static ChangeRequestHistoryDTO fromEntity(ReservationChangeRequest request) {
             if (request == null) return null;
@@ -205,6 +208,9 @@ public class ReservationResponse {
                     .status(request.getStatus() != null ? request.getStatus().name() : "UNKNOWN")
                     .statusDescription(request.getStatus() != null ? request.getStatus().getDescription() : "알 수 없음")
                     .rejectionReason(request.getRejectionReason() != null ? request.getRejectionReason() : "")
+                    .isRefunded(request.isRefunded())
+                    .isApproved(request.getStatus() == com.camping.erp.domain.reservation.enums.RequestStatus.APPROVED)
+                    .isPartialRefund(request.getSettlementType() == com.camping.erp.domain.reservation.enums.SettlementType.PARTIAL_REFUND)
                     .build();
         }
     }
@@ -221,6 +227,8 @@ public class ReservationResponse {
         private String status;
         private String statusDescription;
         private String rejectionReason;
+        private boolean isRefunded; 
+        private boolean isApproved; // 승인 여부 추가
 
         public static CancelRequestHistoryDTO fromEntity(ReservationCancelRequest request) {
             if (request == null) return null;
@@ -231,6 +239,8 @@ public class ReservationResponse {
                     .status(request.getStatus() != null ? request.getStatus().name() : "UNKNOWN")
                     .statusDescription(request.getStatus() != null ? request.getStatus().getDescription() : "알 수 없음")
                     .rejectionReason(request.getRejectionReason() != null ? request.getRejectionReason() : "")
+                    .isRefunded(request.isRefunded())
+                    .isApproved(request.getStatus() == com.camping.erp.domain.reservation.enums.RequestStatus.APPROVED)
                     .build();
         }
     }
@@ -274,6 +284,7 @@ public class ReservationResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ChangeDoneDTO {
+        private Long requestId; // 결제 시 필요
         private Long reservationId;
         private String newSiteName;
         private String newZoneName;
@@ -281,6 +292,14 @@ public class ReservationResponse {
         private String newCheckOut;
         private Integer newPeopleCount;
         private String requestDate;
+        private String settlementType; // ADDITIONAL_PAY, PARTIAL_REFUND, NONE
+        private Long amount; // 차액
+        private Long newTotalPrice; // 최종 결제 금액 (합계)
+
+        // Mustache 렌더링을 위한 불리언 플래그
+        private boolean isAdditionalPay;
+        private boolean isPartialRefund;
+        private boolean isNone;
     }
 
     @Getter

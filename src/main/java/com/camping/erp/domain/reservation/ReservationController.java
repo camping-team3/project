@@ -191,8 +191,13 @@ public class ReservationController {
     // 예약 변경 요청 처리
     @PostMapping("/mypage/reservations/{id}/change-request")
     public String changeRequest(@PathVariable("id") Long id, ReservationRequest.ChangeDTO dto) {
+        // [DEBUG] 컨트롤러 진입 확인용 로그
+        System.out.println(">>> [DEBUG] ReservationController.changeRequest 진입함! Reservation ID: " + id);
+        System.out.println(">>> [DEBUG] DTO Data: newSiteId=" + dto.getNewSiteId() + ", newCheckIn=" + dto.getNewCheckIn() + ", newCheckOut=" + dto.getNewCheckOut());
+
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         if (sessionUser == null) {
+            System.out.println(">>> [DEBUG] 세션 유저 없음 -> 로그인 폼 리다이렉트");
             return "redirect:/login-form";
         }
 
@@ -213,6 +218,11 @@ public class ReservationController {
         model.addAttribute("changeRequest", changeRequest);
         UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
         model.addAttribute("user", user);
+
+        // PortOne 설정값 추가 (추가 결제 버튼 연동용)
+        model.addAttribute("storeId", portoneStoreId);
+        model.addAttribute("channelKey", portoneChannelKey);
+
         return "mypage/reservation-change-done";
     }
 
@@ -266,7 +276,7 @@ public class ReservationController {
     @ResponseBody
     public ResponseEntity<?> getChangePaymentData(@PathVariable("requestId") Long requestId) {
         ReservationResponse.ChangePaymentDTO data = reservationService.getChangePaymentData(requestId);
-        return ResponseEntity.ok(new Resp<>(1, "결제 데이터 조회 성공", data));
+        return Resp.ok("결제 데이터 조회 성공", data);
     }
 
     /**
@@ -279,6 +289,6 @@ public class ReservationController {
         String impUid = requestData.get("impUid").toString();
 
         reservationService.confirmChange(requestId, impUid);
-        return ResponseEntity.ok(new Resp<>(1, "예약 변경이 최종 확정되었습니다.", null));
+        return Resp.ok("예약 변경이 최종 확정되었습니다.", null);
     }
 }
