@@ -20,6 +20,13 @@
     />
     <!-- Common CSS -->
     <link href="/css/common.css" rel="stylesheet" />
+    
+    <!-- CSRF Meta Tags -->
+    {{#_csrf}}
+    <meta name="_csrf" content="{{token}}" />
+    <meta name="_csrf_header" content="{{headerName}}" />
+    {{/_csrf}}
+
     <!-- Page CSS -->
     <link href="/css/index.css" rel="stylesheet" />
     <link href="/css/auth/login-form.css" rel="stylesheet" />
