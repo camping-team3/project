@@ -15,6 +15,7 @@ import com.camping.erp.domain.site.ZoneRepository;
 import com.camping.erp.domain.user.User;
 import com.camping.erp.domain.user.enums.UserStatus;
 import com.camping.erp.global.util.FileUtil;
+import com.camping.erp.global.handler.ex.Exception400;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -132,16 +133,16 @@ public class ReviewService {
 
     public Review findById(Long id) {
         return reviewRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+                .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));
     }
 
     @Transactional
     public void update(Long reviewId, User user, ReviewRequest.UpdateDTO req) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+                .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));
 
         if (!review.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("본인의 리뷰만 수정할 수 있습니다.");
+            throw new Exception400("본인의 리뷰만 수정할 수 있습니다.");
         }
 
         // 평점 업데이트 (차이만큼 가감)
@@ -183,10 +184,10 @@ public class ReviewService {
     @Transactional
     public void deleteByUser(Long reviewId, User user) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+                .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));
 
         if (!review.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("본인의 리뷰만 삭제할 수 있습니다.");
+            throw new Exception400("본인의 리뷰만 삭제할 수 있습니다.");
         }
 
         // 평점 차감
@@ -208,18 +209,18 @@ public class ReviewService {
     public void save(User user, ReviewRequest.SaveDTO req) {
         // 1. 예약 검증
         Reservation reservation = reservationRepository.findById(req.getReservationId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
+                .orElseThrow(() -> new Exception400("존재하지 않는 예약입니다."));
 
         if (!reservation.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("본인의 예약만 리뷰를 작성할 수 있습니다.");
+            throw new Exception400("본인의 예약만 리뷰를 작성할 수 있습니다.");
         }
         if (reservation.getStatus() != ReservationStatus.COMPLETED) {
-            throw new IllegalArgumentException("이용 완료된 예약만 리뷰를 작성할 수 있습니다.");
+            throw new Exception400("이용 완료된 예약만 리뷰를 작성할 수 있습니다.");
         }
 
         // 2. 중복 검증
         if (reviewRepository.existsByReservationId(reservation.getId())) {
-            throw new IllegalArgumentException("이미 리뷰를 작성한 예약입니다.");
+            throw new Exception400("이미 리뷰를 작성한 예약입니다.");
         }
 
         // 3. 엔티티 생성 및 저장
@@ -237,7 +238,7 @@ public class ReviewService {
         // 5. 이미지 저장 (최대 5장)
         if (req.getImages() != null && !req.getImages().isEmpty()) {
             if (req.getImages().size() > 5) {
-                throw new IllegalArgumentException("이미지는 최대 5장까지 업로드 가능합니다.");
+                throw new Exception400("이미지는 최대 5장까지 업로드 가능합니다.");
             }
             for (MultipartFile file : req.getImages()) {
                 if (file.isEmpty()) continue;
@@ -258,7 +259,7 @@ public class ReviewService {
     @Transactional
     public void deleteByAdmin(Long reviewId, String reason) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+                .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));
 
         // 2. 논리 삭제 처리
         review.processByAdmin(true, reason);
@@ -274,7 +275,7 @@ public class ReviewService {
     @Transactional
     public void keepByAdmin(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+                .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));
 
         // 1. 검토 완료 상태로만 변경 (isDeleted = false)
         review.processByAdmin(false, null);
