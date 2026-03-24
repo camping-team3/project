@@ -62,9 +62,18 @@ public class AdminController {
         model.addAllAttributes(stats);
 
         // 2. 미처리 QnA 목록 최신 5개 조회 (status="pending" 필터 적용)
-        Pageable pageable = PageRequest.of(0, 5, Sort.by("id").descending());
-        QnaResponse.PageDTO pageDTO = qnaService.findAll("pending", null, pageable);
-        model.addAttribute("unansweredQnas", pageDTO.getQnas());
+        Pageable qnaPageable = PageRequest.of(0, 5, Sort.by("id").descending());
+        QnaResponse.PageDTO qnaPageDTO = qnaService.findAll("pending", null, qnaPageable);
+        model.addAttribute("unansweredQnas", qnaPageDTO.getQnas());
+
+        // 3. [추가] 예약 요청 통계 (변경/취소 건수)
+        Map<String, Long> resStats = reservationService.getDashboardStatistics();
+        model.addAllAttributes(resStats);
+
+        // 4. [추가] 예약 요청 목록 (최신 5건)
+        Pageable resPageable = PageRequest.of(0, 5, Sort.by("id").descending());
+        AdminResponse.ReservationPageDTO resPageDTO = reservationService.findPendingRequests(resPageable);
+        model.addAttribute("pendingRequests", resPageDTO);
 
         return "admin/dashboard";
     }

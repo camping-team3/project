@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -712,5 +713,59 @@ public class ReservationService {
 
                 // 공통: 예약 상태를 다시 '확정' 상태로 복원
                 r.updateStatus(ReservationStatus.CONFIRMED);
+        }
+
+        /**
+         * [추가] 대시보드용 예약 통계 데이터 조회
+         */
+        public Map<String, Long> getDashboardStatistics() {
+                return Map.of(
+                                "changeReqCount", reservationRepository.countByStatus(ReservationStatus.CHANGE_REQ),
+                                "cancelReqCount", reservationRepository.countByStatus(ReservationStatus.CANCEL_REQ));
+        }
+
+        /**
+         * [추가] 대시보드용 미처리 요청(변경/취소) 목록 조회
+         */
+        public AdminResponse.ReservationPageDTO findPendingRequests(Pageable pageable) {
+                List<ReservationStatus> pendingStatuses = List.of(
+                                ReservationStatus.CHANGE_REQ,
+                                ReservationStatus.CANCEL_REQ);
+
+                Page<Reservation> page = reservationRepository.findByStatuses(pendingStatuses, pageable);
+
+                List<AdminResponse.ReservationListDTO> dtoList = page.getContent().stream()
+                                .map(r -> {
+                                        long nights = ChronoUnit.DAYS.between(r.getCheckIn(), r.getCheckOut());
+                                        String statusText = r.getStatus() == ReservationStatus.CHANGE_REQ ? "변경 요청"
+                                                        : "취소 요청";
+                                        String statusClass = "info";
+
+                                        return AdminResponse.ReservationListDTO.builder()
+                                                        .id(r.getId())
+                                                        .username(r.getUser().getName())
+                                                        .siteName(r.getSite().getSiteName())
+                                                        .checkIn(r.getCheckIn())
+                                                        .checkOut(r.getCheckOut())
+                                                        .nights(nights)
+                                                        .totalPrice(r.getTotalPrice())
+                                                        .status(r.getStatus())
+                                                        .statusText(statusText)
+                                                        .statusClass(statusClass)
+                                                        .build();
+                                }).toList();
+
+                return AdminResponse.ReservationPageDTO.builder()
+                                .reservations(dtoList)
+                                .pagination(AdminResponse.PaginationDTO.builder()
+                                                .totalPages(page.getTotalPages())
+                                                .totalElements(page.getTotalElements())
+                                                .currentPage(page.getNumber())
+                                                .hasPrev(page.hasPrevious())
+                                                .hasNext(page.hasNext())
+                                                .prevPage(page.getNumber() - 1)
+                                                .nextPage(page.getNumber() + 1)
+                                                .build())
+                                .build();
         }
 }

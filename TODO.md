@@ -33,3 +33,27 @@
   - [x] 관리자용: `list`, `detail`, `change-detail`, `cancel-detail` 페이지 수정
   - [x] 모든 페이지에서 `RESERV-` 접두사 및 일관된 스타일 적용
 
+## 🎯 관리자 대시보드 통합 및 고도화
+
+### Task 1: 백엔드 데이터 공급 로직 (Admin Dashboard)
+- [x] `ReservationService`: `CHANGE_REQ`, `CANCEL_REQ` 상태별 카운트 조회 로직 구현
+- [x] `ReservationService`: 변경/취소 요청 통합 목록 조회 기능 (Pageable 지원)
+- [x] `AdminController`: 대시보드(`/admin`) 진입 시 통계 데이터 및 최신 요청 목록(5건) Model 주입
+
+### Task 2: 대시보드 UI - 요청 현황 카운터
+
+- [ ] `dashboard.mustache`: 변경 요청 건수 위젯 구현 (클릭 시 `status=CHANGE_REQ` 리스트 이동)
+- [ ] `dashboard.mustache`: 취소 요청 건수 위젯 구현 (클릭 시 `status=CANCEL_REQ` 리스트 이동)
+
+### Task 3: 대시보드 UI - 통합 요청 관리 리스트
+
+- [ ] `dashboard.mustache`: 변경/취소 요청 통합 리스트 섹션 구현 (최신 5건)
+- [ ] 리스트 행 클릭 시 해당 예약 상세 페이지로 이동 (`onclick` 로직)
+- [ ] '전체보기' 버튼 추가 (예약 목록 페이지로 이동)
+- [ ] 페이지네이션 구현 (Size 5, 버튼 < 1 2 3 4 5 >)
+
+### Task 4: 대시보드 UI - 승인/거절 액션 통합
+
+- [ ] 승인/거절 버튼 배치 및 기존 관리자 승인 로직(`POST`) 연결
+- [ ] 거절 버튼 클릭 시 기존 거절 사유 입력 모달(`reject-modal.mustache`) 연동
+- [ ] 버튼 디자인 일관성 확보 (`list.mustache` 스타일 복제)
