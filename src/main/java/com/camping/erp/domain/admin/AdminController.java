@@ -6,12 +6,22 @@ import com.camping.erp.domain.gallery.GalleryService;
 import com.camping.erp.domain.notice.NoticeRequest;
 import com.camping.erp.domain.notice.NoticeResponse;
 import com.camping.erp.domain.notice.NoticeService;
+import com.camping.erp.domain.payment.RefundResponse;
+import com.camping.erp.domain.payment.RefundService;
+import com.camping.erp.domain.qna.QnaResponse;
+import com.camping.erp.domain.qna.QnaService;
+import com.camping.erp.domain.reservation.ReservationResponse;
 import com.camping.erp.domain.reservation.ReservationService;
+import com.camping.erp.domain.review.ReviewService;
 import com.camping.erp.domain.site.SiteRequest;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
+import com.camping.erp.domain.user.UserResponse;
+import com.camping.erp.domain.user.UserService;
 import com.camping.erp.global.dto.PageResponse;
 import com.camping.erp.global.handler.ex.Exception400;
+import com.camping.erp.global.util.Resp;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,15 +30,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -38,10 +49,73 @@ public class AdminController {
     private final ReservationService reservationService;
     private final NoticeService noticeService;
     private final GalleryService galleryService;
+    private final QnaService qnaService;
+    private final ReviewService reviewService;
+    private final UserService userService;
+    private final RefundService refundService;
+    private final HttpSession session;
 
     @GetMapping("/admin")
-    public String dashboard() {
+    public String dashboard(Model model) {
+        // 1. 미처리 QnA 통계 개수 조회 (unansweredCount 포함)
+        Map<String, Long> stats = qnaService.getStatistics();
+        model.addAllAttributes(stats);
+
+        // 2. 미처리 QnA 목록 최신 5개 조회 (status="pending" 필터 적용)
+        Pageable qnaPageable = PageRequest.of(0, 5, Sort.by("id").descending());
+        QnaResponse.PageDTO qnaPageDTO = qnaService.findAll("pending", null, qnaPageable);
+        model.addAttribute("unansweredQnas", qnaPageDTO.getQnas());
+
+        // 3. [추가] 예약 요청 통계 (변경/취소 건수)
+        Map<String, Long> resStats = reservationService.getDashboardStatistics();
+        model.addAllAttributes(resStats);
+
+        // 4. [추가] 예약 요청 목록 (최신 5건)
+        Pageable resPageable = PageRequest.of(0, 5, Sort.by("id").descending());
+        AdminResponse.ReservationPageDTO resPageDTO = reservationService.findPendingRequests(resPageable);
+        model.addAttribute("pendingRequests", resPageDTO);
+
         return "admin/dashboard";
+    }
+
+    // --- 리뷰 관리 ---
+    @GetMapping("/admin/reviews")
+    public String reviewList(@RequestParam(name = "page", defaultValue = "0") int page,
+                             @RequestParam(name = "sort", defaultValue = "latest") String sort,
+                             @RequestParam(name = "filter", defaultValue = "all") String filter,
+                             @RequestParam(name = "keyword", defaultValue = "") String keyword,
+                             Model model) {
+        // 정렬 조건 설정
+        Pageable pageable = PageRequest.of(page, 10, sort.equals("danger") ? Sort.by("aiDangerScore").descending() : Sort.by("id").descending());
+        
+        // [수정] 서비스 호출 시 '검토 대기중' 필터 여부와 '검색어'를 함께 전달합니다.
+        boolean isPending = "pending".equals(filter);
+        AdminResponse.ReviewPageDTO response = reviewService.findAllForAdmin(isPending, keyword, pageable);
+        
+        model.addAttribute("response", response);
+        model.addAttribute("isDangerSort", "danger".equals(sort));
+        model.addAttribute("isPendingFilter", "pending".equals(filter));
+        model.addAttribute("isAllFilter", "all".equals(filter) && !"danger".equals(sort));
+        model.addAttribute("keyword", keyword);
+        return "admin/review/list";
+    }
+
+    @PostMapping("/admin/reviews/{id}/keep")
+    public String keepReview(@PathVariable("id") Long id) {
+        reviewService.keepByAdmin(id);
+        return "redirect:/admin/reviews";
+    }
+
+    @PostMapping("/admin/reviews/{id}/delete")
+    public String deleteReview(@PathVariable("id") Long id, @RequestParam("reason") String reason) {
+        reviewService.deleteByAdmin(id, reason);
+        return "redirect:/admin/reviews";
+    }
+
+    @PostMapping("/admin/users/{userId}/expel")
+    public String expelUser(@PathVariable("userId") Long userId, @RequestParam(name = "reason", required = false) String reason) {
+        userService.expelUser(userId, reason);
+        return "redirect:/admin/reviews";
     }
 
     // --- 사이트 관리 ---
@@ -99,14 +173,51 @@ public class AdminController {
         return "admin/reservation/list";
     }
 
-    @GetMapping("/admin/reservations/{id}/change")
-    public String reservationChangeDetail(@PathVariable("id") Long id) {
+    @GetMapping("/admin/reservations/{id}/change-detail")
+    public String reservationChangeDetail(@PathVariable("id") Long id, Model model) {
+        AdminResponse.AdminChangeDetailDTO detail = reservationService.getAdminChangeDetail(id);
+        model.addAttribute("detail", detail);
         return "admin/reservation/change-detail";
     }
 
-    @GetMapping("/admin/reservations/{id}/cancel")
-    public String reservationCancelDetail(@PathVariable("id") Long id) {
+    @GetMapping("/admin/reservations/{id}/cancel-detail")
+    public String reservationCancelDetail(@PathVariable("id") Long id, Model model) {
+        AdminResponse.AdminCancelDetailDTO detail = reservationService.getAdminCancelDetail(id);
+        model.addAttribute("detail", detail);
         return "admin/reservation/cancel-detail";
+    }
+
+    @GetMapping("/admin/reservations/{id}/detail")
+    public String reservationDetail(@PathVariable("id") Long id, Model model) {
+        AdminResponse.AdminReservationDetailDTO detail = reservationService.getAdminReservationDetail(id);
+        model.addAttribute("detail", detail);
+        return "admin/reservation/detail";
+    }
+
+    @GetMapping("/api/admin/reservations/{id}/refund-info")
+    @ResponseBody
+    public ResponseEntity<?> getRefundInfo(@PathVariable("id") Long id) {
+        RefundResponse.RefundInfo info = refundService.getRefundInfo(id);
+        return Resp.ok(info);
+    }
+
+    @PostMapping("/admin/reservations/{id}/refund")
+    @ResponseBody
+    public ResponseEntity<?> approveRefund(@PathVariable("id") Long id, @RequestParam("reason") String reason) {
+        refundService.approveRefund(id, reason);
+        return Resp.ok("환불 승인 및 결제 취소가 완료되었습니다.");
+    }
+
+    @PostMapping("/admin/reservations/{id}/approve")
+    public String approveReservation(@PathVariable("id") Long id) {
+        reservationService.approveRequest(id);
+        return "redirect:/admin/reservations";
+    }
+
+    @PostMapping("/admin/reservations/{id}/reject")
+    public String rejectReservation(@PathVariable("id") Long id, AdminRequest.RejectDTO rejectDTO) {
+        reservationService.rejectRequest(id, rejectDTO);
+        return "redirect:/admin/reservations";
     }
 
     // --- 공지사항 관리 ---
@@ -158,9 +269,12 @@ public class AdminController {
 
     // --- 갤러리 관리 ---
     @GetMapping("/admin/galleries")
-    public String galleryList(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        Page<GalleryResponse.ListDTO> galleryPage = galleryService.findAll(pageable);
+    public String galleryList(@PageableDefault(size = 10) Pageable pageable, 
+                              @RequestParam(value = "keyword", required = false) String keyword, 
+                              Model model) {
+        Page<GalleryResponse.ListDTO> galleryPage = galleryService.findAll(pageable, keyword);
         model.addAttribute("galleries", new PageResponse<>(galleryPage));
+        model.addAttribute("keyword", keyword);
         return "admin/gallery/list";
     }
 
@@ -202,23 +316,81 @@ public class AdminController {
     }
 
     // --- 기타 ---
-    @GetMapping("/admin/stat")
-    public String stat() {
-        return "admin/stat";
-    }
-
     @GetMapping("/admin/qna")
-    public String qnaList() {
+    public String qnaList(
+            @RequestParam(value = "status", defaultValue = "all") String status,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
+        
+        UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
+        QnaResponse.PageDTO pageDTO = qnaService.findAll(status, sessionAdmin, pageable);
+        
+        model.addAttribute("qnas", pageDTO.getQnas());
+        model.addAttribute("pagination", pageDTO);
+
+        Map<String, Long> stats = qnaService.getStatistics();
+        model.addAllAttributes(stats);
+
+        model.addAttribute("status", status);
+        model.addAttribute("isAll", "all".equalsIgnoreCase(status));
+        model.addAttribute("isPending", "pending".equalsIgnoreCase(status));
+        model.addAttribute("isCompleted", "completed".equalsIgnoreCase(status));
+
         return "admin/qna/list";
     }
 
     @GetMapping("/admin/qna/{id}/answer")
-    public String qnaAnswer(@PathVariable("id") Long id) {
+    public String qnaAnswer(@PathVariable("id") Long id, Model model) {
+        UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        QnaResponse.DetailDTO qna = qnaService.findById(id, sessionAdmin);
+        model.addAttribute("qna", qna);
         return "admin/qna/answer";
     }
 
+    @PostMapping("/admin/qna/{id}/comment")
+    public String saveComment(@PathVariable("id") Long id, @RequestParam("content") String content) {
+        UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        log.debug("답변 등록 시도 - 문의 ID: {}, 관리자 ID: {}", id, sessionAdmin.getId());
+        qnaService.saveComment(id, content, sessionAdmin);
+        return "redirect:/admin/qna/" + id + "/answer";
+    }
+
+    @PostMapping("/admin/qna/{id}/delete")
+    @ResponseBody
+    public String qnaDelete(@PathVariable("id") Long id) {
+        UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        qnaService.delete(id, sessionAdmin);
+        return """
+                <script>
+                    alert('해당 문의가 삭제되었습니다.');
+                    location.href = '/admin/qna';
+                </script>
+                """;
+    }
+
     @GetMapping("/admin/sites/season")
-    public String siteSeason() {
+    public String siteSeason(Model model) {
+        LocalDate now = LocalDate.now();
+        model.addAttribute("currentYear", now.getYear());
+        model.addAttribute("currentMonth", now.getMonthValue());
+
+        List<AdminResponse.CalendarDayDTO> calendarDays = new ArrayList<>();
+        LocalDate firstOfMonth = now.withMonth(now.getMonthValue()).withDayOfMonth(1);
+        int dayOfWeek = firstOfMonth.getDayOfWeek().getValue() % 7; 
+        
+        LocalDate startDate = firstOfMonth.minusDays(dayOfWeek);
+        for (int i = 0; i < 42; i++) {
+            LocalDate date = startDate.plusDays(i);
+            calendarDays.add(AdminResponse.CalendarDayDTO.builder()
+                    .day(date.getDayOfMonth())
+                    .date(date)
+                    .isCurrentMonth(date.getMonthValue() == now.getMonthValue())
+                    .isToday(date.equals(now))
+                    .build());
+        }
+        model.addAttribute("calendarDays", calendarDays);
+
         return "admin/site/season";
     }
 }

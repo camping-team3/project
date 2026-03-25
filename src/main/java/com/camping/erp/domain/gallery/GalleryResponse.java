@@ -32,7 +32,7 @@ public class GalleryResponse {
             
             // 첫 번째 이미지를 썸네일로 사용
             if (gallery.getImages() != null && !gallery.getImages().isEmpty()) {
-                this.thumbnailPath = gallery.getImages().get(0).getFilePath();
+                this.thumbnailPath = gallery.getImages().get(0).getFullPath();
             } else {
                 this.thumbnailPath = "/img/default-thumbnail.jpg";
             }
@@ -68,6 +68,10 @@ public class GalleryResponse {
                     .collect(Collectors.toList());
         }
 
+        public String getCreatedAt() {
+            return createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        }
+
         @Getter
         @NoArgsConstructor
         public static class ImageDTO {
@@ -76,7 +80,7 @@ public class GalleryResponse {
 
             public ImageDTO(Image image) {
                 this.id = image.getId();
-                this.filePath = image.getFilePath();
+                this.filePath = image.getFullPath();
             }
         }
     }

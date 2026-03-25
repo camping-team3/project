@@ -2,27 +2,27 @@
         <!-- Summary Stats -->
         <div class="row g-4 mb-5">
             <div class="col-md-4">
-                <div class="stat-card-v2">
+                <div class="stat-card-v2 cursor-pointer transition-all hover-shadow" onclick="location.href='/admin/reservations?status=CHANGE_REQ'">
                     <div class="d-flex justify-content-between align-items-start mb-4">
                         <div class="bg-primary bg-opacity-5 text-primary rounded-3 d-flex align-items-center justify-content-center icon-box-48">
                             <span class="material-symbols-outlined fs-4">edit_calendar</span>
                         </div>
-                        <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-2.5 py-1 badge-stat-delta">전일 대비 +2</span>
+                        <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-2.5 py-1 badge-stat-delta">실시간 현황</span>
                     </div>
                     <p class="text-secondary small fw-bold mb-1">예약 변경 요청</p>
-                    <h3 class="h2 fw-black text-dark m-0">12<small class="text-secondary fs-6 fw-normal ms-1">건</small></h3>
+                    <h3 class="h2 fw-black text-dark m-0">{{changeReqCount}}<small class="text-secondary fs-6 fw-normal ms-1">건</small></h3>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="stat-card-v2">
+                <div class="stat-card-v2 cursor-pointer transition-all hover-shadow" onclick="location.href='/admin/reservations?status=CANCEL_REQ'">
                     <div class="d-flex justify-content-between align-items-start mb-4">
                         <div class="text-danger rounded-3 d-flex align-items-center justify-content-center icon-box-48" style="background-color: #fef2f2;">
                             <span class="material-symbols-outlined fs-4">event_busy</span>
                         </div>
-                        <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-2.5 py-1 badge-stat-delta">전일 대비 +1</span>
+                        <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-2.5 py-1 badge-stat-delta">실시간 현황</span>
                     </div>
                     <p class="text-secondary small fw-bold mb-1">예약 취소 요청</p>
-                    <h3 class="h2 fw-black text-dark m-0">8<small class="text-secondary fs-6 fw-normal ms-1">건</small></h3>
+                    <h3 class="h2 fw-black text-dark m-0">{{cancelReqCount}}<small class="text-secondary fs-6 fw-normal ms-1">건</small></h3>
                 </div>
             </div>
             <div class="col-md-4">
@@ -34,7 +34,7 @@
                         <span class="badge bg-warning bg-opacity-10 text-warning-emphasis fw-bold px-2.5 py-1 badge-stat-delta">긴급 처리 필요</span>
                     </div>
                     <p class="text-secondary small fw-bold mb-1">미답변 Q&A</p>
-                    <h3 class="h2 fw-black text-dark m-0">25<small class="text-secondary fs-6 fw-normal ms-1">건</small></h3>
+                    <h3 class="h2 fw-black text-dark m-0">{{unansweredCount}}<small class="text-secondary fs-6 fw-normal ms-1">건</small></h3>
                 </div>
             </div>
         </div>
@@ -53,18 +53,22 @@
                         <tr>
                             <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider">요청 유형</th>
                             <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider">사용자</th>
-                            <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider">기존 예약일</th>
-                            <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider">요청일</th>
+                            <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider">이용 일정</th>
+                            <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider">예약 번호</th>
                             <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider">상태</th>
                             <th class="px-4 py-3 text-xs fw-bold text-secondary text-uppercase tracking-wider text-end">관리</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y border-light">
-                        <tr>
-                            <td class="px-4 py-4"><span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-2.5 py-1 rounded">변경</span></td>
-                            <td class="px-4 py-4 fw-bold text-dark">김철수</td>
-                            <td class="px-4 py-4 text-secondary">2023-11-05</td>
-                            <td class="px-4 py-4 text-secondary">2023-10-24</td>
+                        {{#pendingRequests.reservations}}
+                        <tr class="reservation-table-row cursor-pointer hover-bg-light transition-all" 
+                            onclick="if(!event.target.closest('.btn')) location.href='/admin/reservations/{{id}}/{{#isChangeReq}}change-detail{{/isChangeReq}}{{#isCancelReq}}cancel-detail{{/isCancelReq}}{{#isDetailView}}detail{{/isDetailView}}';">
+                            <td class="px-4 py-4">
+                                <span class="badge bg-{{statusClass}} bg-opacity-10 text-{{statusClass}} fw-bold px-2.5 py-1 rounded">{{statusText}}</span>
+                            </td>
+                            <td class="px-4 py-4 fw-bold text-dark">{{username}}</td>
+                            <td class="px-4 py-4 text-secondary small">{{checkIn}} ~ {{checkOut}}</td>
+                            <td class="px-4 py-4 text-primary fw-bold font-monospace small">RESERV-{{id}}</td>
                             <td class="px-4 py-4">
                                 <div class="d-flex align-items-center gap-2 text-warning fw-bold small">
                                     <div class="pulse-dot-orange"></div> 대기중
@@ -72,30 +76,52 @@
                             </td>
                             <td class="px-4 py-4 text-end">
                                 <div class="d-flex justify-content-end gap-2">
-                                    <button class="btn btn-primary btn-sm px-3 fw-bold shadow-sm">승인</button>
-                                    <button class="btn btn-light bg-white border btn-sm px-3 fw-bold text-secondary shadow-sm">거절</button>
+                                    <form action="/admin/reservations/{{id}}/approve" method="POST" onsubmit="return confirm('요청을 승인하시겠습니까?')" class="m-0">
+                                        <button type="submit" class="btn btn-primary btn-sm px-3 fw-bold shadow-sm" onclick="event.stopPropagation()">승인</button>
+                                    </form>
+                                    <button type="button" class="btn btn-light bg-white border btn-sm px-3 fw-bold text-secondary shadow-sm"
+                                            onclick="event.stopPropagation(); openRejectModal({{id}})">거절</button>
                                 </div>
                             </td>
                         </tr>
+                        {{/pendingRequests.reservations}}
+                        {{^pendingRequests.reservations}}
                         <tr>
-                            <td class="px-4 py-4"><span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-2.5 py-1 rounded">취소</span></td>
-                            <td class="px-4 py-4 fw-bold text-dark">이영희</td>
-                            <td class="px-4 py-4 text-secondary">2023-10-31</td>
-                            <td class="px-4 py-4 text-secondary">2023-10-24</td>
-                            <td class="px-4 py-4">
-                                <div class="d-flex align-items-center gap-2 text-warning fw-bold small">
-                                    <div class="pulse-dot-orange"></div> 대기중
-                                </div>
-                            </td>
-                            <td class="px-4 py-4 text-end">
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button class="btn btn-primary btn-sm px-3 fw-bold shadow-sm">승인</button>
-                                    <button class="btn btn-light bg-white border btn-sm px-3 fw-bold text-secondary shadow-sm">거절</button>
-                                </div>
+                            <td colspan="6" class="px-4 py-5 text-center text-secondary opacity-50">
+                                <span class="material-symbols-outlined fs-2 mb-2">check_circle</span>
+                                <p class="m-0">처리할 예약 변경/취소 요청이 없습니다.</p>
                             </td>
                         </tr>
+                        {{/pendingRequests.reservations}}
                     </tbody>
                 </table>
+            </div>
+            <!-- Pagination for Reservations -->
+            <div class="px-4 py-3 bg-light bg-opacity-50 border-top d-flex justify-content-between align-items-center">
+                {{#pendingRequests.pagination}}
+                <span class="text-secondary small">총 <strong>{{totalElements}}</strong>건의 요청</span>
+                <nav>
+                    <ul class="pagination pagination-sm m-0 gap-1">
+                        <li class="page-item {{^hasPrev}}disabled{{/hasPrev}}">
+                            <a class="page-link border-0 rounded-2 bg-transparent text-secondary" href="?page={{prevPage}}">
+                                <span class="material-symbols-outlined fs-6">chevron_left</span>
+                            </a>
+                        </li>
+                        {{#pageNumbers}}
+                        <li class="page-item {{#isCurrent}}active{{/isCurrent}}">
+                            <a class="page-link border-0 rounded-2 {{#isCurrent}}bg-primary text-white fw-bold{{/isCurrent}} {{^isCurrent}}text-secondary{{/isCurrent}}" href="?page={{number}}">
+                                {{displayDigit}}
+                            </a>
+                        </li>
+                        {{/pageNumbers}}
+                        <li class="page-item {{^hasNext}}disabled{{/hasNext}}">
+                            <a class="page-link border-0 rounded-2 text-secondary" href="?page={{nextPage}}">
+                                <span class="material-symbols-outlined fs-6">chevron_right</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                {{/pendingRequests.pagination}}
             </div>
         </div>
 
@@ -106,19 +132,24 @@
                     <h3 class="h6 fw-bold text-dark m-0">미답변 Q&A 목록</h3>
                     <span class="badge bg-warning text-dark fw-black badge-update">UPDATE</span>
                 </div>
+                <button onclick="location.href='/admin/qna?status=pending'" class="btn btn-link text-primary small fw-bold p-0 text-decoration-none d-flex align-items-center gap-1">
+                    전체보기 <span class="material-symbols-outlined fs-6">chevron_right</span>
+                </button>
             </div>
             <div class="divide-y">
-                <div class="px-4 py-4 d-flex justify-content-between align-items-center hover-bg-light transition-all cursor-pointer">
+                {{#unansweredQnas}}
+                <div class="px-4 py-4 d-flex justify-content-between align-items-center hover-bg-light transition-all cursor-pointer border-top"
+                     onclick="location.href='/admin/qna/{{id}}/answer'">
                     <div class="d-flex align-items-center gap-4">
                         <div class="bg-light rounded-circle d-flex align-items-center justify-content-center user-avatar-placeholder">
                             <span class="material-symbols-outlined text-secondary opacity-50">person</span>
                         </div>
                         <div>
-                            <h4 class="small fw-bold text-dark mb-1">예약 시간 변경이 가능한가요?</h4>
+                            <h4 class="small fw-bold text-dark mb-1">{{title}}</h4>
                             <div class="d-flex gap-2 text-secondary qa-meta-text">
-                                <span class="fw-bold">작성자: 박지민</span>
+                                <span class="fw-bold">작성자: {{username}}</span>
                                 <span class="opacity-25">|</span>
-                                <span class="opacity-75">2023-10-25 09:30</span>
+                                <span class="opacity-75">{{createdAt}}</span>
                             </div>
                         </div>
                     </div>
@@ -126,24 +157,15 @@
                         답변 달러 가기 <span class="material-symbols-outlined fs-6">reply</span>
                     </button>
                 </div>
-                <div class="px-4 py-4 d-flex justify-content-between align-items-center hover-bg-light transition-all cursor-pointer border-top">
-                    <div class="d-flex align-items-center gap-4">
-                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center user-avatar-placeholder">
-                            <span class="material-symbols-outlined text-secondary opacity-50">person</span>
-                        </div>
-                        <div>
-                            <h4 class="small fw-bold text-dark mb-1">단체 예약 할인 혜택 문의드립니다.</h4>
-                            <div class="d-flex gap-2 text-secondary qa-meta-text">
-                                <span class="fw-bold">작성자: 최민호</span>
-                                <span class="opacity-25">|</span>
-                                <span class="opacity-75">2023-10-24 18:45</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn btn-light bg-primary bg-opacity-5 text-primary fw-bold small border-0 px-4 py-2 rounded-3 d-flex align-items-center gap-2">
-                        답변 달러 가기 <span class="material-symbols-outlined fs-6">reply</span>
-                    </button>
+                {{/unansweredQnas}}
+
+                {{^unansweredQnas}}
+                <div class="px-4 py-5 text-center text-secondary">
+                    미답변 문의가 없습니다. 숲이 평화롭네요! 🌲
                 </div>
+                {{/unansweredQnas}}
             </div>
         </div>
+
+{{> admin/reservation/reject-modal}}
 {{> layout/admin-footer}}

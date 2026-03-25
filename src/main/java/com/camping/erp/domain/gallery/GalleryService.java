@@ -23,14 +23,27 @@ public class GalleryService {
     private final GalleryRepository galleryRepository;
     private final FileUtil fileUtil;
 
-    public Page<GalleryResponse.ListDTO> findAll(Pageable pageable) {
-        return galleryRepository.findAllOrderByIdDesc(pageable)
+    public Page<GalleryResponse.ListDTO> findAll(Pageable pageable, String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return galleryRepository.findAllOrderByIdDesc(pageable)
+                    .map(GalleryResponse.ListDTO::new);
+        }
+        return galleryRepository.findByKeywordOrderByIdDesc(keyword, pageable)
                 .map(GalleryResponse.ListDTO::new);
     }
 
     public GalleryResponse.DetailDTO findById(Long id) {
         Gallery gallery = galleryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("갤러리 게시글을 찾을 수 없습니다."));
+        return new GalleryResponse.DetailDTO(gallery);
+    }
+
+    // 사용자용 상세 조회 (조회수 증가 포함)
+    @Transactional
+    public GalleryResponse.DetailDTO findByIdWithViewCount(Long id) {
+        Gallery gallery = galleryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("갤러리 게시글을 찾을 수 없습니다."));
+        gallery.increaseViewCount();
         return new GalleryResponse.DetailDTO(gallery);
     }
 

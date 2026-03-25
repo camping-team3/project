@@ -1,18 +1,101 @@
 package com.camping.erp.domain.qna;
 
+import com.camping.erp.domain.user.UserResponse;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequiredArgsConstructor
 public class QnaController {
 
+    private final QnaService qnaService;
+    private final HttpSession session;
+
     @GetMapping("/qna")
-    public String list() {
+    public String list(
+            @RequestParam(value = "status", defaultValue = "all") String status,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
+        
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        
+        // 5개씩, 최신순(ID 기준) 정렬
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
+        
+        QnaResponse.PageDTO pageDTO = qnaService.findAll(status, sessionUser, pageable);
+        
+        model.addAttribute("qnas", pageDTO.getQnas());
+        model.addAttribute("pagination", pageDTO);
+        
+        // 필터링 활성화 상태 표시용
+        model.addAttribute("isAll", "all".equalsIgnoreCase(status));
+        model.addAttribute("isPending", "pending".equalsIgnoreCase(status));
+        model.addAttribute("isCompleted", "completed".equalsIgnoreCase(status));
+        
         return "qna/list";
     }
 
     @GetMapping("/qna/new")
     public String newForm() {
         return "qna/new";
+    }
+
+    @PostMapping("/qna/save")
+    public String save(QnaRequest.SaveDTO requestDTO) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        qnaService.save(requestDTO, sessionUser);
+        return "redirect:/qna";
+    }
+
+    @GetMapping("/qna/{id}")
+    public String detail(@PathVariable("id") Long id, Model model) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        QnaResponse.DetailDTO qna = qnaService.findById(id, sessionUser);
+        
+        model.addAttribute("qna", qna);
+        // sessionUser는 세션에서 자동으로 모델에 노출되므로 명시적 추가 제외 (충돌 방지)
+        
+        return "qna/detail";
+    }
+
+    @GetMapping("/qna/{id}/edit-form")
+    public String editForm(@PathVariable("id") Long id, Model model) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        QnaResponse.DetailDTO qna = qnaService.findById(id, sessionUser);
+        
+        // 답변 완료된 경우 수정 폼 접근 차단
+        if (qna.getIsAnswered()) {
+            throw new com.camping.erp.global.handler.ex.Exception400("답변이 완료된 질문은 수정할 수 없습니다.");
+        }
+        
+        model.addAttribute("qna", qna);
+        return "qna/edit-form";
+    }
+
+    @PostMapping("/qna/{id}/update")
+    public String update(@PathVariable("id") Long id, QnaRequest.UpdateDTO requestDTO) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        qnaService.update(id, requestDTO, sessionUser);
+        return "redirect:/qna";
+    }
+
+    @PostMapping("/qna/{id}/delete")
+    @ResponseBody
+    public String delete(@PathVariable("id") Long id) {
+        UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        qnaService.delete(id, sessionUser);
+        
+        return """
+                <script>
+                    alert('문의가 정상적으로 삭제되었습니다.');
+                    location.href = '/qna';
+                </script>
+                """;
     }
 }

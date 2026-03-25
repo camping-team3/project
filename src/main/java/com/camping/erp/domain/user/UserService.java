@@ -18,6 +18,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BlacklistRepository blacklistRepository; // 추가
     private final BCryptPasswordEncoder passwordEncoder;
 
     public boolean existsByUsername(String username) {
@@ -44,11 +45,21 @@ public class UserService {
     }
 
     public UserResponse.LoginDTO login(UserRequest.LoginDTO request) {
+        // [추가] 0. 블랙리스트 체크 (최우선)
+        blacklistRepository.findByUsername(request.getUsername()).ifPresent(b -> {
+            throw new Exception400("귀하는 다음 사유로 이용이 제한되었습니다: " + b.getReason());
+        });
+
         // 1. 사용자 조회
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new Exception400("아이디 또는 비밀번호가 일치하지 않습니다."));
 
-        // 2. 비밀번호 비교 (평문 비교 OR BCrypt 비교)
+        // 2. 상태 체크 (탈퇴 회원 로그인 차단)
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw new Exception400("탈퇴하거나 이용이 정지된 계정입니다.");
+        }
+
+        // 3. 비밀번호 비교
         boolean isMatch = request.getPassword().equals(user.getPassword())
                 || passwordEncoder.matches(request.getPassword(), user.getPassword());
 
@@ -70,6 +81,41 @@ public class UserService {
                 .build();
     }
 
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
+    }
+
+    // 회원 정보 수정
+    @Transactional
+    public User update(Long id, UserRequest.UpdateDTO request) {
+        // 1. 사용자 조회
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
+
+        // 2. 기존 비밀번호 확인 (평문 비교 OR BCrypt 비교)
+        boolean isMatch = request.getCurrentPassword().equals(user.getPassword())
+                || passwordEncoder.matches(request.getCurrentPassword(), user.getPassword());
+
+        if (!isMatch) {
+            throw new Exception400("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 3. 일반 정보 업데이트 (이름, 이메일, 전화번호)
+        user.updateInfo(request.getName(), request.getEmail(), request.getPhone());
+
+        // 4. 새 비밀번호 변경 처리 (입력된 경우에만)
+        if (request.getNewPassword() != null && !request.getNewPassword().isBlank()) {
+            if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
+                throw new Exception400("새 비밀번호가 일치하지 않습니다.");
+            }
+            String encodedNewPassword = passwordEncoder.encode(request.getNewPassword());
+            user.updatePassword(encodedNewPassword);
+        }
+
+        return user;
+    }
+
     // 전체 회원 목록 조회 (페이징)
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
@@ -89,5 +135,21 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
         user.updateStatus(status);
+    }
+
+    @Transactional
+    public void expelUser(Long id, String reason) { // 사유 파라미터 추가
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
+        
+        // 1. 상태 변경
+        user.updateStatus(UserStatus.ANONYMOUS);
+
+        // 2. 블랙리스트 등록
+        Blacklist blacklist = Blacklist.builder()
+                .username(user.getUsername())
+                .reason(reason != null ? reason : "관리자에 의한 강제 탈퇴")
+                .build();
+        blacklistRepository.save(blacklist);
     }
 }

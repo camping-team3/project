@@ -60,4 +60,9 @@ public class Gallery extends BaseTimeEntity {
         this.images.add(image);
         image.updateGallery(this);
     }
+
+    // 조회수 증가 메서드 추가
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
 }

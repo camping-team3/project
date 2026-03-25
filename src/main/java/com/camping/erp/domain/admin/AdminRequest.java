@@ -18,4 +18,9 @@ public class AdminRequest {
 
         private ReservationStatus status;
     }
+
+    @Getter @Setter
+    public static class RejectDTO {
+        private String rejectionReason; // 관리자가 입력한 거절 사유
+    }
 }

@@ -48,6 +48,10 @@ public class Image extends BaseTimeEntity {
     @Column(nullable = false)
     private String fileName;
 
+    public String getFullPath() {
+        return filePath + fileName;
+    }
+
     @Builder
     public Image(Long id, Gallery gallery, Review review, Notice notice, Zone zone, Site site, String filePath,
             String fileName) {

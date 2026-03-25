@@ -1,29 +1,81 @@
 package com.camping.erp.domain.reservation;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.camping.erp.domain.reservation.enums.ReservationStatus;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Locale;
 
 public class ReservationResponse {
 
     @Getter
     @Setter
     @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ListDTO {
+        private Long id;
+        private String siteName;
+        private String siteImage;
+        private String checkIn;
+        private String checkOut;
+        private String totalPrice;
+        private String reservationDate;
+        private String statusDescription;
+
+        // 버튼 노출 및 상태 제어 플래그
+        private boolean canModify; // 예약 확정 & 이용 전
+        private boolean isWait; // 승인 대기 중 (변경/취소 요청 중)
+        private boolean isCompleted; // 이용 완료
+        private boolean isReviewDone; // 리뷰 작성 완료 (추후 확장용)
+
+        public static ListDTO fromEntity(Reservation reservation, LocalDate today) {
+            String dayOfWeekIn = reservation.getCheckIn().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+            String dayOfWeekOut = reservation.getCheckOut().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+
+            // TODO: Site/Zone 이미지 연관관계 확정 후 이미지 경로 로직 보완 예정
+            // 현재 Site 엔티티에 images 연관관계가 없어 임시로 upload 폴더의 이미지를 사용함
+            String imageUrl = "/upload/1df7d7fc-2f49-4f29-a27b-71f68cbfb104_wesley-shen-2l2EslhTaOM-unsplash.jpg";
+
+            return ListDTO.builder()
+                    .id(reservation.getId())
+                    .siteName(reservation.getSite().getSiteName())
+                    .siteImage(imageUrl)
+                    .checkIn(reservation.getCheckIn().toString().replace("-", ".") + " (" + dayOfWeekIn + ")")
+                    .checkOut(reservation.getCheckOut().toString().replace("-", ".") + " (" + dayOfWeekOut + ")")
+                    .totalPrice(String.format("%,d원", reservation.getTotalPrice()))
+                    .reservationDate(reservation.getCreatedAt().toLocalDate().toString().replace("-", "."))
+                    .canModify(reservation.getStatus() == ReservationStatus.CONFIRMED
+                            && reservation.getCheckIn().isAfter(today))
+                    .isWait(reservation.getStatus() == ReservationStatus.CHANGE_REQ
+                            || reservation.getStatus() == ReservationStatus.CANCEL_REQ)
+                    .isCompleted(reservation.getStatus() == ReservationStatus.COMPLETED)
+                    .statusDescription(reservation.getStatus() == ReservationStatus.CHANGE_REQ ? "변경 승인 대기"
+                            : reservation.getStatus() == ReservationStatus.CANCEL_REQ ? "취소 승인 대기" : "")
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder
     public static class PaymentFormDTO {
+        private Long reservationId; // 가예약(PENDING) ID 추가
         private Long siteId;
         private String siteName;
         private String zoneName;
         private LocalDate checkIn;
         private LocalDate checkOut;
-        private Long nights;
+        private long nights;
         private Integer peopleCount;
         private Integer basePeople;
         private Long pricePerNight;
         private Long extraPrice;
         private Long totalPrice;
-        private Long extraPersonFee; // 추가 요금 단가 추가
+        private Long extraPersonFee;
     }
 
     @Getter
@@ -40,6 +92,8 @@ public class ReservationResponse {
     @Getter
     @Setter
     @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class CompleteDTO {
         private Long id;
         private String siteName;
@@ -50,5 +104,226 @@ public class ReservationResponse {
         private Integer peopleCount;
         private Long totalPrice;
         private String username;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DetailDTO {
+        private Long id;
+        private String siteName;
+        private String zoneName;
+        private String siteImage;
+        private String checkIn;
+        private String checkOut;
+        private String nights;
+        private String totalPrice;
+        private String visitorName;
+        private String visitorPhone;
+        private Integer peopleCount;
+        private String reservationDate;
+        private String status;
+        private String statusDescription;
+
+        // 상태 제어 플래그
+        private boolean canModify;
+        private boolean isWait;
+        private boolean isCompleted;
+
+        // 요청 이력
+        private List<ChangeRequestHistoryDTO> changeRequests;
+        private List<CancelRequestHistoryDTO> cancelRequests;
+
+        public static DetailDTO fromEntity(Reservation reservation, LocalDate today) {
+            long nights = ChronoUnit.DAYS.between(reservation.getCheckIn(), reservation.getCheckOut());
+            String dayOfWeekIn = reservation.getCheckIn().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+            String dayOfWeekOut = reservation.getCheckOut().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+
+            List<ChangeRequestHistoryDTO> changeHistories = reservation.getChangeRequests().stream()
+                    .map(ChangeRequestHistoryDTO::fromEntity)
+                    .toList();
+
+            List<CancelRequestHistoryDTO> cancelHistories = reservation.getCancelRequests().stream()
+                    .map(CancelRequestHistoryDTO::fromEntity)
+                    .toList();
+
+            return DetailDTO.builder()
+                    .id(reservation.getId())
+                    .siteName(reservation.getSite().getSiteName())
+                    .zoneName(reservation.getSite().getZone().getName())
+                    .siteImage("/upload/1df7d7fc-2f49-4f29-a27b-71f68cbfb104_wesley-shen-2l2EslhTaOM-unsplash.jpg")
+                    .checkIn(reservation.getCheckIn().toString().replace("-", ".") + " (" + dayOfWeekIn + ")")
+                    .checkOut(reservation.getCheckOut().toString().replace("-", ".") + " (" + dayOfWeekOut + ")")
+                    .nights(nights + "박 " + (nights + 1) + "일")
+                    .totalPrice(String.format("%,d원", reservation.getTotalPrice()))
+                    .visitorName(reservation.getVisitorName())
+                    .visitorPhone(reservation.getVisitorPhone())
+                    .peopleCount(reservation.getPeopleCount())
+                    .reservationDate(reservation.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))
+                    .status(reservation.getStatus().name())
+                    .statusDescription(reservation.getStatus() == ReservationStatus.CONFIRMED ? "예약 확정"
+                            : reservation.getStatus() == ReservationStatus.CHANGE_REQ ? "변경 승인 대기"
+                                    : reservation.getStatus() == ReservationStatus.CANCEL_REQ ? "취소 승인 대기"
+                                            : reservation.getStatus() == ReservationStatus.COMPLETED ? "이용 완료"
+                                                    : "취소 완료")
+                    .canModify(reservation.getStatus() == ReservationStatus.CONFIRMED
+                            && reservation.getCheckIn().isAfter(today))
+                    .isWait(reservation.getStatus() == ReservationStatus.CHANGE_REQ
+                            || reservation.getStatus() == ReservationStatus.CANCEL_REQ)
+                    .isCompleted(reservation.getStatus() == ReservationStatus.COMPLETED)
+                    .changeRequests(changeHistories)
+                    .cancelRequests(cancelHistories)
+                    .build();
+        }
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ChangeRequestHistoryDTO {
+        private Long id;
+        private String requestDate;
+        private String newCheckIn;
+        private String newCheckOut;
+        private String newSiteName;
+        private String status;
+        private String statusDescription;
+        private String rejectionReason;
+        private boolean isRefunded; 
+        private boolean isApproved;
+        private boolean isPartialRefund; // 환불 대상 여부 추가
+
+        public static ChangeRequestHistoryDTO fromEntity(ReservationChangeRequest request) {
+            if (request == null) return null;
+            return ChangeRequestHistoryDTO.builder()
+                    .id(request.getId())
+                    .requestDate(request.getCreatedAt() != null ? request.getCreatedAt().toLocalDate().toString().replace("-", ".") : "-")
+                    .newCheckIn(request.getNewCheckIn() != null ? request.getNewCheckIn().toString().replace("-", ".") : "-")
+                    .newCheckOut(request.getNewCheckOut() != null ? request.getNewCheckOut().toString().replace("-", ".") : "-")
+                    .newSiteName(request.getNewSite() != null ? request.getNewSite().getSiteName() : "삭제된 사이트")
+                    .status(request.getStatus() != null ? request.getStatus().name() : "UNKNOWN")
+                    .statusDescription(request.getStatus() != null ? request.getStatus().getDescription() : "알 수 없음")
+                    .rejectionReason(request.getRejectionReason() != null ? request.getRejectionReason() : "")
+                    .isRefunded(request.isRefunded())
+                    .isApproved(request.getStatus() == com.camping.erp.domain.reservation.enums.RequestStatus.APPROVED)
+                    .isPartialRefund(request.getSettlementType() == com.camping.erp.domain.reservation.enums.SettlementType.PARTIAL_REFUND)
+                    .build();
+        }
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CancelRequestHistoryDTO {
+        private Long id;
+        private String requestDate;
+        private String reason;
+        private String status;
+        private String statusDescription;
+        private String rejectionReason;
+        private boolean isRefunded; 
+        private boolean isApproved; // 승인 여부 추가
+
+        public static CancelRequestHistoryDTO fromEntity(ReservationCancelRequest request) {
+            if (request == null) return null;
+            return CancelRequestHistoryDTO.builder()
+                    .id(request.getId())
+                    .requestDate(request.getCreatedAt() != null ? request.getCreatedAt().toLocalDate().toString().replace("-", ".") : "-")
+                    .reason(request.getReason() != null ? request.getReason() : "-")
+                    .status(request.getStatus() != null ? request.getStatus().name() : "UNKNOWN")
+                    .statusDescription(request.getStatus() != null ? request.getStatus().getDescription() : "알 수 없음")
+                    .rejectionReason(request.getRejectionReason() != null ? request.getRejectionReason() : "")
+                    .isRefunded(request.isRefunded())
+                    .isApproved(request.getStatus() == com.camping.erp.domain.reservation.enums.RequestStatus.APPROVED)
+                    .build();
+        }
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ChangeFormDTO {
+        private Long id;
+        private String siteName;
+        private String zoneName;
+        private String siteImage;
+        private String checkIn;
+        private String checkOut;
+        private Integer peopleCount;
+        private Long totalPrice;
+        private String visitorName;
+        private String visitorPhone;
+
+        public static ChangeFormDTO fromEntity(Reservation reservation) {
+            return ChangeFormDTO.builder()
+                    .id(reservation.getId())
+                    .siteName(reservation.getSite().getSiteName())
+                    .zoneName(reservation.getSite().getZone().getName())
+                    .siteImage("/upload/1df7d7fc-2f49-4f29-a27b-71f68cbfb104_wesley-shen-2l2EslhTaOM-unsplash.jpg")
+                    .checkIn(reservation.getCheckIn().toString())
+                    .checkOut(reservation.getCheckOut().toString())
+                    .peopleCount(reservation.getPeopleCount())
+                    .totalPrice(reservation.getTotalPrice())
+                    .visitorName(reservation.getVisitorName())
+                    .visitorPhone(reservation.getVisitorPhone())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ChangeDoneDTO {
+        private Long requestId; // 결제 시 필요
+        private Long reservationId;
+        private String newSiteName;
+        private String newZoneName;
+        private String newCheckIn;
+        private String newCheckOut;
+        private Integer newPeopleCount;
+        private String requestDate;
+        private String settlementType; // ADDITIONAL_PAY, PARTIAL_REFUND, NONE
+        private Long amount; // 차액
+        private Long newTotalPrice; // 최종 결제 금액 (합계)
+
+        // Mustache 렌더링을 위한 불리언 플래그
+        private boolean isAdditionalPay;
+        private boolean isPartialRefund;
+        private boolean isNone;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CancelDoneDTO {
+        private Long reservationId;
+        private String reason;
+        private String requestDate;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ChangePaymentDTO {
+        private Long requestId;
+        private String merchantUid;
+        private Long amount; // 결제해야 할 차액
+        private String siteName;
+        private String visitorName;
+        private String visitorPhone;
     }
 }
