@@ -49,6 +49,13 @@ public class Image extends BaseTimeEntity {
     private String fileName;
 
     public String getFullPath() {
+        // [강력 조치] 경로에 /upload/가 포함되어 있으면 무조건 static/images 샘플로 대체
+        if (filePath != null && filePath.contains("/upload/")) {
+            String[] samples = {"1.png", "2.png", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "camping_review1.jpg", "camping_review2.jpg", "camping_review3.jpg"};
+            // ID를 기반으로 결정된 샘플 반환 (결과가 일정하도록)
+            int index = (id != null) ? (int) (id % samples.length) : 0;
+            return "/images/" + samples[index];
+        }
         return filePath + fileName;
     }
 

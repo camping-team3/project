@@ -118,7 +118,7 @@
                                     </div>
                                 </div>
                                 <button type="button" 
-                                        class="btn btn-outline-primary w-100 mt-4 py-2.5 fw-bold shadow-sm rounded-3 select-site-btn"
+                                        class="btn btn-outline w-100 mt-4 py-2.5 fw-bold shadow-sm rounded-3 select-site-btn"
                                         onclick="selectSite('{{id}}', '{{siteName}}', '{{pricePerNight}}', '{{basePeople}}', '{{extraPersonFee}}')">
                                     선택하기
                                 </button>
@@ -240,7 +240,7 @@
                 
                 const btn = document.querySelector(`#site-card-${id} .select-site-btn`);
                 btn.innerText = '선택됨';
-                btn.classList.remove('btn-outline-primary');
+                btn.classList.remove('btn-outline');
                 btn.classList.add('btn-primary');
 
                 updateSummary();
@@ -251,7 +251,7 @@
                 if (btn) {
                     btn.innerText = '선택하기';
                     btn.classList.remove('btn-primary');
-                    btn.classList.add('btn-outline-primary');
+                    btn.classList.add('btn-outline');
                 }
             }
 
@@ -330,16 +330,16 @@
             }
             /* 활성화된 핀 스타일 */
             .zone-pin.active .pin-icon {
-                color: #0d6efd;
+                color: var(--fh-primary);
                 transform: scale(1.1);
             }
             .zone-pin.active .pin-label {
-                background: #0d6efd;
+                background: var(--fh-primary);
                 color: white;
-                border-color: #0d6efd;
+                border-color: var(--fh-primary);
             }
             .zone-pin:hover .pin-icon {
-                color: #0d6efd;
+                color: var(--fh-primary);
             }
         </style>
 
