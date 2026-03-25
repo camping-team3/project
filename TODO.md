@@ -154,5 +154,15 @@
   - [x] 기존 카드 레이아웃(`ratio-16x9`) 및 스타일 100% 보존
   - [x] 작업 완료 후 리포트 작성 및 커밋
 
+- [x] Task 5: 마이페이지 예약 목록 이미지 경로 수정
+  - [x] `ReservationResponse.java` 내 하드코딩된 이미지 경로를 `/images/camping_review2.jpg`로 수정
+  - [x] `ListDTO`, `DetailDTO`, `ChangeFormDTO` 전체 적용 확인
+  - [x] 작업 완료 후 리포트 작성 및 커밋
+
+- [x] Task 6: 관리자 리뷰 관리 페이지 헤더 홈 버튼 복구
+  - [x] `admin/review/list.mustache` 내 `.admin-header` 숨김 CSS 제거
+  - [x] 공통 헤더 노출 및 홈 버튼 가시성 확인
+  - [x] 작업 완료 후 리포트 작성 및 커밋
+
 
 
