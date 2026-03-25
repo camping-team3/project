@@ -36,21 +36,25 @@
 ## 🎯 관리자 대시보드 통합 및 고도화
 
 ### Task 1: 백엔드 데이터 공급 로직 (Admin Dashboard)
+
 - [x] `ReservationService`: `CHANGE_REQ`, `CANCEL_REQ` 상태별 카운트 조회 로직 구현
 - [x] `ReservationService`: 변경/취소 요청 통합 목록 조회 기능 (Pageable 지원)
 - [x] `AdminController`: 대시보드(`/admin`) 진입 시 통계 데이터 및 최신 요청 목록(5건) Model 주입
 
 ### Task 2: 대시보드 UI - 요청 현황 카운터
+
 - [x] `dashboard.mustache`: 변경 요청 건수 위젯 구현 (클릭 시 `status=CHANGE_REQ` 리스트 이동)
 - [x] `dashboard.mustache`: 취소 요청 건수 위젯 구현 (클릭 시 `status=CANCEL_REQ` 리스트 이동)
 
 ### Task 3: 대시보드 UI - 통합 요청 관리 리스트
+
 - [x] `dashboard.mustache`: 변경/취소 요청 통합 리스트 섹션 구현 (최신 5건)
 - [x] 리스트 행 클릭 시 해당 예약 상세 페이지로 이동 (`onclick` 로직)
 - [x] '전체보기' 버튼 추가 (예약 목록 페이지로 이동)
 - [x] 페이지네이션 구현 (Size 5, 버튼 < 1 2 3 4 5 >)
 
 ### Task 4: 대시보드 UI - 승인/거절 액션 통합
+
 - [x] 승인/거절 버튼 배치 및 기존 관리자 승인 로직(`POST`) 연결
 - [x] 거절 버튼 클릭 시 기존 거절 사유 입력 모달(`reject-modal.mustache`) 연동
 - [x] 버튼 디자인 일관성 확보 (`list.mustache` 스타일 복제)
@@ -58,19 +62,23 @@
 ## 🎯 마이페이지 홈 및 예약 내역 구현
 
 ### Task 1: 백엔드 데이터 공급 로직 (Mypage Home)
+
 - [x] `ReservationService`: 진행 중인 예약 건수 조회 로직 구현 (PENDING, CONFIRMED, CHANGE_REQ, CANCEL_REQ)
 - [x] `ReservationService`: 최근 예약 내역 목록 조회 로직 구현 (진행중 전체 + 1개월 내 이용완료/취소완료)
 - [x] `UserResponse.MypageHomeDTO`: 홈 화면용 통합 데이터 DTO 정의
 
 ### Task 2: 컨트롤러 연동 (UserController)
+
 - [x] `UserController`: `/mypage` 진입 시 `MypageHomeDTO` 데이터 Model 주입
 - [x] 세션 유저 존재 여부 및 예외 처리 강화
 
 ### Task 3: 마이페이지 홈 UI 구현 (home.mustache)
+
 - [x] `home.mustache` 기본 레이아웃 및 요약 섹션(진행 중 건수) 강조
 - [x] 최근 예약 내역 리스트(테이블/카드) 및 상태 표시 구현
 - [x] 데이터 부재 시 Empty State(안내 문구 및 예약 버튼) 구현
 
 ### Task 4: 디자인 정밀 조정 및 사후 처리
+
 - [x] 기존 디자인 시스템(Bootstrap 5) 준수 여부 및 반응형 확인
 - [x] 작업 완료 보고서 작성 및 TODO 동기화, 커밋

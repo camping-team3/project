@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sitesContainer.innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border text-primary spinner-border-sm" role="status"></div><span class="ms-2">사이트를 찾는 중...</span></div>';
 
         try {
-            const response = await fetch(`/api/reservations/available-sites?checkIn=${checkIn}&checkOut=${checkOut}&peopleCount=${peopleCount}`);
+            const response = await fetch(`/api/reservations/available-sites?checkIn=${checkIn}&checkOut=${checkOut}&peopleCount=${peopleCount}&currentReservationId={{reservation.id}}`);
             const sites = await response.json();
 
             if (sites.length === 0) {
