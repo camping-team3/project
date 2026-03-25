@@ -1,4 +1,18 @@
 -- ==========================================================
+-- 0. 블랙리스트 (blacklist_tb)
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS blacklist_tb (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    reason VARCHAR(500) NOT NULL,
+    admin_memo VARCHAR(255),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+INSERT INTO blacklist_tb (username, reason, created_at, updated_at) VALUES ('baduser', '불법 광고 및 커뮤니티 가이드 반복 위반 (관리자 테스트용)', NOW(), NOW());
+
+-- ==========================================================
 -- 1. 회원 정보 (user_tb)
 -- ==========================================================
 INSERT INTO user_tb (id, username, password, name, email, phone, role, status, penalty_count, created_at) VALUES 
@@ -78,7 +92,7 @@ INSERT INTO reservation_tb (id, user_id, site_id, check_in, check_out, total_pri
 (22, 4, 4, '2026-09-10', '2026-09-12', 300000, 2, '강사랑', '010-4444-4444', 'CANCEL_REQ', NOW());
 
 -- ==========================================================
--- 6. 결제 및 환불 정보 (payment_tb, refund_tb)
+-- 6. 결제 및 환불 정보
 -- ==========================================================
 INSERT INTO payment_tb (id, reservation_id, imp_uid, merchant_uid, amount, status, pay_date, created_at) VALUES 
 (1, 1, 'imp_111111', 'ORD-20260220-001', 100000, 'PAID', '2026-02-20', NOW()),
@@ -90,7 +104,7 @@ INSERT INTO refund_tb (id, reservation_id, reason, refund_amount, cancelled_at, 
 (1, 5, '개인 사정으로 인한 일정 변경 불가', 240000, NOW(), NOW());
 
 -- ==========================================================
--- 7. 공지사항 및 QnA (notice_tb, qna_tb, comment_tb)
+-- 7. 공지사항 및 QnA
 -- ==========================================================
 INSERT INTO notice_tb (id, title, content, is_top, created_at) VALUES 
 (1, '2026년 봄 시즌 정식 오픈 안내', '정식 오픈합니다.', true, NOW()),
@@ -172,15 +186,18 @@ INSERT INTO image_tb (id, gallery_id, review_id, notice_id, zone_id, site_id, fi
 (16, 11, null, null, null, null, '/upload/', '16d44a91-4b62-4083-bdc3-f84154ed2352_stills_by_suki-autumn-8356402_1280.jpg', NOW()),
 (17, 12, null, null, null, null, '/upload/', '28edcc83-74d8-4fb8-868c-8d005c70717a_stills_by_suki-autumn-8356402_1280.jpg', NOW());
 
--- ==========================================================
--- 10. 예약 변경/취소 요청 (reservation_change_request, reservation_cancel_request)
--- ==========================================================
+-- [리뷰 전용 이미지 연결]
+INSERT INTO image_tb (gallery_id, review_id, notice_id, zone_id, site_id, file_path, file_name, created_at) VALUES 
+(null, 2, null, null, null, '/images/', 'camping_review1.jpg', NOW()),
+(null, 3, null, null, null, '/images/', 'camping_review2.jpg', NOW()),
+(null, 4, null, null, null, '/images/', 'camping_review3.jpg', NOW());
 
--- [10-1] 예약 변경 요청 데이터 (ID: 21)
+-- ==========================================================
+-- 10. 예약 변경/취소 요청
+-- ==========================================================
 INSERT INTO reservation_change_request (id, reservation_id, new_check_in, new_check_out, new_site_id, new_people_count, status, old_total_price, new_total_price, settlement_type, is_refunded, created_at) VALUES
 (1, 21, '2026-09-05', '2026-09-07', 3, 4, 'PENDING', 100000, 100000, 'NONE', FALSE, NOW());
 
--- [10-2] 예약 취소 요청 데이터 (ID: 4, 10, 22)
 INSERT INTO reservation_cancel_request (id, reservation_id, reason, refund_bank, refund_account, refund_account_holder, refund_amount, status, is_refunded, created_at) VALUES
 (1, 22, '개인 사정으로 인한 취소 요청입니다.', '우리은행', '110-123-456789', '강사랑', 300000, 'PENDING', FALSE, NOW()),
 (2, 4, '갑작스러운 출장으로 취소합니다.', '신한은행', '112-223-334455', '이게스트', 150000, 'PENDING', FALSE, NOW()),
