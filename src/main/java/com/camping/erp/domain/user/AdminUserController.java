@@ -21,7 +21,16 @@ public class AdminUserController {
     @GetMapping("/users")
     public String userList(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
         Page<User> userPage = userService.findAll(PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id")));
+        
+        // [수정] 서비스 코드 수정 없이 컨트롤러에서 페이징 정보를 미리 계산하여 모델에 추가합니다.
         model.addAttribute("userPage", userPage);
+        model.addAttribute("currentPage", userPage.getNumber());
+        model.addAttribute("displayPage", userPage.getNumber() + 1); // 1부터 시작하는 페이지 번호
+        model.addAttribute("prevPage", userPage.getNumber() - 1);
+        model.addAttribute("nextPage", userPage.getNumber() + 1);
+        model.addAttribute("isFirst", userPage.isFirst());
+        model.addAttribute("isLast", userPage.isLast());
+        
         return "admin/user/list";
     }
 

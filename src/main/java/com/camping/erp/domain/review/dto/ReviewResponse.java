@@ -107,9 +107,11 @@ public class ReviewResponse {
             this.siteName = review.getReservation().getSite().getSiteName();
             this.siteId = review.getReservation().getSite().getId();
             
+            // [수정] 파일명만 가져오던 로직을 전체 경로(filePath + fileName)를 합치도록 확실히 수정합니다.
             this.images = review.getImages().stream()
-                    .map(img -> new ImageDTO(img.getFileName()))
+                    .map(img -> new ImageDTO(img.getFilePath() + img.getFileName()))
                     .collect(Collectors.toList());
+            
             this.hasMoreImages = this.images.size() > 1;
             this.imageCount = this.images.size() - 1;
             this.isDeleted = review.isDeleted();
@@ -119,9 +121,9 @@ public class ReviewResponse {
 
     @Getter
     public static class ImageDTO {
-        private String fileName;
-        public ImageDTO(String fileName) {
-            this.fileName = fileName;
+        private String fullPath;
+        public ImageDTO(String fullPath) {
+            this.fullPath = fullPath;
         }
     }
 }

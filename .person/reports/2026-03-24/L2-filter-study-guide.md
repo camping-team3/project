@@ -1,6 +1,6 @@
 # [기술 학습 보고서] 비동기 AI 정밀 분석 (L2 Filter) 아키텍처 및 핵심 기술
 
-**작성자:** Gemini-CLI  
+**작성자:** 김현지
 **날짜:** 2026-03-24  
 **주제:** Spring Boot 비동기 처리와 LLM(Large Language Model) 연동 기술 분석
 

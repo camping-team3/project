@@ -76,11 +76,17 @@ public class AdminController {
                              @RequestParam(name = "filter", defaultValue = "all") String filter,
                              @RequestParam(name = "keyword", defaultValue = "") String keyword,
                              Model model) {
+        // 정렬 조건 설정
         Pageable pageable = PageRequest.of(page, 10, sort.equals("danger") ? Sort.by("aiDangerScore").descending() : Sort.by("id").descending());
-        AdminResponse.ReviewPageDTO response = reviewService.findAllForAdmin(pageable);
+        
+        // [수정] 서비스 호출 시 '검토 대기중' 필터 여부와 '검색어'를 함께 전달합니다.
+        boolean isPending = "pending".equals(filter);
+        AdminResponse.ReviewPageDTO response = reviewService.findAllForAdmin(isPending, keyword, pageable);
         
         model.addAttribute("response", response);
         model.addAttribute("isDangerSort", "danger".equals(sort));
+        model.addAttribute("isPendingFilter", "pending".equals(filter));
+        model.addAttribute("isAllFilter", "all".equals(filter) && !"danger".equals(sort));
         model.addAttribute("keyword", keyword);
         return "admin/review/list";
     }
