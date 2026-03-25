@@ -38,8 +38,8 @@ public class ReservationResponse {
             String dayOfWeekOut = reservation.getCheckOut().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
 
             // TODO: Site/Zone 이미지 연관관계 확정 후 이미지 경로 로직 보완 예정
-            // 현재 Site 엔티티에 images 연관관계가 없어 임시로 upload 폴더의 이미지를 사용함
-            String imageUrl = "/upload/1df7d7fc-2f49-4f29-a27b-71f68cbfb104_wesley-shen-2l2EslhTaOM-unsplash.jpg";
+            // 현재 Site 엔티티에 images 연관관계가 없어 임시로 static 이미지를 사용함
+            String imageUrl = "/images/camping_review2.jpg";
 
             return ListDTO.builder()
                     .id(reservation.getId())
@@ -153,7 +153,7 @@ public class ReservationResponse {
                     .id(reservation.getId())
                     .siteName(reservation.getSite().getSiteName())
                     .zoneName(reservation.getSite().getZone().getName())
-                    .siteImage("/upload/1df7d7fc-2f49-4f29-a27b-71f68cbfb104_wesley-shen-2l2EslhTaOM-unsplash.jpg")
+                    .siteImage("/images/camping_review2.jpg")
                     .checkIn(reservation.getCheckIn().toString().replace("-", ".") + " (" + dayOfWeekIn + ")")
                     .checkOut(reservation.getCheckOut().toString().replace("-", ".") + " (" + dayOfWeekOut + ")")
                     .nights(nights + "박 " + (nights + 1) + "일")
@@ -267,7 +267,7 @@ public class ReservationResponse {
                     .id(reservation.getId())
                     .siteName(reservation.getSite().getSiteName())
                     .zoneName(reservation.getSite().getZone().getName())
-                    .siteImage("/upload/1df7d7fc-2f49-4f29-a27b-71f68cbfb104_wesley-shen-2l2EslhTaOM-unsplash.jpg")
+                    .siteImage("/images/camping_review2.jpg")
                     .checkIn(reservation.getCheckIn().toString())
                     .checkOut(reservation.getCheckOut().toString())
                     .peopleCount(reservation.getPeopleCount())
