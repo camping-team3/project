@@ -35,7 +35,8 @@
                 <!-- Review Images -->
                 {{#images.0}}
                 <div class="ratio ratio-16x9">
-                    <img src="/upload/{{fileName}}" class="object-fit-cover" alt="Review Image">
+                    <!-- [수정] 하드코딩된 /upload/를 제거하고 서버에서 준 전체 경로(fullPath)를 사용합니다. -->
+                    <img src="{{fullPath}}" class="object-fit-cover" alt="Review Image">
                     {{#hasMoreImages}}
                     <div class="position-absolute bottom-0 end-0 m-2 px-2 py-1 bg-dark bg-opacity-75 text-white small rounded">
                         +{{imageCount}}

@@ -39,9 +39,15 @@ public class ReviewService {
     private final ZoneRepository zoneRepository;
     private final FileUtil fileUtil;
 
-    // 관리자용 리뷰 목록 조회 (페이징)
-    public AdminResponse.ReviewPageDTO findAllForAdmin(Pageable pageable) {
-        Page<Review> page = reviewRepository.findAllWithDetails(pageable);
+    /**
+     * [관리자용] 리뷰 목록 조회 (페이징, 필터, 검색 적용)
+     * @param isPending true면 '검토 대기 중'만 필터링합니다.
+     * @param keyword 검색어 (작성자/내용)
+     * @param pageable 페이징 정보 (기존 페이징 유지)
+     */
+    public AdminResponse.ReviewPageDTO findAllForAdmin(boolean isPending, String keyword, Pageable pageable) {
+        // [수정] 페이징(Pageable)을 유지하면서 필터링과 검색이 가능한 리포지토리 메서드를 호출합니다.
+        Page<Review> page = reviewRepository.findAllForAdmin(isPending, keyword, pageable);
 
         List<AdminResponse.ReviewListDTO> dtoList = page.getContent().stream()
                 .map(r -> AdminResponse.ReviewListDTO.builder()
@@ -52,7 +58,8 @@ public class ReviewService {
                         .zoneName(r.getReservation().getSite().getZone().getName())
                         .siteName(r.getReservation().getSite().getSiteName())
                         .createdAt(r.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                        .images(r.getImages().stream().map(Image::getFileName).collect(Collectors.toList()))
+                        // [수정] 파일명만 보내는 게 아니라 전체 경로(filePath + fileName)를 보내 이미지 깨짐을 방지합니다.
+                        .images(r.getImages().stream().map(img -> img.getFilePath() + img.getFileName()).collect(Collectors.toList()))
                         .aiDangerScore(r.getAiDangerScore())
                         .isReviewed(r.isReviewed())
                         .isDeleted(r.isDeleted())
@@ -96,7 +103,8 @@ public class ReviewService {
     public ReviewResponse.ListWrapperDTO findAll(Pageable pageable) {
         Page<Review> reviewPage = reviewRepository.findAllWithDetails(pageable);
         Double avgRating = reviewRepository.findAverageRating();
-        long totalCount = reviewRepository.count();
+        // [수정] 삭제된 리뷰까지 세던 기존 count() 대신, 실제 서비스 중인 리뷰만 세는 메서드를 사용합니다.
+        long totalCount = reviewRepository.countByIsDeletedFalse();
 
         List<ReviewResponse.ListDTO> reviews = reviewPage.getContent().stream()
                 .map(ReviewResponse.ListDTO::new)
@@ -244,10 +252,19 @@ public class ReviewService {
         recalculateAverageRating(review.getReservation().getSite().getId(), review.getReservation().getSite().getZone().getId());
     }
 
+    /**
+     * [관리자용] 리뷰 유지 처리
+     * 리뷰에 문제가 없다고 판단되면 '검토 완료' 상태로 변경하여 '검토 대기중' 목록에서 제외합니다.
+     */
     @Transactional
     public void keepByAdmin(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));}
+                .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));
+        
+        // [핵심] isReviewed를 true로 바꿔서 '검토 완료'임을 표시합니다.
+        // 첫 번째 인자 false는 삭제하지 않겠다는 의미(유지)입니다.
+        review.processByAdmin(false, null); 
+    }
     public void recalculateAverageRating(Long siteId, Long zoneId) {
         List<Review> siteReviews = reviewRepository.findActiveReviewsBySiteId(siteId);
         double siteAvg = siteReviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
