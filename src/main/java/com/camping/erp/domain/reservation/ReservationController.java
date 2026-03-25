@@ -5,6 +5,7 @@ import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
 import com.camping.erp.domain.user.UserResponse;
 import com.camping.erp.domain.user.UserService;
+import com.camping.erp.domain.review.ReviewRepository;
 import com.camping.erp.global.util.Resp;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class ReservationController {
     private final PaymentService paymentService;
     private final ReservationService reservationService;
     private final UserService userService;
+    private final ReviewRepository reviewRepository; // 리뷰 레포지토리 주입
     private final HttpSession session;
 
     // 예약 페이지 (예약 가능 사이트 목록 조회)
@@ -138,10 +140,15 @@ public class ReservationController {
         // 본인 예약 목록 조회 (최신순)
         List<Reservation> reservationList = reservationService.findByUserIdOrderByCreatedAtDesc(sessionUser.getId());
 
-        // DTO 변환 및 오늘 날짜 기준 버튼 노출 로직 계산
+        // DTO 변환 및 리뷰 작성 여부 체크
         LocalDate today = LocalDate.now();
         List<ReservationResponse.ListDTO> dtos = reservationList.stream()
-                .map(r -> ReservationResponse.ListDTO.fromEntity(r, today))
+                .map(r -> {
+                    ReservationResponse.ListDTO dto = ReservationResponse.ListDTO.fromEntity(r, today);
+                    // 이미 작성된 리뷰가 있는지 확인하여 플래그 설정
+                    dto.setReviewDone(reviewRepository.existsByReservationId(r.getId()));
+                    return dto;
+                })
                 .toList();
 
         model.addAttribute("reservations", dtos);

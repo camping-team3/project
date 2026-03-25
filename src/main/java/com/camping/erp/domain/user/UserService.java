@@ -18,6 +18,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BlacklistRepository blacklistRepository; // 추가
     private final BCryptPasswordEncoder passwordEncoder;
 
     public boolean existsByUsername(String username) {
@@ -44,6 +45,11 @@ public class UserService {
     }
 
     public UserResponse.LoginDTO login(UserRequest.LoginDTO request) {
+        // [추가] 0. 블랙리스트 체크 (최우선)
+        blacklistRepository.findByUsername(request.getUsername()).ifPresent(b -> {
+            throw new Exception400("귀하는 다음 사유로 이용이 제한되었습니다: " + b.getReason());
+        });
+
         // 1. 사용자 조회
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new Exception400("아이디 또는 비밀번호가 일치하지 않습니다."));
@@ -77,7 +83,9 @@ public class UserService {
 
     public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));}
+                .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
+    }
+
     // 회원 정보 수정
     @Transactional
     public User update(Long id, UserRequest.UpdateDTO request) {
@@ -130,9 +138,18 @@ public class UserService {
     }
 
     @Transactional
-    public void expelUser(Long id) {
+    public void expelUser(Long id, String reason) { // 사유 파라미터 추가
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new Exception400("사용자를 찾을 수 없습니다."));
+        
+        // 1. 상태 변경
         user.updateStatus(UserStatus.ANONYMOUS);
+
+        // 2. 블랙리스트 등록
+        Blacklist blacklist = Blacklist.builder()
+                .username(user.getUsername())
+                .reason(reason != null ? reason : "관리자에 의한 강제 탈퇴")
+                .build();
+        blacklistRepository.save(blacklist);
     }
 }
