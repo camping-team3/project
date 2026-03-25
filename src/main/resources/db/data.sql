@@ -170,21 +170,21 @@ INSERT INTO gallery_tb (id, title, category, shooting_date, content, view_count,
 (12, '텐트에서 바라본 아침 풍경', '특별한 순간', '2026-03-18', '새 아침을 여는 캠핑장의 평화.', 77, NOW());
 
 INSERT INTO image_tb (id, gallery_id, review_id, notice_id, zone_id, site_id, file_path, file_name, created_at) VALUES
-(1, null, null, null, 1, null, '/upload/', 'zone_a_main.jpg', NOW()),
-(3, 1, null, null, null, null, '/upload/', '4adc36ff-bbfc-4c3c-86d8-d5f6c60a63da_wesley-shen-2l2EslhTaOM-unsplash.jpg', NOW()),
-(4, 1, null, null, null, null, '/upload/', 'f52dd56a-3b53-473d-b4ea-63c8c085be2f_chris-lynch-jKj_ujtUe6Q-unsplash.jpg', NOW()),
-(5, 2, null, null, null, null, '/upload/', '1df7d7fc-2f49-4f29-a27b-71f68cbfb104_wesley-shen-2l2EslhTaOM-unsplash.jpg', NOW()),
-(7, 3, null, null, null, null, '/upload/', '22918b6d-6245-41ac-b492-589b1623f6ef_wesley-shen-2l2EslhTaOM-unsplash.jpg', NOW()),
-(8, 3, null, null, null, null, '/upload/', '300d603c-5a5c-4ce1-96b5-2d3e3692b513_wesley-shen-2l2EslhTaOM-unsplash.jpg', NOW()),
-(9, 4, null, null, null, null, '/upload/', '33c9f42d-9b09-45d9-b6fb-220f3070148a_stills_by_suki-autumn-8356402_1280.jpg', NOW()),
-(10, 5, null, null, null, null, '/upload/', '365920b1-efaf-46f6-9eae-1a9ec9c13a24_wesley-shen-2l2EslhTaOM-unsplash.jpg', NOW()),
-(11, 6, null, null, null, null, '/upload/', '38edae3d-238d-45af-8c62-8524e01afbb0_wesley-shen-2l2EslhTaOM-unsplash.jpg', NOW()),
-(12, 7, null, null, null, null, '/upload/', '46a41582-0851-4f46-b8c6-b28e47046ce3_wesley-shen-2l2EslhTaOM-unsplash.jpg', NOW()),
-(13, 8, null, null, null, null, '/upload/', '0497ed2c-5881-4db2-bde8-979039c2c197_chris-lynch-jKj_ujtUe6Q-unsplash.jpg', NOW()),
-(14, 9, null, null, null, null, '/upload/', '07925048-e0ee-43c5-806f-7dbfd97389e8_chris-lynch-jKj_ujtUe6Q-unsplash.jpg', NOW()),
-(15, 10, null, null, null, null, '/upload/', '13d7c6a8-6b3f-4d44-ba8a-69c3f470c202_stills_by_suki-autumn-8356402_1280.jpg', NOW()),
-(16, 11, null, null, null, null, '/upload/', '16d44a91-4b62-4083-bdc3-f84154ed2352_stills_by_suki-autumn-8356402_1280.jpg', NOW()),
-(17, 12, null, null, null, null, '/upload/', '28edcc83-74d8-4fb8-868c-8d005c70717a_stills_by_suki-autumn-8356402_1280.jpg', NOW());
+(1, null, null, null, 1, null, '/images/', 'Camping_map.png', NOW()),
+(3, 1, null, null, null, null, '/images/', '1.png', NOW()),
+(4, 1, null, null, null, null, '/images/', '2.png', NOW()),
+(5, 2, null, null, null, null, '/images/', '3.jpg', NOW()),
+(7, 3, null, null, null, null, '/images/', '4.jpg', NOW()),
+(8, 3, null, null, null, null, '/images/', '5.jpg', NOW()),
+(9, 4, null, null, null, null, '/images/', '6.jpg', NOW()),
+(10, 5, null, null, null, null, '/images/', 'camping_review1.jpg', NOW()),
+(11, 6, null, null, null, null, '/images/', 'camping_review2.jpg', NOW()),
+(12, 7, null, null, null, null, '/images/', 'camping_review3.jpg', NOW()),
+(13, 8, null, null, null, null, '/images/', '1.png', NOW()),
+(14, 9, null, null, null, null, '/images/', '2.png', NOW()),
+(15, 10, null, null, null, null, '/images/', '3.jpg', NOW()),
+(16, 11, null, null, null, null, '/images/', '4.jpg', NOW()),
+(17, 12, null, null, null, null, '/images/', '5.jpg', NOW());
 
 -- [리뷰 전용 이미지 연결]
 INSERT INTO image_tb (gallery_id, review_id, notice_id, zone_id, site_id, file_path, file_name, created_at) VALUES 

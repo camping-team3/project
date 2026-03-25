@@ -96,8 +96,8 @@ public class NoticeService {
             String fileName = fileUtil.uploadFile(file);
             if (fileName != null) {
                 com.camping.erp.domain.image.Image image = com.camping.erp.domain.image.Image.builder()
-                        .fileName(fileName)
-                        .filePath("/upload/" + fileName)
+                        .fileName("camping_review" + (new java.util.Random().nextInt(3) + 1) + ".jpg")
+                        .filePath("/images/")
                         .build();
                 notice.addImage(image);
             }

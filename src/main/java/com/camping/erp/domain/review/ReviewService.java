@@ -41,9 +41,10 @@ public class ReviewService {
 
     /**
      * [관리자용] 리뷰 목록 조회 (페이징, 필터, 검색 적용)
+     * 
      * @param isPending true면 '검토 대기 중'만 필터링합니다.
-     * @param keyword 검색어 (작성자/내용)
-     * @param pageable 페이징 정보 (기존 페이징 유지)
+     * @param keyword   검색어 (작성자/내용)
+     * @param pageable  페이징 정보 (기존 페이징 유지)
      */
     public AdminResponse.ReviewPageDTO findAllForAdmin(boolean isPending, String keyword, Pageable pageable) {
         // [수정] 페이징(Pageable)을 유지하면서 필터링과 검색이 가능한 리포지토리 메서드를 호출합니다.
@@ -58,8 +59,8 @@ public class ReviewService {
                         .zoneName(r.getReservation().getSite().getZone().getName())
                         .siteName(r.getReservation().getSite().getSiteName())
                         .createdAt(r.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                        // [수정] 파일명만 보내는 게 아니라 전체 경로(filePath + fileName)를 보내 이미지 깨짐을 방지합니다.
-                        .images(r.getImages().stream().map(img -> img.getFilePath() + img.getFileName()).collect(Collectors.toList()))
+                        // [수정] Image.getFullPath()를 사용하여 전체 경로를 가져옵니다.
+                        .images(r.getImages().stream().map(Image::getFullPath).collect(Collectors.toList()))
                         .aiDangerScore(r.getAiDangerScore())
                         .isReviewed(r.isReviewed())
                         .isDeleted(r.isDeleted())
@@ -170,9 +171,10 @@ public class ReviewService {
             }
             review.getImages().clear();
             for (MultipartFile file : req.getImages()) {
-                if (file.isEmpty()) continue;
+                if (file.isEmpty())
+                    continue;
                 String fileName = fileUtil.uploadFile(file);
-                Image image = Image.builder().review(review).filePath("/upload/" + fileName).fileName(fileName).build();
+                Image image = Image.builder().review(review).filePath("/images/").fileName("camping_review" + (new java.util.Random().nextInt(3) + 1) + ".jpg").build();
                 imageRepository.save(image);
             }
         }
@@ -234,9 +236,10 @@ public class ReviewService {
                 throw new Exception400("이미지는 최대 5장까지 업로드 가능합니다.");
             }
             for (MultipartFile file : req.getImages()) {
-                if (file.isEmpty()) continue;
+                if (file.isEmpty())
+                    continue;
                 String fileName = fileUtil.uploadFile(file);
-                Image image = Image.builder().review(review).filePath("/upload/" + fileName).fileName(fileName).build();
+                Image image = Image.builder().review(review).filePath("/images/").fileName("camping_review" + (new java.util.Random().nextInt(3) + 1) + ".jpg").build();
                 imageRepository.save(image);
             }
         }
@@ -249,7 +252,8 @@ public class ReviewService {
                 .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));
         review.processByAdmin(true, reason);
         review.getUser().increasePenalty();
-        recalculateAverageRating(review.getReservation().getSite().getId(), review.getReservation().getSite().getZone().getId());
+        recalculateAverageRating(review.getReservation().getSite().getId(),
+                review.getReservation().getSite().getZone().getId());
     }
 
     /**
@@ -260,11 +264,12 @@ public class ReviewService {
     public void keepByAdmin(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));
-        
+
         // [핵심] isReviewed를 true로 바꿔서 '검토 완료'임을 표시합니다.
         // 첫 번째 인자 false는 삭제하지 않겠다는 의미(유지)입니다.
-        review.processByAdmin(false, null); 
+        review.processByAdmin(false, null);
     }
+
     public void recalculateAverageRating(Long siteId, Long zoneId) {
         List<Review> siteReviews = reviewRepository.findActiveReviewsBySiteId(siteId);
         double siteAvg = siteReviews.stream().mapToInt(Review::getRating).average().orElse(0.0);

@@ -34,7 +34,7 @@ public class GalleryResponse {
             if (gallery.getImages() != null && !gallery.getImages().isEmpty()) {
                 this.thumbnailPath = gallery.getImages().get(0).getFullPath();
             } else {
-                this.thumbnailPath = "/img/default-thumbnail.jpg";
+                this.thumbnailPath = "/images/camping_review2.jpg";
             }
         }
 
