@@ -45,8 +45,12 @@
                 </div>
                 {{/images.0}}
                 {{^images}}
-                <div class="ratio ratio-16x9 bg-light d-flex align-items-center justify-content-center">
-                    <span class="material-symbols-outlined text-muted opacity-25" style="font-size: 3rem;">image</span>
+                <div class="ratio ratio-16x9">
+                    <!-- [수정] 이미지가 없을 경우 기본 이미지를 표시합니다. -->
+                    <img src="/images/camping_review2.jpg" class="object-fit-cover opacity-50" alt="Default Review Image">
+                    <div class="position-absolute top-50 start-50 translate-middle text-center">
+                        <span class="material-symbols-outlined text-muted opacity-50" style="font-size: 2rem;">image</span>
+                    </div>
                 </div>
                 {{/images}}
 
