@@ -92,18 +92,19 @@
                                             {{/isWait}}
 
                                             {{#isCompleted}}
-                                            <a href="/review/new?reservationId={{id}}" class="btn btn-outline-fh btn-sm d-flex align-items-center gap-1">
-                                                <span class="material-symbols-outlined fs-6">rate_review</span>
-                                                리뷰 작성하기
-                                            </a>
+                                                {{^isReviewDone}}
+                                                <a href="/reviews/new?reservationId={{id}}" class="btn btn-outline-fh btn-sm d-flex align-items-center gap-1">
+                                                    <span class="material-symbols-outlined fs-6">rate_review</span>
+                                                    리뷰 작성하기
+                                                </a>
+                                                {{/isReviewDone}}
+                                                {{#isReviewDone}}
+                                                <div class="d-flex align-items-center gap-1 text-primary">
+                                                    <span class="material-symbols-outlined small">stars</span>
+                                                    <span class="small fw-bold">리뷰 작성 완료</span>
+                                                </div>
+                                                {{/isReviewDone}}
                                             {{/isCompleted}}
-
-                                            {{#isReviewDone}}
-                                            <div class="d-flex align-items-center gap-1 text-primary">
-                                                <span class="material-symbols-outlined small">stars</span>
-                                                <span class="small fw-bold">리뷰 작성 완료</span>
-                                            </div>
-                                            {{/isReviewDone}}
                                         </div>
                                     </div>
                                 </div>
