@@ -20,7 +20,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                         "s.id NOT IN (" +
                         "  SELECT r.site.id FROM Reservation r " +
                         "  WHERE (r.checkIn < :checkOut AND r.checkOut > :checkIn) " +
-                        "  AND r.status IN :statuses" +
+                        "  AND r.status IN :statuses " +
+                        "  AND (:currentReservationId IS NULL OR r.id != :currentReservationId) " + // 본인 예약 제외 로직
                         ") AND " +
                         "s.id NOT IN (" +
                         "  SELECT cr.newSite.id FROM ReservationChangeRequest cr " +
@@ -31,7 +32,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                         @Param("checkOut") LocalDate checkOut,
                         @Param("statuses") List<ReservationStatus> statuses,
                         @Param("zoneId") Long zoneId,
-                        @Param("peopleCount") Integer peopleCount);
+                        @Param("peopleCount") Integer peopleCount,
+                        @Param("currentReservationId") Long currentReservationId);
 
         // 중복 예약 여부 체크 (가예약 Lock 로직 포함)
         @Query("SELECT (COUNT(r) > 0 OR COUNT(cr) > 0) FROM Site s " +
@@ -41,6 +43,22 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                         +
                         "WHERE s.id = :siteId")
         boolean existsBySiteIdAndDateRange(@Param("siteId") Long siteId,
+                        @Param("checkIn") LocalDate checkIn,
+                        @Param("checkOut") LocalDate checkOut,
+                        @Param("statuses") List<ReservationStatus> statuses);
+
+        /**
+         * 특정 예약(자신)을 제외하고 사이트 점유 여부 체크 (변경 요청 시 사용)
+         */
+        @Query("SELECT (COUNT(r) > 0 OR COUNT(cr) > 0) FROM Site s " +
+                        "LEFT JOIN Reservation r ON r.site.id = s.id AND r.id != :reservationId AND r.status IN :statuses AND (r.checkIn < :checkOut AND r.checkOut > :checkIn) "
+                        +
+                        "LEFT JOIN ReservationChangeRequest cr ON cr.newSite.id = s.id AND cr.status = 'PENDING' AND (cr.newCheckIn < :checkOut AND cr.newCheckOut > :checkIn) "
+                        +
+                        "WHERE s.id = :siteId")
+        boolean existsBySiteIdAndDateRangeExcludingSelf(
+                        @Param("siteId") Long siteId,
+                        @Param("reservationId") Long reservationId,
                         @Param("checkIn") LocalDate checkIn,
                         @Param("checkOut") LocalDate checkOut,
                         @Param("statuses") List<ReservationStatus> statuses);

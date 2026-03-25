@@ -222,6 +222,9 @@ public class ReviewService {
         recalculateAverageRating(reservation.getSite().getId(), reservation.getSite().getZone().getId());
 
         if (req.getImages() != null && !req.getImages().isEmpty()) {
+            if (req.getImages().size() > 5) {
+                throw new Exception400("이미지는 최대 5장까지 업로드 가능합니다.");
+            }
             for (MultipartFile file : req.getImages()) {
                 if (file.isEmpty()) continue;
                 String fileName = fileUtil.uploadFile(file);
@@ -244,12 +247,7 @@ public class ReviewService {
     @Transactional
     public void keepByAdmin(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));
-        review.processByAdmin(false, null);
-        recalculateAverageRating(review.getReservation().getSite().getId(), review.getReservation().getSite().getZone().getId());
-    }
-
-    @Transactional
+                .orElseThrow(() -> new Exception400("존재하지 않는 리뷰입니다."));}
     public void recalculateAverageRating(Long siteId, Long zoneId) {
         List<Review> siteReviews = reviewRepository.findActiveReviewsBySiteId(siteId);
         double siteAvg = siteReviews.stream().mapToInt(Review::getRating).average().orElse(0.0);

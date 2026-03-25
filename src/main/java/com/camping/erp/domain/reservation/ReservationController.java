@@ -1,5 +1,6 @@
 package com.camping.erp.domain.reservation;
 
+import com.camping.erp.domain.payment.PaymentService;
 import com.camping.erp.domain.site.SiteResponse;
 import com.camping.erp.domain.site.SiteService;
 import com.camping.erp.domain.user.UserResponse;
@@ -19,11 +20,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class ReservationController {
-    
+
     @Value("${portone.store-id}")
     private String portoneStoreId;
 
@@ -31,6 +33,7 @@ public class ReservationController {
     private String portoneChannelKey;
 
     private final SiteService siteService;
+    private final PaymentService paymentService;
     private final ReservationService reservationService;
     private final UserService userService;
     private final ReviewRepository reviewRepository; // 리뷰 레포지토리 주입
@@ -85,7 +88,7 @@ public class ReservationController {
 
         model.addAttribute("payment", paymentInfo);
         model.addAttribute("dateRange", dateRange);
-        
+
         // PortOne 및 JS용 설정값 추가
         model.addAttribute("storeId", portoneStoreId);
         model.addAttribute("channelKey", portoneChannelKey);
@@ -107,7 +110,15 @@ public class ReservationController {
 
     // 예약 완료 페이지 (예약 정보 확인 가능)
     @GetMapping("/reservations/complete")
-    public String complete(@RequestParam("id") Long id, Model model) {
+    public String complete(@RequestParam("id") Long id,
+            @RequestParam(value = "paymentId", required = false) String paymentId,
+            Model model) {
+
+        // 브라우저에서 결제 성공 후 paymentId(imp_uid)를 들고 온 경우 즉시 동기화
+        if (paymentId != null && !paymentId.isEmpty()) {
+            paymentService.syncPaymentStatus(paymentId);
+        }
+
         ReservationResponse.CompleteDTO reservation = reservationService.getCompleteDetails(id);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E)", Locale.KOREAN);
@@ -187,8 +198,13 @@ public class ReservationController {
     // 예약 변경 요청 처리
     @PostMapping("/mypage/reservations/{id}/change-request")
     public String changeRequest(@PathVariable("id") Long id, ReservationRequest.ChangeDTO dto) {
+        // [DEBUG] 컨트롤러 진입 확인용 로그
+        System.out.println(">>> [DEBUG] ReservationController.changeRequest 진입함! Reservation ID: " + id);
+        System.out.println(">>> [DEBUG] DTO Data: newSiteId=" + dto.getNewSiteId() + ", newCheckIn=" + dto.getNewCheckIn() + ", newCheckOut=" + dto.getNewCheckOut());
+
         UserResponse.LoginDTO sessionUser = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
         if (sessionUser == null) {
+            System.out.println(">>> [DEBUG] 세션 유저 없음 -> 로그인 폼 리다이렉트");
             return "redirect:/login-form";
         }
 
@@ -209,6 +225,11 @@ public class ReservationController {
         model.addAttribute("changeRequest", changeRequest);
         UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
         model.addAttribute("user", user);
+
+        // PortOne 설정값 추가 (추가 결제 버튼 연동용)
+        model.addAttribute("storeId", portoneStoreId);
+        model.addAttribute("channelKey", portoneChannelKey);
+
         return "mypage/reservation-change-done";
     }
 
@@ -253,5 +274,28 @@ public class ReservationController {
         UserResponse.DetailDTO user = userService.findUser(sessionUser.getId());
         model.addAttribute("user", user);
         return "mypage/reservation-cancel-done";
+    }
+
+    /**
+     * 예약 변경 추가 결제 데이터 조회
+     */
+    @GetMapping("/api/reservation/change/{requestId}/payment-data")
+    @ResponseBody
+    public ResponseEntity<?> getChangePaymentData(@PathVariable("requestId") Long requestId) {
+        ReservationResponse.ChangePaymentDTO data = reservationService.getChangePaymentData(requestId);
+        return Resp.ok("결제 데이터 조회 성공", data);
+    }
+
+    /**
+     * 예약 변경 추가 결제 성공 처리
+     */
+    @PostMapping("/api/reservation/change/payment/success")
+    @ResponseBody
+    public ResponseEntity<?> confirmChange(@RequestBody Map<String, Object> requestData) {
+        Long requestId = Long.parseLong(requestData.get("requestId").toString());
+        String impUid = requestData.get("impUid").toString();
+
+        reservationService.confirmChange(requestId, impUid);
+        return Resp.ok("예약 변경이 최종 확정되었습니다.", null);
     }
 }

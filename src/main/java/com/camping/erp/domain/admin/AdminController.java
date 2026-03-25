@@ -51,7 +51,7 @@ public class AdminController {
     private final GalleryService galleryService;
     private final QnaService qnaService;
     private final ReviewService reviewService;
-    private final UserService userService; // 추가
+    private final UserService userService;
     private final RefundService refundService;
     private final HttpSession session;
 
@@ -76,8 +76,6 @@ public class AdminController {
                              @RequestParam(name = "filter", defaultValue = "all") String filter,
                              @RequestParam(name = "keyword", defaultValue = "") String keyword,
                              Model model) {
-        // TODO: 향후 Service에서 sort/filter/keyword를 처리하도록 확장 필요. 
-        // 현재는 기본 페이징 조회만 유지하되 UI 파라미터 전달
         Pageable pageable = PageRequest.of(page, 10, sort.equals("danger") ? Sort.by("aiDangerScore").descending() : Sort.by("id").descending());
         AdminResponse.ReviewPageDTO response = reviewService.findAllForAdmin(pageable);
         
@@ -174,7 +172,6 @@ public class AdminController {
         return "admin/reservation/cancel-detail";
     }
 
-    // 예약 상세 보기
     @GetMapping("/admin/reservations/{id}/detail")
     public String reservationDetail(@PathVariable("id") Long id, Model model) {
         AdminResponse.AdminReservationDetailDTO detail = reservationService.getAdminReservationDetail(id);
@@ -182,7 +179,6 @@ public class AdminController {
         return "admin/reservation/detail";
     }
 
-    // 환불 정보 조회 API
     @GetMapping("/api/admin/reservations/{id}/refund-info")
     @ResponseBody
     public ResponseEntity<?> getRefundInfo(@PathVariable("id") Long id) {
@@ -190,7 +186,6 @@ public class AdminController {
         return Resp.ok(info);
     }
 
-    // 환불 승인 처리
     @PostMapping("/admin/reservations/{id}/refund")
     @ResponseBody
     public ResponseEntity<?> approveRefund(@PathVariable("id") Long id, @RequestParam("reason") String reason) {
@@ -198,14 +193,12 @@ public class AdminController {
         return Resp.ok("환불 승인 및 결제 취소가 완료되었습니다.");
     }
 
-    // 예약 승인 처리 (변경/취소 공통)
     @PostMapping("/admin/reservations/{id}/approve")
     public String approveReservation(@PathVariable("id") Long id) {
         reservationService.approveRequest(id);
         return "redirect:/admin/reservations";
     }
 
-    // 예약 거절 처리 (변경/취소 공통)
     @PostMapping("/admin/reservations/{id}/reject")
     public String rejectReservation(@PathVariable("id") Long id, AdminRequest.RejectDTO rejectDTO) {
         reservationService.rejectRequest(id, rejectDTO);
@@ -315,20 +308,15 @@ public class AdminController {
             Model model) {
         
         UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
-        
-        // 관리자용도 동일하게 5개씩 최신순 페이징 적용
         Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
-        
         QnaResponse.PageDTO pageDTO = qnaService.findAll(status, sessionAdmin, pageable);
         
         model.addAttribute("qnas", pageDTO.getQnas());
         model.addAttribute("pagination", pageDTO);
 
-        // 통계 데이터 추가
         Map<String, Long> stats = qnaService.getStatistics();
         model.addAllAttributes(stats);
 
-        // 필터링 활성화 상태 표시용
         model.addAttribute("status", status);
         model.addAttribute("isAll", "all".equalsIgnoreCase(status));
         model.addAttribute("isPending", "pending".equalsIgnoreCase(status));
@@ -346,10 +334,11 @@ public class AdminController {
     }
 
     @PostMapping("/admin/qna/{id}/comment")
-    public String saveComment(@PathVariable("id") Long id, String content) {
+    public String saveComment(@PathVariable("id") Long id, @RequestParam("content") String content) {
         UserResponse.LoginDTO sessionAdmin = (UserResponse.LoginDTO) session.getAttribute("sessionUser");
+        log.debug("답변 등록 시도 - 문의 ID: {}, 관리자 ID: {}", id, sessionAdmin.getId());
         qnaService.saveComment(id, content, sessionAdmin);
-        return "redirect:/admin/qna";
+        return "redirect:/admin/qna/" + id + "/answer";
     }
 
     @PostMapping("/admin/qna/{id}/delete")
@@ -371,10 +360,9 @@ public class AdminController {
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("currentMonth", now.getMonthValue());
 
-        // 달력 데이터 생성 (6주 분량)
         List<AdminResponse.CalendarDayDTO> calendarDays = new ArrayList<>();
-        LocalDate firstOfMonth = now.withDayOfMonth(1);
-        int dayOfWeek = firstOfMonth.getDayOfWeek().getValue() % 7; // 0:일, 1:월, ..., 6:토
+        LocalDate firstOfMonth = now.withMonth(now.getMonthValue()).withDayOfMonth(1);
+        int dayOfWeek = firstOfMonth.getDayOfWeek().getValue() % 7; 
         
         LocalDate startDate = firstOfMonth.minusDays(dayOfWeek);
         for (int i = 0; i < 42; i++) {
