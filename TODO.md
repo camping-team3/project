@@ -45,6 +45,10 @@
 - [x] `admin-header.mustache` 내 '시즌 관리' 링크 삭제
 - [x] 작업 완료 후 리포트 작성 및 커밋
 
+### Task 6: 관리자 사용자 목록 페이지 미구현 버튼 삭제
+- [x] `admin/user/list.mustache` 내 '사용자 추가' 버튼 삭제
+- [x] 작업 완료 후 리포트 작성 및 커밋
+
 ### Task 2: 대시보드 UI - 요청 현황 카운터
 
 - [x] `dashboard.mustache`: 변경 요청 건수 위젯 구현 (클릭 시 `status=CHANGE_REQ` 리스트 이동)
