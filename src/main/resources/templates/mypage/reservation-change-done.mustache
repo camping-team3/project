@@ -1,84 +1,88 @@
 {{> layout/header}}
 
-<div class="container py-5 mt-5">
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-6 text-center">
-            <!-- Success Icon -->
-            <div class="mb-4">
-                <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
-                    <span class="material-symbols-outlined text-primary display-3">check_circle</span>
+        <div class="col-lg-7">
+            <div class="fh-card p-5 text-center shadow-sm">
+                <!-- 상단 아이콘 및 제목 -->
+                <div class="mb-4">
+                    <div class="bg-primary-subtle d-inline-flex p-4 rounded-circle mb-3">
+                        <span class="material-symbols-outlined text-primary fs-1">check_circle</span>
+                    </div>
+                    <h2 class="fw-bold mb-2">변경 신청이 접수되었습니다</h2>
+                    <p class="text-secondary fs-5">관리자 확인 후 최종 변경 승인 및 확정 절차가 진행됩니다.</p>
                 </div>
-            </div>
 
-            <!-- Header Text -->
-            <h1 class="display-5 fw-bold text-dark mb-3">예약 변경 신청 완료</h1>
-            <p class="text-secondary fs-5 mb-5">요청하신 변경 신청이 정상적으로 접수되었습니다.</p>
-
-            <!-- Settlement Info Section (정산 정보) -->
-            <div class="mb-5">
-                {{#changeRequest.isAdditionalPay}}
-                <div class="alert alert-warning border-0 rounded-4 p-4 shadow-sm">
-                    <div class="d-flex align-items-center gap-3 justify-content-center mb-3">
-                        <span class="material-symbols-outlined text-warning fs-1">payments</span>
-                        <h4 class="h4 fw-bold m-0 text-dark">차액 결제 필요</h4>
-                    </div>
-                    <p class="text-secondary mb-4">변경하신 조건의 요금이 더 높습니다.<br><strong>₩{{changeRequest.amount}}</strong>원을 추가 결제하시면 예약 변경이 확정됩니다.</p>
-                    <button id="btn-pay-diff" class="btn btn-warning w-100 py-3 fw-bold shadow-sm rounded-3">차액 ₩{{changeRequest.amount}} 결제하기</button>
-                </div>
-                {{/changeRequest.isAdditionalPay}}
-
-                {{#changeRequest.isPartialRefund}}
-                <div class="alert alert-info border-0 rounded-4 p-4 shadow-sm">
-                    <div class="d-flex align-items-center gap-3 justify-content-center mb-3">
-                        <span class="material-symbols-outlined text-info fs-1">account_balance_wallet</span>
-                        <h4 class="h4 fw-bold m-0 text-dark">부분 환불 예정</h4>
-                    </div>
-                    <p class="text-secondary mb-0">변경하신 조건의 요금이 더 저렴합니다.<br>차액 <strong>₩{{changeRequest.amount}}</strong>원은 관리자 승인 시<br>환불 규정에 따라 부분 환불 처리됩니다.</p>
-                </div>
-                {{/changeRequest.isPartialRefund}}
-
-                {{#changeRequest.isNone}}
-                <div class="alert alert-light border rounded-4 p-4 shadow-sm">
-                    <p class="text-secondary m-0">요금 변동이 없는 예약 변경 건입니다.<br>관리자 승인 후 즉시 확정됩니다.</p>
-                </div>
-                {{/changeRequest.isNone}}
-            </div>
-
-            <!-- Request Details Card -->
-            <div class="fh-card shadow-sm p-4 mb-5 text-start">
-                <h3 class="h5 fw-bold text-primary mb-4 border-bottom pb-3">변경 신청 상세 내역</h3>
-                
-                <div class="row g-4">
-                    <div class="col-sm-6">
-                        <div class="small text-secondary mb-1">예약 번호</div>
-                        <div class="fw-bold">RESERV-{{changeRequest.reservationId}}</div>
-                    </div>
-                    <div class="col-sm-6 text-sm-end">
-                        <div class="small text-secondary mb-1">최종 결제 금액 (합계)</div>
-                        <div class="fw-bold text-primary fs-5">₩{{changeRequest.newTotalPrice}}</div>
-                    </div>
-                    <div class="col-sm-12">
-                        <div class="small text-secondary mb-1">신청 사이트</div>
-                        <div class="fw-bold text-dark fs-5">{{changeRequest.newSiteName}} <span class="text-secondary fs-6 fw-normal">({{changeRequest.newZoneName}})</span></div>
-                    </div>
-                    <div class="col-sm-12">
-                        <div class="small text-secondary mb-1">변경 일정</div>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="material-symbols-outlined fs-6 text-primary">calendar_month</span>
-                            <span class="fw-bold">{{changeRequest.newCheckIn}} ~ {{changeRequest.newCheckOut}}</span>
+                <!-- 정산 정보 섹션 (dev 추가분 반영) -->
+                <div class="mb-4">
+                    {{#changeRequest.isAdditionalPay}}
+                    <div class="alert alert-warning border-0 rounded-4 p-4 text-start">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span class="material-symbols-outlined text-warning fs-1">payments</span>
+                            <h5 class="fw-bold m-0 text-dark">차액 결제 필요</h5>
                         </div>
+                        <p class="text-secondary mb-4 small">변경하신 조건의 요금이 더 높습니다.<br><strong>₩<span class="price-format">{{changeRequest.amount}}</span></strong>원을 추가 결제하시면 예약 변경이 확정됩니다.</p>
+                        <button id="btn-pay-diff" class="btn btn-warning w-100 py-3 fw-bold shadow-sm rounded-3">차액 결제하기</button>
                     </div>
-                    <div class="col-sm-12">
-                        <div class="small text-secondary mb-1">변경 인원</div>
-                        <div class="fw-bold">{{changeRequest.newPeopleCount}}인</div>
+                    {{/changeRequest.isAdditionalPay}}
+
+                    {{#changeRequest.isPartialRefund}}
+                    <div class="alert alert-info border-0 rounded-4 p-4 text-start">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span class="material-symbols-outlined text-info fs-1">account_balance_wallet</span>
+                            <h5 class="fw-bold m-0 text-dark">부분 환불 예정</h5>
+                        </div>
+                        <p class="text-secondary mb-0 small">변경하신 조건의 요금이 더 저렴합니다.<br>차액 <strong>₩<span class="price-format">{{changeRequest.amount}}</span></strong>원은 관리자 승인 시<br>환불 규정에 따라 부분 환불 처리될 예정입니다.</p>
+                    </div>
+                    {{/changeRequest.isPartialRefund}}
+
+                    {{#changeRequest.isNone}}
+                    <div class="alert alert-light border rounded-4 p-3 mb-0">
+                        <p class="text-secondary m-0 small">요금 변동이 없는 예약 변경 건입니다. 관리자 승인 후 즉시 확정됩니다.</p>
+                    </div>
+                    {{/changeRequest.isNone}}
+                </div>
+
+                <!-- 요청 정보 그리드 (HEAD 스타일 유지) -->
+                <div class="bg-light rounded-4 p-4 mb-4 text-start border">
+                    <h5 class="fw-bold mb-3 pb-2 border-bottom">변경 신청 상세 내역</h5>
+                    <div class="row gy-3">
+                        <div class="col-4 text-secondary small">예약 번호</div>
+                        <div class="col-8 fw-bold">RESERV-{{changeRequest.reservationId}}</div>
+                        
+                        <div class="col-4 text-secondary small">변경 사이트</div>
+                        <div class="col-8 fw-bold">{{changeRequest.newSiteName}} <span class="text-secondary fw-normal small">({{changeRequest.newZoneName}})</span></div>
+                        
+                        <div class="col-4 text-secondary small">변경 일정</div>
+                        <div class="col-8">
+                            <div class="d-flex align-items-center gap-1">
+                                <span class="material-symbols-outlined fs-6 text-primary">calendar_month</span>
+                                <span class="fw-bold">{{changeRequest.newCheckIn}} ~ {{changeRequest.newCheckOut}}</span>
+                            </div>
+                        </div>
+
+                        <div class="col-4 text-secondary small">변경 인원</div>
+                        <div class="col-8 fw-bold">{{changeRequest.newPeopleCount}}인</div>
+
+                        <div class="col-4 text-secondary small">변경 후 요금</div>
+                        <div class="col-8 fw-bold text-primary">₩<span class="price-format">{{changeRequest.newTotalPrice}}</span></div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Action Buttons -->
-            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                <a href="/mypage/reservations" class="btn btn-primary px-5 py-3 fw-bold shadow-sm">마이페이지 예약 내역</a>
-                <a href="/" class="btn btn-outline-secondary px-5 py-3 fw-bold shadow-sm">홈으로 가기</a>
+                <!-- 안내 배너 -->
+                <div class="alert alert-secondary border-0 mb-4 py-3 small d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined fs-5 text-primary">info</span>
+                    <div class="text-start">
+                        <span>승인 처리 결과는 마이페이지 예약 내역 상세에서 확인하실 수 있습니다.</span>
+                        <br><span class="text-muted">※ 결제 관련 문의는 고객센터로 연락 부탁드립니다.</span>
+                    </div>
+                </div>
+
+                <!-- 하단 액션 버튼 -->
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="/mypage/reservations" class="btn btn-primary btn-lg px-4 fw-bold">목록으로 돌아가기</a>
+                    <a href="/mypage" class="btn btn-outline-secondary btn-lg px-4 fw-bold">마이페이지 홈</a>
+                </div>
             </div>
         </div>
     </div>
@@ -161,15 +165,28 @@
             alert("결제 진행 중 예기치 못한 오류가 발생했습니다. 브라우저 콘솔 로그를 확인해 주세요.");
         }
     });
+
+    // 가격 포맷팅
+    document.addEventListener('DOMContentLoaded', function() {
+        const priceElements = document.querySelectorAll('.price-format');
+        priceElements.forEach(el => {
+            const price = parseInt(el.textContent);
+            if (!isNaN(price)) {
+                el.textContent = price.toLocaleString();
+            }
+        });
+    });
 </script>
 
 <style>
     .fh-card {
         border: 1px solid rgba(0,0,0,0.05);
-        border-radius: 20px;
+        border-radius: 24px;
+        background-color: #ffffff;
     }
-    .alert-warning { background-color: #fffbeb; color: #854d0e; }
-    .alert-info { background-color: #f0f9ff; color: #075985; }
+    .bg-primary-subtle {
+        background-color: #e7f1ff !important;
+    }
 </style>
 
 {{> layout/footer}}

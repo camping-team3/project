@@ -92,4 +92,33 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * 특정 시각 이전에 생성된 특정 상태의 예약 목록 조회 (선점 만료 체크용)
      */
     java.util.List<Reservation> findByStatusAndCreatedAtBefore(ReservationStatus status, java.time.LocalDateTime threshold);
+
+    /**
+     * [추가] 특정 상태의 예약 건수 조회 (대시보드 통계용)
+     */
+    long countByStatus(ReservationStatus status);
+
+    /**
+     * [추가] 여러 상태에 해당하는 예약 목록 조회 (페이징)
+     */
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.user JOIN FETCH r.site s JOIN FETCH s.zone " +
+            "WHERE r.status IN :statuses")
+    Page<Reservation> findByStatuses(@Param("statuses") List<ReservationStatus> statuses, Pageable pageable);
+
+    /**
+     * [추가] 특정 유저의 특정 상태들에 해당하는 예약 건수 조회
+     */
+    long countByUserIdAndStatusIn(Long userId, List<ReservationStatus> statuses);
+
+    /**
+     * [추가] 특정 유저의 특정 상태들에 해당하거나, 최근 일정 기간 내에 생성된 예약 목록 조회
+     */
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.site s JOIN FETCH s.zone " +
+            "WHERE r.user.id = :userId " +
+            "AND (r.status IN :activeStatuses OR (r.status IN :pastStatuses AND r.createdAt >= :since)) " +
+            "ORDER BY r.createdAt DESC")
+    List<Reservation> findRecentMypageReservations(@Param("userId") Long userId,
+                                                   @Param("activeStatuses") List<ReservationStatus> activeStatuses,
+                                                   @Param("pastStatuses") List<ReservationStatus> pastStatuses,
+                                                   @Param("since") java.time.LocalDateTime since);
 }

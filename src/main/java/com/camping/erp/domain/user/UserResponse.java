@@ -46,4 +46,12 @@ public class UserResponse {
             this.role = user.getRole();
         }
     }
+
+    @Getter
+    @Setter
+    @Builder
+    public static class MypageHomeDTO {
+        private long activeReservationCount; // 진행 중인 예약 건수
+        private java.util.List<com.camping.erp.domain.admin.AdminResponse.ReservationListDTO> recentReservations;
+    }
 }
