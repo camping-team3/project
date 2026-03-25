@@ -41,6 +41,10 @@
 - [x] `ReservationService`: 변경/취소 요청 통합 목록 조회 기능 (Pageable 지원)
 - [x] `AdminController`: 대시보드(`/admin`) 진입 시 통계 데이터 및 최신 요청 목록(5건) Model 주입
 
+### Task 5: 미구현 시즌 관리 메뉴 삭제
+- [x] `admin-header.mustache` 내 '시즌 관리' 링크 삭제
+- [x] 작업 완료 후 리포트 작성 및 커밋
+
 ### Task 2: 대시보드 UI - 요청 현황 카운터
 
 - [x] `dashboard.mustache`: 변경 요청 건수 위젯 구현 (클릭 시 `status=CHANGE_REQ` 리스트 이동)
