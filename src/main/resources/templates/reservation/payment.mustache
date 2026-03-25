@@ -116,50 +116,6 @@
                     </div>
                 </div>
 
-<<<<<<< HEAD
-                <!-- Right Side: Payment Methods -->
-                <div class="col-lg-5 sticky-top sticky-sidebar">
-                    <section class="fh-card shadow-sm border-0 p-4 p-md-5 bg-white rounded-4">
-                        <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
-                            <span class="material-symbols-outlined text-primary fs-4">account_balance_wallet</span> 결제 수단
-                        </h3>
-
-                        <div class="fh-selection-group mb-5">
-                            <div class="selection-item active shadow-sm">
-                                <div class="payment-method-icon"><span class="material-symbols-outlined">credit_card</span></div>
-                                <div>
-                                    <p class="small fw-bold text-dark m-0">신용/체크카드</p>
-                                    <p class="text-secondary m-0 text-xxs">일반 신용카드 결제</p>
-                                </div>
-                                <div class="selection-check"></div>
-                            </div>
-                        </div>
-
-                        <div class="price-breakdown mb-2">
-                            <div class="price-breakdown-row"><span class="text-secondary">객실 금액 ({{payment.nights}}박)</span><span class="fw-bold">₩ {{payment.pricePerNight}}</span></div>
-                            <div class="price-breakdown-row"><span class="text-secondary">인원 추가 요금 ({{payment.basePeople}}인 초과 시 인당 ₩{{payment.extraPersonFee}})</span><span class="text-primary fw-bold">+ ₩ {{payment.extraPrice}}</span></div>
-                            <div class="total-price-row">
-                                <span class="h6 fw-bold text-dark m-0">최종 결제 금액</span>
-                                <span class="h3 fw-black text-primary m-0">₩ {{payment.totalPrice}}</span>
-                            </div>
-                        </div>
-
-                        <form id="payment-form" action="/reservations/reserve" method="POST">
-                            <input type="hidden" name="siteId" value="{{payment.siteId}}">
-                            <input type="hidden" name="checkIn" value="{{payment.checkIn}}">
-                            <input type="hidden" name="checkOut" value="{{payment.checkOut}}">
-                            <input type="hidden" name="peopleCount" value="{{payment.peopleCount}}">
-                            <input type="hidden" name="totalPrice" value="{{payment.totalPrice}}">
-                            <input type="hidden" name="visitorName" id="visitorNameHidden">
-                            <input type="hidden" name="visitorPhone" id="visitorPhoneHidden">
-                            
-                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3.5 mt-4 fw-bold shadow-lg border-0 rounded-3">
-                                ₩ {{payment.totalPrice}} 결제하기
-                            </button>
-                        </form>
-                        <p class="text-center text-secondary mt-4 mb-0 text-xxs opacity-60">상기 결제 내역을 확인하였으며 결제에 동의합니다.</p>
-                    </section>
-=======
                 <div class="price-breakdown mb-2">
                     <div class="price-breakdown-row"><span class="text-secondary">객실 금액 ({{payment.nights}}박)</span><span class="fw-bold">₩ <span class="format-price">{{payment.pricePerNight}}</span></span></div>
                     <div class="price-breakdown-row"><span class="text-secondary">인원 추가 요금 ({{payment.basePeople}}인 초과 시 인당 ₩<span class="format-price">{{payment.extraPersonFee}}</span>)</span><span class="text-primary fw-bold">+ ₩ <span class="format-price">{{payment.extraPrice}}</span></span></div>
@@ -167,31 +123,8 @@
                         <span class="h6 fw-bold text-dark m-0">최종 결제 금액</span>
                         <span class="h3 fw-black text-primary m-0">₩ <span class="format-price">{{payment.totalPrice}}</span></span>
                     </div>
->>>>>>> dev
                 </div>
 
-<<<<<<< HEAD
-    <!-- Terms Agreement Logic -->
-    <script>
-        const paymentForm = document.getElementById('payment-form');
-        const visitorNameInput = document.getElementById('visitorNameInput');
-        const visitorPhoneInput = document.getElementById('visitorPhoneInput');
-        const visitorNameHidden = document.getElementById('visitorNameHidden');
-        const visitorPhoneHidden = document.getElementById('visitorPhoneHidden');
-        
-        const allCheck = document.getElementById('all-check');
-        const termChecks = [
-            document.getElementById('term1'),
-            document.getElementById('term2'),
-            document.getElementById('term3')
-        ];
-
-        // 전체 동의 클릭 시
-        allCheck.addEventListener('change', () => {
-            termChecks.forEach(check => {
-                check.checked = allCheck.checked;
-            });
-=======
                 <form id="payment-form" action="/reservations/reserve" method="POST">
                     <!-- 가예약 정보를 서버로 전송하기 위한 hidden 필드들 -->
                     <input type="hidden" name="siteId" value="{{payment.siteId}}">
@@ -261,7 +194,6 @@
         fetch(`/api/reservations/${reservationId}/lock`, {
             method: 'DELETE',
             keepalive: true 
->>>>>>> dev
         });
     }
 
@@ -342,34 +274,11 @@
         });
     });
 
-<<<<<<< HEAD
-        // 폼 제출 시 검증
-        paymentForm.addEventListener('submit', (e) => {
-            // 1. 약관 동의 검증
-            const allChecked = termChecks.every(c => c.checked);
-            if (!allChecked) {
-                e.preventDefault();
-                alert('모든 필수 약관에 동의하셔야 결제가 가능합니다.');
-                return;
-            }
-
-            // 2. 방문객 정보 검증 및 동기화
-            if (!visitorNameInput.value.trim() || !visitorPhoneInput.value.trim()) {
-                e.preventDefault();
-                alert('방문객 정보를 모두 입력해 주세요.');
-                visitorNameInput.focus();
-                return;
-            }
-
-            visitorNameHidden.value = visitorNameInput.value.trim();
-            visitorPhoneHidden.value = visitorPhoneInput.value.trim();
-=======
     // 개별 항목 클릭 시
     termChecks.forEach(check => {
         check.addEventListener('change', () => {
             const allChecked = termChecks.every(c => c.checked);
             allCheck.checked = allChecked;
->>>>>>> dev
         });
     });
 
