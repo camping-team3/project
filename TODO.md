@@ -164,5 +164,24 @@
   - [x] 공통 헤더 노출 및 홈 버튼 가시성 확인
   - [x] 작업 완료 후 리포트 작성 및 커밋
 
+# Phase 5: JSP/JSTL 마이그레이션 (Mustache Syntax 제거)
+
+## 1단계: QnA 도메인 JSP 변환
+- [ ] Task 1: `qna/detail.jsp` 변환 (Directives, Include, Loop: answers)
+- [ ] Task 2: `qna/edit-form.jsp` 변환 (Directives, Include, Value binding)
+- [ ] Task 3: `qna/list.jsp` 변환 (Directives, Include, Loop: qnas)
+- [ ] Task 4: `qna/new.jsp` 변환 (Directives, Include)
+
+## 2단계: Review 도메인 JSP 변환
+- [ ] Task 5: `review/edit.jsp` 변환 (Directives, Include)
+- [x] Task 6: `review/list.jsp` 변환 (Directives, Include, Loop: reviews)
+- [x] Task 7: `review/new.jsp` 변환 (Directives, Include)
+
+## 3단계: Site 및 Reservation 도메인 JSP 변환
+- [x] Task 8: `site/detail.jsp` 변환 (Directives, Include, Loop: reviews)
+- [x] Task 9: `reservation/complete.jsp` 변환 (Directives, Include)
+- [x] Task 10: `reservation/new.jsp` 변환 (Directives, Include, Loop: zones, sites)
+- [x] Task 11: `reservation/payment.jsp` 변환 (Directives, Include)
+
 
 

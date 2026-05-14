@@ -1,4 +1,6 @@
-{{> layout/admin-header}}
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<jsp:include page="/WEB-INF/views/layout/admin-header.jsp" />
         <!-- Summary Stats -->
         <div class="row g-4 mb-5">
             <div class="col-md-4">
@@ -10,7 +12,7 @@
                         <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-2.5 py-1 badge-stat-delta">실시간 현황</span>
                     </div>
                     <p class="text-secondary small fw-bold mb-1">예약 변경 요청</p>
-                    <h3 class="h2 fw-black text-dark m-0">{{changeReqCount}}<small class="text-secondary fs-6 fw-normal ms-1">건</small></h3>
+                    <h3 class="h2 fw-black text-dark m-0">${changeReqCount}<small class="text-secondary fs-6 fw-normal ms-1">건</small></h3>
                 </div>
             </div>
             <div class="col-md-4">
@@ -22,7 +24,7 @@
                         <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-2.5 py-1 badge-stat-delta">실시간 현황</span>
                     </div>
                     <p class="text-secondary small fw-bold mb-1">예약 취소 요청</p>
-                    <h3 class="h2 fw-black text-dark m-0">{{cancelReqCount}}<small class="text-secondary fs-6 fw-normal ms-1">건</small></h3>
+                    <h3 class="h2 fw-black text-dark m-0">${cancelReqCount}<small class="text-secondary fs-6 fw-normal ms-1">건</small></h3>
                 </div>
             </div>
             <div class="col-md-4">
@@ -34,7 +36,7 @@
                         <span class="badge bg-warning bg-opacity-10 text-warning-emphasis fw-bold px-2.5 py-1 badge-stat-delta">긴급 처리 필요</span>
                     </div>
                     <p class="text-secondary small fw-bold mb-1">미답변 Q&A</p>
-                    <h3 class="h2 fw-black text-dark m-0">{{unansweredCount}}<small class="text-secondary fs-6 fw-normal ms-1">건</small></h3>
+                    <h3 class="h2 fw-black text-dark m-0">${unansweredCount}<small class="text-secondary fs-6 fw-normal ms-1">건</small></h3>
                 </div>
             </div>
         </div>
@@ -60,15 +62,15 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y border-light">
-                        {{#pendingRequests.reservations}}
+                        <c:forEach items="${pendingRequests.reservations}" var="reservation">
                         <tr class="reservation-table-row cursor-pointer hover-bg-light transition-all" 
-                            onclick="if(!event.target.closest('.btn')) location.href='/admin/reservations/{{id}}/{{#isChangeReq}}change-detail{{/isChangeReq}}{{#isCancelReq}}cancel-detail{{/isCancelReq}}{{#isDetailView}}detail{{/isDetailView}}';">
+                            onclick="if(!event.target.closest('.btn')) location.href='/admin/reservations/${reservation.id}/${reservation.isChangeReq ? 'change-detail' : ''}${reservation.isCancelReq ? 'cancel-detail' : ''}${reservation.isDetailView ? 'detail' : ''}';">
                             <td class="px-4 py-4">
-                                <span class="badge bg-{{statusClass}} bg-opacity-10 text-{{statusClass}} fw-bold px-2.5 py-1 rounded">{{statusText}}</span>
+                                <span class="badge bg-${reservation.statusClass} bg-opacity-10 text-${reservation.statusClass} fw-bold px-2.5 py-1 rounded">${reservation.statusText}</span>
                             </td>
-                            <td class="px-4 py-4 fw-bold text-dark">{{username}}</td>
-                            <td class="px-4 py-4 text-secondary small">{{checkIn}} ~ {{checkOut}}</td>
-                            <td class="px-4 py-4 text-primary fw-bold font-monospace small">RESERV-{{id}}</td>
+                            <td class="px-4 py-4 fw-bold text-dark">${reservation.username}</td>
+                            <td class="px-4 py-4 text-secondary small">${reservation.checkIn} ~ ${reservation.checkOut}</td>
+                            <td class="px-4 py-4 text-primary fw-bold font-monospace small">RESERV-${reservation.id}</td>
                             <td class="px-4 py-4">
                                 <div class="d-flex align-items-center gap-2 text-warning fw-bold small">
                                     <div class="pulse-dot-orange"></div> 대기중
@@ -76,52 +78,52 @@
                             </td>
                             <td class="px-4 py-4 text-end">
                                 <div class="d-flex justify-content-end gap-2">
-                                    <form action="/admin/reservations/{{id}}/approve" method="POST" onsubmit="return confirm('요청을 승인하시겠습니까?')" class="m-0">
+                                    <form action="/admin/reservations/${reservation.id}/approve" method="POST" onsubmit="return confirm('요청을 승인하시겠습니까?')" class="m-0">
                                         <button type="submit" class="btn btn-primary btn-sm px-3 fw-bold shadow-sm" onclick="event.stopPropagation()">승인</button>
                                     </form>
                                     <button type="button" class="btn btn-light bg-white border btn-sm px-3 fw-bold text-secondary shadow-sm"
-                                            onclick="event.stopPropagation(); openRejectModal({{id}})">거절</button>
+                                            onclick="event.stopPropagation(); openRejectModal(${reservation.id})">거절</button>
                                 </div>
                             </td>
                         </tr>
-                        {{/pendingRequests.reservations}}
-                        {{^pendingRequests.reservations}}
+                        </c:forEach>
+                        <c:if test="${empty pendingRequests.reservations}">
                         <tr>
                             <td colspan="6" class="px-4 py-5 text-center text-secondary opacity-50">
                                 <span class="material-symbols-outlined fs-2 mb-2">check_circle</span>
                                 <p class="m-0">처리할 예약 변경/취소 요청이 없습니다.</p>
                             </td>
                         </tr>
-                        {{/pendingRequests.reservations}}
+                        </c:if>
                     </tbody>
                 </table>
             </div>
             <!-- Pagination for Reservations -->
             <div class="px-4 py-3 bg-light bg-opacity-50 border-top d-flex justify-content-between align-items-center">
-                {{#pendingRequests.pagination}}
-                <span class="text-secondary small">총 <strong>{{totalElements}}</strong>건의 요청</span>
+                <c:if test="${not empty pendingRequests.pagination}">
+                <span class="text-secondary small">총 <strong>${pendingRequests.pagination.totalElements}</strong>건의 요청</span>
                 <nav>
                     <ul class="pagination pagination-sm m-0 gap-1">
-                        <li class="page-item {{^hasPrev}}disabled{{/hasPrev}}">
-                            <a class="page-link border-0 rounded-2 bg-transparent text-secondary" href="?page={{prevPage}}">
+                        <li class="page-item ${not pendingRequests.pagination.hasPrev ? 'disabled' : ''}">
+                            <a class="page-link border-0 rounded-2 bg-transparent text-secondary" href="?page=${pendingRequests.pagination.prevPage}">
                                 <span class="material-symbols-outlined fs-6">chevron_left</span>
                             </a>
                         </li>
-                        {{#pageNumbers}}
-                        <li class="page-item {{#isCurrent}}active{{/isCurrent}}">
-                            <a class="page-link border-0 rounded-2 {{#isCurrent}}bg-primary text-white fw-bold{{/isCurrent}} {{^isCurrent}}text-secondary{{/isCurrent}}" href="?page={{number}}">
-                                {{displayDigit}}
+                        <c:forEach items="${pendingRequests.pagination.pageNumbers}" var="page">
+                        <li class="page-item ${page.isCurrent ? 'active' : ''}">
+                            <a class="page-link border-0 rounded-2 ${page.isCurrent ? 'bg-primary text-white fw-bold' : 'text-secondary'}" href="?page=${page.number}">
+                                ${page.displayDigit}
                             </a>
                         </li>
-                        {{/pageNumbers}}
-                        <li class="page-item {{^hasNext}}disabled{{/hasNext}}">
-                            <a class="page-link border-0 rounded-2 text-secondary" href="?page={{nextPage}}">
+                        </c:forEach>
+                        <li class="page-item ${not pendingRequests.pagination.hasNext ? 'disabled' : ''}">
+                            <a class="page-link border-0 rounded-2 text-secondary" href="?page=${pendingRequests.pagination.nextPage}">
                                 <span class="material-symbols-outlined fs-6">chevron_right</span>
                             </a>
                         </li>
                     </ul>
                 </nav>
-                {{/pendingRequests.pagination}}
+                </c:if>
             </div>
         </div>
 
@@ -137,19 +139,19 @@
                 </button>
             </div>
             <div class="divide-y">
-                {{#unansweredQnas}}
+                <c:forEach items="${unansweredQnas}" var="qna">
                 <div class="px-4 py-4 d-flex justify-content-between align-items-center hover-bg-light transition-all cursor-pointer border-top"
-                     onclick="location.href='/admin/qna/{{id}}/answer'">
+                     onclick="location.href='/admin/qna/${qna.id}/answer'">
                     <div class="d-flex align-items-center gap-4">
                         <div class="bg-light rounded-circle d-flex align-items-center justify-content-center user-avatar-placeholder">
                             <span class="material-symbols-outlined text-secondary opacity-50">person</span>
                         </div>
                         <div>
-                            <h4 class="small fw-bold text-dark mb-1">{{title}}</h4>
+                            <h4 class="small fw-bold text-dark mb-1">${qna.title}</h4>
                             <div class="d-flex gap-2 text-secondary qa-meta-text">
-                                <span class="fw-bold">작성자: {{username}}</span>
+                                <span class="fw-bold">작성자: ${qna.username}</span>
                                 <span class="opacity-25">|</span>
-                                <span class="opacity-75">{{createdAt}}</span>
+                                <span class="opacity-75">${qna.createdAt}</span>
                             </div>
                         </div>
                     </div>
@@ -157,15 +159,15 @@
                         답변 달러 가기 <span class="material-symbols-outlined fs-6">reply</span>
                     </button>
                 </div>
-                {{/unansweredQnas}}
+                </c:forEach>
 
-                {{^unansweredQnas}}
+                <c:if test="${empty unansweredQnas}">
                 <div class="px-4 py-5 text-center text-secondary">
                     미답변 문의가 없습니다. 숲이 평화롭네요! 🌲
                 </div>
-                {{/unansweredQnas}}
+                </c:if>
             </div>
         </div>
 
-{{> admin/reservation/reject-modal}}
-{{> layout/admin-footer}}
+<jsp:include page="/WEB-INF/views/admin/reservation/reject-modal.jsp" />
+<jsp:include page="/WEB-INF/views/layout/admin-footer.jsp" />
